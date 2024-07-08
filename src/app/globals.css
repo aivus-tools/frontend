@@ -1,51 +1,54 @@
 :root {
-  --min-width: 320;
-  --max-width: 1280px;
-  --font-family: 'Montserrat', 'Aria', sans-serif;
+	--min-width: 320;
+	--max-width: 1280px;
+	--font-family: 'Montserrat', 'Aria', sans-serif;
 
-  /* COLOURS */
-  --white: #FFFFFF;
-  --gray-light: #A0A0A0;
-  --gray: #99A1B7;
-  --gray-dark: #3F3E3E;
-  --main: #4B5675;
-  --main-dark: #121B3E;
-  --blue: #2288FF;
-  --orange: #FD8258;
-  --red: #D63C22;
-  --green: #BED935;
-  --green-darker: #A5C500;
-  --bg-blue-subtotal: #F4FBFF;
-  --bg-blue-subsection: #F6F9FF;
-  --bg-blue-important: #E1F5FF;
-  --bg-market-na: #EFF4FE;
-  --bg-orange: #F8E4C5;
-  --bg-green: #F4FBDB;
-  --bg-light-green: #FCFFF0;
-  --bg-red: #F6DCD7;
-  --bg-gray-ligth: #E5E5E5;
-  --bg-gray-page: #F6F7F9;
+	/* COLOURS */
+	--white: #FFFFFF;
+	--beige: #F9F9F9;
+	--gray-light: #A0A0A0;
+	--gray: #99A1B7;
+	--gray-dark: #3F3E3E;
+	--main: #4B5675;
+	--main-dark: #121B3E;
+	--blue: #2288FF;
+	--orange: #FD8258;
+	--red: #D63C22;
+	--green: #BED935;
+	--green-darker: #A5C500;
+	--bg-blue-subtotal: #F4FBFF;
+	--bg-blue-subsection: #F6F9FF;
+	--bg-blue-important: #E1F5FF;
+	--bg-market-na: #EFF4FE;
+	--bg-orange: #F8E4C5;
+	--bg-green: #F4FBDB;
+	--bg-light-green: #FCFFF0;
+	--bg-red: #F6DCD7;
+	--bg-gray-ligth: #E5E5E5;
+	--bg-gray-page: #F6F7F9;
 
-  --compare-green: #5CE191;
-  --compare-green-light: #CCE25F;
-  --compare-yellow: #F8D977;
-  --compare-orange: #FC9B73;
-  --compare-red: #DE644F;
+	--compare-green: #5CE191;
+	--compare-green-light: #CCE25F;
+	--compare-yellow: #F8D977;
+	--compare-orange: #FC9B73;
+	--compare-red: #DE644F;
 
 }
 
 * {
-  box-sizing: border-box;
-  padding: 0;
-  margin: 0;
+	box-sizing: border-box;
+	padding: 0;
+	margin: 0;
 }
 
 html,
 body {
-  max-width: 100vw;
-  overflow-x: hidden;
-  color: var(--main);
-  background-color: var(--white);
+	max-width: 100vw;
+	overflow-x: hidden;
+	color: var(--main);
+	background-color: var(--white);
+	font-size: 13px;
+	font-weight: 500;
 }
 
 body {
@@ -53,7 +56,82 @@ body {
 }
 
 a {
-  color: inherit;
-  text-decoration: none;
+	color: inherit;
+	text-decoration: none;
 }
 
+
+/* reset default styles */
+button,
+input,
+optgroup,
+select,
+textarea {
+	padding: 0;
+	margin: 0;
+	border: none;
+	border-radius: 0;
+	box-shadow: none;
+	background-color: transparent;
+	font: inherit; /* По дефолту, шрифтовые свойства, для этих элементов не наследуются */
+	color: inherit;
+	letter-spacing: inherit;
+}
+
+button,
+input {
+	overflow: visible;
+}
+
+button,
+select {
+	text-align: left;
+	text-transform: none;
+}
+
+button,
+[type='button'],
+[type='reset'],
+[type='submit'] {
+	cursor: pointer;
+	-webkit-appearance: none;
+}
+
+textarea {
+	resize: none;
+	overflow-y: auto;
+	overflow-x: hidden;
+}
+
+button::-moz-focus-inner,
+[type='button']::-moz-focus-inner,
+[type='reset']::-moz-focus-inner,
+[type='submit']::-moz-focus-inner {
+	border: none;
+	padding: 0;
+}
+
+button:-moz-focusring,
+[type='button']:-moz-focusring,
+[type='reset']:-moz-focusring,
+[type='submit']:-moz-focusring {
+	outline: none;
+}
+
+[type='number']::-webkit-inner-spin-button,
+[type='number']::-webkit-outer-spin-button {
+	height: auto;
+}
+
+[type='search']::-webkit-search-decoration {
+	-webkit-appearance: none;
+}
+
+[type='search'] {
+	outline: none;
+}
+
+::-webkit-file-upload-button {
+	-webkit-appearance: button;
+	font: inherit;
+}

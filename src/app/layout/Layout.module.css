@@ -1,0 +1,25 @@
+.layout {
+	min-height: 100vh;
+	display: grid;
+	grid-template-columns: 250px auto 1fr auto;
+	grid-template-rows: 70px 1fr auto;
+
+	grid-template-areas:
+		"sidebar header header header"
+		"sidebar . content ."
+		"sidebar . content .";
+
+	background-color: var(--bg-gray-page);
+}
+
+.main {
+	grid-area: content;
+}
+
+.header {
+	grid-area: header;
+}
+
+.sidebar {
+	grid-area: sidebar;
+}

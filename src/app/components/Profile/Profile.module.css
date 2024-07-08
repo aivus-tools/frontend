@@ -1,0 +1,27 @@
+.profile {
+	display: flex;
+	align-items: center;
+}
+
+.icon {
+	margin-right: 15px;
+	cursor: pointer;
+}
+
+.user {
+	display: flex;
+	align-items: center;
+	padding: 5px 10px;
+	border-radius: 30px;
+	background-color: var(--bg-gray-ligth);
+	cursor: pointer;
+}
+
+.userpic {
+	width: 27px;
+	height: 27px;
+	margin-right: 5px;
+	border-radius: 50%;
+	background-image: url('/images/userpic.png');
+	background-size: cover;
+}

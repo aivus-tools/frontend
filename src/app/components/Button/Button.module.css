@@ -1,0 +1,41 @@
+.button {
+	font-weight: 600;
+}
+
+.s {
+	padding: 10px 28px 10px 28px;
+	border-radius: 4px;
+	font-size: 13px;
+}
+
+.m {
+	padding: 10px 28px 10px 28px;
+	border-radius: 4px;
+	font-size: 15px;
+}
+
+.primary {
+	background-color: var(--blue);
+	color: var(--white);
+}
+
+.beige {
+	background-color: var(--beige);
+	color: var(--blue);
+}
+
+.transparent {
+	background-color: transparent;
+	color: var(--main);
+}
+
+.primary:hover,
+.beige:hover {
+	filter: brightness(85%);
+	transition: filter ease-in 300ms;
+}
+
+.transparent:hover {
+	color: var(--blue);
+	transition: color ease-in 300ms;
+}

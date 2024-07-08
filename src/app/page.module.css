@@ -1,8 +1,14 @@
 .main {
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-  align-items: center;
+	text-align: center;
   padding: 6rem;
   min-height: 100vh;
+}
+
+.flex {
+	display: flex;
+	margin-top: 20px;
+}
+
+.flexItem {
+	margin: 0 10px;
 }
