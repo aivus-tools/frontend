@@ -4,9 +4,11 @@
 .input {
 	padding: 10px 5px;
 }
-
-.input:hover,
-.input:focus {
+.input:disabled {
+	color: var(--gray);
+}
+.input:not(:disabled):hover,
+.input:not(:disabled):focus {
 	outline: 1px solid var(--blue);
 	border-radius: 1px;
 }

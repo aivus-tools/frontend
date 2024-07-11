@@ -88,7 +88,18 @@ export default function Home() {
 				<div className={cn(styles.flexItem)}>
 					<p>Current Text: {valueText}</p>
 				</div>
+			</div>
 
+			<div className={cn(styles.item)}>
+				<div className={cn(styles.flexItem)}>
+					<span>Disabled Input:</span>
+					<EditableInput value={valueText} type="text" disabled={true} onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+						setValueText(e.target.value);
+					}} className={cn(styles.input)}/>
+				</div>
+				<div className={cn(styles.flexItem)}>
+					<p>Current Text: {valueText}</p>
+				</div>
 			</div>
 
 		</main>

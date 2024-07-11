@@ -3,7 +3,7 @@ import styles from './EditableInput.module.css';
 import { EditableInputProps } from './EditableInput.props';
 import { formatPrice } from '@/app/helpers/helper';
 
-export const EditableInput = ({ value, type = 'number', isPrice = false, className, onChange, ...props }: EditableInputProps) => {
+export const EditableInput = ({ value, type = 'number', isPrice = false, disabled = false, className, onChange, ...props }: EditableInputProps) => {
 	const [isFocused, setIsFocused] = useState(false);
 	const [inputValue, setInputValue] = useState(value.toString());
 	const inputRef = useRef<HTMLInputElement>(null);
@@ -44,6 +44,7 @@ export const EditableInput = ({ value, type = 'number', isPrice = false, classNa
 				ref={inputRef}
 				type={isFocused ? (type === 'number' ? 'number' : 'text') : 'text'}
 				value={displayValue}
+				disabled={disabled}
 				onChange={handleChange}
 				onBlur={handleBlur}
 				className={styles.input}

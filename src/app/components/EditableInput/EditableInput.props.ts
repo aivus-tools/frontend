@@ -4,5 +4,6 @@ export interface EditableInputProps extends DetailedHTMLProps<InputHTMLAttribute
 	value: number | string;
 	type?: 'number' | 'text';
 	isPrice?: boolean;
+	disabled?: boolean;
 	onChange?: ChangeEventHandler<HTMLInputElement>;
 }
