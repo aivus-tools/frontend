@@ -1,7 +1,7 @@
 .main {
-	text-align: center;
-  padding: 6rem;
-  min-height: 100vh;
+	/*text-align: center;*/
+	padding: 6rem;
+	min-height: 100vh;
 }
 
 .flex {
@@ -11,4 +11,13 @@
 
 .flexItem {
 	margin: 0 10px;
+}
+
+.item {
+	margin: 20px 10px;
+}
+
+.input {
+	display: inline-block;
+	margin-left: 10px;
 }

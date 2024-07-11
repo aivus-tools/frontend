@@ -4,3 +4,5 @@ export * from './Profile/Profile';
 export * from './Search/Search';
 export * from './SidebarNav/SidebarNav';
 export * from './SumCounter/SumCounter';
+export * from './Input/Input';
+export * from './EditableInput/EditableInput';

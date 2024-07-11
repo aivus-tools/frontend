@@ -1,0 +1,12 @@
+.inputWrapper {
+
+}
+.input {
+	padding: 10px 5px;
+}
+
+.input:hover,
+.input:focus {
+	outline: 1px solid var(--blue);
+	border-radius: 1px;
+}
