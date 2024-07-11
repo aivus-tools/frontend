@@ -1,3 +1,6 @@
 export * from './Button/Button';
 export * from './Nav/Nav';
 export * from './Profile/Profile';
+export * from './Search/Search';
+export * from './SidebarNav/SidebarNav';
+export * from './SumCounter/SumCounter';

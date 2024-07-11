@@ -3,3 +3,68 @@
 	border-right: 1px solid var(--gray);
 
 }
+
+.logoWrap {
+	width: 100%;
+	height: 70px;
+	padding: 23px 30px;
+	display: flex;
+	align-items: baseline;
+}
+
+.logo {
+
+}
+
+.home {
+	margin-right: 12px;
+}
+
+
+.sidebarItem {
+	margin: 0 20px;
+	padding: 14px 0;
+	border-top: 1px dashed var(--gray);
+}
+
+.sidebarProjectItem {
+	margin-bottom: 15px;
+}
+
+.sidebarProjectItem:last-of-type {
+	margin-bottom: 0;
+}
+
+.sidebarSubTitle {
+	color: var(--gray);
+}
+
+.sidebarSubText {
+	margin-top: 5px;
+}
+
+.counters {
+	position: fixed;
+	margin: 0 20px;
+	bottom: 50px;
+	left: 0;
+}
+
+.counterItem {
+	margin-bottom: 6px;
+}
+.sub {
+	display: flex;
+	align-items: center;
+	width: 88px;
+	margin-top: 5px;
+	padding: 3px 8px;
+	background-color: var(--bg-green);
+	border-radius: 3px;
+	color: var(--green);
+	font-size: 16px;
+	font-weight: 700;
+}
+.subIcon {
+	margin-right: 6px;
+}
