@@ -6,3 +6,4 @@ export * from './SidebarNav/SidebarNav';
 export * from './SumCounter/SumCounter';
 export * from './Input/Input';
 export * from './EditableInput/EditableInput';
+export * from './Select/Select';

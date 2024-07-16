@@ -6,11 +6,16 @@
 
 .flex {
 	display: flex;
+	flex-wrap: wrap;
 	margin-top: 20px;
 }
 
 .flexItem {
 	margin: 0 10px;
+}
+
+.section {
+	min-width: 450px;
 }
 
 .item {
@@ -21,3 +26,5 @@
 	display: inline-block;
 	margin-left: 10px;
 }
+
+
