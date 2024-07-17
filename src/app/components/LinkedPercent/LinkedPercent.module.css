@@ -6,6 +6,8 @@
 }
 
 .icon {
+	width: 12px;
+	height: 12px;
 	margin-right: 8px;
 	fill: var(--gray);
 }

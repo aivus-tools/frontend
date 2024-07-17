@@ -1,3 +1,5 @@
+import { Modal } from '@/app/components/Modal/Modal';
+
 export * from './Button/Button';
 export * from './Nav/Nav';
 export * from './Profile/Profile';
@@ -13,3 +15,7 @@ export * from './Accordion/Accordion';
 export * from './Percent/Percent';
 export * from './CustomTable/CustomTable';
 export * from './LinkedPercent/LinkedPercent';
+export * from './Modal/Modal';
+export * from './SideModal/SideModal';
+export * from './SettingsModal/SettingsModal';
+export * from './SurchargeModal/SurchargeModal';

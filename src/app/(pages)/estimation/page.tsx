@@ -5,7 +5,6 @@ import withAuth from '@/app/layout/withAuth/withAuth';
 import { EstTable, CustomTable } from '@/app/components';
 import { tSection } from '@/app/interfaces/app.interface';
 
-
 const Estimation = () => {
 	const data: tSection[] = [
 		{
@@ -105,7 +104,7 @@ const Estimation = () => {
 	return (
 		<main>
 			{/*<EstTable data={data} />*/}
-			<CustomTable data={data} />
+			<CustomTable data={data}/>
 		</main>
 	);
 }

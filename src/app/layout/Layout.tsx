@@ -3,6 +3,7 @@ import styles from './Layout.module.css';
 import cn from 'classnames';
 import { Header } from './Header/Header';
 import { Sidebar } from './Sidebar/Sidebar';
+import { ModalProvider } from '@/app/context/ModalContext';
 
 
 export const Layout = ({ children, className, ...props }: LayoutProps) => {
@@ -17,9 +18,11 @@ export const Layout = ({ children, className, ...props }: LayoutProps) => {
 
 const withLayout = <T extends Record<string, unknown>>(Component: React.FC<T>) => {
 	const WithLayoutComponent: React.FC<T> = (props) => (
-		<Layout>
-			<Component {...props} />
-		</Layout>
+		<ModalProvider>
+			<Layout>
+					<Component {...props} />
+			</Layout>
+		</ModalProvider>
 	);
 
 	return WithLayoutComponent;

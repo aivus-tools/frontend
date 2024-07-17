@@ -2,12 +2,23 @@
 import { CustomTableProps } from './CustomTable.props';
 import styles from './CustomTable.module.css';
 import cn from 'classnames';
-import { Accordion, EditableInput, LinkedPercent, Percent, THeadItem } from '@/app/components';
+import {
+	Accordion,
+	EditableInput,
+	LinkedPercent,
+	Percent,
+	THeadItem,
+	SettingsModal,
+	SurchargeModal,
+} from '@/app/components';
 import { tHead, TRow, tSection } from '@/app/interfaces/app.interface';
 import SettingsIcon from '@/app/icons/settings-icon.svg';
 import RemoveIcon from '@/app/icons/remove-icon.svg';
+import { useModal } from '@/app/context/ModalContext';
 
 export const CustomTable = ({data, className, ...props }: CustomTableProps) => {
+	const { showModal } = useModal();
+
 	const contentTHeads: tHead[] = [
 		{
 			text: 'Item',
@@ -53,7 +64,13 @@ export const CustomTable = ({data, className, ...props }: CustomTableProps) => {
 
 	const handleOpenSettings = (item: tSection) => {
 		console.log(`open settings: ${item}`);
+		showModal('side', <SettingsModal /> );
 	}
+
+	const handleOpenSurcharge = (e: React.MouseEvent<HTMLDivElement>) => {
+		e.stopPropagation();
+		showModal('centered', <SurchargeModal />);
+	};
 
 	return (
 		<div className={cn(styles.est)}
@@ -106,7 +123,7 @@ export const CustomTable = ({data, className, ...props }: CustomTableProps) => {
 									</div>
 									<div className={cn(styles.accpart, styles.asideGrid)}>
 										<div></div>
-										<LinkedPercent highlight={true} count={10} disabled={true} />
+										<LinkedPercent highlight={true} count={10} disabled={true} onClick={ handleOpenSurcharge } />
 									</div>
 								</div>
 							}>
