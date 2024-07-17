@@ -14,7 +14,7 @@
 
 .main {
 	grid-area: content;
-	padding: 20px 0; /* to do remove */
+	padding: 10px 0; /* to do remove */
 }
 
 .header {

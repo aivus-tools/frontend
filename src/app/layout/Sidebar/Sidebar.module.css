@@ -52,17 +52,5 @@
 	margin-bottom: 6px;
 }
 .sub {
-	display: flex;
-	align-items: center;
-	width: 88px;
 	margin-top: 5px;
-	padding: 3px 8px;
-	background-color: var(--bg-green);
-	border-radius: 3px;
-	color: var(--green);
-	font-size: 16px;
-	font-weight: 700;
-}
-.subIcon {
-	margin-right: 6px;
 }

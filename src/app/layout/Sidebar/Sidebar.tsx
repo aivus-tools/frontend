@@ -4,7 +4,7 @@ import cn from 'classnames';
 import HomeIcon from './home-icon.svg';
 import LogoIcon from './aivus-logo.svg';
 import TopArrowIcon from './top-arrow-icon.svg';
-import { Search, SidebarNav, SumCounter } from '@/app/components';
+import { Percent, Search, SidebarNav, SumCounter } from '@/app/components';
 import Link from 'next/link';
 
 export const Sidebar = ({ children, className, ...props }: SidebarProps) => {
@@ -37,10 +37,7 @@ export const Sidebar = ({ children, className, ...props }: SidebarProps) => {
 				<SumCounter className={cn(styles.counterItem)} title="Total client’s cost" count={32620.8} />
 				<SumCounter className={cn(styles.counterItem)} title="Expenses" count={20727.0} />
 				<SumCounter className={cn(styles.counterItem)} title="Revenue & Mark-Up" count={11893.8} highlight={true}>
-					<div className={cn(styles.sub)}>
-						<TopArrowIcon className={cn(styles.subIcon)} />
-						36,5 %
-					</div>
+					<Percent className={cn(styles.sub)} mark="average" size='l' count={36.5}/>
 				</SumCounter>
 			</div>
 		</aside>

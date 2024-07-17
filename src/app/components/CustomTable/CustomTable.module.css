@@ -19,7 +19,7 @@
 .accpart {
 	background-color: var(--white);
 	border-radius: 6px;
-	padding: 18px 25px;
+	padding: 18px 0;
 }
 
 .part {
@@ -29,22 +29,35 @@
 	/*padding: 10px;*/
 }
 
+.part:hover {
+	background-color: var(--bg-blue-subsection);
+}
+
+.part:hover .settingsIcon,
+.part:hover .removeIcon {
+	visibility: visible;
+}
+
 .hcontent,
 .haside {
 	height: 30px;
+}
+.hcontent .icon,
+.haside .icon {
+	margin-top: 2px;
 }
 
 .contentGrid {
 	width: 100%;
 	display: grid;
-	grid-template-columns: [start] 1fr [itemEnd] 80px [priceEnd] 140px [unitsEnd] 70px [quantityEnd] 90px [end];
+	grid-template-columns: [start] 40px [iconEnd] 1fr [itemEnd] 80px [priceEnd] 140px [unitsEnd] 70px [quantityEnd] 90px [costEnd] 30px [end];
 	align-items: center;
 }
 
 .asideGrid {
 	width: 100%;
 	display: grid;
-	grid-template-columns: repeat(4, calc(100%/4));
+	grid-template-columns: 20px repeat(4, calc((100% - 20px)/4));
 	align-items: center;
 }
 
@@ -65,7 +78,11 @@
 	border-bottom-right-radius: 6px;
 }
 
-.row:first-child .part::before {
+.rowItem {
+	padding: 10px 0;
+}
+
+.rowItem::before {
 	content: '';
 	position: absolute;
 	width: calc(100% - 80px);
@@ -74,11 +91,15 @@
 	left: 40px;
 	border-top: 1px dashed var(--gray-light);
 }
+.item {
 
-.rowItem {
-	padding: 10px 0;
 }
 
-.item {
-	padding-left: 40px;
+.settingsIcon,
+.removeIcon {
+	visibility: hidden;
+	cursor: pointer;
+}
+.icon {
+	text-align: center;
 }

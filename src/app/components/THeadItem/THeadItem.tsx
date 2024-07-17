@@ -2,7 +2,7 @@
 import { THeadItemProps } from './THeadItem.props';
 import styles from './THeadItem.module.css';
 import cn from 'classnames';
-import SettingsIcon from './settings-icon.svg';
+import SettingsIcon from '@/app/icons/settings-icon.svg';
 
 export const THeadItem = ({text, showIcon = false, className, ...props }: THeadItemProps) => {
 

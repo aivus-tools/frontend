@@ -23,7 +23,18 @@ const Estimation = () => {
 					range: 16,
 				},
 				{
-					item: 'Select an item',
+					item: 'Select an item 1',
+					price: 600,
+					units: 'units',
+					quantity: 1,
+					cost: 600,
+					surcharge: 10,
+					cprice: 700,
+					ccost: 700,
+					range: 16,
+				},
+				{
+					item: 'Select an item 2',
 					price: 300,
 					units: 'units',
 					quantity: 1,
@@ -31,7 +42,7 @@ const Estimation = () => {
 					surcharge: 10,
 					cprice: 300,
 					ccost: 300,
-					range: 19,
+					range: 15,
 				}
 			]
 		},
