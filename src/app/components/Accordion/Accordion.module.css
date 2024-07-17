@@ -3,9 +3,7 @@
 }
 
 .title {
-	/*display: flex;*/
-	/*align-items: center;*/
-	/*padding: 20px 8px;*/
+	position: relative;
 	cursor: pointer;
 	font-size: 14px;
 	font-weight: 700;
@@ -13,6 +11,9 @@
 	text-transform: uppercase;
 }
 .icon {
+	position: absolute;
+	top: 24px;
+	left: 6px;
 	margin-right: 6px;
 	transform: rotate(-90deg);
 	transition: transform ease-in 0.3s;

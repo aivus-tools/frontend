@@ -32,14 +32,8 @@ export const Accordion = ({ title, children, className, onToggle, ...props }: Ac
 				className={cn(styles.title, { [styles.opened]: isOpen })}
 				onClick={toggleAccordion}
 			>
-				{typeof title === 'string' ? (
-					<>
-						<ArrowIcon className={cn(styles.icon)} />
-						<div>{title}</div>
-					</>
-				) : (
-					title
-				)}
+				<ArrowIcon className={cn(styles.icon)} />
+				{title}
 			</div>
 			<div
 				ref={contentRef}

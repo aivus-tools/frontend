@@ -1,0 +1,84 @@
+.est {
+	width: 100%;
+	padding: 0 25px;
+	/*grid-template-rows: 20px 1fr;*/
+	/*grid-template-areas:*/
+	/*	"hcontent haside"*/
+	/*	"content aside";*/
+	/*column-gap: 30px;*/
+}
+
+.grid {
+	display: grid;
+	grid-template-columns: calc(70% - 30px/2) calc(30% - 30px/2); /* 30px - column-gap */
+	/*grid-template-areas:*/
+	/*		"content aside";*/
+	column-gap: 30px;
+}
+
+.accpart {
+	background-color: var(--white);
+	border-radius: 6px;
+	padding: 18px 25px;
+}
+
+.part {
+	position: relative;
+	background-color: var(--white);
+	border-radius: 6px;
+	/*padding: 10px;*/
+}
+
+.hcontent,
+.haside {
+	height: 30px;
+}
+
+.contentGrid {
+	width: 100%;
+	display: grid;
+	grid-template-columns: [start] 1fr [itemEnd] 80px [priceEnd] 140px [unitsEnd] 70px [quantityEnd] 90px [end];
+	align-items: center;
+}
+
+.asideGrid {
+	width: 100%;
+	display: grid;
+	grid-template-columns: repeat(4, calc(100%/4));
+	align-items: center;
+}
+
+.section {
+	margin-bottom: 20px;
+}
+
+.row {
+	/*padding: 10px 0;*/
+}
+
+.row .part {
+	border-radius: 0;
+}
+
+.row:last-child .part {
+	border-bottom-left-radius: 6px;
+	border-bottom-right-radius: 6px;
+}
+
+.row:first-child .part::before {
+	content: '';
+	position: absolute;
+	width: calc(100% - 80px);
+	height: 1px;
+	top: 0;
+	left: 40px;
+	border-top: 1px dashed var(--gray-light);
+}
+
+.rowItem {
+	padding: 10px 0;
+}
+
+.item {
+	padding-left: 40px;
+}

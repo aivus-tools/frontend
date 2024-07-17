@@ -2,7 +2,7 @@
 import styles from "./page.module.css";
 import withLayout from '@/app/layout/Layout';
 import withAuth from '@/app/layout/withAuth/withAuth';
-import { EstTable } from '@/app/components';
+import { EstTable, CustomTable } from '@/app/components';
 import { tSection } from '@/app/interfaces/app.interface';
 
 
@@ -93,7 +93,8 @@ const Estimation = () => {
 
 	return (
 		<main>
-			<EstTable data={data} />
+			{/*<EstTable data={data} />*/}
+			<CustomTable data={data} />
 		</main>
 	);
 }

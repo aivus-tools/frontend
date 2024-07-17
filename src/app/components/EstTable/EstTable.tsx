@@ -2,7 +2,7 @@
 import { EstTableProps } from './EstTable.props';
 import styles from './EstTable.module.css';
 import cn from 'classnames';
-import { THeadItem, Accordion, EditableInput } from '@/app/components';
+import { THeadItem, Accordion, EditableInput, Percent } from '@/app/components';
 import { tHead, TRow, tSection } from '@/app/interfaces/app.interface';
 import ArrowIcon from '@/app/icons/arrow-down-icon.svg';
 import { useState } from 'react';
@@ -144,7 +144,7 @@ export const EstTable = ({data, className, ...props }: EstTableProps) => {
 															<EditableInput type="number" disabled={true} isPrice={true} value={row.ccost} />
 														</div>
 														<div className={cn(styles.rowItem, styles.element)}>
-															<EditableInput type="number" value={row.range} />
+															<Percent mark="above" count={row.range}/>
 														</div>
 													</>
 												);
