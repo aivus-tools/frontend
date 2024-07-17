@@ -1,3 +1,5 @@
+import { Percent } from '@/app/components/Percent/Percent';
+
 export * from './Button/Button';
 export * from './Nav/Nav';
 export * from './Profile/Profile';
@@ -10,3 +12,4 @@ export * from './Select/Select';
 export * from './EstTable/EstTable';
 export * from './THeadItem/THeadItem';
 export * from './Accordion/Accordion';
+export * from './Percent/Percent';

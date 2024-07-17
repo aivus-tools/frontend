@@ -2,7 +2,7 @@
 import styles from "./page.module.css";
 import cn from 'classnames';
 import { ChangeEvent, useState } from 'react';
-import { Button, EditableInput, Select, Input } from '@/app/components';
+import { Button, EditableInput, Select, Input, Percent } from '@/app/components';
 import { formatPrice } from '@/app/helpers/helper';
 import Link from 'next/link';
 
@@ -130,8 +130,74 @@ export default function Home() {
 						/>
 						<Select options={options} onAdd={handleAddOption}/>
 					</div>
+					<div className={cn(styles.item)}>
+						<div className={cn(styles.flex)}>
+							<div className={cn(styles.flexItem)}>
+								<Percent mark="average" size="s" rounded={true} count={16}/>
+							</div>
+							<div className={cn(styles.flexItem)}>
+								<Percent mark="average" size="s" count={16}/>
+							</div>
+							<div className={cn(styles.flexItem)}>
+								<Percent mark="average" size="s" type="inversion" count={16}/>
+							</div>
+							<div className={cn(styles.flexItem)}>
+								<Percent mark="average" size="s" type="transparent" count={16}/>
+							</div>
+						</div>
+
+					</div>
+					<div className={cn(styles.item)}>
+						<div className={cn(styles.flex)}>
+							<div className={cn(styles.flexItem)}>
+								<Percent mark="above" rounded={true} count={16}/>
+							</div>
+							<div className={cn(styles.flexItem)}>
+								<Percent mark="above" count={16}/>
+							</div>
+							<div className={cn(styles.flexItem)}>
+								<Percent mark="above" type="inversion" count={16}/>
+							</div>
+							<div className={cn(styles.flexItem)}>
+								<Percent mark="above" type="transparent" count={16}/>
+							</div>
+						</div>
+					</div>
+					<div className={cn(styles.item)}>
+						<div className={cn(styles.flex)}>
+						<div className={cn(styles.flexItem)}>
+								<Percent mark="below" size="l" rounded={true} count={16}/>
+							</div>
+							<div className={cn(styles.flexItem)}>
+								<Percent mark="below" size="l" count={16}/>
+							</div>
+							<div className={cn(styles.flexItem)}>
+								<Percent mark="below" size="l" type="inversion" count={16}/>
+							</div>
+							<div className={cn(styles.flexItem)}>
+								<Percent mark="below" size="l" type="transparent" count={16}/>
+							</div>
+						</div>
+					</div>
+					<div className={cn(styles.item)}>
+						<div className={cn(styles.flex)}>
+							<div className={cn(styles.flexItem)}>
+								<Percent mark="na" rounded={true} count={0}/>
+							</div>
+							<div className={cn(styles.flexItem)}>
+								<Percent mark="na" count={0}/>
+							</div>
+							<div className={cn(styles.flexItem)}>
+								<Percent mark="na" type="inversion" count={0}/>
+							</div>
+							<div className={cn(styles.flexItem)}>
+								<Percent mark="na" type="transparent" count={0}/>
+							</div>
+						</div>
+					</div>
+
 				</div>
 			</div>
 		</main>
-);
+	);
 }
