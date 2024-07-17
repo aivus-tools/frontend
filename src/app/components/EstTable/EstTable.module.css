@@ -1,0 +1,124 @@
+.est {
+	min-width: 1130px;
+}
+
+.hgrid {
+	display: grid;
+	grid-template-columns: [start] auto [contentStart] 7fr [contentEnd] 3fr [asideEnd] auto [end];
+	grid-auto-rows: minmax(20px, auto);
+	grid-template-areas:
+		". hcontent haside .";
+	column-gap: 25px;
+}
+
+.hcontent {
+	grid-area: hcontent;
+	grid-row: 1;
+	padding: 0 15px;
+}
+
+.haside {
+	width: 340px;
+	grid-area: haside;
+	grid-row: 1;
+}
+
+.grid {
+	display: grid;
+	grid-template-columns: [start] auto [contentStart] 7fr [contentEnd] 3fr [asideEnd] auto [end];
+	grid-auto-rows: minmax(20px, auto);
+	grid-template-areas:
+		". content aside .";
+	column-gap: 25px;
+}
+
+.content {
+	grid-column: 2 / span 1;
+	/*grid-area: content;*/
+}
+.contgrid {
+	display: grid;
+	grid-template-columns: 1fr 80px 140px 70px 90px;
+	grid-template-areas:
+		"item price units quantity cost";
+}
+.aside {
+	width: 340px;
+	grid-column: 3 / span 1;
+	/*grid-area: aside;*/
+}
+.asidegrid {
+	display: grid;
+	grid-template-columns: repeat(4, 85px);
+	grid-template-areas:
+		"element element element element";
+}
+.hsection {
+	padding: 18px 8px;
+	background-color: var(--white);
+	border-radius: 6px;
+}
+.csection {
+	/*padding: 0 40px;*/
+	padding: 0 15px;
+	background-color: var(--white);
+	border-bottom-left-radius: 6px;
+	border-bottom-right-radius: 6px;
+}
+.section {
+	margin-bottom: 20px;
+}
+
+.icon {
+	margin-right: 6px;
+	transform: rotate(-90deg);
+	transition: transform ease-in 0.3s;
+}
+.opened .icon {
+	transform: rotate(0deg);
+	transition: transform ease-out 0.3s;
+}
+
+.opened .hsection {
+	border-bottom-left-radius: 0;
+	border-bottom-right-radius: 0;
+}
+
+.accContent {
+	position: relative;
+
+}
+.accContent::before {
+	content: '';
+	position: absolute;
+	width: calc(100% - 80px); /* 80px paddings */
+	height: 1px;
+	top: 0;
+	left: 40px;
+	border-top: 1px dashed var(--gray-light);
+}
+
+.rowItem {
+	padding: 10px 0;
+}
+
+.item {
+	padding-left: 25px;
+	/*grid-area: item;*/
+}
+.price {
+	/*grid-area: price;*/
+}
+.units {
+	/*grid-area: units;*/
+}
+.quantity {
+	/*grid-area: quantity;*/
+}
+.cost {
+	padding-right: 25px;
+	/*grid-area: cost;*/
+}
+.element {
+	/*grid-area: element;*/
+}

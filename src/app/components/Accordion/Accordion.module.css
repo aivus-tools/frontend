@@ -1,0 +1,33 @@
+.accordion {
+
+}
+
+.title {
+	/*display: flex;*/
+	/*align-items: center;*/
+	/*padding: 20px 8px;*/
+	cursor: pointer;
+	font-size: 14px;
+	font-weight: 700;
+	color: var(--blue);
+	text-transform: uppercase;
+}
+.icon {
+	margin-right: 6px;
+	transform: rotate(-90deg);
+	transition: transform ease-in 0.3s;
+}
+
+.opened .icon {
+	transform: rotate(0deg);
+	transition: transform ease-out 0.3s;
+}
+
+.content {
+	max-height: 0;
+	overflow: hidden;
+	transition: max-height 0.3s ease;
+}
+.contentInner {
+	/*padding: 20px 8px;*/
+}

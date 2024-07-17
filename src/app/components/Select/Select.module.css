@@ -1,9 +1,10 @@
 .wrapper {
 	position: relative;
 	width: 130px;
+	cursor: pointer;
 }
 
-.inputSearch {
+.search {
 	width: 100%;
 }
 

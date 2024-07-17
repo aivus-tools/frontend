@@ -5,16 +5,17 @@ import HomeIcon from './home-icon.svg';
 import LogoIcon from './aivus-logo.svg';
 import TopArrowIcon from './top-arrow-icon.svg';
 import { Search, SidebarNav, SumCounter } from '@/app/components';
+import Link from 'next/link';
 
 export const Sidebar = ({ children, className, ...props }: SidebarProps) => {
 	return (
 		<aside className={cn(styles.sidebar, className)}
 					 {...props}
 		>
-			<div className={cn(styles.logoWrap)}>
+			<Link href='/' className={cn(styles.logoWrap)}>
 				<HomeIcon className={cn(styles.home)}/>
 				<LogoIcon className={cn(styles.logo)}/>
-			</div>
+			</Link>
 			<div className={cn(styles.sidebarItem)}>
 				<Search/>
 			</div>

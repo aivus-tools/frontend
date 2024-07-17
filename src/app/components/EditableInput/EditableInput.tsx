@@ -1,3 +1,4 @@
+'use client'
 import React, { useState, useRef, ChangeEvent, FocusEvent, ChangeEventHandler } from 'react';
 import styles from './EditableInput.module.css';
 import { EditableInputProps } from './EditableInput.props';

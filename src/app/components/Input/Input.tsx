@@ -2,7 +2,7 @@ import { InputProps } from './Input.props';
 import styles from './Input.module.css';
 import cn from 'classnames';
 import React, { ForwardedRef, forwardRef } from 'react';
-import ArrowIcon from '@/app/components/Input/arrow-down-icon.svg';
+import ArrowIcon from '@/app/icons/arrow-down-icon.svg';
 
 export const Input = forwardRef(({ className, showIcon = false, error, ...props }: InputProps, ref: ForwardedRef<HTMLInputElement>) => {
 

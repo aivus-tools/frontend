@@ -4,6 +4,7 @@ import cn from 'classnames';
 import { ChangeEvent, useState } from 'react';
 import { Button, EditableInput, Select, Input } from '@/app/components';
 import { formatPrice } from '@/app/helpers/helper';
+import Link from 'next/link';
 
 export default function Home() {
 	const [value, setValue] = useState(11893);
@@ -64,6 +65,9 @@ export default function Home() {
 						Button
 					</Button>
 				</div>
+			</div>
+			<div className={cn(styles.flex)}>
+				<Link href={'/estimation'}>Estimation page</Link>
 			</div>
 
 			<div className={cn(styles.flex)}>
@@ -129,5 +133,5 @@ export default function Home() {
 				</div>
 			</div>
 		</main>
-	);
+);
 }

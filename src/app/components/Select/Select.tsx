@@ -50,7 +50,7 @@ export const Select = ({ options, onAdd }: SelectProps) => {
 				type='text'
 				value={searchTerm}
 				showIcon={true}
-				className={cn(styles.inputSearch)}
+				className={cn(styles.search)}
 				onChange={handleSearchChange}
 				onFocus={() => setShowDropdown(true)}
 				placeholder='Select Units'
