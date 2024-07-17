@@ -2,7 +2,7 @@
 import styles from "./page.module.css";
 import cn from 'classnames';
 import { ChangeEvent, useState } from 'react';
-import { Button, EditableInput, Select, Input, Percent } from '@/app/components';
+import { Button, EditableInput, Select, Input, Percent, LinkedPercent } from '@/app/components';
 import { formatPrice } from '@/app/helpers/helper';
 import Link from 'next/link';
 
@@ -195,7 +195,26 @@ export default function Home() {
 							</div>
 						</div>
 					</div>
-
+				</div>
+				<div className={cn(styles.section)}>
+					<div className={cn(styles.item)}>
+						<LinkedPercent count={10}/>
+					</div>
+					<div className={cn(styles.item)}>
+						<LinkedPercent linked={false} count={16}/>
+					</div>
+					<div className={cn(styles.item)}>
+						<LinkedPercent linked={false} disabled={true} count={16}/>
+					</div>
+					<div className={cn(styles.item)}>
+						<LinkedPercent highlight={true} count={10}/>
+					</div>
+					<div className={cn(styles.item)}>
+						<LinkedPercent linked={false} highlight={true} count={16}/>
+					</div>
+					<div className={cn(styles.item)}>
+						<LinkedPercent linked={false} highlight={true} disabled={true} count={16}/>
+					</div>
 				</div>
 			</div>
 		</main>

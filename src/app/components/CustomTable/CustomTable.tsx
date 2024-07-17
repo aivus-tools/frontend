@@ -2,7 +2,7 @@
 import { CustomTableProps } from './CustomTable.props';
 import styles from './CustomTable.module.css';
 import cn from 'classnames';
-import { Accordion, EditableInput, Percent, THeadItem } from '@/app/components';
+import { Accordion, EditableInput, LinkedPercent, Percent, THeadItem } from '@/app/components';
 import { tHead, TRow, tSection } from '@/app/interfaces/app.interface';
 
 
@@ -88,7 +88,9 @@ export const CustomTable = ({data, className, ...props }: CustomTableProps) => {
 									<div className={cn(styles.accpart, styles.contentGrid)}>
 										<div key={index}>{item.title}</div>
 									</div>
-									<div className={cn(styles.accpart, styles.asideGrid)}>10%</div>
+									<div className={cn(styles.accpart, styles.asideGrid)}>
+										<LinkedPercent highlight={true} count={10} disabled={true} />
+									</div>
 								</div>
 							}>
 
