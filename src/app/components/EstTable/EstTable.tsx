@@ -101,7 +101,7 @@ export const EstTable = ({data, className, ...props }: EstTableProps) => {
 									<div className={cn(styles.aside, styles.hsection)}>10%</div>
 								</div>
 							}
-								onToggle={ handleToggle }
+								onAccToggle={ handleToggle }
 							>
 								<div className={cn(styles.grid)}>
 									<div className={cn(styles.content, styles.contgrid, styles.csection, styles.accContent)}>

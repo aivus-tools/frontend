@@ -1,8 +1,15 @@
-import { DetailedHTMLProps, HTMLAttributes, ReactNode } from 'react';
+// import { DetailedHTMLProps, HTMLAttributes, ReactNode } from 'react';
+//
+// export interface AccordionProps extends DetailedHTMLProps<HTMLAttributes<HTMLDivElement>, HTMLDivElement> {
+// 	title: ReactNode | string;
+// 	onToggle?: (isOpen: boolean) => void;
+// 	children: ReactNode;
+// }
 
-export interface AccordionProps extends DetailedHTMLProps<HTMLAttributes<HTMLDivElement>, HTMLDivElement> {
-	title: ReactNode | string;
-	onToggle?: (isOpen: boolean) => void;
+import { ReactNode, HTMLAttributes } from 'react';
+
+export interface AccordionProps extends Omit<HTMLAttributes<HTMLDivElement>, 'title'> {
+	title: ReactNode;
+	onAccToggle?: (isOpen: boolean) => void;
 	children: ReactNode;
-
 }

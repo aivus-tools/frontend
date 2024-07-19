@@ -1,3 +1,4 @@
+'use client';
 import React, { createContext, useContext, useState, ReactNode, ReactElement } from 'react';
 import { Modal, SideModal } from '@/app/components';
 

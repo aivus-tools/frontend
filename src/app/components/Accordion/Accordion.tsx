@@ -5,7 +5,7 @@ import cn from 'classnames';
 import { useState, useRef, useEffect } from 'react';
 import ArrowIcon from '@/app/icons/arrow-down-icon.svg';
 
-export const Accordion = ({ title, children, className, onToggle, ...props }: AccordionProps) => {
+export const Accordion = ({ title, children, className, onAccToggle, ...props }: AccordionProps) => {
 	const [isOpen, setIsOpen] = useState(false);
 	const [height, setHeight] = useState('0px');
 	const contentRef = useRef<HTMLDivElement>(null);
@@ -15,8 +15,8 @@ export const Accordion = ({ title, children, className, onToggle, ...props }: Ac
 		if (contentRef.current) {
 			setHeight(isOpen ? '0px' : `${contentRef.current.scrollHeight}px`);
 		}
-		if (onToggle) {
-			onToggle(!isOpen);
+		if (onAccToggle) {
+			onAccToggle(!isOpen);
 		}
 	};
 
