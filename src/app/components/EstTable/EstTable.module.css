@@ -34,11 +34,11 @@
 	border-bottom-left-radius: 6px;
 	border-bottom-right-radius: 6px;
 	box-shadow: var(--boxShadow);
-
 }
 .accsubsum {
 	padding: 10px 0;
 	background-color: var(--bg-blue-subtotal);
+	box-shadow: var(--boxShadow);
 }
 
 .part {
