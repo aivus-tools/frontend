@@ -33,6 +33,9 @@
 	--compare-orange: #FC9B73;
 	--compare-red: #DE644F;
 
+
+	--boxShadow: 0 5px 16.5px -11px rgba(0, 0, 0, 0.25);
+
 }
 
 * {

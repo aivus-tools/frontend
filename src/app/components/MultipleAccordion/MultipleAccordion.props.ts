@@ -9,8 +9,11 @@
 import { HTMLAttributes } from 'react';
 import { SubSection } from '@/app/interfaces/app.interface';
 
-export interface MultipleAccordionProps extends Omit<HTMLAttributes<HTMLDivElement>, 'title' | 'content'> {
+export interface MultipleAccordionProps {
 	title: React.ReactNode;
 	content?: React.ReactNode;
-	subSections?: SubSection[];
+	subSections: { subTitle: React.ReactNode; subContent: React.ReactNode; isOpen: boolean; onToggle: (isOpen: boolean) => void }[];
+	isOpen: boolean;
+	onToggle: (isOpen: boolean) => void;
+	className?: string;
 }

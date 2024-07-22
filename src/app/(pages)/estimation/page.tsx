@@ -2,7 +2,7 @@
 import styles from "./page.module.css";
 import withLayout from '@/app/layout/Layout';
 import withAuth from '@/app/layout/withAuth/withAuth';
-import { EstTable, CustomTable } from '@/app/components';
+import { EstTable } from '@/app/components';
 import { tSection } from '@/app/interfaces/app.interface';
 
 const Estimation = () => {
@@ -49,17 +49,17 @@ const Estimation = () => {
 			title: 'Production',
 			subSections: [
 				{
-					title: 'Production Sub Section 1',
+					title: 'Locations',
 					rows: [
 						{
 							item: 'Colorful Storyboard',
-							price: 1700,
+							price: 2000,
 							units: '',
 							quantity: 1,
-							cost: 1700,
+							cost: 2000,
 							surcharge: 10,
-							cprice: 1700,
-							ccost: 1700,
+							cprice: 2200,
+							ccost: 2200,
 							range: 16,
 						},
 						{
@@ -76,7 +76,7 @@ const Estimation = () => {
 					]
 				},
 				{
-					title: 'Production Sub Section 2',
+					title: 'Sub Section 2',
 					rows: [
 						{
 							item: 'Colorful Storyboard',
@@ -135,8 +135,7 @@ const Estimation = () => {
 
 	return (
 		<main>
-			{/*<EstTable data={data} />*/}
-			<CustomTable data={data}/>
+			<EstTable data={data} />
 		</main>
 	);
 }
