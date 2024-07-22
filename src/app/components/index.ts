@@ -12,6 +12,7 @@ export * from './Select/Select';
 export * from './EstTable/EstTable';
 export * from './THeadItem/THeadItem';
 export * from './Accordion/Accordion';
+export * from './MultipleAccordion/MultipleAccordion';
 export * from './Percent/Percent';
 export * from './CustomTable/CustomTable';
 export * from './LinkedPercent/LinkedPercent';

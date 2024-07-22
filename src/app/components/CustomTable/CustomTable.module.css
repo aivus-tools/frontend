@@ -21,6 +21,10 @@
 	border-radius: 6px;
 	padding: 18px 0;
 }
+.accsub {
+	padding: 10px 0;
+	background-color: var(--bg-blue-subsection);
+}
 
 .part {
 	position: relative;
@@ -63,6 +67,10 @@
 
 .section {
 	margin-bottom: 20px;
+}
+
+.sectionTitle {
+	margin-left: -15px;
 }
 
 .row {

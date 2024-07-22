@@ -47,30 +47,62 @@ const Estimation = () => {
 		},
 		{
 			title: 'Production',
-			rows: [
+			subSections: [
 				{
-					item: 'Colorful Storyboard',
-					price: 1700,
-					units: '',
-					quantity: 1,
-					cost: 1700,
-					surcharge: 10,
-					cprice: 1700,
-					ccost: 1700,
-					range: 16,
+					title: 'Production Sub Section 1',
+					rows: [
+						{
+							item: 'Colorful Storyboard',
+							price: 1700,
+							units: '',
+							quantity: 1,
+							cost: 1700,
+							surcharge: 10,
+							cprice: 1700,
+							ccost: 1700,
+							range: 16,
+						},
+						{
+							item: 'Select an item',
+							price: 300,
+							units: '',
+							quantity: 1,
+							cost: 300,
+							surcharge: 10,
+							cprice: 300,
+							ccost: 300,
+							range: 19,
+						}
+					]
 				},
 				{
-					item: 'Select an item',
-					price: 300,
-					units: '',
-					quantity: 1,
-					cost: 300,
-					surcharge: 10,
-					cprice: 300,
-					ccost: 300,
-					range: 19,
+					title: 'Production Sub Section 2',
+					rows: [
+						{
+							item: 'Colorful Storyboard',
+							price: 1700,
+							units: '',
+							quantity: 1,
+							cost: 1700,
+							surcharge: 10,
+							cprice: 1700,
+							ccost: 1700,
+							range: 16,
+						},
+						{
+							item: 'Select an item',
+							price: 300,
+							units: '',
+							quantity: 1,
+							cost: 300,
+							surcharge: 10,
+							cprice: 300,
+							ccost: 300,
+							range: 19,
+						}
+					]
 				}
-			]
+			],
 		},
 		{
 			title: 'Creative',

@@ -33,3 +33,8 @@ export interface TRow {
 	ccost: number;
 	range: number;
 }
+
+export interface SubSection {
+	subTitle: React.ReactNode;
+	subContent: React.ReactNode;
+}

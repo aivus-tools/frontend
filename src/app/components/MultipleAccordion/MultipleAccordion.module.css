@@ -1,0 +1,60 @@
+.title {
+	position: relative;
+	font-size: 14px;
+	font-weight: 700;
+	color: var(--blue);
+	text-transform: uppercase;
+	cursor: pointer;
+}
+
+.subTitle {
+	position: relative;
+	/*box-shadow: 0 5px 16.5px -11px rgba(0, 0, 0, 0.25);*/
+	cursor: pointer;
+
+}
+
+.subTitle.opened {
+	color: var(--blue);
+}
+
+.icon {
+	position: absolute;
+	margin-right: 6px;
+	transform: rotate(-90deg);
+	transition: transform ease-in 0.3s;
+}
+
+.title .icon {
+	top: 24px;
+	left: 6px;
+	margin-right: 6px;
+}
+.subTitle .icon {
+	top: 14px;
+	left: 12px;
+	margin-right: 6px;
+}
+
+.title.opened .icon,
+.subTitle.opened .icon {
+	transform: rotate(0deg);
+	transition: transform ease-out 0.3s;
+}
+
+.content {
+	/*padding: 10px;*/
+	/*background: #fff;*/
+}
+
+.subTitle {
+	/*cursor: pointer;*/
+	/*padding: 10px;*/
+	/*background: #e0e0e0;*/
+	/*border-bottom: 1px solid #ccc;*/
+}
+
+.subContent {
+	/*padding: 10px;*/
+	/*background: #d0d0d0;*/
+}
