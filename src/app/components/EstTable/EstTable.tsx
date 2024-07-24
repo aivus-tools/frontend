@@ -11,10 +11,13 @@ import {
 	THeadItem,
 	SettingsModal,
 	SurchargeModal,
+	Sum,
 } from '@/app/components';
 import { tHead, TRow, tSection, tSubSection, SubSection } from '@/app/interfaces/app.interface';
 import SettingsIcon from '@/app/icons/settings-icon.svg';
 import RemoveIcon from '@/app/icons/remove-icon.svg';
+import AddIcon from '@/app/icons/add-icon.svg';
+import OpenedEyeIcon from '@/app/icons/opened-eye-icon.svg';
 import { useModal } from '@/app/context/ModalContext';
 import { useState } from 'react';
 import { formatPrice } from '@/app/helpers/helper';
@@ -174,14 +177,13 @@ export const EstTable = ({data, onRemoveItem, onAddItem, onAddSection, className
 		return (
 			<div className={cn(styles.grid, {
 				[styles.sectionSum]: !isSubSection,
-				[styles.subSectionSum]: isSubSection,
 			})}>
 				<div className={cn(styles.contentTotalGrid, {
 					[styles.accsum]: !isSubSection,
 					[styles.accsubsum]: isSubSection,
 				})}>
 					<div className={cn(styles.icon)}>
-						<SettingsIcon/>
+						<AddIcon />
 					</div>
 					<div className={cn(styles.addItem)}>
 						add <span onClick={() => {
@@ -195,10 +197,8 @@ export const EstTable = ({data, onRemoveItem, onAddItem, onAddSection, className
 						{!isSubSection && item && `${item.title} total:`}
 						{isSubSection && item && `Subtotal of ${item.title}`}
 					</div>
-					<div className={cn(styles.totalSum, {
-						[styles.subtotalSum]: isSubSection,
-					})}>
-						$ {formatPrice(totalSum)}
+					<div className={cn(styles.totalSum)}>
+						<Sum count={totalSum} size={isSubSection ? 's' : 'm'} type='blue' />
 					</div>
 				</div>
 				<div className={cn(styles.asideTotalGrid, {
@@ -207,10 +207,8 @@ export const EstTable = ({data, onRemoveItem, onAddItem, onAddSection, className
 				})}>
 					<div></div>
 					<div></div>
-					<div className={cn(styles.totalSum, {
-						[styles.subtotalSum]: isSubSection,
-					})}>
-						$ {formatPrice(totalClientSum)}
+					<div className={cn(styles.totalSum)}>
+						<Sum count={totalClientSum} size={isSubSection ? 's' : 'm'} type='blue' />
 					</div>
 					<div>
 						<Percent mark="average" count={8}/>
@@ -235,14 +233,14 @@ export const EstTable = ({data, onRemoveItem, onAddItem, onAddSection, className
 							<div></div>
 							<div className={cn(styles.sectionTitle)}>{item.title}</div>
 							<div></div>
-							<div className={cn(styles.sectionTitleSum, styles.totalSum)}>$ {formatPrice(totalSum)}</div>
+							<div className={cn(styles.sectionTitleSum, styles.totalSum)}><Sum count={totalSum} type='blue' /></div>
 						</div>
 						<div className={cn(styles.accpart, styles.asideTotalGrid)}>
 							<div></div>
 							<div>
 								<LinkedPercent className={cn(styles.sectionTitleSurcharge)} highlight={true} count={10} disabled={true} onClick={handleOpenSurcharge}/>
 							</div>
-							<div className={cn(styles.sectionTitleSum, styles.totalSum)}>$ {formatPrice(totalClientSum)}</div>
+							<div className={cn(styles.sectionTitleSum, styles.totalSum)}><Sum count={totalClientSum} type='blue' /></div>
 							<div className={cn(styles.sectionTitleSum)}>
 								<Percent mark="average" count={8}/>
 							</div>
@@ -275,7 +273,7 @@ export const EstTable = ({data, onRemoveItem, onAddItem, onAddSection, className
 								<div></div>
 								<div className={cn(styles.sectionTitle)}>{item.title}</div>
 								<div></div>
-								<div className={cn(styles.sectionTitleSum, styles.totalSum)}>$ {formatPrice(totalSum)}</div>
+								<div className={cn(styles.sectionTitleSum, styles.totalSum)}><Sum count={totalSum} type='blue' /></div>
 							</div>
 							<div className={cn(styles.accpart, styles.asideTotalGrid)}>
 								<div></div>
@@ -283,7 +281,7 @@ export const EstTable = ({data, onRemoveItem, onAddItem, onAddSection, className
 									<LinkedPercent className={cn(styles.sectionTitleSurcharge)} highlight={true} count={10}
 																		disabled={true} onClick={handleOpenSurcharge}/>
 								</div>
-								<div className={cn(styles.sectionTitleSum, styles.totalSum)}>$ {formatPrice(totalClientSum)}</div>
+								<div className={cn(styles.sectionTitleSum, styles.totalSum)}><Sum count={totalClientSum} type='blue' /></div>
 								<div className={cn(styles.sectionTitleSum)}>
 									<Percent mark="average" count={8}/>
 								</div>
@@ -300,13 +298,15 @@ export const EstTable = ({data, onRemoveItem, onAddItem, onAddSection, className
 										<div></div>
 										<div>{sub.title}</div>
 										<div></div>
-										<div className={cn(styles.totalSum, styles.subtotalSum)}>$ {formatPrice(getTotalCost(sub, 'cost'))}</div>
+										<div className={cn(styles.totalSum)}>
+											<Sum count={getTotalCost(sub, 'cost')} size='s' type='blue' />
+										</div>
 									</div>
 									<div className={cn(styles.accsub, styles.asideTotalGrid)}>
 										<div></div>
 										<div></div>
-										<div className={cn(styles.totalSum, styles.subtotalSum)}>
-											$ {formatPrice(getTotalCost(sub, 'ccost'))}
+										<div className={cn(styles.totalSum)}>
+											<Sum count={getTotalCost(sub, 'ccost')} size='s' type='blue' />
 										</div>
 										<div>
 											<Percent mark="average" count={8}/>
@@ -332,19 +332,116 @@ export const EstTable = ({data, onRemoveItem, onAddItem, onAddSection, className
 		);
 	};
 
+	const renderFooter = () => {
+		return (
+			<>
+				<div className={styles.grid}>
+					<div className={cn(styles.contentTotalGrid, styles.footerSubTotal)}>
+						<div className={cn(styles.icon)}>
+							<SettingsIcon/>
+						</div>
+						<div>Subtotal for All Sections</div>
+						<div></div>
+						<div className={cn(styles.totalSum)}>
+							<Sum count={19740} size='l' type='green' />
+						</div>
+					</div>
+					<div className={cn(styles.asideTotalGrid, styles.footerSubTotal)}>
+						<div></div>
+						<div></div>
+						<div className={cn(styles.totalSum)}>
+							<Sum count={27184} size='l' type='green' />
+						</div>
+						<div>
+							<Percent mark="average" type='inversion' count={2}/>
+						</div>
+					</div>
+				</div>
+				<div className={styles.grid}>
+					<div className={cn(styles.contentTotalGrid, styles.footerExpenses)}>
+						<div className={cn(styles.icon)}>
+							<OpenedEyeIcon/>
+						</div>
+						<div>Unforeseen expenses</div>
+						<div></div>
+						<div className={cn(styles.totalSum)}>
+							<Sum count={987} size='xs' />
+						</div>
+					</div>
+					<div className={cn(styles.asideTotalGrid, styles.footerExpenses)}>
+						<div></div>
+						<div></div>
+						<div className={cn(styles.totalSum)}>
+							<Sum count={5436} size='xs' />
+						</div>
+						<div>
+							<Percent mark="average" type='inversion' count={2}/>
+						</div>
+					</div>
+				</div>
+				<div className={styles.grid}>
+					<div className={cn(styles.contentTotalGrid, styles.footerGrandTotal)}>
+						<div className={cn(styles.icon)}>
+							<SettingsIcon/>
+						</div>
+						<div>Grand total</div>
+						<div></div>
+						<div className={cn(styles.totalSum)}>
+							<Sum count={20727} size='l' type='dark' />
+						</div>
+					</div>
+					<div className={cn(styles.asideTotalGrid, styles.footerGrandTotal)}>
+						<div></div>
+						<div></div>
+						<div className={cn(styles.totalSum)}>
+							<Sum count={32620} size='l' type='dark' />
+						</div>
+						<div>
+							<Percent mark="average" type='inversion' count={2}/>
+						</div>
+					</div>
+				</div>
+				<div className={styles.grid}>
+					<div className={cn(styles.contentTotalGrid, styles.footerExpenses)}>
+						<div className={cn(styles.icon)}>
+							<OpenedEyeIcon/>
+						</div>
+						<div>Cost Per Video</div>
+						<div></div>
+						<div className={cn(styles.totalSum)}>
+							<Sum count={10363.5} size='xs' />
+						</div>
+					</div>
+					<div className={cn(styles.asideTotalGrid, styles.footerExpenses)}>
+						<div></div>
+						<div></div>
+						<div className={cn(styles.totalSum)}>
+							<Sum count={16310.4} size='xs' />
+						</div>
+						<div>
+						</div>
+					</div>
+				</div>
+			</>
+		)
+	}
+
+
 	return (
 		<div className={cn(styles.est)} {...props}>
-			{ renderHeader() }
+			{renderHeader()}
 
 			{data.map((item: tSection, index: number) => (
 				<div key={`grid_${item.id}`}>
-					{ item.subSections ? (
+					{item.subSections ? (
 						renderFullSection(item, index)
 					) : (
 						item.rows && renderSimpleSection(item, index)
 					)}
 				</div>
 			))}
+
+			{renderFooter()}
 		</div>
 	);
 }

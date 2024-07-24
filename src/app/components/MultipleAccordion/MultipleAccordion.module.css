@@ -25,6 +25,7 @@
 	margin-right: 6px;
 	transform: rotate(-90deg);
 	transition: transform ease-in 0.3s;
+	z-index: 10;
 }
 
 

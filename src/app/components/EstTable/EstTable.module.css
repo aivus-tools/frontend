@@ -1,18 +1,11 @@
 .est {
 	width: 100%;
 	padding: 0 25px;
-	/*grid-template-rows: 20px 1fr;*/
-	/*grid-template-areas:*/
-	/*	"hcontent haside"*/
-	/*	"content aside";*/
-	/*column-gap: 30px;*/
 }
 
 .grid {
 	display: grid;
 	grid-template-columns: calc(70% - 30px/2) calc(30% - 30px/2); /* 30px - column-gap */
-	/*grid-template-areas:*/
-	/*		"content aside";*/
 	column-gap: 30px;
 }
 
@@ -22,12 +15,14 @@
 	padding: 16px 0;
 }
 .accsub {
+	position: relative;
 	padding: 8px 0;
 	background-color: var(--bg-blue-subsection);
 	border-bottom-left-radius: 6px;
 	border-bottom-right-radius: 6px;
-	box-shadow: var(--boxShadow);
+	/*box-shadow: var(--boxShadow);*/
 }
+
 .accsum {
 	padding: 18px 0;
 	background-color: var(--bg-blue-important);
@@ -41,6 +36,54 @@
 	background-color: var(--bg-blue-subtotal);
 	box-shadow: var(--boxShadow);
 	border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+.footerSubTotal {
+	position: relative;
+	padding: 18px 0;
+	background-color: var(--bg-green);
+	border-radius: 6px;
+	box-shadow: var(--boxShadow);
+	color: var(--green-darker);
+	font-size: 14px;
+	font-weight: 700;
+}
+
+.footerExpenses {
+	position: relative;
+	padding: 10px 0;
+	background-color: var(--white);
+	border-bottom-left-radius: 6px;
+	border-bottom-right-radius: 6px;
+	box-shadow: var(--boxShadow);
+}
+
+.footerGrandTotal {
+	position: relative;
+	padding: 18px 0;
+	background-color: var(--bg-blue-important);
+	border-bottom-left-radius: 6px;
+	border-bottom-right-radius: 6px;
+	box-shadow: var(--boxShadow);
+	color: var(--gray-dark);
+	font-size: 14px;
+	font-weight: 700;
+	text-transform: uppercase;
+}
+
+.accsub::after,
+.footerSubTotal::after,
+.footerExpenses::after {
+	content: '';
+	position: absolute;
+	left: 0;
+	bottom: 0;
+	width: 100%;
+	/*height: 100%;*/
+	box-shadow: var(--boxShadow);
+	z-index: 10;
+	border-bottom-left-radius: 6px;
+	border-bottom-right-radius: 6px;
 }
 
 .part {
@@ -161,6 +204,9 @@
 	cursor: pointer;
 }
 .icon {
+	display: flex;
+	justify-content: center;
+	align-items: center;
 	text-align: center;
 }
 
@@ -180,28 +226,17 @@
 
 .totalSum {
 	padding-right: 20px;
-	color: var(--blue);
-	font-size: 16px;
-	font-weight: 600;
 	text-align: right;
-}
-
-.subtotalSum {
-	font-size: 14px;
-	/*font-weight: 700;*/
-}
-
-.subSectionSum {
-
 }
 
 .addItem {
 	color: var(--gray-light);
+	font-size: 11px;
 	font-weight: 400;
 	cursor: pointer;
 }
 
 .addItem span:hover {
-	color: var(--blue);
+	color: var(--main);
 	transition: color ease-in 0.3s;
 }

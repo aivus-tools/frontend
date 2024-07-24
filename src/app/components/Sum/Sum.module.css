@@ -1,0 +1,37 @@
+.sum {
+
+}
+
+.xs {
+	font-size: 13px;
+}
+
+.s {
+	font-size: 14px;
+}
+
+.m {
+	font-size: 16px;
+	font-weight: 600;
+}
+
+.l {
+	font-size: 18px;
+	font-weight: 700;
+}
+
+.green {
+	color: var(--green-darker);
+}
+
+.blue {
+	color: var(--blue);
+}
+
+.gray {
+	color: var(--main);
+}
+
+.dark {
+	color: var(--gray-dark);
+}

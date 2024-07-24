@@ -3,8 +3,8 @@ import { SidebarNavProps } from './SidebarNav.props';
 import styles from './SidebarNav.module.css';
 import cn from 'classnames';
 import ArrowIcon from './arrow-left-icon.svg';
-import OpenedEyeIcon from './opened-eye-icon.svg';
-import ClosedEyeIcon from './closed-eye-icon.svg';
+import OpenedEyeIcon from '@/app/icons/opened-eye-icon.svg';
+import ClosedEyeIcon from '@/app/icons/closed-eye-icon.svg';
 
 
 export const SidebarNav = ({children, className, ...props }: SidebarNavProps) => {

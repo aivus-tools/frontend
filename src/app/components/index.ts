@@ -1,4 +1,5 @@
 import { Modal } from '@/app/components/Modal/Modal';
+import { Sum } from '@/app/components/Sum/Sum';
 
 export * from './Button/Button';
 export * from './Nav/Nav';
@@ -19,3 +20,4 @@ export * from './Modal/Modal';
 export * from './SideModal/SideModal';
 export * from './SettingsModal/SettingsModal';
 export * from './SurchargeModal/SurchargeModal';
+export * from './Sum/Sum';
