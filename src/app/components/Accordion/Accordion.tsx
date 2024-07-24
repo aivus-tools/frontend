@@ -13,7 +13,8 @@ export const Accordion = ({ title, children, className, onAccToggle, ...props }:
 	const toggleAccordion = () => {
 		setIsOpen(!isOpen);
 		if (contentRef.current) {
-			setHeight(isOpen ? '0px' : `${contentRef.current.scrollHeight}px`);
+			// setHeight(isOpen ? '0px' : `${contentRef.current.scrollHeight}px`);
+			setHeight(isOpen ? '0px' : 'auto');
 		}
 		if (onAccToggle) {
 			onAccToggle(!isOpen);
@@ -22,7 +23,8 @@ export const Accordion = ({ title, children, className, onAccToggle, ...props }:
 
 	useEffect(() => {
 		if (contentRef.current) {
-			setHeight(isOpen ? `${contentRef.current.scrollHeight}px` : '0px');
+			// setHeight(isOpen ? `${contentRef.current.scrollHeight}px` : '0px');
+			setHeight(isOpen ? 'auto' : '0px');
 		}
 	}, [isOpen]);
 
@@ -37,7 +39,7 @@ export const Accordion = ({ title, children, className, onAccToggle, ...props }:
 			</div>
 			<div
 				ref={contentRef}
-				style={{ maxHeight: height, transition: 'max-height 0.3s ease' }}
+				style={{ height: height }}
 				className={cn(styles.content, { [styles.opened]: isOpen })}
 			>
 				<div className={cn(styles.contentInner)}>{children}</div>

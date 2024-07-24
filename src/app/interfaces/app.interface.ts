@@ -12,17 +12,20 @@ export interface tHead {
 }
 
 export interface tSection {
+	id: number;
 	title: string;
 	subSections?: tSubSection[];
 	rows?: TRow[];
 }
 
 export interface tSubSection {
+	id: number;
 	title: string;
 	rows: TRow[];
 }
 
 export interface TRow {
+	id: number;
 	item: string;
 	price: number;
 	units: string;

@@ -36,9 +36,11 @@
 	box-shadow: var(--boxShadow);
 }
 .accsubsum {
+	position: relative;
 	padding: 10px 0;
 	background-color: var(--bg-blue-subtotal);
 	box-shadow: var(--boxShadow);
+	border-bottom: 1px solid rgba(0, 0, 0, 0.1);
 }
 
 .part {
@@ -191,4 +193,15 @@
 
 .subSectionSum {
 
+}
+
+.addItem {
+	color: var(--gray-light);
+	font-weight: 400;
+	cursor: pointer;
+}
+
+.addItem span:hover {
+	color: var(--blue);
+	transition: color ease-in 0.3s;
 }

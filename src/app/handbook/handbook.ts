@@ -1,0 +1,40 @@
+import { tHead } from '@/app/interfaces/app.interface';
+
+export const contentTHeads: tHead[] = [
+	{
+		text: 'Item',
+		showIcon: true,
+	},
+	{
+		text: 'Price, $',
+		className: 'alignRight',
+	},
+	{
+		text: 'Units',
+		className: 'alignRight',
+	},
+	{
+		text: 'Quantity',
+		className: 'alignRight',
+	},
+	{
+		text: 'Cost, $',
+		className: 'alignRight',
+	},
+]
+export const asideTHeads: tHead[] = [
+	{
+		text: 'Surcharge',
+		showIcon: true,
+	},
+	{
+		text: 'Client’s price',
+	},
+	{
+		text: 'Client’s cost',
+		// className: 'alignRight',
+	},
+	{
+		text: 'Market Range',
+	},
+]

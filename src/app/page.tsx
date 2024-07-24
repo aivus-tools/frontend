@@ -28,7 +28,6 @@ export default function Home() {
 		setInputVal(e.target.value);
 	}
 
-
 	return (
 		<main className={styles.main}>
 			<h1>Main Page</h1>

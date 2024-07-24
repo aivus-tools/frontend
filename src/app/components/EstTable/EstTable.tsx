@@ -18,51 +18,21 @@ import RemoveIcon from '@/app/icons/remove-icon.svg';
 import { useModal } from '@/app/context/ModalContext';
 import { useState } from 'react';
 import { formatPrice } from '@/app/helpers/helper';
+import { contentTHeads, asideTHeads } from '@/app/handbook/handbook';
 
-export const EstTable = ({data, className, ...props }: EstTableProps) => {
+export const EstTable = ({data, onRemoveItem, onAddItem, onAddSection, className, ...props }: EstTableProps) => {
 	const { showModal } = useModal();
 
-	const contentTHeads: tHead[] = [
-		{
-			text: 'Item',
-			showIcon: true,
-		},
-		{
-			text: 'Price, $',
-			className: 'alignRight',
-		},
-		{
-			text: 'Units',
-			className: 'alignRight',
-		},
-		{
-			text: 'Quantity',
-			className: 'alignRight',
-		},
-		{
-			text: 'Cost, $',
-			className: 'alignRight',
-		},
-	]
-	const asideTHeads: tHead[] = [
-		{
-			text: 'Surcharge',
-			showIcon: true,
-		},
-		{
-			text: 'Client’s price',
-		},
-		{
-			text: 'Client’s cost',
-			// className: 'alignRight',
-		},
-		{
-			text: 'Market Range',
-		},
-	]
+	const handleRemoveItem = (row: TRow) => {
+		onRemoveItem(row);
+	}
 
-	const handleRemoveItem = (item: tSection , row: TRow) => {
-		console.log(`remove: ${item} - ${row}`);
+	const handleAddItem = (sectionId: number, isSubSection: boolean = false) => {
+		onAddItem(sectionId, isSubSection);
+	}
+
+	const handleAddSection = () => {
+		onAddSection()
 	}
 
 	const handleOpenSettings = (item: tSection) => {
@@ -101,9 +71,45 @@ export const EstTable = ({data, className, ...props }: EstTableProps) => {
 		}));
 	};
 
+	const renderHeader = () => {
+		return (
+			<div className={styles.grid}>
+				<div className={cn(styles.hcontent, styles.contentGrid)}>
+					<div className={cn(styles.icon)}>
+						<SettingsIcon/>
+					</div>
+					{contentTHeads.map((item: tHead, index: number) => (
+						<THeadItem
+							key={`chead_${index}`}
+							className={cn({
+								[styles.alignRight]: item.className && item.className === 'alignRight',
+							})}
+							text={item.text}
+						/>
+					))}
+					<div></div>
+				</div>
+				<div className={cn(styles.haside, styles.asideGrid)}>
+					<div className={cn(styles.icon)}>
+						<SettingsIcon/>
+					</div>
+					{asideTHeads.map((item: tHead, index: number) => (
+						<THeadItem
+							key={`ahead_${index}`}
+							className={cn({
+								[styles.alignRight]: item.className && item.className === 'alignRight',
+							})}
+							text={item.text}
+						/>
+					))}
+				</div>
+			</div>
+		)
+	}
+
 	const renderRows = (item: tSection | tSubSection, rows: TRow[]) => {
 		return rows.map((row: TRow, rowIndex: number) => (
-			<div className={cn(styles.grid, styles.row)} key={rowIndex}>
+			<div className={cn(styles.grid, styles.row)} key={`row_${row.id}`}>
 				<div className={cn(styles.part, styles.contentGrid)}>
 					<div className={cn(styles.icon, styles.settingsIcon)} onClick={() => handleOpenSettings(item)}>
 						<SettingsIcon />
@@ -123,7 +129,7 @@ export const EstTable = ({data, className, ...props }: EstTableProps) => {
 					<div className={cn(styles.rowItem, styles.alignRight, styles.cost)}>
 						<EditableInput type="number" disabled={true} isPrice={true} value={row.cost} />
 					</div>
-					<div className={cn(styles.icon, styles.removeIcon)} onClick={() => handleRemoveItem(item, row)}>
+					<div className={cn(styles.icon, styles.removeIcon)} onClick={() => handleRemoveItem(row)}>
 						<RemoveIcon />
 					</div>
 				</div>
@@ -159,26 +165,51 @@ export const EstTable = ({data, className, ...props }: EstTableProps) => {
 		return totalSum
 	}
 
-	const renderTotalSum = (item: tSection) => {
+	const renderSumRow = (item: tSection | tSubSection, type: 'section' | 'subsection' = 'section') => {
 		const totalSum = getTotalCost(item, 'cost');
 		const totalClientSum = getTotalCost(item, 'ccost');
 
+		let isSubSection: boolean = type === 'subsection' ? true : false;
+
 		return (
-			<div className={cn(styles.sectionSum, styles.grid)}>
-				<div className={cn(styles.accsum, styles.contentTotalGrid)}>
-					<div></div>
-					<div className={cn(styles.sectionTitle)}></div>
-					<div className={cn(styles.totalTitle)}>
-						{ item && item.title } total:
+			<div className={cn(styles.grid, {
+				[styles.sectionSum]: !isSubSection,
+				[styles.subSectionSum]: isSubSection,
+			})}>
+				<div className={cn(styles.contentTotalGrid, {
+					[styles.accsum]: !isSubSection,
+					[styles.accsubsum]: isSubSection,
+				})}>
+					<div className={cn(styles.icon)}>
+						<SettingsIcon/>
 					</div>
-					<div className={cn(styles.totalSum)}>
+					<div className={cn(styles.addItem)}>
+						add <span onClick={() => {
+						handleAddItem(item.id, isSubSection);
+					}}>item</span> / <span onClick={handleAddSection}>section</span>
+					</div>
+					<div className={cn({
+						[styles.totalTitle]: !isSubSection,
+						[styles.subtotalTitle]: isSubSection,
+					})}>
+						{!isSubSection && item && `${item.title} total:`}
+						{isSubSection && item && `Subtotal of ${item.title}`}
+					</div>
+					<div className={cn(styles.totalSum, {
+						[styles.subtotalSum]: isSubSection,
+					})}>
 						$ {formatPrice(totalSum)}
 					</div>
 				</div>
-				<div className={cn(styles.accsum, styles.asideTotalGrid)}>
+				<div className={cn(styles.asideTotalGrid, {
+					[styles.accsum]: !isSubSection,
+					[styles.accsubsum]: isSubSection,
+				})}>
 					<div></div>
 					<div></div>
-					<div className={cn(styles.totalSum)}>
+					<div className={cn(styles.totalSum, {
+						[styles.subtotalSum]: isSubSection,
+					})}>
 						$ {formatPrice(totalClientSum)}
 					</div>
 					<div>
@@ -189,36 +220,6 @@ export const EstTable = ({data, className, ...props }: EstTableProps) => {
 		);
 	}
 
-	const renderSubTotalSum = (sub: tSubSection) => {
-		const totalSum = getTotalCost(sub, 'cost');
-		const totalClientSum = getTotalCost(sub, 'ccost');
-
-		return (
-			<div className={cn(styles.subSectionSum, styles.grid)}>
-				<div className={cn(styles.accsubsum, styles.contentTotalGrid)}>
-					<div></div>
-					<div className={cn(styles.sectionTitle)}></div>
-					<div className={cn(styles.subtotalTitle)}>
-						Subtotal of { sub.title }:
-					</div>
-					<div className={cn(styles.totalSum, styles.subtotalSum)}>
-						$ {formatPrice(totalSum)}
-					</div>
-				</div>
-				<div className={cn(styles.accsubsum, styles.asideTotalGrid)}>
-					<div></div>
-					<div></div>
-					<div className={cn(styles.totalSum, styles.subtotalSum)}>
-						$ {formatPrice(totalClientSum)}
-					</div>
-					<div>
-						<Percent mark="average" count={8}/>
-					</div>
-				</div>
-			</div>
-		)
-	}
-
 	const renderSimpleSection = (item: tSection, index: number) => {
 		const isAccordionOpen = openAccordions[index] || false;
 		const totalSum = getTotalCost(item, 'cost');
@@ -227,7 +228,7 @@ export const EstTable = ({data, className, ...props }: EstTableProps) => {
 		return (
 			<div className={cn(styles.section, {
 				[styles.opened]: isAccordionOpen,
-			})} key={index}>
+			})} key={`section_${item.id}`}>
 				<Accordion title={
 					<div className={cn(styles.grid)}>
 						<div className={cn(styles.accpart, styles.contentTotalGrid)}>
@@ -253,7 +254,7 @@ export const EstTable = ({data, className, ...props }: EstTableProps) => {
 					{ item.rows && item.rows.length > 0 && renderRows(item, item.rows) }
 				</Accordion>
 
-				{ renderTotalSum(item) }
+				{ renderSumRow(item) }
 			</div>
 		);
 	}
@@ -266,7 +267,7 @@ export const EstTable = ({data, className, ...props }: EstTableProps) => {
 		const totalClientSum = getTotalCost(item, 'ccost');
 
 		return (
-			<div className={cn(styles.section, { [styles.opened]: isAccordionOpen })} key={index}>
+			<div className={cn(styles.section, { [styles.opened]: isAccordionOpen })} key={`section_${item.id}`}>
 				<MultipleAccordion
 					title={
 						<div className={cn(styles.grid)}>
@@ -293,7 +294,7 @@ export const EstTable = ({data, className, ...props }: EstTableProps) => {
 						subTitle: (
 							<div className={cn(styles.subsection, {
 								[styles.opened] : openSubSections[subIndex] || false
-							})} key={subIndex}>
+							})} key={`sub_${sub.id}`}>
 								<div className={cn(styles.grid)}>
 									<div className={cn(styles.accsub, styles.contentTotalGrid)}>
 										<div></div>
@@ -317,7 +318,7 @@ export const EstTable = ({data, className, ...props }: EstTableProps) => {
 						subContent: (
 							<>
 								{sub.rows && sub.rows.length > 0 && renderRows(sub, sub.rows)}
-								{renderSubTotalSum(sub)}
+								{renderSumRow(sub, 'subsection')}
 							</>
 						),
 						isOpen: openSubSections[subIndex] || false,
@@ -326,55 +327,24 @@ export const EstTable = ({data, className, ...props }: EstTableProps) => {
 					isOpen={isAccordionOpen}
 					onToggle={(isOpen: boolean) => handleToggleSection(index, isOpen)}
 				/>
-				{ renderTotalSum(item) }
+				{ renderSumRow(item) }
 			</div>
 		);
 	};
 
 	return (
 		<div className={cn(styles.est)} {...props}>
-			<div className={styles.grid}>
-				<div className={cn(styles.hcontent, styles.contentGrid)}>
-					<div className={cn(styles.icon)}>
-						<SettingsIcon/>
-					</div>
-					{contentTHeads.map((item: tHead, index: number) => (
-						<THeadItem
-							key={index}
-							className={cn({
-								[styles.alignRight]: item.className && item.className === 'alignRight',
-							})}
-							text={item.text}
-						/>
-					))}
-					<div></div>
-				</div>
-				<div className={cn(styles.haside, styles.asideGrid)}>
-					<div className={cn(styles.icon)}>
-						<SettingsIcon/>
-					</div>
-					{asideTHeads.map((item: tHead, index: number) => (
-						<THeadItem
-							key={index}
-							className={cn({
-								[styles.alignRight]: item.className && item.className === 'alignRight',
-							})}
-							text={item.text}
-						/>
-					))}
-				</div>
-			</div>
+			{ renderHeader() }
 
 			{data.map((item: tSection, index: number) => (
-				<div key={index}>
-					{'subSections' in item && item.subSections ? (
+				<div key={`grid_${item.id}`}>
+					{ item.subSections ? (
 						renderFullSection(item, index)
 					) : (
-						'rows' in item && item.rows && renderSimpleSection(item, index)
+						item.rows && renderSimpleSection(item, index)
 					)}
 				</div>
 			))}
-
 		</div>
 	);
 }
