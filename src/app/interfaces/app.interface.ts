@@ -30,10 +30,8 @@ export interface TRow {
 	price: number;
 	units: string;
 	quantity: number;
-	cost: number;
 	surcharge: number;
 	cprice: number;
-	ccost: number;
 	range: number;
 }
 

@@ -19,10 +19,8 @@ const Estimation = () => {
 					price: 1700,
 					units: 'units',
 					quantity: 1,
-					cost: 1700,
 					surcharge: 10,
 					cprice: 1700,
-					ccost: 1700,
 					range: 16,
 				},
 				{
@@ -31,10 +29,8 @@ const Estimation = () => {
 					price: 600,
 					units: 'units',
 					quantity: 1,
-					cost: 600,
 					surcharge: 10,
 					cprice: 700,
-					ccost: 700,
 					range: 16,
 				},
 				{
@@ -43,10 +39,8 @@ const Estimation = () => {
 					price: 300,
 					units: 'units',
 					quantity: 1,
-					cost: 300,
 					surcharge: 10,
 					cprice: 300,
-					ccost: 300,
 					range: 15,
 				}
 			]
@@ -65,10 +59,8 @@ const Estimation = () => {
 							price: 2000,
 							units: 'units',
 							quantity: 1,
-							cost: 2000,
 							surcharge: 10,
 							cprice: 2200,
-							ccost: 2200,
 							range: 16,
 						},
 						{
@@ -77,10 +69,8 @@ const Estimation = () => {
 							price: 300,
 							units: 'units',
 							quantity: 1,
-							cost: 300,
 							surcharge: 10,
 							cprice: 300,
-							ccost: 300,
 							range: 19,
 						}
 					]
@@ -95,10 +85,8 @@ const Estimation = () => {
 							price: 1700,
 							units: 'units',
 							quantity: 1,
-							cost: 1700,
 							surcharge: 10,
 							cprice: 1700,
-							ccost: 1700,
 							range: 16,
 						},
 						{
@@ -107,10 +95,8 @@ const Estimation = () => {
 							price: 300,
 							units: 'units',
 							quantity: 1,
-							cost: 300,
 							surcharge: 10,
 							cprice: 300,
-							ccost: 300,
 							range: 19,
 						}
 					]
@@ -127,10 +113,8 @@ const Estimation = () => {
 					price: 1700,
 					units: 'units',
 					quantity: 1,
-					cost: 1700,
 					surcharge: 10,
 					cprice: 1700,
-					ccost: 1700,
 					range: 16,
 				},
 				{
@@ -139,10 +123,8 @@ const Estimation = () => {
 					price: 300,
 					units: 'units',
 					quantity: 1,
-					cost: 300,
 					surcharge: 10,
 					cprice: 300,
-					ccost: 300,
 					range: 19,
 				}
 			]
@@ -184,10 +166,8 @@ const Estimation = () => {
 			price: 0,
 			units: '',
 			quantity: 0,
-			cost: 0,
 			surcharge: 0,
 			cprice: 0,
-			ccost: 0,
 			range: 0,
 		};
 
@@ -231,12 +211,51 @@ const Estimation = () => {
 		});
 	};
 
+	const handleInputChange = (sectionId: number, rowId: number, field: string, value: string | number) => {
+		setData((prevData) =>
+			prevData.map((section) => {
+				if (section.id === sectionId) {
+					return {
+						...section,
+						rows: section.rows?.map((row) =>
+							row.id === rowId ? { ...row, [field]: value } : row
+						),
+						subSections: section.subSections?.map((subSection) => ({
+							...subSection,
+							rows: subSection.rows?.map((row) =>
+								row.id === rowId ? { ...row, [field]: value } : row
+							),
+						})),
+					};
+				} else if (section.subSections) {
+					return {
+						...section,
+						subSections: section.subSections.map((subSection) => {
+							if (subSection.id === sectionId) {
+								return {
+									...subSection,
+									rows: subSection.rows.map((row) =>
+										row.id === rowId ? { ...row, [field]: value } : row
+									),
+								};
+							} else {
+								return subSection;
+							}
+						}),
+					};
+				}
+				return section;
+			})
+		);
+	};
+
 	return (
 		<main>
 			<EstTable data={data}
 				onRemoveItem={handleRemoveItem}
 				onAddItem={handleAddItem}
 				onAddSection={handleAddSection}
+				onChangeInput={handleInputChange}
 			/>
 		</main>
 	);

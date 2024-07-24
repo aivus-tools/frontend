@@ -19,12 +19,50 @@ import RemoveIcon from '@/app/icons/remove-icon.svg';
 import AddIcon from '@/app/icons/add-icon.svg';
 import OpenedEyeIcon from '@/app/icons/opened-eye-icon.svg';
 import { useModal } from '@/app/context/ModalContext';
-import { useState } from 'react';
-import { formatPrice } from '@/app/helpers/helper';
+import { useMemo, useState } from 'react';
+import { getCost } from '@/app/helpers/helper';
 import { contentTHeads, asideTHeads } from '@/app/handbook/handbook';
 
-export const EstTable = ({data, onRemoveItem, onAddItem, onAddSection, className, ...props }: EstTableProps) => {
+export const EstTable = ({data, onRemoveItem, onAddItem, onAddSection, onChangeInput, className, ...props }: EstTableProps) => {
 	const { showModal } = useModal();
+
+	const totalCost = useMemo(() => {
+		let total = 0;
+		let ctotal: number = 0;
+		data.forEach((section) => {
+			if (section.rows) {
+				section.rows.forEach((row) => {
+					total += row.price * row.quantity;
+					ctotal += row.cprice * row.quantity;
+				});
+			}
+			if (section.subSections) {
+				section.subSections.forEach((subSection) => {
+					subSection.rows.forEach((row) => {
+						total += row.price * row.quantity;
+						ctotal += row.cprice * row.quantity;
+					});
+				});
+			}
+		});
+		return {
+			total: total,
+			ctotal: ctotal,
+		};
+	}, [data]);
+
+	const expensesCost = {
+		total: 987,
+		ctotal: 5436,
+	}
+
+
+	const grandTotalCost = useMemo(() => {
+		return {
+			total: expensesCost.total + totalCost.total,
+			ctotal: expensesCost.ctotal + totalCost.ctotal,
+		};
+	}, [data]);
 
 	const handleRemoveItem = (row: TRow) => {
 		onRemoveItem(row);
@@ -37,6 +75,10 @@ export const EstTable = ({data, onRemoveItem, onAddItem, onAddSection, className
 	const handleAddSection = () => {
 		onAddSection()
 	}
+
+	const handleInputChange = (sectionId: number, rowId: number, field: string, value: string | number) => {
+		onChangeInput(sectionId, rowId, field, value);
+	};
 
 	const handleOpenSettings = (item: tSection) => {
 		console.log(`open settings: ${item}`);
@@ -111,26 +153,26 @@ export const EstTable = ({data, onRemoveItem, onAddItem, onAddSection, className
 	}
 
 	const renderRows = (item: tSection | tSubSection, rows: TRow[]) => {
-		return rows.map((row: TRow, rowIndex: number) => (
+		return rows.map((row: TRow) => (
 			<div className={cn(styles.grid, styles.row)} key={`row_${row.id}`}>
 				<div className={cn(styles.part, styles.contentGrid)}>
 					<div className={cn(styles.icon, styles.settingsIcon)} onClick={() => handleOpenSettings(item)}>
 						<SettingsIcon />
 					</div>
 					<div className={cn(styles.rowItem, styles.item)}>
-						<EditableInput type="text" value={row.item} />
+						<EditableInput type="text" value={row.item} onChange={(e) => handleInputChange(item.id, row.id, 'item', e.target.value)} />
 					</div>
 					<div className={cn(styles.rowItem, styles.alignRight, styles.price)}>
-						<EditableInput type="number" isPrice={true} value={row.price} />
+						<EditableInput type="number" isPrice={true} value={row.price} onChange={(e) => handleInputChange(item.id, row.id, 'price', e.target.value)} />
 					</div>
 					<div className={cn(styles.rowItem, styles.alignRight, styles.units)}>
-						<EditableInput type="text" value={row.units} />
+						<EditableInput type="text" value={row.units} onChange={(e) => handleInputChange(item.id, row.id, 'units', e.target.value)} />
 					</div>
 					<div className={cn(styles.rowItem, styles.alignRight, styles.quantity)}>
-						<EditableInput type="number" value={row.quantity} />
+						<EditableInput type="number" value={row.quantity} onChange={(e) => handleInputChange(item.id, row.id, 'quantity', e.target.value)} />
 					</div>
 					<div className={cn(styles.rowItem, styles.alignRight, styles.cost)}>
-						<EditableInput type="number" disabled={true} isPrice={true} value={row.cost} />
+						<div>{getCost(row.price, row.quantity)}</div>
 					</div>
 					<div className={cn(styles.icon, styles.removeIcon)} onClick={() => handleRemoveItem(row)}>
 						<RemoveIcon />
@@ -139,13 +181,13 @@ export const EstTable = ({data, onRemoveItem, onAddItem, onAddSection, className
 				<div className={cn(styles.part, styles.asideGrid)}>
 					<div className={cn(styles.rowItem, styles.element)}></div>
 					<div className={cn(styles.rowItem, styles.element)}>
-						<EditableInput type="number" value={row.surcharge} />
+						<EditableInput type="number" value={row.surcharge} onChange={(e) => handleInputChange(item.id, row.id, 'surcharge', e.target.value)} />
 					</div>
 					<div className={cn(styles.rowItem, styles.element)}>
-						<EditableInput type="number" isPrice={true} value={row.cprice} />
+						<EditableInput type="number" isPrice={true} value={row.cprice} onChange={(e) => handleInputChange(item.id, row.id, 'cprice', e.target.value)} />
 					</div>
-					<div className={cn(styles.rowItem, styles.element)}>
-						<EditableInput type="number" disabled={true} isPrice={true} value={row.ccost} />
+					<div className={cn(styles.rowItem, styles.cost)}>
+						<div>{getCost(row.cprice, row.quantity)}</div>
 					</div>
 					<div className={cn(styles.rowItem, styles.element)}>
 						<Percent mark="above" count={row.range} />
@@ -155,22 +197,22 @@ export const EstTable = ({data, onRemoveItem, onAddItem, onAddSection, className
 		));
 	};
 
-	const getTotalCost = (item: tSection, field: 'cost' | 'ccost'): number => {
-		let totalSum = 0;
+	const getTotalCost = (item: tSection, field: 'price' | 'cprice'): number => {
+		let totalCost = 0;
 		if ('subSections' in item && item.subSections) {
-			totalSum = item.subSections.reduce((sunSum, sub) => {
-				return sunSum + sub.rows.reduce((partialSum, row) => partialSum + row[field], 0);
+			totalCost = item.subSections.reduce((sunSum, sub) => {
+				return sunSum + sub.rows.reduce((partialSum, row) => partialSum + getCost(row[field], row.quantity), 0);
 			}, 0)
 		} else {
-			totalSum = item.rows ? item.rows.reduce((partialSum, row) => partialSum + row[field], 0) : 0;
+			totalCost = item.rows ? item.rows.reduce((partialSum, row) => partialSum + getCost(row[field], row.quantity), 0) : 0;
 		}
 
-		return totalSum
+		return totalCost
 	}
 
 	const renderSumRow = (item: tSection | tSubSection, type: 'section' | 'subsection' = 'section') => {
-		const totalSum = getTotalCost(item, 'cost');
-		const totalClientSum = getTotalCost(item, 'ccost');
+		const totalSum = getTotalCost(item, 'price');
+		const totalClientSum = getTotalCost(item, 'cprice');
 
 		let isSubSection: boolean = type === 'subsection' ? true : false;
 
@@ -220,8 +262,8 @@ export const EstTable = ({data, onRemoveItem, onAddItem, onAddSection, className
 
 	const renderSimpleSection = (item: tSection, index: number) => {
 		const isAccordionOpen = openAccordions[index] || false;
-		const totalSum = getTotalCost(item, 'cost');
-		const totalClientSum = getTotalCost(item, 'ccost');
+		const totalSum = getTotalCost(item, 'price');
+		const totalClientSum = getTotalCost(item, 'cprice');
 
 		return (
 			<div className={cn(styles.section, {
@@ -261,8 +303,8 @@ export const EstTable = ({data, onRemoveItem, onAddItem, onAddSection, className
 		const isAccordionOpen = openAccordions[index] || false;
 		const openSubSections = openSubAccordions[index] || {};
 
-		const totalSum = getTotalCost(item, 'cost');
-		const totalClientSum = getTotalCost(item, 'ccost');
+		const totalSum = getTotalCost(item, 'price');
+		const totalClientSum = getTotalCost(item, 'cprice');
 
 		return (
 			<div className={cn(styles.section, { [styles.opened]: isAccordionOpen })} key={`section_${item.id}`}>
@@ -299,14 +341,14 @@ export const EstTable = ({data, onRemoveItem, onAddItem, onAddSection, className
 										<div>{sub.title}</div>
 										<div></div>
 										<div className={cn(styles.totalSum)}>
-											<Sum count={getTotalCost(sub, 'cost')} size='s' type='blue' />
+											<Sum count={getTotalCost(sub, 'price')} size='s' type='blue' />
 										</div>
 									</div>
 									<div className={cn(styles.accsub, styles.asideTotalGrid)}>
 										<div></div>
 										<div></div>
 										<div className={cn(styles.totalSum)}>
-											<Sum count={getTotalCost(sub, 'ccost')} size='s' type='blue' />
+											<Sum count={getTotalCost(sub, 'cprice')} size='s' type='blue' />
 										</div>
 										<div>
 											<Percent mark="average" count={8}/>
@@ -343,14 +385,14 @@ export const EstTable = ({data, onRemoveItem, onAddItem, onAddSection, className
 						<div>Subtotal for All Sections</div>
 						<div></div>
 						<div className={cn(styles.totalSum)}>
-							<Sum count={19740} size='l' type='green' />
+							<Sum count={totalCost.total} size='l' type='green' />
 						</div>
 					</div>
 					<div className={cn(styles.asideTotalGrid, styles.footerSubTotal)}>
 						<div></div>
 						<div></div>
 						<div className={cn(styles.totalSum)}>
-							<Sum count={27184} size='l' type='green' />
+							<Sum count={totalCost.ctotal} size='l' type='green' />
 						</div>
 						<div>
 							<Percent mark="average" type='inversion' count={2}/>
@@ -365,14 +407,14 @@ export const EstTable = ({data, onRemoveItem, onAddItem, onAddSection, className
 						<div>Unforeseen expenses</div>
 						<div></div>
 						<div className={cn(styles.totalSum)}>
-							<Sum count={987} size='xs' />
+							<Sum count={expensesCost.total} size='xs' />
 						</div>
 					</div>
 					<div className={cn(styles.asideTotalGrid, styles.footerExpenses)}>
 						<div></div>
 						<div></div>
 						<div className={cn(styles.totalSum)}>
-							<Sum count={5436} size='xs' />
+							<Sum count={expensesCost.ctotal} size='xs' />
 						</div>
 						<div>
 							<Percent mark="average" type='inversion' count={2}/>
@@ -387,14 +429,14 @@ export const EstTable = ({data, onRemoveItem, onAddItem, onAddSection, className
 						<div>Grand total</div>
 						<div></div>
 						<div className={cn(styles.totalSum)}>
-							<Sum count={20727} size='l' type='dark' />
+							<Sum count={grandTotalCost.total} size='l' type='dark' />
 						</div>
 					</div>
 					<div className={cn(styles.asideTotalGrid, styles.footerGrandTotal)}>
 						<div></div>
 						<div></div>
 						<div className={cn(styles.totalSum)}>
-							<Sum count={32620} size='l' type='dark' />
+							<Sum count={grandTotalCost.ctotal} size='l' type='dark' />
 						</div>
 						<div>
 							<Percent mark="average" type='inversion' count={2}/>

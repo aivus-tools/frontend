@@ -6,5 +6,6 @@ export interface EstTableProps extends DetailedHTMLProps<HTMLAttributes<HTMLDivE
 	onRemoveItem: (row: TRow) => void;
 	onAddItem: (sectionId: number, isSubSection: boolean) => void;
 	onAddSection: () => void;
+	onChangeInput: (sectionId: number, rowId: number, field: string, value: string | number) => void;
 }
 

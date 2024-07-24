@@ -8,3 +8,7 @@ export const formatPrice = (price: number): string => {
 
 	return formattedIntegerPart + decimalPart;
 };
+
+export const getCost = (price: number, quantity: number): number => {
+	return price * quantity;
+}
