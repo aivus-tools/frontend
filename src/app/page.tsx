@@ -127,7 +127,7 @@ export default function Home() {
 							value={inputVal}
 							onChange={handleInputChange}
 						/>
-						<Select options={options} onAdd={handleAddOption}/>
+						{/*<Select options={options} onAdd={handleAddOption}/>*/}
 					</div>
 					<div className={cn(styles.item)}>
 						<div className={cn(styles.flex)}>

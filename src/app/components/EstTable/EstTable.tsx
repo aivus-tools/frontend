@@ -12,6 +12,7 @@ import {
 	SettingsModal,
 	SurchargeModal,
 	Sum,
+	Select,
 } from '@/app/components';
 import { tHead, TRow, tSection, tSubSection, SubSection } from '@/app/interfaces/app.interface';
 import SettingsIcon from '@/app/icons/settings-icon.svg';
@@ -21,7 +22,7 @@ import OpenedEyeIcon from '@/app/icons/opened-eye-icon.svg';
 import { useModal } from '@/app/context/ModalContext';
 import { useMemo, useState } from 'react';
 import { getCost } from '@/app/helpers/helper';
-import { contentTHeads, asideTHeads } from '@/app/handbook/handbook';
+import { contentTHeads, asideTHeads, unitsOptions } from '@/app/handbook/handbook';
 
 export const EstTable = ({data, onRemoveItem, onAddItem, onAddSection, onChangeInput, className, ...props }: EstTableProps) => {
 	const { showModal } = useModal();
@@ -74,6 +75,10 @@ export const EstTable = ({data, onRemoveItem, onAddItem, onAddSection, onChangeI
 
 	const handleAddSection = () => {
 		onAddSection()
+	}
+
+	const handleAddOption = (newOptions: string) => {
+		console.log(`add option: ${newOptions}`);
 	}
 
 	const handleInputChange = (sectionId: number, rowId: number, field: string, value: string | number) => {
@@ -166,7 +171,16 @@ export const EstTable = ({data, onRemoveItem, onAddItem, onAddSection, onChangeI
 						<EditableInput type="number" isPrice={true} value={row.price} onChange={(e) => handleInputChange(item.id, row.id, 'price', e.target.value)} />
 					</div>
 					<div className={cn(styles.rowItem, styles.alignRight, styles.units)}>
-						<EditableInput type="text" value={row.units} onChange={(e) => handleInputChange(item.id, row.id, 'units', e.target.value)} />
+						{/*{ row.units }*/}
+						<Select
+							options={unitsOptions}
+							value={row.units}
+							onAdd={(newUnit) => {
+								handleAddOption(newUnit);
+								handleInputChange(item.id, row.id, 'units', newUnit);
+							}}
+							onChange={(selectedUnit) => handleInputChange(item.id, row.id, 'units', selectedUnit)}
+						/>
 					</div>
 					<div className={cn(styles.rowItem, styles.alignRight, styles.quantity)}>
 						<EditableInput type="number" value={row.quantity} onChange={(e) => handleInputChange(item.id, row.id, 'quantity', e.target.value)} />

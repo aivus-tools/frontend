@@ -27,10 +27,10 @@
 }
 
 .content {
-	height: 0;
-	overflow: hidden;
 	transition: height 0.3s ease;
 }
-.contentInner {
-	/*padding: 20px 8px;*/
+
+.content:not(.opened) {
+	height: 0;
+	overflow: hidden;
 }

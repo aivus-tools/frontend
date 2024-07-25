@@ -5,8 +5,8 @@ import cn from 'classnames';
 import { useState, ChangeEvent, useEffect, useRef } from 'react';
 import { Input } from '@/app/components';
 
-export const Select = ({ options, onAdd }: SelectProps) => {
-	const [searchTerm, setSearchTerm] = useState<string>('');
+export const Select = ({ options, value, onAdd, onChange }: SelectProps) => {
+	const [searchTerm, setSearchTerm] = useState<string>(value || '');
 	const [filteredOptions, setFilteredOptions] = useState<string[]>(options);
 	const [showDropdown, setShowDropdown] = useState<boolean>(false);
 	const selectRef = useRef<HTMLDivElement>(null);
@@ -32,7 +32,7 @@ export const Select = ({ options, onAdd }: SelectProps) => {
 	const handleClickOutside = (event: MouseEvent) => {
 		if (selectRef.current && !selectRef.current.contains(event.target as Node)) {
 			setShowDropdown(false);
-			setSearchTerm('');
+			// setSearchTerm('');
 			setFilteredOptions(options);
 		}
 	};
@@ -43,6 +43,11 @@ export const Select = ({ options, onAdd }: SelectProps) => {
 			document.removeEventListener('mousedown', handleClickOutside);
 		};
 	}, []);
+
+	useEffect(() => {
+		console.log(value)
+		setSearchTerm(value || '');
+	}, [value]);
 
 	return (
 		<div className={cn(styles.wrapper)} ref={selectRef}>
@@ -65,6 +70,7 @@ export const Select = ({ options, onAdd }: SelectProps) => {
 								onClick={() => {
 									setSearchTerm(option);
 									setShowDropdown(false);
+									onChange && onChange(option);
 								}}
 							>
 								{option}
