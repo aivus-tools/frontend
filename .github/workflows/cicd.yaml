@@ -55,6 +55,6 @@ jobs:
           method: kubeconfig
           kubeconfig: ${{ secrets.KUBECONFIG }}
 
-#      - name: Deploy to Kubernetes using Helm
-#        run: |
-#          kubectl rollout restart deployment --namespace app-main estify-web
+      - name: Deploy to Kubernetes
+        run: |
+          kubectl rollout restart deployment --namespace app-main aivus-web
