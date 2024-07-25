@@ -4,5 +4,5 @@ export interface SelectProps extends Omit<DetailedHTMLProps<HTMLAttributes<HTMLD
 	options: string[];
 	value?: string;
 	onAdd: (newOption: string) => void;
-	onChange: (selectedOption: string) => void;
+	onChange?: (selectedOption: string) => void;
 }
