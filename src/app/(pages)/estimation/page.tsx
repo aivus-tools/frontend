@@ -17,7 +17,7 @@ const Estimation = () => {
 					id: 111,
 					item: 'Colorful Storyboard',
 					price: 1700,
-					units: 'units',
+					units: 'Units',
 					quantity: 1,
 					surcharge: 10,
 					cprice: 1700,
@@ -27,7 +27,7 @@ const Estimation = () => {
 					id: 112,
 					item: 'Select an item 1',
 					price: 600,
-					units: 'units',
+					units: 'Pack',
 					quantity: 1,
 					surcharge: 10,
 					cprice: 700,
@@ -37,7 +37,7 @@ const Estimation = () => {
 					id: 113,
 					item: 'Select an item 2',
 					price: 300,
-					units: 'units',
+					units: 'Piece',
 					quantity: 1,
 					surcharge: 10,
 					cprice: 300,
@@ -57,7 +57,7 @@ const Estimation = () => {
 							id: 211,
 							item: 'Colorful Storyboard',
 							price: 2000,
-							units: 'units',
+							units: 'Units',
 							quantity: 1,
 							surcharge: 10,
 							cprice: 2200,
@@ -67,7 +67,7 @@ const Estimation = () => {
 							id: 212,
 							item: 'Select an item',
 							price: 300,
-							units: 'units',
+							units: 'Units',
 							quantity: 1,
 							surcharge: 10,
 							cprice: 300,
@@ -83,7 +83,7 @@ const Estimation = () => {
 							id: 221,
 							item: 'Colorful Storyboard',
 							price: 1700,
-							units: 'units',
+							units: '',
 							quantity: 1,
 							surcharge: 10,
 							cprice: 1700,
@@ -93,7 +93,7 @@ const Estimation = () => {
 							id: 222,
 							item: 'Select an item',
 							price: 300,
-							units: 'units',
+							units: 'Units',
 							quantity: 1,
 							surcharge: 10,
 							cprice: 300,
@@ -111,7 +111,7 @@ const Estimation = () => {
 					id: 311,
 					item: 'Colorful Storyboard',
 					price: 1700,
-					units: 'units',
+					units: 'Piece',
 					quantity: 1,
 					surcharge: 10,
 					cprice: 1700,
@@ -121,7 +121,7 @@ const Estimation = () => {
 					id: 312,
 					item: 'Select an item',
 					price: 300,
-					units: 'units',
+					units: 'Piece',
 					quantity: 1,
 					surcharge: 10,
 					cprice: 300,
@@ -248,6 +248,10 @@ const Estimation = () => {
 			})
 		);
 	};
+
+	useEffect(() => {
+		console.log(data);
+	}, [data]);
 
 	return (
 		<main>

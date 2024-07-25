@@ -38,3 +38,14 @@ export const asideTHeads: tHead[] = [
 		text: 'Market Range',
 	},
 ]
+
+
+export const unitsOptions: string[] = [
+	'Units',
+	'Pack',
+	'Piece',
+	'Box',
+	'Bag',
+	'Dozen',
+	'Roll'
+]
