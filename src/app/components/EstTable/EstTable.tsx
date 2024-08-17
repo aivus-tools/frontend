@@ -136,7 +136,7 @@ export const EstTable = ({data, onRemoveItem, onAddItem, onAddSection, onChangeI
 					<div className={cn(styles.rowItem, styles.item)}>
 						<EditableInput type="text" value={row.item} onChange={(e) => handleInputChange(item.id, row.id, 'item', e.target.value)} />
 					</div>
-					<div className={cn(styles.rowItem, styles.alignRight, styles.price)}>
+					<div className={cn(styles.rowItem, styles.alignRight, styles.price, styles.alignRight)}>
 						<EditableInput type="number" isPrice={true} value={row.price} onChange={(e) => handleInputChange(item.id, row.id, 'price', e.target.value)} />
 					</div>
 					<div className={cn(styles.rowItem, styles.alignRight, styles.units)}>
@@ -169,7 +169,7 @@ export const EstTable = ({data, onRemoveItem, onAddItem, onAddSection, onChangeI
 					<div className={cn(styles.rowItem, styles.element)}>
 						<EditableInput type="number" isPrice={true} value={row.cprice} onChange={(e) => handleInputChange(item.id, row.id, 'cprice', e.target.value)} />
 					</div>
-					<div className={cn(styles.rowItem, styles.cost)}>
+					<div className={cn(styles.rowItem, styles.cost, styles.alignRight)}>
 						<div>{formatPrice(getCost(row.cprice, row.quantity))}</div>
 					</div>
 					<div className={cn(styles.rowItem, styles.element)}>

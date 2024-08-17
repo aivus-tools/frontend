@@ -178,9 +178,9 @@ const Estimation = () => {
 		dispatch(updateItem({ sectionId, rowId, field, value }));
 	};
 
-	useEffect(() => {
-		console.log(data);
-	}, [data]);
+	// useEffect(() => {
+	// 	console.log(data);
+	// }, [data]);
 
 	return (
 		<main>

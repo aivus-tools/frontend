@@ -245,3 +245,8 @@
 	color: var(--main);
 	transition: color ease-in 0.3s;
 }
+
+.alignRight {
+	padding-right: 20px;
+	text-align: right;
+}

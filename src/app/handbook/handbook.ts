@@ -32,7 +32,7 @@ export const asideTHeads: THead[] = [
 	},
 	{
 		text: 'Client’s cost',
-		// className: 'alignRight',
+		className: 'alignRight',
 	},
 	{
 		text: 'Market Range',
