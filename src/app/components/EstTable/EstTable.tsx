@@ -13,57 +13,26 @@ import {
 	SurchargeModal,
 	Sum,
 	Select,
+	AddItem,
 } from '@/app/components';
-import { tHead, TRow, tSection, tSubSection, SubSection } from '@/app/interfaces/app.interface';
+import { THead, TRow, TSection, TSubSection } from '@/app/interfaces/app.interface';
 import SettingsIcon from '@/app/icons/settings-icon.svg';
 import RemoveIcon from '@/app/icons/remove-icon.svg';
 import AddIcon from '@/app/icons/add-icon.svg';
 import OpenedEyeIcon from '@/app/icons/opened-eye-icon.svg';
 import { useModal } from '@/app/context/ModalContext';
 import { useMemo, useState } from 'react';
-import { getCost } from '@/app/helpers/helper';
+import { formatPrice, getCost } from '@/app/helpers/helper';
 import { contentTHeads, asideTHeads, unitsOptions } from '@/app/handbook/handbook';
+import { useSelector } from 'react-redux';
+import { selectTotalCosts, selectExpensesCost, selectGrandTotalCost } from '@/app/store/selectors';
 
 export const EstTable = ({data, onRemoveItem, onAddItem, onAddSection, onChangeInput, className, ...props }: EstTableProps) => {
 	const { showModal } = useModal();
 
-	const totalCost = useMemo(() => {
-		let total = 0;
-		let ctotal: number = 0;
-		data.forEach((section) => {
-			if (section.rows) {
-				section.rows.forEach((row) => {
-					total += row.price * row.quantity;
-					ctotal += row.cprice * row.quantity;
-				});
-			}
-			if (section.subSections) {
-				section.subSections.forEach((subSection) => {
-					subSection.rows.forEach((row) => {
-						total += row.price * row.quantity;
-						ctotal += row.cprice * row.quantity;
-					});
-				});
-			}
-		});
-		return {
-			total: total,
-			ctotal: ctotal,
-		};
-	}, [data]);
-
-	const expensesCost = {
-		total: 987,
-		ctotal: 5436,
-	}
-
-
-	const grandTotalCost = useMemo(() => {
-		return {
-			total: expensesCost.total + totalCost.total,
-			ctotal: expensesCost.ctotal + totalCost.ctotal,
-		};
-	}, [data]);
+	const totalCost = useSelector(selectTotalCosts);
+	const expensesCost = useSelector(selectExpensesCost);
+	const grandTotalCost = useSelector(selectGrandTotalCost);
 
 	const handleRemoveItem = (row: TRow) => {
 		onRemoveItem(row);
@@ -85,7 +54,7 @@ export const EstTable = ({data, onRemoveItem, onAddItem, onAddSection, onChangeI
 		onChangeInput(sectionId, rowId, field, value);
 	};
 
-	const handleOpenSettings = (item: tSection) => {
+	const handleOpenSettings = (item: TSection) => {
 		console.log(`open settings: ${item}`);
 		showModal('side', <SettingsModal /> );
 	}
@@ -128,7 +97,7 @@ export const EstTable = ({data, onRemoveItem, onAddItem, onAddSection, onChangeI
 					<div className={cn(styles.icon)}>
 						<SettingsIcon/>
 					</div>
-					{contentTHeads.map((item: tHead, index: number) => (
+					{contentTHeads.map((item: THead, index: number) => (
 						<THeadItem
 							key={`chead_${index}`}
 							className={cn({
@@ -143,7 +112,7 @@ export const EstTable = ({data, onRemoveItem, onAddItem, onAddSection, onChangeI
 					<div className={cn(styles.icon)}>
 						<SettingsIcon/>
 					</div>
-					{asideTHeads.map((item: tHead, index: number) => (
+					{asideTHeads.map((item: THead, index: number) => (
 						<THeadItem
 							key={`ahead_${index}`}
 							className={cn({
@@ -157,7 +126,7 @@ export const EstTable = ({data, onRemoveItem, onAddItem, onAddSection, onChangeI
 		)
 	}
 
-	const renderRows = (item: tSection | tSubSection, rows: TRow[]) => {
+	const renderRows = (item: TSection | TSubSection, rows: TRow[]) => {
 		return rows.map((row: TRow) => (
 			<div className={cn(styles.grid, styles.row)} key={`row_${row.id}`}>
 				<div className={cn(styles.part, styles.contentGrid)}>
@@ -186,7 +155,7 @@ export const EstTable = ({data, onRemoveItem, onAddItem, onAddSection, onChangeI
 						<EditableInput type="number" value={row.quantity} onChange={(e) => handleInputChange(item.id, row.id, 'quantity', e.target.value)} />
 					</div>
 					<div className={cn(styles.rowItem, styles.alignRight, styles.cost)}>
-						<div>{getCost(row.price, row.quantity)}</div>
+						<div>{formatPrice(getCost(row.price, row.quantity))}</div>
 					</div>
 					<div className={cn(styles.icon, styles.removeIcon)} onClick={() => handleRemoveItem(row)}>
 						<RemoveIcon />
@@ -201,7 +170,7 @@ export const EstTable = ({data, onRemoveItem, onAddItem, onAddSection, onChangeI
 						<EditableInput type="number" isPrice={true} value={row.cprice} onChange={(e) => handleInputChange(item.id, row.id, 'cprice', e.target.value)} />
 					</div>
 					<div className={cn(styles.rowItem, styles.cost)}>
-						<div>{getCost(row.cprice, row.quantity)}</div>
+						<div>{formatPrice(getCost(row.cprice, row.quantity))}</div>
 					</div>
 					<div className={cn(styles.rowItem, styles.element)}>
 						<Percent mark="above" count={row.range} />
@@ -211,11 +180,11 @@ export const EstTable = ({data, onRemoveItem, onAddItem, onAddSection, onChangeI
 		));
 	};
 
-	const getTotalCost = (item: tSection, field: 'price' | 'cprice'): number => {
+	const getTotalCost = (item: TSection, field: 'price' | 'cprice'): number => {
 		let totalCost = 0;
 		if ('subSections' in item && item.subSections) {
 			totalCost = item.subSections.reduce((sunSum, sub) => {
-				return sunSum + sub.rows.reduce((partialSum, row) => partialSum + getCost(row[field], row.quantity), 0);
+				return sunSum + (sub.isHidden ? 0 : sub.rows.reduce((partialSum, row) => partialSum + getCost(row[field], row.quantity), 0));
 			}, 0)
 		} else {
 			totalCost = item.rows ? item.rows.reduce((partialSum, row) => partialSum + getCost(row[field], row.quantity), 0) : 0;
@@ -224,11 +193,12 @@ export const EstTable = ({data, onRemoveItem, onAddItem, onAddSection, onChangeI
 		return totalCost
 	}
 
-	const renderSumRow = (item: tSection | tSubSection, type: 'section' | 'subsection' = 'section') => {
+	const renderSumRow = (item: TSection | TSubSection, type: 'section' | 'subsection' = 'section') => {
 		const totalSum = getTotalCost(item, 'price');
 		const totalClientSum = getTotalCost(item, 'cprice');
 
 		let isSubSection: boolean = type === 'subsection' ? true : false;
+		// let isHasSubSection: boolean = 'subSections' in item;
 
 		return (
 			<div className={cn(styles.grid, {
@@ -241,10 +211,14 @@ export const EstTable = ({data, onRemoveItem, onAddItem, onAddSection, onChangeI
 					<div className={cn(styles.icon)}>
 						<AddIcon />
 					</div>
-					<div className={cn(styles.addItem)}>
-						add <span onClick={() => {
-						handleAddItem(item.id, isSubSection);
-					}}>item</span> / <span onClick={handleAddSection}>section</span>
+					<div
+						 className={cn(styles.addItem)}
+						 onClick={() => {
+							 handleAddItem(item.id, isSubSection);
+						 }}
+					>
+						add item
+						{/*/ <span onClick={handleAddSection}>section</span>*/}
 					</div>
 					<div className={cn({
 						[styles.totalTitle]: !isSubSection,
@@ -274,7 +248,9 @@ export const EstTable = ({data, onRemoveItem, onAddItem, onAddSection, onChangeI
 		);
 	}
 
-	const renderSimpleSection = (item: tSection, index: number) => {
+	const renderSimpleSection = (item: TSection, index: number) => {
+		if (item.isHidden) return null; // Skip rendering if the section is hidden
+
 		const isAccordionOpen = openAccordions[index] || false;
 		const totalSum = getTotalCost(item, 'price');
 		const totalClientSum = getTotalCost(item, 'cprice');
@@ -303,17 +279,19 @@ export const EstTable = ({data, onRemoveItem, onAddItem, onAddSection, onChangeI
 						</div>
 					</div>
 				}
-					onAccToggle={(isOpen: boolean) => handleToggleSection(index, isOpen)}
+									 onAccToggle={(isOpen: boolean) => handleToggleSection(index, isOpen)}
 				>
-					{ item.rows && item.rows.length > 0 && renderRows(item, item.rows) }
+					{item.rows && item.rows.length > 0 && renderRows(item, item.rows)}
 				</Accordion>
 
-				{ renderSumRow(item) }
+				{renderSumRow(item)}
 			</div>
 		);
-	}
+	};
 
-	const renderFullSection = (item: tSection, index: number) => {
+	const renderFullSection = (item: TSection, index: number) => {
+		if (item.isHidden) return null; // Skip rendering if the section is hidden
+
 		const isAccordionOpen = openAccordions[index] || false;
 		const openSubSections = openSubAccordions[index] || {};
 
@@ -334,8 +312,7 @@ export const EstTable = ({data, onRemoveItem, onAddItem, onAddSection, onChangeI
 							<div className={cn(styles.accpart, styles.asideTotalGrid)}>
 								<div></div>
 								<div>
-									<LinkedPercent className={cn(styles.sectionTitleSurcharge)} highlight={true} count={10}
-																		disabled={true} onClick={handleOpenSurcharge}/>
+									<LinkedPercent className={cn(styles.sectionTitleSurcharge)} highlight={true} count={10} disabled={true} onClick={handleOpenSurcharge}/>
 								</div>
 								<div className={cn(styles.sectionTitleSum, styles.totalSum)}><Sum count={totalClientSum} type='blue' /></div>
 								<div className={cn(styles.sectionTitleSum)}>
@@ -344,46 +321,48 @@ export const EstTable = ({data, onRemoveItem, onAddItem, onAddSection, onChangeI
 							</div>
 						</div>
 					}
-					subSections={(item.subSections || []).map((sub, subIndex) => ({
-						subTitle: (
-							<div className={cn(styles.subsection, {
-								[styles.opened] : openSubSections[subIndex] || false
-							})} key={`sub_${sub.id}`}>
-								<div className={cn(styles.grid)}>
-									<div className={cn(styles.accsub, styles.contentTotalGrid)}>
-										<div></div>
-										<div>{sub.title}</div>
-										<div></div>
-										<div className={cn(styles.totalSum)}>
-											<Sum count={getTotalCost(sub, 'price')} size='s' type='blue' />
+					subSections={(item.subSections?.filter(sub => !sub.isHidden) || []).map((sub, subIndex) => {
+						return {
+							subTitle: (
+								<div className={cn(styles.subsection, {
+									[styles.opened]: openSubSections[subIndex] || false,
+								})} key={`sub_${sub.id}`}>
+									<div className={cn(styles.grid)}>
+										<div className={cn(styles.accsub, styles.contentTotalGrid)}>
+											<div></div>
+											<div>{sub.title}</div>
+											<div></div>
+											<div className={cn(styles.totalSum)}>
+												<Sum count={getTotalCost(sub, 'price')} size='s' type='blue' />
+											</div>
 										</div>
-									</div>
-									<div className={cn(styles.accsub, styles.asideTotalGrid)}>
-										<div></div>
-										<div></div>
-										<div className={cn(styles.totalSum)}>
-											<Sum count={getTotalCost(sub, 'cprice')} size='s' type='blue' />
-										</div>
-										<div>
-											<Percent mark="average" count={8}/>
+										<div className={cn(styles.accsub, styles.asideTotalGrid)}>
+											<div></div>
+											<div></div>
+											<div className={cn(styles.totalSum)}>
+												<Sum count={getTotalCost(sub, 'cprice')} size='s' type='blue' />
+											</div>
+											<div>
+												<Percent mark="average" count={8} />
+											</div>
 										</div>
 									</div>
 								</div>
-							</div>
-						),
-						subContent: (
-							<>
-								{sub.rows && sub.rows.length > 0 && renderRows(sub, sub.rows)}
-								{renderSumRow(sub, 'subsection')}
-							</>
-						),
-						isOpen: openSubSections[subIndex] || false,
-						onToggle: (isOpen: boolean) => handleToggleSubSection(index, subIndex, isOpen),
-					}))}
+							),
+							subContent: (
+								<>
+									{sub.rows && sub.rows.length > 0 && renderRows(sub, sub.rows)}
+									{renderSumRow(sub, 'subsection')}
+								</>
+							),
+							isOpen: openSubSections[subIndex] || false,
+							onToggle: (isOpen: boolean) => handleToggleSubSection(index, subIndex, isOpen),
+						};
+					})}
 					isOpen={isAccordionOpen}
 					onToggle={(isOpen: boolean) => handleToggleSection(index, isOpen)}
 				/>
-				{ renderSumRow(item) }
+				{renderSumRow(item)}
 			</div>
 		);
 	};
@@ -487,7 +466,7 @@ export const EstTable = ({data, onRemoveItem, onAddItem, onAddSection, onChangeI
 		<div className={cn(styles.est)} {...props}>
 			{renderHeader()}
 
-			{data.map((item: tSection, index: number) => (
+			{data.map((item: TSection, index: number) => (
 				<div key={`grid_${item.id}`}>
 					{item.subSections ? (
 						renderFullSection(item, index)

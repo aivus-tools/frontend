@@ -45,7 +45,7 @@ export const Select = ({ options, value, onAdd, onChange }: SelectProps) => {
 	}, []);
 
 	useEffect(() => {
-		console.log(value)
+		// console.log(value)
 		setSearchTerm(value || '');
 	}, [value]);
 

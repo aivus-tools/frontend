@@ -4,14 +4,19 @@ import cn from 'classnames';
 import withLayout from '@/app/layout/Layout';
 import withAuth from '@/app/layout/withAuth/withAuth';
 import { EstTable } from '@/app/components';
-import { TRow, tSection, tSubSection } from '@/app/interfaces/app.interface';
+import { TRow, TSection, TSubSection } from '@/app/interfaces/app.interface';
 import { useEffect, useState } from 'react';
 
+import { useSelector, useDispatch } from 'react-redux';
+import { RootState } from '@/app/store/store';
+import { setTableData, removeItem, addItem, addSection, updateItem } from '@/app/store/actions';
+
 const Estimation = () => {
-	const initialData: tSection[] = [
+	const initialData: TSection[] = [
 		{
 			id: 1,
 			title: 'Pre production',
+			isHidden: false,
 			rows: [
 				{
 					id: 111,
@@ -48,10 +53,12 @@ const Estimation = () => {
 		{
 			id: 2,
 			title: 'Production',
+			isHidden: false,
 			subSections: [
 				{
 					id: 21,
 					title: 'Locations',
+					isHidden: false,
 					rows: [
 						{
 							id: 211,
@@ -78,6 +85,7 @@ const Estimation = () => {
 				{
 					id: 22,
 					title: 'Sub Section 2',
+					isHidden: false,
 					rows: [
 						{
 							id: 221,
@@ -106,6 +114,7 @@ const Estimation = () => {
 		{
 			id: 3,
 			title: 'Creative',
+			isHidden: false,
 			rows: [
 				{
 					id: 311,
@@ -131,34 +140,16 @@ const Estimation = () => {
 		},
 	]
 
-	const [data, setData] = useState<tSection[]>(initialData);
-	const handleRemoveItem = (row: TRow) => {
-		setData((prevData) =>
-			prevData.map(section => {
-				if (section.rows && section.rows.some(item => item.id === row.id)) {
-					return {
-						...section,
-						rows: section.rows.filter(item => item.id !== row.id),
-					};
-				} else if (section.subSections) {
-					return {
-						...section,
-						subSections: section.subSections.map(subSection => {
-							if (subSection.rows && subSection.rows.some(item => item.id === row.id)) {
-								return {
-									...subSection,
-									rows: subSection.rows.filter(item => item.id !== row.id),
-								};
-							}
-							return subSection;
-						}),
-					};
-				}
-				return section;
-			})
-		);
-	};
+	const data = useSelector((state: RootState) => state.estimates.data);
+	const dispatch = useDispatch();
 
+	useEffect(() => {
+		dispatch(setTableData(initialData));
+	}, [dispatch]);
+
+	const handleRemoveItem = (row: TRow) => {
+		dispatch(removeItem(row.id));
+	};
 	const handleAddItem = (sectionId: number, isSubSection: boolean) => {
 		const newRow: TRow = {
 			id: +new Date() % 10000,
@@ -171,82 +162,20 @@ const Estimation = () => {
 			range: 0,
 		};
 
-		const addRowToSection = (section: tSection) => ({
-			...section,
-			rows: section.rows ? [...section.rows, newRow] : [newRow],
-		});
-
-		const addRowToSubSection = (subSection: tSubSection) => ({
-			...subSection,
-			rows: subSection.rows ? [...subSection.rows, newRow] : [newRow],
-		});
-
-		setData((prevData) =>
-			prevData.map(section => {
-				if (section.id === sectionId) {
-					return addRowToSection(section);
-				}
-				if (section.subSections) {
-					return {
-						...section,
-						subSections: section.subSections.map(subSection =>
-							subSection.id === sectionId && isSubSection ? addRowToSubSection(subSection) : subSection
-						),
-					};
-				}
-				return section;
-			})
-		);
+		dispatch(addItem({ sectionId, newRow, isSubSection }));
 	};
-
 	const handleAddSection = () => {
-		let newSection: tSection = {
+		let newSection: TSection = {
 			id: +new Date() % 1000,
 			title: 'New Section',
+			isHidden: false,
 			rows: [],
 		};
 
-		setData(prevData => {
-			return [...prevData, newSection];
-		});
+		dispatch(addSection(newSection));
 	};
-
 	const handleInputChange = (sectionId: number, rowId: number, field: string, value: string | number) => {
-		setData((prevData) =>
-			prevData.map((section) => {
-				if (section.id === sectionId) {
-					return {
-						...section,
-						rows: section.rows?.map((row) =>
-							row.id === rowId ? { ...row, [field]: value } : row
-						),
-						subSections: section.subSections?.map((subSection) => ({
-							...subSection,
-							rows: subSection.rows?.map((row) =>
-								row.id === rowId ? { ...row, [field]: value } : row
-							),
-						})),
-					};
-				} else if (section.subSections) {
-					return {
-						...section,
-						subSections: section.subSections.map((subSection) => {
-							if (subSection.id === sectionId) {
-								return {
-									...subSection,
-									rows: subSection.rows.map((row) =>
-										row.id === rowId ? { ...row, [field]: value } : row
-									),
-								};
-							} else {
-								return subSection;
-							}
-						}),
-					};
-				}
-				return section;
-			})
-		);
+		dispatch(updateItem({ sectionId, rowId, field, value }));
 	};
 
 	useEffect(() => {

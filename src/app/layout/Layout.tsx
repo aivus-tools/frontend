@@ -4,7 +4,8 @@ import cn from 'classnames';
 import { Header } from './Header/Header';
 import { Sidebar } from './Sidebar/Sidebar';
 import { ModalProvider } from '@/app/context/ModalContext';
-
+import { Provider } from 'react-redux';
+import store from '@/app/store/store';
 
 export const Layout = ({ children, className, ...props }: LayoutProps) => {
 	return (
@@ -18,11 +19,13 @@ export const Layout = ({ children, className, ...props }: LayoutProps) => {
 
 const withLayout = <T extends Record<string, unknown>>(Component: React.FC<T>) => {
 	const WithLayoutComponent: React.FC<T> = (props) => (
-		<ModalProvider>
-			<Layout>
+		<Provider store={store}>
+			<ModalProvider>
+				<Layout>
 					<Component {...props} />
-			</Layout>
-		</ModalProvider>
+				</Layout>
+			</ModalProvider>
+		</Provider>
 	);
 
 	return WithLayoutComponent;

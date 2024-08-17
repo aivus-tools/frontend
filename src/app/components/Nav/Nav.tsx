@@ -3,13 +3,13 @@ import { NavProps } from './Nav.props';
 import styles from './Nav.module.css';
 import cn from 'classnames';
 import { usePathname } from 'next/navigation';
-import { menu } from '@/app/interfaces/app.interface';
+import { Menu } from '@/app/interfaces/app.interface';
 import { Button } from '@/app/components';
 import Link from 'next/link';
 
 
 export const Nav = ({children, className, ...props }: NavProps) => {
-	const menu: menu[] = [
+	const menu: Menu[] = [
 		{
 			title: 'Prj details',
 			route: '/project',
@@ -48,7 +48,7 @@ export const Nav = ({children, className, ...props }: NavProps) => {
 			className={cn(styles.nav, className)}
 			{...props}
 		>
-			{menu.map((item: menu, index: number) => {
+			{menu.map((item: Menu, index: number) => {
 				return (
 					<div key={index}
 							className={cn(styles.navItem)}

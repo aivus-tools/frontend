@@ -21,3 +21,5 @@ export * from './SideModal/SideModal';
 export * from './SettingsModal/SettingsModal';
 export * from './SurchargeModal/SurchargeModal';
 export * from './Sum/Sum';
+export * from './AddItem/AddItem';
+export * from './SidebarNavSection/SidebarNavSection';

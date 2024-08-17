@@ -1,8 +1,8 @@
 import { DetailedHTMLProps, HTMLAttributes } from 'react';
-import { TRow, tSection, tSubSection } from '@/app/interfaces/app.interface';
+import { TRow, TSection } from '@/app/interfaces/app.interface';
 
 export interface EstTableProps extends DetailedHTMLProps<HTMLAttributes<HTMLDivElement>, HTMLDivElement> {
-	data: tSection[],
+	data: TSection[],
 	onRemoveItem: (row: TRow) => void;
 	onAddItem: (sectionId: number, isSubSection: boolean) => void;
 	onAddSection: () => void;

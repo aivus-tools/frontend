@@ -3,11 +3,14 @@ import styles from './Sidebar.module.css';
 import cn from 'classnames';
 import HomeIcon from './home-icon.svg';
 import LogoIcon from './aivus-logo.svg';
-import TopArrowIcon from './top-arrow-icon.svg';
 import { Percent, Search, SidebarNav, SumCounter } from '@/app/components';
 import Link from 'next/link';
+import { useSelector } from 'react-redux';
+import { selectGrandTotalCost, selectTotalCosts } from '@/app/store/selectors';
 
 export const Sidebar = ({ children, className, ...props }: SidebarProps) => {
+	const grandTotalCost = useSelector(selectGrandTotalCost);
+
 	return (
 		<aside className={cn(styles.sidebar, className)}
 					 {...props}
@@ -29,14 +32,14 @@ export const Sidebar = ({ children, className, ...props }: SidebarProps) => {
 					<div className={cn(styles.sidebarSubText)}>The Coca-Cola Company</div>
 				</div>
 			</div>
-			<div className={cn(styles.sidebarItem)}>
+			<div className={cn(styles.sidebarItem, styles.sidebarNav)}>
 				<SidebarNav/>
 			</div>
 
 			<div className={cn(styles.counters)}>
-				<SumCounter className={cn(styles.counterItem)} title="Total client’s cost" count={32620.8} />
-				<SumCounter className={cn(styles.counterItem)} title="Expenses" count={20727.0} />
-				<SumCounter className={cn(styles.counterItem)} title="Revenue & Mark-Up" count={11893.8} highlight={true}>
+				<SumCounter className={cn(styles.counterItem)} title="Total client’s cost" count={ grandTotalCost.total } />
+				<SumCounter className={cn(styles.counterItem)} title="Expenses" count={ grandTotalCost.ctotal } />
+				<SumCounter className={cn(styles.counterItem)} title="Revenue & Mark-Up" count={ grandTotalCost.ctotal - grandTotalCost.total } highlight={true}>
 					<Percent className={cn(styles.sub)} mark="average" size='l' count={36.5}/>
 				</SumCounter>
 			</div>

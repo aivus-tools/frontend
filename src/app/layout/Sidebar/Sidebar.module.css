@@ -1,4 +1,7 @@
 .sidebar {
+	position: fixed;
+	width: 250px;
+	height: 100%;
 	background-color: var(--white);
 }
 
@@ -20,9 +23,14 @@
 
 
 .sidebarItem {
-	margin: 0 20px;
-	padding: 14px 0;
+	/*margin: 0 20px;*/
+	padding: 14px 20px;
 	border-top: 1px dashed var(--gray);
+}
+
+.sidebarNav {
+	max-height: 360px;
+	overflow-y: scroll;
 }
 
 .sidebarProjectItem {

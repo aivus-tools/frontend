@@ -1,6 +1,6 @@
-import { tHead } from '@/app/interfaces/app.interface';
+import { THead } from '@/app/interfaces/app.interface';
 
-export const contentTHeads: tHead[] = [
+export const contentTHeads: THead[] = [
 	{
 		text: 'Item',
 		showIcon: true,
@@ -22,7 +22,7 @@ export const contentTHeads: tHead[] = [
 		className: 'alignRight',
 	},
 ]
-export const asideTHeads: tHead[] = [
+export const asideTHeads: THead[] = [
 	{
 		text: 'Surcharge',
 		showIcon: true,

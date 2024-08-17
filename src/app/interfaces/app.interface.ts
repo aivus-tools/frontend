@@ -1,26 +1,36 @@
 // MENU //
-export interface menu {
+export interface Menu {
 	title: string;
 	route: string;
 	pathname: string;
 }
 
-export interface tHead {
+export interface SidebarItem {
+	id: number;
+	title: string;
+	type: 'section' | 'subsection' | 'row';
+	isHidden: boolean;
+	children?: SidebarItem[];
+}
+
+export interface THead {
 	text: string;
 	showIcon?: boolean;
 	className?: string;
 }
 
-export interface tSection {
+export interface TSection {
 	id: number;
 	title: string;
-	subSections?: tSubSection[];
+	isHidden: boolean;
+	subSections?: TSubSection[];
 	rows?: TRow[];
 }
 
-export interface tSubSection {
+export interface TSubSection {
 	id: number;
 	title: string;
+	isHidden: boolean;
 	rows: TRow[];
 }
 
