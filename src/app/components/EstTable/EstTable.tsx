@@ -13,7 +13,6 @@ import {
 	SurchargeModal,
 	Sum,
 	Select,
-	AddItem,
 } from '@/app/components';
 import { THead, TRow, TSection, TSubSection } from '@/app/interfaces/app.interface';
 import SettingsIcon from '@/app/icons/settings-icon.svg';
@@ -21,7 +20,7 @@ import RemoveIcon from '@/app/icons/remove-icon.svg';
 import AddIcon from '@/app/icons/add-icon.svg';
 import OpenedEyeIcon from '@/app/icons/opened-eye-icon.svg';
 import { useModal } from '@/app/context/ModalContext';
-import { useMemo, useState } from 'react';
+import { useState } from 'react';
 import { formatPrice, getCost } from '@/app/helpers/helper';
 import { contentTHeads, asideTHeads, unitsOptions } from '@/app/handbook/handbook';
 import { useSelector } from 'react-redux';
@@ -136,10 +135,10 @@ export const EstTable = ({data, onRemoveItem, onAddItem, onAddSection, onChangeI
 					<div className={cn(styles.rowItem, styles.item)}>
 						<EditableInput type="text" value={row.item} onChange={(e) => handleInputChange(item.id, row.id, 'item', e.target.value)} />
 					</div>
-					<div className={cn(styles.rowItem, styles.alignRight, styles.price, styles.alignRight)}>
+					<div className={cn(styles.rowItem, styles.price)}>
 						<EditableInput type="number" isPrice={true} value={row.price} onChange={(e) => handleInputChange(item.id, row.id, 'price', e.target.value)} />
 					</div>
-					<div className={cn(styles.rowItem, styles.alignRight, styles.units)}>
+					<div className={cn(styles.rowItem, styles.units)}>
 						{/*{ row.units }*/}
 						<Select
 							options={unitsOptions}
@@ -151,10 +150,10 @@ export const EstTable = ({data, onRemoveItem, onAddItem, onAddSection, onChangeI
 							onChange={(selectedUnit) => handleInputChange(item.id, row.id, 'units', selectedUnit)}
 						/>
 					</div>
-					<div className={cn(styles.rowItem, styles.alignRight, styles.quantity)}>
+					<div className={cn(styles.rowItem, styles.quantity)}>
 						<EditableInput type="number" value={row.quantity} onChange={(e) => handleInputChange(item.id, row.id, 'quantity', e.target.value)} />
 					</div>
-					<div className={cn(styles.rowItem, styles.alignRight, styles.cost)}>
+					<div className={cn(styles.rowItem, styles.cost, styles.alignRight)}>
 						<div>{formatPrice(getCost(row.price, row.quantity))}</div>
 					</div>
 					<div className={cn(styles.icon, styles.removeIcon)} onClick={() => handleRemoveItem(row)}>

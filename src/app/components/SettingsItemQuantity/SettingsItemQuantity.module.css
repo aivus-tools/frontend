@@ -1,0 +1,6 @@
+.quantity {
+	display: flex;
+	justify-content: space-between;
+	align-items: baseline;
+	padding-right: 4px;
+}

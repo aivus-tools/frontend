@@ -2,7 +2,19 @@
 import styles from "./page.module.css";
 import cn from 'classnames';
 import { ChangeEvent, useState } from 'react';
-import { Button, EditableInput, Select, Input, Percent, LinkedPercent } from '@/app/components';
+import {
+	Button,
+	EditableInput,
+	Select,
+	Input,
+	Percent,
+	LinkedPercent,
+	SettingsItem,
+	SettingsItemTitle,
+	SettingsItemExpenses, SettingsItemQuantity, SettingsItemTaxes,
+	SettingsItemClient,
+	SettingsItemMarket,
+} from '@/app/components';
 import { formatPrice } from '@/app/helpers/helper';
 import Link from 'next/link';
 
@@ -164,7 +176,7 @@ export default function Home() {
 					</div>
 					<div className={cn(styles.item)}>
 						<div className={cn(styles.flex)}>
-						<div className={cn(styles.flexItem)}>
+							<div className={cn(styles.flexItem)}>
 								<Percent mark="below" size="l" rounded={true} count={16}/>
 							</div>
 							<div className={cn(styles.flexItem)}>
@@ -195,9 +207,31 @@ export default function Home() {
 						</div>
 					</div>
 				</div>
+				<div className={cn(styles.modal)}>
+					<h2 className={cn(styles.text)}>Some text</h2>
+					<SettingsItemTitle
+						title="Colourful Storyboard"
+						subTitle="Options of the item"
+					/>
+					<SettingsItem title="Quantity">
+						<SettingsItemQuantity />
+					</SettingsItem>
+					<SettingsItem title="Expenses">
+						<SettingsItemExpenses />
+					</SettingsItem>
+					<SettingsItem title="Taxes">
+						<SettingsItemTaxes />
+					</SettingsItem>
+					<SettingsItem title="For client">
+						<SettingsItemClient />
+					</SettingsItem>
+					<SettingsItem title="Market Analytics">
+						<SettingsItemMarket />
+					</SettingsItem>
+				</div>
 				<div className={cn(styles.section)}>
 					<div className={cn(styles.item)}>
-						<LinkedPercent count={10}/>
+					<LinkedPercent count={10}/>
 					</div>
 					<div className={cn(styles.item)}>
 						<LinkedPercent linked={false} count={16}/>

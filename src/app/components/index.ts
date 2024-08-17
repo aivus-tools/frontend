@@ -2,6 +2,7 @@ import { Modal } from '@/app/components/Modal/Modal';
 import { Sum } from '@/app/components/Sum/Sum';
 
 export * from './Button/Button';
+export * from './Text/Text';
 export * from './Nav/Nav';
 export * from './Profile/Profile';
 export * from './Search/Search';
@@ -23,3 +24,10 @@ export * from './SurchargeModal/SurchargeModal';
 export * from './Sum/Sum';
 export * from './AddItem/AddItem';
 export * from './SidebarNavSection/SidebarNavSection';
+export * from './SettingsItem/SettingsItem';
+export * from './SettingsItemTitle/SettingsItemTitle';
+export * from './SettingsItemQuantity/SettingsItemQuantity';
+export * from './SettingsItemExpenses/SettingsItemExpenses';
+export * from './SettingsItemTaxes/SettingsItemTaxes';
+export * from './SettingsItemClient/SettingsItemClient';
+export * from './SettingsItemMarket/SettingsItemMarket';

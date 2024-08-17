@@ -7,15 +7,15 @@ export const contentTHeads: THead[] = [
 	},
 	{
 		text: 'Price, $',
-		className: 'alignRight',
+		// className: 'alignRight',
 	},
 	{
 		text: 'Units',
-		className: 'alignRight',
+		// className: 'alignRight',
 	},
 	{
 		text: 'Quantity',
-		className: 'alignRight',
+		// className: 'alignRight',
 	},
 	{
 		text: 'Cost, $',

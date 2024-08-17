@@ -27,4 +27,13 @@
 	margin-left: 10px;
 }
 
+.modal {
+	width: 370px;
+	border: 1px solid gray;
+	padding: 20px 30px;
+}
+
+.text {
+	padding: 5px 0;
+}
 
