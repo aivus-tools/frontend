@@ -78,7 +78,10 @@ export default function Home() {
 				</div>
 			</div>
 			<div className={cn(styles.flex)}>
-				<Link href={'/estimation'}>Estimation page</Link>
+				<Link className={cn(styles.link)} href={'/estimation'}>Estimation page</Link>
+			</div>
+			<div className={cn(styles.flex)}>
+				<Link className={cn(styles.link)} href={'/dashboard'}>Dasboard page</Link>
 			</div>
 
 			<div className={cn(styles.flex)}>
@@ -214,24 +217,24 @@ export default function Home() {
 						subTitle="Options of the item"
 					/>
 					<SettingsItem title="Quantity">
-						<SettingsItemQuantity />
+						<SettingsItemQuantity/>
 					</SettingsItem>
 					<SettingsItem title="Expenses">
-						<SettingsItemExpenses />
+						<SettingsItemExpenses/>
 					</SettingsItem>
 					<SettingsItem title="Taxes">
-						<SettingsItemTaxes />
+						<SettingsItemTaxes/>
 					</SettingsItem>
 					<SettingsItem title="For client">
-						<SettingsItemClient />
+						<SettingsItemClient/>
 					</SettingsItem>
 					<SettingsItem title="Market Analytics">
-						<SettingsItemMarket />
+						<SettingsItemMarket/>
 					</SettingsItem>
 				</div>
 				<div className={cn(styles.section)}>
 					<div className={cn(styles.item)}>
-					<LinkedPercent count={10}/>
+						<LinkedPercent count={10}/>
 					</div>
 					<div className={cn(styles.item)}>
 						<LinkedPercent linked={false} count={16}/>

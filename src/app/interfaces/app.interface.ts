@@ -49,3 +49,18 @@ export interface SubSection {
 	subTitle: React.ReactNode;
 	subContent: React.ReactNode;
 }
+
+export interface Project {
+	id: number;
+	title: string;
+	assignee: string;
+	clientName: string;
+	clientContact: string;
+	status: 'RFP' | 'Reviewing' | 'Ongoing';
+	cost: number;
+	expenses: number;
+	profit: number;
+	deadline: string;
+	createdAt: string;
+
+}

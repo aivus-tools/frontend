@@ -3,9 +3,9 @@ import styles from "./page.module.css";
 import cn from 'classnames';
 import withLayout from '@/app/layout/Layout';
 import withAuth from '@/app/layout/withAuth/withAuth';
-import { EstTable } from '@/app/components';
-import { TRow, TSection, TSubSection } from '@/app/interfaces/app.interface';
-import { useEffect, useState } from 'react';
+import { EstTable, SidebarEst } from '@/app/components';
+import { TRow, TSection } from '@/app/interfaces/app.interface';
+import { useEffect } from 'react';
 
 import { useSelector, useDispatch } from 'react-redux';
 import { RootState } from '@/app/store/store';
@@ -194,4 +194,4 @@ const Estimation = () => {
 	);
 }
 
-export default withAuth(withLayout<{}>(Estimation));
+export default withAuth(withLayout<{}>(Estimation, 'light', <SidebarEst />));

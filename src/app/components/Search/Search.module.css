@@ -2,6 +2,17 @@
 	display: flex;
 	padding: 10px 0;
 }
+.gray .searchIcon {
+	stroke: var(--main);
+}
+
+.white {
+	color: var(--white);
+}
+
+.white .searchIcon {
+	stroke: var(--white);
+}
 
 .searchIcon {
 	margin-right: 6px;

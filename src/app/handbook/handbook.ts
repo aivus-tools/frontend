@@ -3,7 +3,7 @@ import { THead } from '@/app/interfaces/app.interface';
 export const contentTHeads: THead[] = [
 	{
 		text: 'Item',
-		showIcon: true,
+		// showIcon: true,
 	},
 	{
 		text: 'Price, $',
@@ -39,6 +39,32 @@ export const asideTHeads: THead[] = [
 	},
 ]
 
+export const dashboardTHeads: THead[] = [
+	{
+		text: 'Project',
+		showIcon: true,
+	},
+	{
+		text: 'Client',
+	},
+	{
+		text: 'Status',
+	},
+	{
+		text: 'Cost/Expenses',
+		className: 'alignRight',
+	},
+	{
+		text: 'Profit',
+		className: 'alignRight',
+	},
+	{
+		text: 'Deadline',
+	},
+	{
+		text: 'Created',
+	},
+]
 
 export const unitsOptions: string[] = [
 	'Units',

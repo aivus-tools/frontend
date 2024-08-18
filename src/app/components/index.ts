@@ -1,5 +1,7 @@
 import { Modal } from '@/app/components/Modal/Modal';
 import { Sum } from '@/app/components/Sum/Sum';
+import { SidebarEst } from '@/app/components/SidebarEst/SidebarEst';
+import { PrStatus } from '@/app/components/PrStatus/PrStatus';
 
 export * from './Button/Button';
 export * from './Text/Text';
@@ -31,3 +33,7 @@ export * from './SettingsItemExpenses/SettingsItemExpenses';
 export * from './SettingsItemTaxes/SettingsItemTaxes';
 export * from './SettingsItemClient/SettingsItemClient';
 export * from './SettingsItemMarket/SettingsItemMarket';
+export * from './SidebarEst/SidebarEst';
+export * from './SidebarDash/SidebarDash';
+export * from './ProjectItem/ProjectItem';
+export * from './PrStatus/PrStatus';

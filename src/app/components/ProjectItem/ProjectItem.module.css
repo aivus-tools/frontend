@@ -1,0 +1,99 @@
+.project {
+	display: grid;
+	width: 100%;
+	align-items: center;
+	grid-template-columns: 1fr 1fr 80px repeat(4, 90px);
+	column-gap: 40px;
+	padding: 33px 22px;
+	box-shadow: 0 5px 16.5px -11px rgba(0, 0, 0, 0.25);
+	border-radius: 6px;
+}
+
+.project.rfp {
+	background-color: var(--bg-blue-subtotal);
+}
+.project.reviewing {
+	background-color: var(--white);
+}
+.project.ongoing {
+	background-color: var(--bg-light-green);
+}
+
+.column {
+
+}
+
+.alignRight {
+	text-align: right;
+}
+
+.main {
+	position: relative;
+	padding-left: 20px;
+}
+
+.main::before {
+	content: '';
+	position: absolute;
+	width: 4px;
+	height: 52px;
+	top: -2px;
+	left: -5px;
+	border-radius: 2px;
+}
+.rfp .main::before {
+	background-color: var(--blue);
+}
+.reviewing .main::before {
+	background-color: var(--orange);
+}
+.ongoing .main::before {
+	background-color: var(--green-darker);
+}
+
+.title {
+	font-weight: 700;
+	font-size: 14px;
+	text-transform: uppercase;
+}
+
+.assignee {
+	margin-top: 10px;
+	color: var(--gray);
+}
+
+.clientName {
+	font-weight: 600;
+}
+
+.contact {
+	margin-top: 10px;
+	color: var(--gray);
+	/*font-weight: 700;*/
+	font-size: 10px;
+}
+
+.cost {
+	font-weight: 600;
+}
+
+.expenses,
+.percent {
+	margin-top: 10px;
+	color: var(--gray);
+	font-size: 10px;
+	padding: 0;
+}
+.blue {
+	color: var(--blue);
+}
+
+.date {
+
+}
+
+.left {
+	margin-top: 10px;
+	color: var(--gray);
+	font-size: 10px;
+}

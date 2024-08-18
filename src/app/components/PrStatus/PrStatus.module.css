@@ -1,0 +1,24 @@
+.status {
+	padding: 5px;
+	font-size: 10px;
+	font-weight: 700;
+	text-align: center;
+	border-radius: 3px;
+}
+
+.status.rfp {
+	color: var(--blue);
+	background-color: var(--bg-blue-important);
+	border: 1px solid var(--blue);
+}
+
+.status.reviewing {
+	background-color: var(--bg-orange);
+	color: var(--orange);
+	border: 1px solid var(--orange);
+}
+.status.ongoing {
+	background-color: var(--bg-green);
+	color: var(--green-darker);
+	border: 1px solid var(--green-darker);
+}
