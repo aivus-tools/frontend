@@ -1,0 +1,40 @@
+.counter {
+  position: relative;
+  padding: 5px 10px;
+}
+
+.counter::before {
+  position: absolute;
+  top: 8px;
+  left: 0;
+  width: 1px;
+  height: calc(100% - 16px);
+  content: '';
+  background-color: var(--gray);
+  border-radius: 1px;
+}
+
+.title {
+  color: var(--gray);
+}
+
+.count {
+  display: flex;
+  align-items: flex-start;
+  margin-top: 5px;
+  color: var(--gray);
+}
+
+.currency {
+  margin-top: 3px;
+}
+
+.num {
+  margin-left: 6px;
+  font-size: 26px;
+  color: var(--main);
+}
+
+.count.primary .num {
+  color: var(--blue);
+}

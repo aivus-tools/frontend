@@ -1,0 +1,18 @@
+.inputWrapper {
+  width: 100%;
+}
+
+.input {
+  max-width: 100%;
+  padding: 10px 5px;
+}
+
+.input:disabled {
+  color: var(--gray);
+}
+
+.input:not(:disabled):hover,
+.input:not(:disabled):focus {
+  border-radius: 1px;
+  outline: 1px solid var(--blue);
+}

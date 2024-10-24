@@ -1,0 +1,136 @@
+.percent {
+  display: inline-flex;
+  align-items: center;
+  border-radius: 3px;
+}
+
+.s {
+  height: 20px;
+  padding: 0 10px;
+  font-size: 10px;
+  font-weight: 700;
+}
+
+.m {
+  height: 24px;
+  padding: 0 10px;
+  font-size: 10px;
+  font-weight: 700;
+}
+
+.l {
+  height: 30px;
+  padding: 0 12px;
+  font-size: 16px;
+  font-weight: 700;
+}
+
+.rounded {
+  border-radius: 20px;
+}
+
+.icon {
+  margin-right: 6px;
+}
+
+
+.average {
+  color: var(--white);
+}
+
+.average.filled {
+  color: var(--green);
+  background-color: var(--bg-green);
+}
+
+.average.transparent {
+  color: var(--green);
+}
+
+.above .icon {
+  fill: var(--red);
+}
+
+.average.inversion {
+  background-color: var(--green);
+}
+
+.average .icon {
+  fill: var(--green);
+}
+
+.below .icon {
+  fill: var(--orange);
+  transform: rotate(180deg);
+}
+
+.average.inversion .icon {
+  fill: var(--white);
+}
+
+
+.below {
+  color: var(--white);
+}
+
+.below.filled {
+  color: var(--orange);
+  background-color: var(--bg-orange);
+}
+
+.below.transparent {
+  color: var(--orange);
+}
+
+.below.inversion {
+  background-color: var(--orange);
+}
+
+.below.inversion .icon {
+  fill: var(--white);
+}
+
+
+.above {
+  color: var(--white);
+}
+
+.above.filled {
+  color: var(--red);
+  background-color: var(--bg-red);
+}
+
+.above.transparent {
+  color: var(--red);
+}
+
+
+
+.above.inversion {
+  background-color: var(--red);
+}
+
+
+
+.above.inversion .icon {
+  fill: var(--white);
+}
+
+
+.na {
+  color: var(--white);
+}
+
+.na.filled {
+  color: var(--gray);
+  background-color: var(--bg-market-na);
+}
+
+.na.transparent {
+  color: var(--gray);
+}
+
+.na.inversion {
+  background-color: var(--gray);
+}
+

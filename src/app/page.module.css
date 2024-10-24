@@ -1,43 +1,42 @@
 .main {
-	/*text-align: center;*/
-	padding: 6rem;
-	min-height: 100vh;
+  min-height: 100vh;
+  padding: 6rem;
 }
 
 .flex {
-	display: flex;
-	flex-wrap: wrap;
-	margin-top: 20px;
+  display: flex;
+  flex-wrap: wrap;
+  margin-top: 20px;
 }
 
 .flexItem {
-	margin: 0 10px;
+  margin: 0 10px;
 }
 
 .section {
-	min-width: 450px;
+  min-width: 450px;
 }
 
 .item {
-	margin: 20px 10px;
+  margin: 20px 10px;
 }
 
 .input {
-	display: inline-block;
-	margin-left: 10px;
+  display: inline-block;
+  margin-left: 10px;
 }
 
 .modal {
-	width: 370px;
-	border: 1px solid gray;
-	padding: 20px 30px;
+  width: 370px;
+  padding: 20px 30px;
+  border: 1px solid #808080;
 }
 
 .text {
-	padding: 5px 0;
+  padding: 5px 0;
 }
 
 .link {
-	color: var(--blue);
+  color: var(--blue);
 }
 

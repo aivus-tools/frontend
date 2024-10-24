@@ -1,0 +1,22 @@
+.search {
+  display: flex;
+  padding: 10px 0;
+}
+
+.white {
+  color: var(--white);
+}
+
+.searchIcon {
+  margin-right: 6px;
+}
+
+.gray .searchIcon {
+  stroke: var(--main);
+}
+
+.white .searchIcon {
+  stroke: var(--white);
+}
+
+

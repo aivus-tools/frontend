@@ -1,0 +1,27 @@
+.inputWrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.input {
+  flex: 1;
+  max-width: 100%;
+  padding: 10px 5px;
+  border-radius: 1px;
+}
+
+.withIcon {
+  padding: 10px 20px 10px 5px;
+}
+
+.input:focus {
+  outline: 1px solid var(--blue);
+}
+
+.icon {
+  position: absolute;
+  right: 5px;
+  pointer-events: none;
+}
+

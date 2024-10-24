@@ -1,0 +1,265 @@
+.est {
+  width: 100%;
+  padding: 0 25px;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: calc(70% - 30px/2) calc(30% - 30px/2); /* 30px - column-gap */
+  column-gap: 30px;
+}
+
+.accpart {
+  padding: 16px 0;
+  background-color: var(--white);
+  border-radius: 6px;
+}
+
+.accsub {
+  position: relative;
+  padding: 8px 0;
+  background-color: var(--bg-blue-subsection);
+  border-bottom-right-radius: 6px;
+  border-bottom-left-radius: 6px;
+
+  /* box-shadow: var(--box-shadow); */
+}
+
+.accsum {
+  padding: 18px 0;
+  background-color: var(--bg-blue-important);
+  border-bottom-right-radius: 6px;
+  border-bottom-left-radius: 6px;
+  box-shadow: var(--box-shadow);
+}
+
+.accsubsum {
+  position: relative;
+  padding: 10px 0;
+  background-color: var(--bg-blue-subtotal);
+  border-bottom: 1px solid rgb(0 0 0 / 10%);
+  box-shadow: var(--box-shadow);
+}
+
+.footerSubTotal {
+  position: relative;
+  padding: 18px 0;
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--green-darker);
+  background-color: var(--bg-green);
+  border-radius: 6px;
+  box-shadow: var(--box-shadow);
+}
+
+.footerExpenses {
+  position: relative;
+  padding: 10px 0;
+  background-color: var(--white);
+  border-bottom-right-radius: 6px;
+  border-bottom-left-radius: 6px;
+  box-shadow: var(--box-shadow);
+}
+
+.footerGrandTotal {
+  position: relative;
+  padding: 18px 0;
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--gray-dark);
+  text-transform: uppercase;
+  background-color: var(--bg-blue-important);
+  border-bottom-right-radius: 6px;
+  border-bottom-left-radius: 6px;
+  box-shadow: var(--box-shadow);
+}
+
+.accsub::after,
+.footerSubTotal::after,
+.footerExpenses::after {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  z-index: 10;
+  width: 100%;
+  content: '';
+  border-bottom-right-radius: 6px;
+  border-bottom-left-radius: 6px;
+
+  /* height: 100%; */
+  box-shadow: var(--box-shadow);
+}
+
+.part {
+  position: relative;
+  background-color: var(--white);
+  border-radius: 6px;
+}
+
+.part:hover {
+  background-color: var(--bg-blue-subsection);
+}
+
+.settingsIcon,
+.removeIcon {
+  cursor: pointer;
+  visibility: hidden;
+}
+
+
+.part:hover .settingsIcon,
+.part:hover .removeIcon {
+  visibility: visible;
+}
+
+.hcontent,
+.haside {
+  height: 30px;
+}
+
+.icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+}
+
+
+.hcontent .icon,
+.haside .icon {
+  margin-top: 2px;
+}
+
+.contentGrid {
+  display: grid;
+  grid-template-columns: [start] 40px [iconend] 1fr [itemend] 80px [priceend] 140px [unitsend] 70px [quantityend] 90px [costend] 30px [end];
+  align-items: center;
+  width: 100%;
+}
+
+.asideGrid {
+  display: grid;
+  grid-template-columns: 20px repeat(4, calc((100% - 20px)/4));
+  align-items: center;
+  width: 100%;
+}
+
+.contentTotalGrid {
+  display: grid;
+  grid-template-columns: 40px 1fr 220px 160px 30px;
+  align-items: center;
+  width: 100%;
+}
+
+.asideTotalGrid {
+  display: grid;
+  grid-template-columns: 20px calc((100% - 20px)/4) calc((100% - 20px)/2) calc((100% - 20px)/4);
+  align-items: center;
+  width: 100%;
+}
+
+.section {
+  margin-bottom: 20px;
+}
+
+.sectionSum {
+  display: none;
+}
+
+.section.opened .sectionSum {
+  display: grid;
+}
+
+.sectionTitleSum,
+.subSectionTitleSum {
+  display: block;
+}
+
+.section.opened .sectionTitleSum,
+.subsection.opened .subtotalSum {
+  visibility: hidden;
+}
+
+.sectionTitleSurcharge {
+  visibility: hidden;
+}
+
+
+.section.opened .sectionTitleSurcharge {
+  visibility: visible;
+}
+
+.section.opened .accpart {
+  border-radius: 6px 6px 0 0;
+}
+
+.sectionTitle {
+  margin-left: -15px;
+}
+
+.row {
+  /* padding: 10px 0; */
+}
+
+.row .part {
+  border-radius: 0;
+}
+
+.row:last-child .part {
+  border-bottom-right-radius: 6px;
+  border-bottom-left-radius: 6px;
+  box-shadow: var(--box-shadow);
+}
+
+.rowItem {
+  padding: 10px 0;
+}
+
+.rowItem::before {
+  position: absolute;
+  top: 0;
+  left: 40px;
+  width: calc(100% - 80px);
+  height: 1px;
+  content: '';
+  border-top: 1px dashed var(--gray-light);
+}
+
+.cost {
+  padding: 10px 5px;
+  color: var(--gray);
+}
+
+
+
+.totalTitle {
+  font-size: 14px;
+  font-weight: 600;
+  text-transform: uppercase;
+}
+
+.subtotalTitle {
+  font-weight: 600;
+}
+
+.totalSum {
+  padding-right: 20px;
+  text-align: right;
+}
+
+.addItem {
+  font-size: 11px;
+  font-weight: 400;
+  color: var(--gray-light);
+  cursor: pointer;
+}
+
+.addItem span:hover {
+  color: var(--main);
+  transition: color ease-in 0.3s;
+}
+
+.alignRight {
+  padding-right: 20px;
+  text-align: right;
+}

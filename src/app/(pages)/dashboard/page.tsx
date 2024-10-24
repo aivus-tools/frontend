@@ -1,13 +1,12 @@
 'use client';
-import styles from "./page.module.css";
-import withLayout from '@/app/layout/Layout';
-import withAuth from '@/app/layout/withAuth/withAuth';
-import { SidebarDash, THeadItem, ProjectItem } from '@/app/components';
+import styles from './page.module.css';
+import withLayout from '@/layout/Layout';
+import withAuth from '@/layout/withAuth/withAuth';
+import { SidebarDash, THeadItem, ProjectItem } from '@/components';
 import cn from 'classnames';
-import SettingsIcon from '@/app/icons/settings-icon.svg';
-import { dashboardTHeads } from '@/app/handbook/handbook';
-import { THead } from '@/app/interfaces/app.interface';
-import { Project } from '@/app/interfaces/app.interface';
+import { dashboardTHeads } from '@/handbook/handbook';
+import { THead } from '@/interfaces/app.interface';
+import { Project } from '@/interfaces/app.interface';
 
 const Dashboard = () => {
 	const initialData: Project[] = [
@@ -62,8 +61,8 @@ const Dashboard = () => {
 			profit: 11893.8,
 			deadline: 'May 21, 2024',
 			createdAt: 'Mar 11, 2024',
-		}
-	]
+		},
+	];
 
 	return (
 		<main className={cn(styles.dashboard)}>
@@ -82,10 +81,9 @@ const Dashboard = () => {
 				{initialData.map((item: Project) => (
 					<ProjectItem className={cn(styles.projectItem)} key={`project_${item.id}`} item={item} />
 				))}
-
 			</div>
 		</main>
 	);
-}
+};
 
-export default withAuth(withLayout<{}>(Dashboard, 'dark', <SidebarDash />));
+export default withAuth(withLayout(Dashboard, 'dark', <SidebarDash />));

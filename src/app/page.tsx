@@ -1,5 +1,5 @@
 'use client';
-import styles from "./page.module.css";
+import styles from './page.module.css';
 import cn from 'classnames';
 import { ChangeEvent, useState } from 'react';
 import {
@@ -11,11 +11,13 @@ import {
 	LinkedPercent,
 	SettingsItem,
 	SettingsItemTitle,
-	SettingsItemExpenses, SettingsItemQuantity, SettingsItemTaxes,
+	SettingsItemExpenses,
+	SettingsItemQuantity,
+	SettingsItemTaxes,
 	SettingsItemClient,
 	SettingsItemMarket,
-} from '@/app/components';
-import { formatPrice } from '@/app/helpers/helper';
+} from '@/components';
+import { formatPrice } from '@/helpers/helper';
 import Link from 'next/link';
 
 export default function Home() {
@@ -25,9 +27,9 @@ export default function Home() {
 
 	const [inputVal, setInputVal] = useState<string>('Simple Input text');
 
-	const clickButton = (name:string) => {
+	const clickButton = (name: string) => {
 		console.log(`click ${name} button`);
-	}
+	};
 
 	const [options, setOptions] = useState<string[]>(['Option 1', 'Option 2', 'Option 3']);
 
@@ -38,7 +40,7 @@ export default function Home() {
 
 	const handleInputChange = (e: ChangeEvent<HTMLInputElement>) => {
 		setInputVal(e.target.value);
-	}
+	};
 
 	return (
 		<main className={styles.main}>
@@ -46,18 +48,19 @@ export default function Home() {
 			<div className={cn(styles.flex)}>
 				<div className={cn(styles.flexItem)}>
 					<Button
-						size="m"
-						color="transparent"
+						size='m'
+						color='transparent'
 						onClick={() => {
 							clickButton('transparent');
 						}}
-					> Button
+					>
+						Button
 					</Button>
 				</div>
 				<div className={cn(styles.flexItem)}>
 					<Button
-						size="m"
-						color="beige"
+						size='m'
+						color='beige'
 						onClick={() => {
 							clickButton('beige');
 						}}
@@ -67,8 +70,8 @@ export default function Home() {
 				</div>
 				<div className={cn(styles.flexItem)}>
 					<Button
-						size="m"
-						color="primary"
+						size='m'
+						color='primary'
 						onClick={() => {
 							clickButton('primary');
 						}}
@@ -78,10 +81,14 @@ export default function Home() {
 				</div>
 			</div>
 			<div className={cn(styles.flex)}>
-				<Link className={cn(styles.link)} href={'/estimation'}>Estimation page</Link>
+				<Link className={cn(styles.link)} href={'/estimation'}>
+					Estimation page
+				</Link>
 			</div>
 			<div className={cn(styles.flex)}>
-				<Link className={cn(styles.link)} href={'/dashboard'}>Dasboard page</Link>
+				<Link className={cn(styles.link)} href={'/dashboard'}>
+					Dasboard page
+				</Link>
 			</div>
 
 			<div className={cn(styles.flex)}>
@@ -89,9 +96,14 @@ export default function Home() {
 					<div className={cn(styles.item)}>
 						<div className={cn(styles.flexItem)}>
 							<span>Price Input:</span>
-							<EditableInput value={value} isPrice={true} onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-								setValue(parseInt(e.target.value));
-							}} className={cn(styles.input)}/>
+							<EditableInput
+								value={value}
+								isPrice={true}
+								onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+									setValue(parseInt(e.target.value));
+								}}
+								className={cn(styles.input)}
+							/>
 						</div>
 
 						<div className={cn(styles.flexItem)}>Current Price: {formatPrice(value)}</div>
@@ -114,9 +126,14 @@ export default function Home() {
 					<div className={cn(styles.item)}>
 						<div className={cn(styles.flexItem)}>
 							<span>String Input:</span>
-							<EditableInput value={valueText} type="text" onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-								setValueText(e.target.value);
-							}} className={cn(styles.input)}/>
+							<EditableInput
+								value={valueText}
+								type='text'
+								onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+									setValueText(e.target.value);
+								}}
+								className={cn(styles.input)}
+							/>
 						</div>
 						<div className={cn(styles.flexItem)}>
 							<p>Current Text: {valueText}</p>
@@ -126,10 +143,15 @@ export default function Home() {
 					<div className={cn(styles.item)}>
 						<div className={cn(styles.flexItem)}>
 							<span>Disabled Input:</span>
-							<EditableInput value={valueText} type="text" disabled={true}
-														 onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-															 setValueText(e.target.value);
-														 }} className={cn(styles.input)}/>
+							<EditableInput
+								value={valueText}
+								type='text'
+								disabled={true}
+								onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+									setValueText(e.target.value);
+								}}
+								className={cn(styles.input)}
+							/>
 						</div>
 						<div className={cn(styles.flexItem)}>
 							<p>Current Text: {valueText}</p>
@@ -138,118 +160,111 @@ export default function Home() {
 				</div>
 				<div className={cn(styles.section)}>
 					<div className={cn(styles.item)}>
-						<Input
-							value={inputVal}
-							onChange={handleInputChange}
-						/>
-						<Select options={options} onAdd={handleAddOption}/>
+						<Input value={inputVal} onChange={handleInputChange} />
+						<Select options={options} onAdd={handleAddOption} />
 					</div>
 					<div className={cn(styles.item)}>
 						<div className={cn(styles.flex)}>
 							<div className={cn(styles.flexItem)}>
-								<Percent mark="average" size="s" rounded={true} count={16}/>
+								<Percent mark='average' size='s' rounded={true} count={16} />
 							</div>
 							<div className={cn(styles.flexItem)}>
-								<Percent mark="average" size="s" count={16}/>
+								<Percent mark='average' size='s' count={16} />
 							</div>
 							<div className={cn(styles.flexItem)}>
-								<Percent mark="average" size="s" type="inversion" count={16}/>
+								<Percent mark='average' size='s' type='inversion' count={16} />
 							</div>
 							<div className={cn(styles.flexItem)}>
-								<Percent mark="average" size="s" type="transparent" count={16}/>
-							</div>
-						</div>
-
-					</div>
-					<div className={cn(styles.item)}>
-						<div className={cn(styles.flex)}>
-							<div className={cn(styles.flexItem)}>
-								<Percent mark="above" rounded={true} count={16}/>
-							</div>
-							<div className={cn(styles.flexItem)}>
-								<Percent mark="above" count={16}/>
-							</div>
-							<div className={cn(styles.flexItem)}>
-								<Percent mark="above" type="inversion" count={16}/>
-							</div>
-							<div className={cn(styles.flexItem)}>
-								<Percent mark="above" type="transparent" count={16}/>
+								<Percent mark='average' size='s' type='transparent' count={16} />
 							</div>
 						</div>
 					</div>
 					<div className={cn(styles.item)}>
 						<div className={cn(styles.flex)}>
 							<div className={cn(styles.flexItem)}>
-								<Percent mark="below" size="l" rounded={true} count={16}/>
+								<Percent mark='above' rounded={true} count={16} />
 							</div>
 							<div className={cn(styles.flexItem)}>
-								<Percent mark="below" size="l" count={16}/>
+								<Percent mark='above' count={16} />
 							</div>
 							<div className={cn(styles.flexItem)}>
-								<Percent mark="below" size="l" type="inversion" count={16}/>
+								<Percent mark='above' type='inversion' count={16} />
 							</div>
 							<div className={cn(styles.flexItem)}>
-								<Percent mark="below" size="l" type="transparent" count={16}/>
+								<Percent mark='above' type='transparent' count={16} />
 							</div>
 						</div>
 					</div>
 					<div className={cn(styles.item)}>
 						<div className={cn(styles.flex)}>
 							<div className={cn(styles.flexItem)}>
-								<Percent mark="na" rounded={true} count={0}/>
+								<Percent mark='below' size='l' rounded={true} count={16} />
 							</div>
 							<div className={cn(styles.flexItem)}>
-								<Percent mark="na" count={0}/>
+								<Percent mark='below' size='l' count={16} />
 							</div>
 							<div className={cn(styles.flexItem)}>
-								<Percent mark="na" type="inversion" count={0}/>
+								<Percent mark='below' size='l' type='inversion' count={16} />
 							</div>
 							<div className={cn(styles.flexItem)}>
-								<Percent mark="na" type="transparent" count={0}/>
+								<Percent mark='below' size='l' type='transparent' count={16} />
+							</div>
+						</div>
+					</div>
+					<div className={cn(styles.item)}>
+						<div className={cn(styles.flex)}>
+							<div className={cn(styles.flexItem)}>
+								<Percent mark='na' rounded={true} count={0} />
+							</div>
+							<div className={cn(styles.flexItem)}>
+								<Percent mark='na' count={0} />
+							</div>
+							<div className={cn(styles.flexItem)}>
+								<Percent mark='na' type='inversion' count={0} />
+							</div>
+							<div className={cn(styles.flexItem)}>
+								<Percent mark='na' type='transparent' count={0} />
 							</div>
 						</div>
 					</div>
 				</div>
 				<div className={cn(styles.modal)}>
 					<h2 className={cn(styles.text)}>Some text</h2>
-					<SettingsItemTitle
-						title="Colourful Storyboard"
-						subTitle="Options of the item"
-					/>
-					<SettingsItem title="Quantity">
-						<SettingsItemQuantity/>
+					<SettingsItemTitle title='Colourful Storyboard' subTitle='Options of the item' />
+					<SettingsItem title='Quantity'>
+						<SettingsItemQuantity />
 					</SettingsItem>
-					<SettingsItem title="Expenses">
-						<SettingsItemExpenses/>
+					<SettingsItem title='Expenses'>
+						<SettingsItemExpenses />
 					</SettingsItem>
-					<SettingsItem title="Taxes">
-						<SettingsItemTaxes/>
+					<SettingsItem title='Taxes'>
+						<SettingsItemTaxes />
 					</SettingsItem>
-					<SettingsItem title="For client">
-						<SettingsItemClient/>
+					<SettingsItem title='For client'>
+						<SettingsItemClient />
 					</SettingsItem>
-					<SettingsItem title="Market Analytics">
-						<SettingsItemMarket/>
+					<SettingsItem title='Market Analytics'>
+						<SettingsItemMarket />
 					</SettingsItem>
 				</div>
 				<div className={cn(styles.section)}>
 					<div className={cn(styles.item)}>
-						<LinkedPercent count={10}/>
+						<LinkedPercent count={10} />
 					</div>
 					<div className={cn(styles.item)}>
-						<LinkedPercent linked={false} count={16}/>
+						<LinkedPercent linked={false} count={16} />
 					</div>
 					<div className={cn(styles.item)}>
-						<LinkedPercent linked={false} disabled={true} count={16}/>
+						<LinkedPercent linked={false} disabled={true} count={16} />
 					</div>
 					<div className={cn(styles.item)}>
-						<LinkedPercent highlight={true} count={10}/>
+						<LinkedPercent highlight={true} count={10} />
 					</div>
 					<div className={cn(styles.item)}>
-						<LinkedPercent linked={false} highlight={true} count={16}/>
+						<LinkedPercent linked={false} highlight={true} count={16} />
 					</div>
 					<div className={cn(styles.item)}>
-						<LinkedPercent linked={false} highlight={true} disabled={true} count={16}/>
+						<LinkedPercent linked={false} highlight={true} disabled={true} count={16} />
 					</div>
 				</div>
 			</div>

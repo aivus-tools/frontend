@@ -1,0 +1,23 @@
+.market {
+  /* padding-right: 4px; */
+}
+
+.section:not(:last-of-type) {
+  margin-bottom: 8px;
+}
+
+.flex {
+  display: flex;
+  align-items: center;
+}
+
+.more {
+  margin-left: 8px;
+}
+
+.link {
+  font-size: 12px;
+  font-weight: 400;
+  color: var(--gray-light);
+  text-decoration-line: underline;
+}

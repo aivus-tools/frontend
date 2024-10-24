@@ -1,7 +1,6 @@
 'use client';
-import styles from "./page.module.css";
-import withLayout from '@/app/layout/Layout';
-import withAuth from '@/app/layout/withAuth/withAuth';
+import withLayout from '@/layout/Layout';
+import withAuth from '@/layout/withAuth/withAuth';
 
 const Timing = () => {
 	return (
@@ -9,6 +8,6 @@ const Timing = () => {
 			<h1>Timing Page</h1>
 		</main>
 	);
-}
+};
 
-export default withAuth(withLayout<{}>(Timing));
+export default withAuth(withLayout(Timing));

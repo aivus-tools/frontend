@@ -1,0 +1,23 @@
+.addItem {
+  display: flex;
+  align-items: center;
+  font-size: 11px;
+  font-weight: 400;
+  color: var(--gray-light);
+  cursor: pointer;
+}
+
+.addItem span:hover {
+  color: var(--main);
+  transition: color ease-in 0.3s;
+}
+
+.icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-right: 4px;
+  margin-left: -2px;
+  text-align: center;
+}
+

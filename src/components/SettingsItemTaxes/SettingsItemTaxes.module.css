@@ -1,0 +1,6 @@
+.taxes {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  padding-right: 4px;
+}

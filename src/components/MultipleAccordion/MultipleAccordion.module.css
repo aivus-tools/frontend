@@ -1,0 +1,60 @@
+.title {
+  position: relative;
+  font-size: 14px;
+  font-weight: 700;
+  text-transform: uppercase;
+  cursor: pointer;
+}
+
+.subTitle {
+  position: relative;
+  cursor: pointer;
+
+}
+
+.subTitle.opened {
+  color: var(--blue);
+}
+
+.opened.title {
+  color: var(--blue);
+}
+
+.icon {
+  position: absolute;
+  z-index: 10;
+  margin-right: 6px;
+  transition: transform ease-in 0.3s;
+  transform: rotate(-90deg);
+}
+
+
+.title .icon {
+  top: 24px;
+  left: 6px;
+  margin-right: 6px;
+}
+
+.subTitle .icon {
+  top: 16px;
+  left: 12px;
+  margin-right: 6px;
+}
+
+.title.opened .icon,
+.subTitle.opened .icon {
+  transition: transform ease-out 0.3s;
+  transform: rotate(0deg);
+}
+
+.content {
+  /* padding: 10px; */
+
+  /* background: #fff; */
+}
+
+.subContent {
+  /* padding: 10px; */
+
+  /* background: #d0d0d0; */
+}

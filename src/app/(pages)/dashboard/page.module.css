@@ -1,17 +1,17 @@
 .dashboard {
-	padding: 20px;
+  padding: 20px;
 }
-.grid {
-	display: grid;
-	grid-template-columns: 1fr 1fr 80px repeat(4, 90px);
-	column-gap: 40px;
-}
-.header {
 
+.grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr 80px repeat(4, 90px);
+  column-gap: 40px;
 }
+
 .content {
-	margin-top: 30px;
+  margin-top: 30px;
 }
+
 .projectItem {
-	margin: 10px 0;
+  margin: 10px 0;
 }

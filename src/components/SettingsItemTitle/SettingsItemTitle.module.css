@@ -1,0 +1,25 @@
+.item {
+  padding: 18px 0;
+  border-top: 1px dashed var(--gray);
+}
+
+.header {
+  display: flex;
+  align-items: baseline;
+}
+
+.titleWrap {
+  margin-left: 8px;
+}
+
+.subTitle {
+  margin-top: 2px;
+  font-size: 10px;
+  color: var(--gray);
+}
+
+.description {
+  margin-top: 8px;
+  font-size: 9px;
+  color: var(--gray);
+}

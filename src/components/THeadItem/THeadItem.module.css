@@ -1,0 +1,13 @@
+.item {
+  display: flex;
+  font-size: 10px;
+  color: var(--gray);
+}
+
+.icon {
+  margin-right: 10px;
+}
+
+.text {
+  width: 100%;
+}

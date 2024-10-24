@@ -1,0 +1,31 @@
+.item {
+  padding: 18px;
+  border-top: 1px dashed var(--gray);
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  cursor: pointer;
+}
+
+.title {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--gray-dark);
+}
+
+.icon {
+  transition: transform ease-in 0.3s;
+  transform: rotate(0);
+}
+
+.opened {
+  transition: transform ease-in 0.3s;
+  transform: rotate(-90deg);
+}
+
+.content {
+  padding: 10px 0;
+}

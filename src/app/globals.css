@@ -1,71 +1,65 @@
 :root {
-	--min-width: 320;
-	--max-width: 1280px;
-	--font-family: 'Montserrat', 'Aria', sans-serif;
+  --min-width: 320;
+  --max-width: 1280px;
+  --font-family: 'Montserrat', 'Aria', sans-serif;
 
-	/* COLOURS */
-	--white: #FFFFFF;
-	--beige: #F9F9F9;
-	--gray-light: #A0A0A0;
-	--gray: #99A1B7;
-	--gray-dark: #3F3E3E;
-	--main: #4B5675;
-	--main-dark: #121B3E;
-	--blue: #2288FF;
-	--orange: #FD8258;
-	--red: #D63C22;
-	--green: #BED935;
-	--green-darker: #A5C500;
-	--bg-blue-subtotal: #F4FBFF;
-	--bg-blue-subsection: #F6F9FF;
-	--bg-blue-important: #E1F5FF;
-	--bg-market-na: #EFF4FE;
-	--bg-orange: #F8E4C5;
-	--bg-green: #F4FBDB;
-	--bg-light-green: #FCFFF0;
-	--bg-red: #F6DCD7;
-	--bg-gray-ligth: #E5E5E5;
-	--bg-gray-page: #F6F7F9;
-
-	--compare-green: #5CE191;
-	--compare-green-light: #CCE25F;
-	--compare-yellow: #F8D977;
-	--compare-orange: #FC9B73;
-	--compare-red: #DE644F;
-
-
-	--boxShadow: 0 5px 16.5px -11px rgba(0, 0, 0, 0.25);
+  /* COLOURS */
+  --white: #fff;
+  --beige: #f9f9f9;
+  --gray-light: #a0a0a0;
+  --gray: #99a1b7;
+  --gray-dark: #3f3e3e;
+  --main: #4b5675;
+  --main-dark: #121b3e;
+  --blue: #28f;
+  --orange: #fd8258;
+  --red: #d63c22;
+  --green: #bed935;
+  --green-darker: #a5c500;
+  --bg-blue-subtotal: #f4fbff;
+  --bg-blue-subsection: #f6f9ff;
+  --bg-blue-important: #e1f5ff;
+  --bg-market-na: #eff4fe;
+  --bg-orange: #f8e4c5;
+  --bg-green: #f4fbdb;
+  --bg-light-green: #fcfff0;
+  --bg-red: #f6dcd7;
+  --bg-gray-ligth: #e5e5e5;
+  --bg-gray-page: #f6f7f9;
+  --compare-green: #5ce191;
+  --compare-green-light: #cce25f;
+  --compare-yellow: #f8d977;
+  --compare-orange: #fc9b73;
+  --compare-red: #de644f;
+  --box-shadow: 0 5px 16.5px -11px rgb(0 0 0 / 25%);
 
 }
 
 * {
-	box-sizing: border-box;
-	padding: 0;
-	margin: 0;
+  box-sizing: border-box;
+  padding: 0;
+  margin: 0;
 }
 
 html,
 body {
-	max-width: 100vw;
-	overflow-x: hidden;
-	color: var(--main);
-	background-color: var(--white);
-	font-size: 13px;
-	font-weight: 500;
+  max-width: 100vw;
+  overflow-x: hidden;
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--main);
+  background-color: var(--white);
 }
 
-body {
-
-}
 
 h2 {
-	font-size: 14px;
-	font-weight: 600;
+  font-size: 14px;
+  font-weight: 600;
 }
 
 a {
-	color: inherit;
-	text-decoration: none;
+  color: inherit;
+  text-decoration: none;
 }
 
 
@@ -75,71 +69,70 @@ input,
 optgroup,
 select,
 textarea {
-	padding: 0;
-	margin: 0;
-	border: none;
-	border-radius: 0;
-	box-shadow: none;
-	background-color: transparent;
-	font: inherit; /* По дефолту, шрифтовые свойства, для этих элементов не наследуются */
-	color: inherit;
-	letter-spacing: inherit;
+  padding: 0;
+  margin: 0;
+  font: inherit; /* По дефолту, шрифтовые свойства, для этих элементов не наследуются */
+  color: inherit;
+  letter-spacing: inherit;
+  background-color: transparent;
+  border: 0;
+  border-radius: 0;
+  box-shadow: none;
 }
 
 button,
 input {
-	overflow: visible;
+  overflow: visible;
 }
 
 button,
 select {
-	text-align: left;
-	text-transform: none;
+  text-align: left;
+  text-transform: none;
 }
 
 button,
 [type='button'],
 [type='reset'],
 [type='submit'] {
-	cursor: pointer;
-	-webkit-appearance: none;
+  appearance: none;
+  cursor: pointer;
 }
 
 textarea {
-	resize: none;
-	overflow-y: auto;
-	overflow-x: hidden;
+  overflow: hidden auto;
+  resize: none;
 }
 
 button::-moz-focus-inner,
 [type='button']::-moz-focus-inner,
 [type='reset']::-moz-focus-inner,
 [type='submit']::-moz-focus-inner {
-	border: none;
-	padding: 0;
+  padding: 0;
+  border: 0;
 }
 
 button:-moz-focusring,
 [type='button']:-moz-focusring,
 [type='reset']:-moz-focusring,
 [type='submit']:-moz-focusring {
-	outline: none;
+  outline: none;
 }
 
 [type='number']::-webkit-inner-spin-button,
 [type='number']::-webkit-outer-spin-button {
-	height: auto;
+  height: auto;
 }
 
 [type='search']::-webkit-search-decoration {
-	-webkit-appearance: none;
+  appearance: none;
 }
 
 [type='search'] {
-	outline: none;
+  outline: none;
 }
 
 ::-webkit-file-upload-button {
-	-webkit-appearance: button;
-	font: inherit;
+  font: inherit;
+  appearance: button;
 }

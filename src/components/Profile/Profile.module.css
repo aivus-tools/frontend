@@ -1,0 +1,40 @@
+.profile {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.icon {
+  margin-right: 15px;
+  cursor: pointer;
+}
+
+.user {
+  display: flex;
+  align-items: center;
+  padding: 5px 10px;
+  cursor: pointer;
+  background-color: var(--bg-gray-ligth);
+  border-radius: 30px;
+}
+
+.userpic {
+  width: 27px;
+  height: 27px;
+  margin-right: 5px;
+  background-image: url('/images/userpic.png');
+  background-size: cover;
+  border-radius: 50%;
+}
+
+.popover {
+  width: 240px;
+  padding: 20px;
+  background-color: var(--white);
+  border-radius: 6px;
+  box-shadow: 0 0 16px 0 rgb(0 0 0 / 25%);
+}
+
+.logout {
+  cursor: pointer;
+}

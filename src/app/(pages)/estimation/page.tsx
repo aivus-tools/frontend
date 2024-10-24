@@ -1,145 +1,143 @@
-'use client'
-import styles from "./page.module.css";
-import cn from 'classnames';
-import withLayout from '@/app/layout/Layout';
-import withAuth from '@/app/layout/withAuth/withAuth';
-import { EstTable, SidebarEst } from '@/app/components';
-import { TRow, TSection } from '@/app/interfaces/app.interface';
+'use client';
+import withLayout from '@/layout/Layout';
+import withAuth from '@/layout/withAuth/withAuth';
+import { EstTable, SidebarEst } from '@/components';
+import { TRow, TSection } from '@/interfaces/app.interface';
 import { useEffect } from 'react';
 
 import { useSelector, useDispatch } from 'react-redux';
-import { RootState } from '@/app/store/store';
-import { setTableData, removeItem, addItem, addSection, updateItem } from '@/app/store/actions';
+import { RootState } from '@/store/store';
+import { setTableData, removeItem, addItem, addSection, updateItem } from '@/store/actions';
+
+const initialData: TSection[] = [
+	{
+		id: 1,
+		title: 'Pre production',
+		isHidden: false,
+		rows: [
+			{
+				id: 111,
+				item: 'Colorful Storyboard',
+				price: 1700,
+				units: 'Units',
+				quantity: 1,
+				surcharge: 10,
+				cprice: 1700,
+				range: 16,
+			},
+			{
+				id: 112,
+				item: 'Select an item 1',
+				price: 600,
+				units: 'Pack',
+				quantity: 1,
+				surcharge: 10,
+				cprice: 700,
+				range: 16,
+			},
+			{
+				id: 113,
+				item: 'Select an item 2',
+				price: 300,
+				units: 'Piece',
+				quantity: 1,
+				surcharge: 10,
+				cprice: 300,
+				range: 15,
+			},
+		],
+	},
+	{
+		id: 2,
+		title: 'Production',
+		isHidden: false,
+		subSections: [
+			{
+				id: 21,
+				title: 'Locations',
+				isHidden: false,
+				rows: [
+					{
+						id: 211,
+						item: 'Colorful Storyboard',
+						price: 2000,
+						units: 'Units',
+						quantity: 1,
+						surcharge: 10,
+						cprice: 2200,
+						range: 16,
+					},
+					{
+						id: 212,
+						item: 'Select an item',
+						price: 300,
+						units: 'Units',
+						quantity: 1,
+						surcharge: 10,
+						cprice: 300,
+						range: 19,
+					},
+				],
+			},
+			{
+				id: 22,
+				title: 'Sub Section 2',
+				isHidden: false,
+				rows: [
+					{
+						id: 221,
+						item: 'Colorful Storyboard',
+						price: 1700,
+						units: '',
+						quantity: 1,
+						surcharge: 10,
+						cprice: 1700,
+						range: 16,
+					},
+					{
+						id: 222,
+						item: 'Select an item',
+						price: 300,
+						units: 'Units',
+						quantity: 1,
+						surcharge: 10,
+						cprice: 300,
+						range: 19,
+					},
+				],
+			},
+		],
+	},
+	{
+		id: 3,
+		title: 'Creative',
+		isHidden: false,
+		rows: [
+			{
+				id: 311,
+				item: 'Colorful Storyboard',
+				price: 1700,
+				units: 'Piece',
+				quantity: 1,
+				surcharge: 10,
+				cprice: 1700,
+				range: 16,
+			},
+			{
+				id: 312,
+				item: 'Select an item',
+				price: 300,
+				units: 'Piece',
+				quantity: 1,
+				surcharge: 10,
+				cprice: 300,
+				range: 19,
+			},
+		],
+	},
+];
 
 const Estimation = () => {
-	const initialData: TSection[] = [
-		{
-			id: 1,
-			title: 'Pre production',
-			isHidden: false,
-			rows: [
-				{
-					id: 111,
-					item: 'Colorful Storyboard',
-					price: 1700,
-					units: 'Units',
-					quantity: 1,
-					surcharge: 10,
-					cprice: 1700,
-					range: 16,
-				},
-				{
-					id: 112,
-					item: 'Select an item 1',
-					price: 600,
-					units: 'Pack',
-					quantity: 1,
-					surcharge: 10,
-					cprice: 700,
-					range: 16,
-				},
-				{
-					id: 113,
-					item: 'Select an item 2',
-					price: 300,
-					units: 'Piece',
-					quantity: 1,
-					surcharge: 10,
-					cprice: 300,
-					range: 15,
-				}
-			]
-		},
-		{
-			id: 2,
-			title: 'Production',
-			isHidden: false,
-			subSections: [
-				{
-					id: 21,
-					title: 'Locations',
-					isHidden: false,
-					rows: [
-						{
-							id: 211,
-							item: 'Colorful Storyboard',
-							price: 2000,
-							units: 'Units',
-							quantity: 1,
-							surcharge: 10,
-							cprice: 2200,
-							range: 16,
-						},
-						{
-							id: 212,
-							item: 'Select an item',
-							price: 300,
-							units: 'Units',
-							quantity: 1,
-							surcharge: 10,
-							cprice: 300,
-							range: 19,
-						}
-					]
-				},
-				{
-					id: 22,
-					title: 'Sub Section 2',
-					isHidden: false,
-					rows: [
-						{
-							id: 221,
-							item: 'Colorful Storyboard',
-							price: 1700,
-							units: '',
-							quantity: 1,
-							surcharge: 10,
-							cprice: 1700,
-							range: 16,
-						},
-						{
-							id: 222,
-							item: 'Select an item',
-							price: 300,
-							units: 'Units',
-							quantity: 1,
-							surcharge: 10,
-							cprice: 300,
-							range: 19,
-						}
-					]
-				}
-			],
-		},
-		{
-			id: 3,
-			title: 'Creative',
-			isHidden: false,
-			rows: [
-				{
-					id: 311,
-					item: 'Colorful Storyboard',
-					price: 1700,
-					units: 'Piece',
-					quantity: 1,
-					surcharge: 10,
-					cprice: 1700,
-					range: 16,
-				},
-				{
-					id: 312,
-					item: 'Select an item',
-					price: 300,
-					units: 'Piece',
-					quantity: 1,
-					surcharge: 10,
-					cprice: 300,
-					range: 19,
-				}
-			]
-		},
-	]
-
 	const data = useSelector((state: RootState) => state.estimates.data);
 	const dispatch = useDispatch();
 
@@ -165,7 +163,7 @@ const Estimation = () => {
 		dispatch(addItem({ sectionId, newRow, isSubSection }));
 	};
 	const handleAddSection = () => {
-		let newSection: TSection = {
+		const newSection: TSection = {
 			id: +new Date() % 1000,
 			title: 'New Section',
 			isHidden: false,
@@ -178,13 +176,10 @@ const Estimation = () => {
 		dispatch(updateItem({ sectionId, rowId, field, value }));
 	};
 
-	// useEffect(() => {
-	// 	console.log(data);
-	// }, [data]);
-
 	return (
 		<main>
-			<EstTable data={data}
+			<EstTable
+				data={data}
 				onRemoveItem={handleRemoveItem}
 				onAddItem={handleAddItem}
 				onAddSection={handleAddSection}
@@ -192,6 +187,6 @@ const Estimation = () => {
 			/>
 		</main>
 	);
-}
+};
 
-export default withAuth(withLayout<{}>(Estimation, 'light', <SidebarEst />));
+export default withAuth(withLayout(Estimation, 'light', <SidebarEst />));
