@@ -14,4 +14,10 @@
 
 .projectItem {
   margin: 10px 0;
+  cursor: pointer;
+
+  &:hover {
+    filter: brightness(90%);
+    box-shadow: rgb(149 157 165 / 20%) 0 8px 24px;
+  }
 }

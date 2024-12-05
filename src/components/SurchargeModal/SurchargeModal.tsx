@@ -1,12 +1,14 @@
 'use client';
-import { SurchargeModalProps } from './SurchargeModal.props';
 import styles from './SurchargeModal.module.css';
 import cn from 'classnames';
 import { EditableInput } from '@/components';
 import UnlinkIcon from '@/icons/unlink-icon.svg';
 import LinkAngleIcon from '@/icons/link-angle-icon.svg';
+import { DetailedHTMLProps, HTMLAttributes } from 'react';
 
-export const SurchargeModal = ({ className, ...props }: SurchargeModalProps) => {
+type Props = DetailedHTMLProps<HTMLAttributes<HTMLDivElement>, HTMLDivElement>;
+
+export const SurchargeModal = ({ className, ...props }: Props) => {
 	return (
 		<div className={cn(styles.surcharge, className)} {...props}>
 			<div className={cn(styles.title)}>Surcharge</div>

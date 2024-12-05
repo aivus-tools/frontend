@@ -9,7 +9,7 @@
     "lint": "next lint --dir src",
     "lint:styles": "stylelint **/*.{css,scss,sass}",
     "test": "echo \"Error: no test specified\"",
-	"typecheck": "tsc --noEmit",
+    "typecheck": "tsc --noEmit",
     "prepare": "husky"
   },
   "dependencies": {
@@ -17,11 +17,14 @@
     "classnames": "^2.5.1",
     "date-fns": "^4.1.0",
     "next": "^15.0.1",
+    "next-auth": "^5.0.0-beta.25",
     "react": "^18",
     "react-dom": "^18",
     "react-hook-form": "^7.52.1",
     "react-redux": "^9.1.2",
-    "react-tiny-popover": "^8.0.4"
+    "react-router-dom": "^6.28.0",
+    "react-tiny-popover": "^8.0.4",
+    "zod": "^3.23.8"
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3.1.0",

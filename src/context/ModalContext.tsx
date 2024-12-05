@@ -1,5 +1,5 @@
 'use client';
-import React, { createContext, useContext, useState, ReactNode, ReactElement } from 'react';
+import React, { createContext, useContext, useState, ReactElement, PropsWithChildren } from 'react';
 import { Modal, SideModal } from '@/components';
 
 type ModalType = 'centered' | 'side';
@@ -11,7 +11,7 @@ interface ModalContextProps {
 
 const ModalContext = createContext<ModalContextProps | undefined>(undefined);
 
-export const ModalProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
+export const ModalProvider = ({ children }: PropsWithChildren) => {
 	const [modalContent, setModalContent] = useState<ReactElement | null>(null);
 	const [modalType, setModalType] = useState<ModalType>('centered');
 

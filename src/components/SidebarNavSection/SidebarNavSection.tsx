@@ -1,3 +1,4 @@
+'use client';
 import { SidebarNavSectionProps } from './SidebarNavSection.props';
 import styles from './SidebarNavSection.module.css';
 import cn from 'classnames';

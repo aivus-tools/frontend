@@ -1,3 +1,4 @@
+'use client';
 import { SettingsItemProps } from './SettingsItem.props';
 import styles from './SettingsItem.module.css';
 import cn from 'classnames';

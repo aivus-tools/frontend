@@ -11,3 +11,7 @@
 .headerContent {
   /* grid-area: content; */
 }
+
+.share {
+  justify-self: end;
+}

@@ -2,56 +2,56 @@
 import { NavProps } from './Nav.props';
 import styles from './Nav.module.css';
 import cn from 'classnames';
-import { usePathname } from 'next/navigation';
 import { Menu } from '@/interfaces/app.interface';
 import { Button } from '@/components';
-import Link from 'next/link';
+import { NavLink } from 'react-router-dom';
 
 const menu: Menu[] = [
 	{
 		title: 'Prj details',
-		route: '/project',
+		route: '/projects/project',
 		pathname: 'project',
 	},
 	{
 		title: 'Estimation',
-		route: '/estimation',
+		route: '/projects/estimation',
 		pathname: 'estimation',
 	},
 	{
 		title: 'Client’s offer',
-		route: '/offer',
+		route: '/projects/offer',
 		pathname: 'offer',
 	},
 	{
 		title: 'Timing',
-		route: '/timing',
+		route: '/projects/timing',
 		pathname: 'timing',
 	},
 	{
 		title: 'Presentation',
-		route: '/presentation',
+		route: '/projects/presentation',
 		pathname: 'presentation',
 	},
 	{
 		title: 'Analysis',
-		route: '/analysis',
+		route: '/projects/analysis',
 		pathname: 'analysis',
 	},
 ];
 
 export const Nav = ({ className, ...props }: NavProps) => {
-	const pathname = usePathname();
 	return (
 		<nav className={cn(styles.nav, className)} {...props}>
 			{menu.map((item: Menu, index: number) => {
 				return (
 					<div key={index} className={cn(styles.navItem)}>
-						<Link href={item.route}>
-							<Button size='m' color={pathname.includes(item.pathname) ? 'beige' : 'transparent'}>
-								{item.title}
-							</Button>
-						</Link>
+						<NavLink to={item.route}>
+							{({ isActive }) => (
+								<Button size='m' color={isActive ? 'beige' : 'transparent'}>
+									{item.title}
+								</Button>
+							)}
+						</NavLink>
 					</div>
 				);
 			})}

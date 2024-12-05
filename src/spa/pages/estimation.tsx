@@ -1,7 +1,4 @@
-'use client';
-import withLayout from '@/layout/Layout';
-import withAuth from '@/layout/withAuth/withAuth';
-import { EstTable, SidebarEst } from '@/components';
+import { EstTable } from '@/components';
 import { TRow, TSection } from '@/interfaces/app.interface';
 import { useEffect } from 'react';
 
@@ -137,7 +134,7 @@ const initialData: TSection[] = [
 	},
 ];
 
-const Estimation = () => {
+export const Estimation = () => {
 	const data = useSelector((state: RootState) => state.estimates.data);
 	const dispatch = useDispatch();
 
@@ -177,7 +174,7 @@ const Estimation = () => {
 	};
 
 	return (
-		<main>
+		<main style={{ maxHeight: '100%', overflowY: 'auto' }}>
 			<EstTable
 				data={data}
 				onRemoveItem={handleRemoveItem}
@@ -188,5 +185,3 @@ const Estimation = () => {
 		</main>
 	);
 };
-
-export default withAuth(withLayout(Estimation, 'light', <SidebarEst />));

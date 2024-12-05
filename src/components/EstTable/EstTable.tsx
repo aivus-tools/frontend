@@ -108,7 +108,7 @@ export const EstTable = ({ data, onRemoveItem, onAddItem, onAddSection, onChange
 							text={item.text}
 						/>
 					))}
-					<div></div>
+					<div />
 				</div>
 				<div className={cn(styles.haside, styles.asideGrid)}>
 					<div className={cn(styles.icon)}>
@@ -272,8 +272,8 @@ export const EstTable = ({ data, onRemoveItem, onAddItem, onAddSection, onChange
 						[styles.accsubsum]: isSubSection,
 					})}
 				>
-					<div></div>
-					<div></div>
+					<div />
+					<div />
 					<div className={cn(styles.totalSum)}>
 						<Sum count={totalClientSum} size={isSubSection ? 's' : 'm'} type='blue' />
 					</div>
@@ -303,15 +303,15 @@ export const EstTable = ({ data, onRemoveItem, onAddItem, onAddSection, onChange
 					title={
 						<div className={cn(styles.grid)}>
 							<div className={cn(styles.accpart, styles.contentTotalGrid)}>
-								<div></div>
+								<div />
 								<div className={cn(styles.sectionTitle)}>{item.title}</div>
-								<div></div>
+								<div />
 								<div className={cn(styles.sectionTitleSum, styles.totalSum)}>
 									<Sum count={totalSum} type='blue' />
 								</div>
 							</div>
 							<div className={cn(styles.accpart, styles.asideTotalGrid)}>
-								<div></div>
+								<div />
 								<div>
 									<LinkedPercent
 										className={cn(styles.sectionTitleSurcharge)}
@@ -355,15 +355,15 @@ export const EstTable = ({ data, onRemoveItem, onAddItem, onAddSection, onChange
 					title={
 						<div className={cn(styles.grid)}>
 							<div className={cn(styles.accpart, styles.contentTotalGrid)}>
-								<div></div>
+								<div />
 								<div className={cn(styles.sectionTitle)}>{item.title}</div>
-								<div></div>
+								<div />
 								<div className={cn(styles.sectionTitleSum, styles.totalSum)}>
 									<Sum count={totalSum} type='blue' />
 								</div>
 							</div>
 							<div className={cn(styles.accpart, styles.asideTotalGrid)}>
-								<div></div>
+								<div />
 								<div>
 									<LinkedPercent
 										className={cn(styles.sectionTitleSurcharge)}
@@ -393,16 +393,16 @@ export const EstTable = ({ data, onRemoveItem, onAddItem, onAddSection, onChange
 								>
 									<div className={cn(styles.grid)}>
 										<div className={cn(styles.accsub, styles.contentTotalGrid)}>
-											<div></div>
+											<div />
 											<div>{sub.title}</div>
-											<div></div>
+											<div />
 											<div className={cn(styles.totalSum)}>
 												<Sum count={getTotalCost(sub, 'price')} size='s' type='blue' />
 											</div>
 										</div>
 										<div className={cn(styles.accsub, styles.asideTotalGrid)}>
-											<div></div>
-											<div></div>
+											<div />
+											<div />
 											<div className={cn(styles.totalSum)}>
 												<Sum count={getTotalCost(sub, 'cprice')} size='s' type='blue' />
 											</div>
@@ -440,14 +440,14 @@ export const EstTable = ({ data, onRemoveItem, onAddItem, onAddSection, onChange
 							<SettingsIcon />
 						</div>
 						<div>Subtotal for All Sections</div>
-						<div></div>
+						<div />
 						<div className={cn(styles.totalSum)}>
 							<Sum count={totalCost.total} size='l' type='green' />
 						</div>
 					</div>
 					<div className={cn(styles.asideTotalGrid, styles.footerSubTotal)}>
-						<div></div>
-						<div></div>
+						<div />
+						<div />
 						<div className={cn(styles.totalSum)}>
 							<Sum count={totalCost.ctotal} size='l' type='green' />
 						</div>
@@ -462,14 +462,14 @@ export const EstTable = ({ data, onRemoveItem, onAddItem, onAddSection, onChange
 							<OpenedEyeIcon />
 						</div>
 						<div>Unforeseen expenses</div>
-						<div></div>
+						<div />
 						<div className={cn(styles.totalSum)}>
 							<Sum count={expensesCost.total} size='xs' />
 						</div>
 					</div>
 					<div className={cn(styles.asideTotalGrid, styles.footerExpenses)}>
-						<div></div>
-						<div></div>
+						<div />
+						<div />
 						<div className={cn(styles.totalSum)}>
 							<Sum count={expensesCost.ctotal} size='xs' />
 						</div>
@@ -484,14 +484,14 @@ export const EstTable = ({ data, onRemoveItem, onAddItem, onAddSection, onChange
 							<SettingsIcon />
 						</div>
 						<div>Grand total</div>
-						<div></div>
+						<div />
 						<div className={cn(styles.totalSum)}>
 							<Sum count={grandTotalCost.total} size='l' type='dark' />
 						</div>
 					</div>
 					<div className={cn(styles.asideTotalGrid, styles.footerGrandTotal)}>
-						<div></div>
-						<div></div>
+						<div />
+						<div />
 						<div className={cn(styles.totalSum)}>
 							<Sum count={grandTotalCost.ctotal} size='l' type='dark' />
 						</div>
@@ -506,18 +506,18 @@ export const EstTable = ({ data, onRemoveItem, onAddItem, onAddSection, onChange
 							<OpenedEyeIcon />
 						</div>
 						<div>Cost Per Video</div>
-						<div></div>
+						<div />
 						<div className={cn(styles.totalSum)}>
 							<Sum count={10363.5} size='xs' />
 						</div>
 					</div>
 					<div className={cn(styles.asideTotalGrid, styles.footerExpenses)}>
-						<div></div>
-						<div></div>
+						<div />
+						<div />
 						<div className={cn(styles.totalSum)}>
 							<Sum count={16310.4} size='xs' />
 						</div>
-						<div></div>
+						<div />
 					</div>
 				</div>
 			</>

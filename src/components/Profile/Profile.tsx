@@ -12,9 +12,7 @@ export const Profile = ({ className, ...props }: ProfileProps) => {
 	const [isPopoverOpen, setIsPopoverOpen] = useState(false);
 
 	const logoutHandle = (): void => {
-		// dispatch(setUser(null));
-		// Cookies.remove('token', { path: '' });
-		location.href = '/';
+		window.open('/auth', '_self');
 	};
 
 	return (
