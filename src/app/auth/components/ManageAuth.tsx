@@ -1,13 +1,20 @@
 'use client';
-import { signup, initialFormState } from '@/app/actions/auth';
+import { signup } from '@/app/actions/auth';
 import { useActionState } from 'react';
 import { EmailForm } from './EmailForm';
 import { PasswordForm } from './PasswordForm';
+import { FormState } from '@/app/lib/definitions';
+
+const initialFormState: FormState = {
+	errors: {},
+	message: '',
+	status: 'unknown',
+};
 
 export function ManageAuth() {
 	const [state, action] = useActionState(signup, initialFormState);
 	const emailError = state?.errors?.email?.join(' ');
-	const passwordError = state?.errors?.email?.join(' ');
+	const passwordError = state?.errors?.password?.join(' ');
 
 	const handlePassSubmit = (formData: FormData) => {
 		if (state?.email) {

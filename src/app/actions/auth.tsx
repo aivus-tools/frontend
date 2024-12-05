@@ -1,11 +1,7 @@
+'use server';
 import { SignupFormSchema, FormState } from '@/app/lib/definitions';
 import { redirect } from 'next/navigation';
-
-export const initialFormState: FormState = {
-	errors: {},
-	message: '',
-	status: 'unknown',
-};
+import { createSession } from '../lib/session';
 
 export async function signup(state: FormState, formData: FormData): Promise<FormState> {
 	if (!formData) {
@@ -24,12 +20,17 @@ export async function signup(state: FormState, formData: FormData): Promise<Form
 		return { email, status: 'exist' as const };
 	}
 	if (email === 'client@aivus.com' && password === 'client') {
-		// get token for client
-		redirect('/dashboard');
+		await createSession('client');
+		redirect('/app/dashboard');
 	}
 	if (email === 'vendor@aivus.com' && password === 'vendor') {
-		// get token for vendor
-		redirect('/dashboard');
+		await createSession('vendor');
+		redirect('/app/dashboard');
 	}
-	redirect('/dashboard');
+
+	return {
+		email: email as string,
+		errors: { password: ['Invalid password'] },
+		status: 'exist' as const,
+	};
 }

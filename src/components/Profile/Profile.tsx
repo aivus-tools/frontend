@@ -19,11 +19,10 @@ export const Profile = ({ className, ...props }: ProfileProps) => {
 		<div className={cn(styles.profile, className)} {...props}>
 			<MovieIcon className={cn(styles.icon)} />
 			<NotificationIcon className={cn(styles.icon)} />
-
 			<Popover
 				isOpen={isPopoverOpen}
 				positions={['bottom']}
-				align='center'
+				align='end'
 				padding={8}
 				onClickOutside={() => setIsPopoverOpen(false)}
 				content={() => (

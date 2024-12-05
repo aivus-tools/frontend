@@ -29,7 +29,7 @@ export const Dashboard = () => {
 						className={cn(styles.projectItem)}
 						key={`project_${item.id}`}
 						item={item}
-						onClick={() => navigate('/projects/estimation')}
+						onClick={() => navigate('/app/projects/estimation')}
 					/>
 				))}
 			</div>

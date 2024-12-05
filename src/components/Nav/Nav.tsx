@@ -9,32 +9,32 @@ import { NavLink } from 'react-router-dom';
 const menu: Menu[] = [
 	{
 		title: 'Prj details',
-		route: '/projects/project',
+		route: '/app/projects/project',
 		pathname: 'project',
 	},
 	{
 		title: 'Estimation',
-		route: '/projects/estimation',
+		route: '/app/projects/estimation',
 		pathname: 'estimation',
 	},
 	{
 		title: 'Client’s offer',
-		route: '/projects/offer',
+		route: '/app/projects/offer',
 		pathname: 'offer',
 	},
 	{
 		title: 'Timing',
-		route: '/projects/timing',
+		route: '/app/projects/timing',
 		pathname: 'timing',
 	},
 	{
 		title: 'Presentation',
-		route: '/projects/presentation',
+		route: '/app/projects/presentation',
 		pathname: 'presentation',
 	},
 	{
 		title: 'Analysis',
-		route: '/projects/analysis',
+		route: '/app/projects/analysis',
 		pathname: 'analysis',
 	},
 ];
