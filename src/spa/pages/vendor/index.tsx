@@ -8,6 +8,7 @@ import { Sidebar } from '@/layout/Sidebar/Sidebar';
 
 import { SidebarDash, SidebarEst } from '@/components';
 import styles from '../../../layout/Layout.module.css';
+import { Details } from './Details';
 
 const Layout = ({ theme = 'light', sidebarContent, className, hideNavigation, ...props }: LayoutProps) => {
 	return (
@@ -29,6 +30,7 @@ const VendorRoutes = () => {
 					<Route index element={<Dashboard />}></Route>
 				</Route>
 				<Route path='projects' element={<Layout sidebarContent={<SidebarEst />} />}>
+					<Route path='details' element={<Details />} />
 					<Route path='estimation' element={<Estimation />} />
 					<Route path='*' element={<></>} />
 				</Route>
