@@ -1,7 +1,7 @@
 import styles from './styles.module.css';
 import LogoIcon from '@/icons/aivus-logo.svg';
 import { Google } from '@/components/Auth/Google';
-import { Apple } from '@/components/Auth/Apple';
+// import { Apple } from '@/components/Auth/Apple';
 import { ManageAuth } from './components/ManageAuth';
 
 export function AuthForm() {
@@ -16,7 +16,7 @@ export function AuthForm() {
 				<div className={styles.divider}>OR</div>
 				<div className={styles.buttonGroup}>
 					<Google />
-					<Apple />
+					{/* <Apple /> */}
 				</div>
 				<div className={styles.text}>
 					<span>
