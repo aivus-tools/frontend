@@ -1,10 +1,18 @@
 import 'server-only';
 import { cookies } from 'next/headers';
+import { Roles } from '@/services/types';
 
-export async function createSession(userType: string) {
+export async function createSession(role: Roles, id: string | number) {
 	const cookieStore = await cookies();
 	const expiresAt = new Date(Date.now() + 1000 * 60 * 60 * 24); // 1 day expiration
-	cookieStore.set('session', userType, {
+	cookieStore.set('role', role, {
+		httpOnly: true,
+		secure: true,
+		expires: expiresAt,
+		sameSite: 'lax',
+		path: '/',
+	});
+	cookieStore.set('userId', `${id}`, {
 		httpOnly: true,
 		secure: true,
 		expires: expiresAt,
@@ -13,26 +21,8 @@ export async function createSession(userType: string) {
 	});
 }
 
-export async function updateSession() {
-	const userType = (await cookies()).get('session')?.value;
-
-	if (!userType) {
-		return null;
-	}
-
-	const expires = new Date(Date.now() + 1000 * 60 * 60 * 24); // 1 day expiration
-
-	const cookieStore = await cookies();
-	cookieStore.set('session', userType, {
-		httpOnly: true,
-		secure: true,
-		expires: expires,
-		sameSite: 'lax',
-		path: '/',
-	});
-}
-
 export async function deleteSession() {
 	const cookieStore = await cookies();
-	cookieStore.delete('session');
+	cookieStore.delete('userId');
+	cookieStore.delete('role');
 }

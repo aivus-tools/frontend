@@ -1,3 +1,4 @@
+'use client';
 import { SidebarEstProps } from './SidebarEst.props';
 import styles from './SidebarEst.module.css';
 import cn from 'classnames';

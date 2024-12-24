@@ -11,6 +11,7 @@
 
 .user {
   display: flex;
+  gap: 4px;
   align-items: center;
   padding: 5px 10px;
   cursor: pointer;
@@ -22,7 +23,6 @@
   width: 27px;
   height: 27px;
   margin-right: 5px;
-  background-image: url('/images/userpic.png');
   background-size: cover;
   border-radius: 50%;
 }

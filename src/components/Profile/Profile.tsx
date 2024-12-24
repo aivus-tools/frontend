@@ -1,5 +1,6 @@
 'use client';
 import { ProfileProps } from './Profile.props';
+import { UserOutlined } from '@ant-design/icons';
 import styles from './Profile.module.css';
 import cn from 'classnames';
 import MovieIcon from './movie-icon.svg';
@@ -7,12 +8,18 @@ import NotificationIcon from './notification-icon.svg';
 import ArrowIcon from './arrow-icon.svg';
 import { Popover } from 'react-tiny-popover';
 import { useState } from 'react';
+import { logout } from '@/app/actions/logout';
+import { Avatar } from 'antd';
+import { useSession } from 'next-auth/react';
+import { ProfileImage } from './ProfileImage';
 
 export const Profile = ({ className, ...props }: ProfileProps) => {
 	const [isPopoverOpen, setIsPopoverOpen] = useState(false);
+	const session = useSession();
+	const image = session?.data?.user?.image;
 
-	const logoutHandle = (): void => {
-		window.open('/auth', '_self');
+	const logoutHandle = () => {
+		logout();
 	};
 
 	return (
@@ -34,7 +41,7 @@ export const Profile = ({ className, ...props }: ProfileProps) => {
 				)}
 			>
 				<div className={styles.user} onClick={() => setIsPopoverOpen(!isPopoverOpen)}>
-					<div className={styles.userpic}></div>
+					<Avatar icon={image ? <ProfileImage url={image} /> : <UserOutlined />} size={32} />
 					<ArrowIcon />
 				</div>
 			</Popover>

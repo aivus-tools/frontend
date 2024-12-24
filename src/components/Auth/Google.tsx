@@ -10,7 +10,7 @@ export async function Google() {
 		<form
 			action={async () => {
 				'use server';
-				await signIn('google', { callbackUrl: 'localhost:3000/app/dashboard' });
+				await signIn('google', { callbackUrl: 'http://localhost:3000/app/dashboard' });
 			}}
 		>
 			<Button className={styles.authButton} color='transparent'>

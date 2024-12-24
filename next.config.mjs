@@ -1,10 +1,20 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+  logging: {
+    fetches: {
+      fullUrl: true,
+    },
+  },
   compiler: {
     styledComponents: true,
   },
   images: {
-    domains: ['https://estify.infame.org/'],
+    remotePatterns: [
+      {
+        protocol: 'https',
+        hostname: 'lh3.googleusercontent.com',
+      },
+    ],
   },
   webpack(config) {
     // Grab the existing rule that handles SVG imports
@@ -32,14 +42,6 @@ const nextConfig = {
     return config;
   },
   output: 'standalone',
-  async rewrites() {
-    return [
-      {
-        source: '/:any*',
-        destination: '/app',
-      },
-    ];
-  },
 };
 
 export default nextConfig;

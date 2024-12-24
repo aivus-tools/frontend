@@ -4,7 +4,7 @@ import styles from './Sidebar.module.css';
 import cn from 'classnames';
 import HomeIcon from '@/icons/home-icon.svg';
 import LogoIcon from '@/icons/aivus-logo.svg';
-import { Link } from 'react-router-dom';
+import Link from 'next/link';
 
 export const Sidebar = ({ theme = 'light', sidebarContent, className, ...props }: SidebarProps) => {
 	return (
@@ -14,7 +14,7 @@ export const Sidebar = ({ theme = 'light', sidebarContent, className, ...props }
 			})}
 			{...props}
 		>
-			<Link to='/dashboard' className={cn(styles.logoWrap)}>
+			<Link href='/app/dashboard' className={cn(styles.logoWrap)}>
 				<HomeIcon className={cn(styles.home)} />
 				<LogoIcon className={cn(styles.logo)} />
 			</Link>

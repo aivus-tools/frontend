@@ -1,32 +1,22 @@
-export { auth as middleware } from '@/auth';
-// import { NextRequest, NextResponse } from 'next/server';
-// import { auth as authMiddleware } from '@/auth';
-// import { cookies } from 'next/headers';
-// import { NextApiRequest, NextApiResponse } from 'next';
+import { auth } from '@/auth';
+import { NextApiRequest, NextApiResponse } from 'next';
+import { NextRequest, NextResponse } from 'next/server';
+import { ROLES } from './services/constants';
+import { cookies } from 'next/headers';
 
-// export default async function middleware(req: NextRequest, res: NextResponse) {
-// 	// 2. Check if the current route is protected or public
-// 	const isProtectedRoute = req.nextUrl.pathname.startsWith('/app');
-// 	const auth = await authMiddleware(req as unknown as NextApiRequest, res as unknown as NextApiResponse);
+const validRoles = new Set<string | undefined>([ROLES.client, ROLES.vendor]);
 
-// 	console.log('auth?.user', auth?.user);
-// 	// 3. Decrypt the session from the cookie
-// 	const userType = (await cookies()).get('session')?.value ?? auth?.user;
+export const middleware = async (req: NextRequest, res: NextResponse) => {
+	if (req.nextUrl.pathname === '/') {
+		return NextResponse.redirect(new URL('/auth', req.url));
+	}
 
-// 	// 4. Redirect to /login if the user is not authenticated
-// 	if (isProtectedRoute && !userType) {
-// 		return NextResponse.redirect(new URL('/auth', req.nextUrl));
-// 	}
+	const cookieStore = await cookies();
+	const role = cookieStore.get('role')?.value;
 
-// 	// 5. Redirect to /dashboard if the user is authenticated
-// 	if (!isProtectedRoute && userType && !req.nextUrl.pathname.startsWith('/dashboard')) {
-// 		return NextResponse.redirect(new URL('/app/dashboard', req.nextUrl));
-// 	}
+	if (req.nextUrl.pathname.endsWith('app') && validRoles.has(role)) {
+		return NextResponse.redirect(new URL('/app/dashboard', req.url));
+	}
 
-// 	return;
-// }
-
-// // Routes Middleware should not run on
-// export const config = {
-// 	matcher: ['/((?!api|_next/static|_next/image|.*\\.png$).*)'],
-// };
+	return auth(req as unknown as NextApiRequest, res as unknown as NextApiResponse);
+};

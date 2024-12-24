@@ -1,7 +1,9 @@
 import type { Metadata } from 'next';
 import StyledComponentsRegistry from './lib/registry';
 import { Montserrat } from 'next/font/google';
+import SessionProvider from '@/providers/SessionProvider';
 import './globals.css';
+import { auth } from '@/auth';
 
 const montserrat = Montserrat({
 	subsets: ['latin'],
@@ -13,15 +15,19 @@ export const metadata: Metadata = {
 	description: 'Aivus Web',
 };
 
-export default function RootLayout({
+export default async function RootLayout({
 	children,
 }: Readonly<{
 	children: React.ReactNode;
 }>) {
+	const session = await auth();
+
 	return (
 		<html lang='en'>
 			<body className={montserrat.className}>
-				<StyledComponentsRegistry>{children}</StyledComponentsRegistry>
+				<StyledComponentsRegistry>
+					<SessionProvider session={session}>{children}</SessionProvider>
+				</StyledComponentsRegistry>
 			</body>
 		</html>
 	);
