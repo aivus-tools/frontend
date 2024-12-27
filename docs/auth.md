@@ -61,3 +61,26 @@ sequenceDiagram
     NEXT->>UI: redirect to /app
 
 ```
+
+### Check user role
+
+```mermaid
+
+sequenceDiagram
+
+    participant UI as Web UI
+    participant NEXT as NEXT BFF
+    participant BE as BACKEND NEST
+
+    UI->>NEXT: /app
+    NEXT->>NEXT: check user role
+    rect rgb(113, 97, 173)
+    NEXT->>UI: choose role
+    UI->>NEXT: vendor|client
+    NEXT->>BE: PATCH /api/v1/auth/change-role/{userId} newRole: vendor|client
+    BE->>NEXT: 200
+    end
+    NEXT->>UI: redirect to app/dashboard
+
+
+```

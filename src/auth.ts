@@ -34,7 +34,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
 
 				const response = await fetch(routes.GET_USERS);
 				const users: User[] = await response.json();
-				const userExist = users.find((u) => u.email === user.email);
+				const userExist = users?.find((u) => u.email === user.email);
 
 				if (!userExist) {
 					const res = await fetch(routes.REGISTER, {
@@ -52,7 +52,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
 					if (res.ok) {
 						const response = await fetch(routes.GET_USERS);
 						const users: User[] = await response.json();
-						const newUser = users.find((u) => u.email === user.email);
+						const newUser = users?.find((u) => u.email === user.email);
 						if (newUser) {
 							await createSession(newUser!.role, newUser!.id);
 							return Promise.resolve(true);
