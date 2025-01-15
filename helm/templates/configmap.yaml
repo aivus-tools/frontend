@@ -3,5 +3,7 @@ kind: ConfigMap
 metadata:
   name: {{ include "my-chart.fullname" . }}
   namespace: {{ .Values.namespace.name }}
+  annotations:
+      {{- include "my-chart.helmAnnotations" . | nindent 4 }}
 data:
   NODE_ENV: {{ .Values.data.NODE_ENV | quote }}

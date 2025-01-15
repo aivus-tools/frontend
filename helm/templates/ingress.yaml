@@ -6,6 +6,7 @@ metadata:
   labels:
     {{- include "my-chart.labels" . | nindent 4 }}
   annotations:
+    {{- include "my-chart.helmAnnotations" . | nindent 4 }}
     kubernetes.io/ingress.class: {{ .Values.ingress.className }}
     cert-manager.io/cluster-issuer: {{ .Values.ingress.clusterIssuer }}
     nginx.ingress.kubernetes.io/auth-type: basic

@@ -5,6 +5,8 @@ metadata:
   namespace: {{ .Values.namespace.name }}
   labels:
     {{- include "my-chart.labels" . | nindent 4 }}
+  annotations:
+    {{- include "my-chart.helmAnnotations" . | nindent 4 }}
 spec:
   type: {{ .Values.service.type }}
   ports:

@@ -3,6 +3,8 @@ kind: Deployment
 metadata:
   name: {{ include "my-chart.fullname" . }}
   namespace: {{ .Values.namespace.name }}
+  annotations:
+      {{- include "my-chart.helmAnnotations" . | nindent 4 }}
   labels:
     {{- include "my-chart.labels" . | nindent 4 }}
 spec:

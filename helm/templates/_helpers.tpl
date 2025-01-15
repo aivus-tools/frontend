@@ -28,3 +28,9 @@ app.kubernetes.io/instance: {{ .Release.Name }}
 app.kubernetes.io/name: {{ include "my-chart.name" . }}
 app.kubernetes.io/instance: {{ .Release.Name }}
 {{- end -}}
+
+{{/* Generate Helm-specific annotations */}}
+{{- define "my-chart.helmAnnotations" -}}
+meta.helm.sh/release-name: {{ .Release.Name }}
+meta.helm.sh/release-namespace: {{ .Release.Namespace }}
+{{- end -}}
