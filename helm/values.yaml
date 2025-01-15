@@ -29,7 +29,8 @@ ingress:
   className: nginx
   clusterIssuer: letsencrypt-prod
   annotations:
-    authSecret: basic-auth
+    authEnabled: false
+    authSecret: ""
     authRealm: "Authentication Required"
   hosts:
     - app.aivus.co

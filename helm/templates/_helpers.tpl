@@ -34,3 +34,18 @@ app.kubernetes.io/instance: {{ .Release.Name }}
 meta.helm.sh/release-name: {{ .Release.Name }}
 meta.helm.sh/release-namespace: {{ .Release.Namespace }}
 {{- end -}}
+
+{{/* Generate Ingress-specific annotations */}}
+{{- define "my-chart.ingressAnnotations" -}}
+meta.helm.sh/release-name: {{ .Release.Name }}
+meta.helm.sh/release-namespace: {{ .Release.Namespace }}
+{{- end -}}
+
+{{/* Generate dynamic annotations for Ingress */}}
+{{- define "my-chart.dynamicIngressAnnotations" -}}
+{{- if .Values.ingress.annotations.authEnabled }}
+nginx.ingress.kubernetes.io/auth-type: basic
+nginx.ingress.kubernetes.io/auth-secret: {{ .Values.ingress.annotations.authSecret }}
+nginx.ingress.kubernetes.io/auth-realm: {{ .Values.ingress.annotations.authRealm | quote }}
+{{- end -}}
+{{- end -}}
