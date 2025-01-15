@@ -2,7 +2,7 @@ import { auth } from '@/auth';
 import { NextApiRequest, NextApiResponse } from 'next';
 import { NextRequest, NextResponse } from 'next/server';
 import { ROLES } from './services/constants';
-import { cookies } from 'next/headers';
+import { getSessionInfo } from './app/lib/session';
 
 const validRoles = new Set<string | undefined>([ROLES.client, ROLES.vendor]);
 
@@ -11,10 +11,22 @@ export const middleware = async (req: NextRequest, res: NextResponse) => {
 		return NextResponse.redirect(new URL('/auth', req.url));
 	}
 
-	const cookieStore = await cookies();
-	const role = cookieStore.get('role')?.value;
+	const { role, id } = await getSessionInfo();
+	const { pathname } = req.nextUrl;
 
-	if (req.nextUrl.pathname.endsWith('app') && validRoles.has(role)) {
+	if ((pathname.startsWith('/auth') || pathname === '/') && id) {
+		return NextResponse.redirect(new URL('/app', req.url));
+	}
+
+	if (pathname.startsWith('/app') && (!role || !id)) {
+		return NextResponse.redirect(new URL('/auth', req.url));
+	}
+
+	if (pathname.startsWith('/app') && role === ROLES.unconfirmed) {
+		return NextResponse.redirect(new URL('/app', req.url));
+	}
+
+	if (pathname.endsWith('app') && validRoles.has(role)) {
 		return NextResponse.redirect(new URL('/app/dashboard', req.url));
 	}
 

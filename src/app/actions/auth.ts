@@ -38,7 +38,6 @@ export async function signup(state: FormState, formData: FormData): Promise<Form
 				status: 'unknown' as const,
 			};
 		}
-
 		const res = await fetch(routes.REGISTER, {
 			method: 'POST',
 			headers: {

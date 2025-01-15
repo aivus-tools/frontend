@@ -1,10 +1,8 @@
-import { auth } from '@/auth';
 import { ModalProvider } from '@/context/ModalContext';
 import { ReduxStore } from '@/providers/Redux';
 import { ROLES } from '@/services/constants';
-import { Roles } from '@/services/types';
-import { cookies } from 'next/headers';
 import { redirect } from 'next/navigation';
+import { getSessionInfo } from '../lib/session';
 
 export default async function Layout({
 	vendor,
@@ -15,13 +13,13 @@ export default async function Layout({
 	client: React.ReactNode;
 	unknown: React.ReactNode;
 }) {
-	const session = await auth();
+	const session = await getSessionInfo();
 
 	if (!session) {
 		redirect('/auth');
 	}
 
-	const role = (await cookies()).get('role')?.value as Roles | undefined;
+	const { role } = session;
 
 	const getComponent = () => {
 		switch (role) {
