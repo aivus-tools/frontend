@@ -5,8 +5,8 @@ image:
   pullPolicy: Always
   tag: latest
 
-nameOverride: "aivus-web"
-fullnameOverride: "aivus-web"
+nameOverride: ""
+fullnameOverride: ""
 
 namespace:
   create: false
@@ -27,15 +27,15 @@ service:
 ingress:
   enabled: true
   className: nginx
+  clusterIssuer: letsencrypt-prod
   annotations:
-    nginx.ingress.kubernetes.io/auth-type: basic
-    nginx.ingress.kubernetes.io/auth-secret: basic-auth
-    nginx.ingress.kubernetes.io/auth-realm: "Authentication Required"
+    authSecret: basic-auth
+    authRealm: "Authentication Required"
   hosts:
-    - host: stag.aivus.app
-      paths:
-        - path: /
-          pathType: Prefix
+    - app.aivus.co
+  paths:
+    - path: /
+      pathType: Prefix
 
 imagePullSecrets:
   - name: github-container-registry

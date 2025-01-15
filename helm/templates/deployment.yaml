@@ -9,11 +9,11 @@ spec:
   replicas: {{ .Values.replicaCount }}
   strategy:
     type: {{ .Values.deployment.strategy.type }}
-    {{ if .Values.deployment.strategy.rollingUpdate }}
+    {{- if .Values.deployment.strategy.rollingUpdate }}
     rollingUpdate:
       maxSurge: {{ .Values.deployment.strategy.rollingUpdate.maxSurge }}
       maxUnavailable: {{ .Values.deployment.strategy.rollingUpdate.maxUnavailable }}
-    {{ end }}
+    {{- end }}
   selector:
     matchLabels:
       {{- include "my-chart.selectorLabels" . | nindent 6 }}

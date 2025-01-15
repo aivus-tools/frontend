@@ -4,4 +4,4 @@ metadata:
   name: {{ include "my-chart.fullname" . }}
   namespace: {{ .Values.namespace.name }}
 data:
-  NODE_ENV: "production"
+  NODE_ENV: {{ .Values.data.NODE_ENV | quote }}
