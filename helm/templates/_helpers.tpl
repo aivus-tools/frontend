@@ -31,12 +31,8 @@ app.kubernetes.io/instance: {{ .Release.Name }}
 
 {{/* Generate Helm-specific annotations */}}
 {{- define "my-chart.helmAnnotations" -}}
-meta.helm.sh/release-name: {{ .Release.Name }}
-meta.helm.sh/release-namespace: {{ .Release.Namespace }}
-{{- end -}}
-
-{{/* Generate Ingress-specific annotations */}}
-{{- define "my-chart.ingressAnnotations" -}}
+cert-manager.io/cluster-issuer: {{ .Values.ingress.clusterIssuer }}
+kubernetes.io/ingress.class: {{ .Values.ingress.className }}
 meta.helm.sh/release-name: {{ .Release.Name }}
 meta.helm.sh/release-namespace: {{ .Release.Namespace }}
 {{- end -}}

@@ -7,7 +7,6 @@ metadata:
     {{- include "my-chart.labels" . | nindent 4 }}
   annotations:
     {{- include "my-chart.helmAnnotations" . | nindent 4 }}
-    {{- include "my-chart.ingressAnnotations" . | nindent 4 }}
     {{- include "my-chart.dynamicIngressAnnotations" . | nindent 4 }}
 
 spec:
