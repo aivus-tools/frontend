@@ -3,7 +3,7 @@ import { Button, Typography } from 'antd';
 
 import styles from './form.module.css';
 import { role } from '@/app/actions/role';
-import { ROLES } from '@/services/constants';
+import { ROLES } from '@/lib/constants';
 
 const { Title } = Typography;
 

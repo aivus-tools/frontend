@@ -1,20 +1,16 @@
 import { auth } from '@/auth';
-import { NextApiRequest, NextApiResponse } from 'next';
-import { NextRequest, NextResponse } from 'next/server';
-import { ROLES } from './services/constants';
-import { getSessionInfo } from './app/lib/session';
-
+import { NextResponse } from 'next/server';
+import { ROLES } from './lib/constants';
 const validRoles = new Set<string | undefined>([ROLES.client, ROLES.vendor]);
 
-export const middleware = async (req: NextRequest, res: NextResponse) => {
+export default auth((req) => {
 	if (req.nextUrl.pathname === '/') {
 		return NextResponse.redirect(new URL('/auth', req.url));
 	}
-
-	const { role, id } = await getSessionInfo();
+	const { id, role } = req.auth?.user ?? {};
 	const { pathname } = req.nextUrl;
 
-	if ((pathname.startsWith('/auth') || pathname === '/') && id) {
+	if (pathname.startsWith('/auth') && id) {
 		return NextResponse.redirect(new URL('/app', req.url));
 	}
 
@@ -29,6 +25,8 @@ export const middleware = async (req: NextRequest, res: NextResponse) => {
 	if (pathname.endsWith('app') && validRoles.has(role)) {
 		return NextResponse.redirect(new URL('/app/dashboard', req.url));
 	}
+});
 
-	return auth(req as unknown as NextApiRequest, res as unknown as NextApiResponse);
+export const config = {
+	matcher: ['/((?!api|_next/static|_next/image|favicon.ico).*)'],
 };

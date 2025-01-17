@@ -1,7 +1,8 @@
 'use server';
 import { SignupFormSchema, FormState, PasswordSchema } from '@/app/lib/definitions';
 import { signIn } from '@/auth';
-import { routes } from '@/service-routes';
+import { routes } from '@/lib/service-routes';
+import { checkEmail } from '@/services/authService';
 
 export async function signup(state: FormState, formData: FormData): Promise<FormState> {
 	if (!formData) {
@@ -60,17 +61,9 @@ export async function signup(state: FormState, formData: FormData): Promise<Form
 		return;
 	}
 
-	const response = await fetch(routes.CHECK_EMAIL, {
-		method: 'POST',
-		body: JSON.stringify({ email }),
-		headers: {
-			'Content-Type': 'application/json',
-		},
-	});
+	const exist = await checkEmail({ email: email as string });
 
-	const data: { exist: boolean } = await response.json();
-
-	if (!password && data.exist) {
+	if (!password && exist) {
 		return { email: email as string, status: 'exist' as const };
 	}
 

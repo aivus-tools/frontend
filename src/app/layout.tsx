@@ -1,7 +1,7 @@
 import type { Metadata } from 'next';
 import StyledComponentsRegistry from './lib/registry';
 import { Montserrat } from 'next/font/google';
-import SessionProvider from '@/providers/SessionProvider';
+import SessionProvider from '@/context/SessionProvider';
 import './globals.css';
 import { auth } from '@/auth';
 
