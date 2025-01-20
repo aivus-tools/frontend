@@ -1,5 +1,6 @@
 import { routes } from '@/lib/service-routes';
 import { User } from '@/types/user';
+import { cache } from 'react';
 
 /**
  * Получение списка пользователей.
@@ -22,15 +23,20 @@ export async function fetchUsers(): Promise<User[]> {
  * Получение пользователя по e-mail.
  * @returns Данные пользователя
  */
-export async function fetchUserByEmail(email: string): Promise<User> {
+export const fetchUserByEmail = cache(async (email: string): Promise<User> => {
+	if (!email || typeof email !== 'string') {
+		throw new Error('Invalid email provided');
+	}
+
 	try {
-		const response = await fetch(routes.getUserByEmail(email));
+		const response = await fetch(routes.getUserByEmail(email), { cache: 'force-cache' });
+
 		if (!response.ok) {
-			throw new Error(`Failed to fetch users: ${response.statusText}`);
+			throw new Error(`Failed to fetch user by email: ${response.statusText}`);
 		}
+
 		return await response.json();
 	} catch (error) {
-		console.error('Error fetching users:', error);
 		throw error;
 	}
-}
+});

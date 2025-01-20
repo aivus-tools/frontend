@@ -19,9 +19,7 @@ export async function login(credentials: Partial<Record<'email' | 'password', un
 		if (!response.ok) {
 			throw new Error(`Failed to fetch ${routes.LOGIN}: ${response.statusText}`);
 		}
-
 		const data = await response.json();
-		console.log('async function login', data);
 		return data;
 	} catch (error) {
 		console.error('Error fetching:', error);
