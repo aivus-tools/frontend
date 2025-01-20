@@ -6,11 +6,21 @@ import { THead } from '@/interfaces/app.interface';
 import { Project } from '@/interfaces/app.interface';
 import { useRouter } from 'next/navigation';
 
-import { initialData } from './mock';
+// import { initialData } from './mock';
 import styles from './project-list.module.css';
+import { useEffect } from 'react';
+
+const initialData: Project[] = [];
 
 export const ProjectList = () => {
 	const router = useRouter();
+
+	useEffect(() => {
+		initialData.forEach((item: Project) => {
+			router.prefetch(`/app/dashboard/${item.id}/details`);
+		});
+	}, [router]);
+
 	return (
 		<main className={cn(styles.dashboard)}>
 			<div className={cn(styles.grid, styles.header)}>

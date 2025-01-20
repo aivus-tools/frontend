@@ -1,9 +1,9 @@
-import { ROLES } from './constants';
+import { ROLES } from '../lib/constants';
 
 export type Roles = (typeof ROLES)[keyof typeof ROLES];
 
 export type User = {
-	id: number;
+	id: string;
 	email: string;
 	name: string;
 	role: Roles;

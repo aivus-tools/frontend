@@ -13,7 +13,7 @@ export const DSidebar = ({ className, ...props }: DSidebarProps) => {
 
 	return (
 		<aside className={cn(styles.sidebar, className)} {...props}>
-			<Link href='/' className={cn(styles.logoWrap)}>
+			<Link href='/app/dashboard' className={cn(styles.logoWrap)} prefetch={false}>
 				<HomeIcon className={cn(styles.home)} />
 				<LogoIcon className={cn(styles.logo)} />
 			</Link>

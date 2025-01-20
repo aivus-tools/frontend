@@ -1,22 +1,32 @@
 import { auth } from '@/auth';
-import { NextApiRequest, NextApiResponse } from 'next';
-import { NextRequest, NextResponse } from 'next/server';
-import { ROLES } from './services/constants';
-import { cookies } from 'next/headers';
-
+import { NextResponse } from 'next/server';
+import { ROLES } from './lib/constants';
 const validRoles = new Set<string | undefined>([ROLES.client, ROLES.vendor]);
 
-export const middleware = async (req: NextRequest, res: NextResponse) => {
+export default auth((req) => {
 	if (req.nextUrl.pathname === '/') {
 		return NextResponse.redirect(new URL('/auth', req.url));
 	}
+	const { id, role } = req.auth?.user ?? {};
+	const { pathname } = req.nextUrl;
 
-	const cookieStore = await cookies();
-	const role = cookieStore.get('role')?.value;
-
-	if (req.nextUrl.pathname.endsWith('app') && validRoles.has(role)) {
-		return NextResponse.redirect(new URL('/app/dashboard', req.url));
+	if (pathname.startsWith('/auth') && id) {
+		return NextResponse.redirect(new URL('/app', req.url));
 	}
 
-	return auth(req as unknown as NextApiRequest, res as unknown as NextApiResponse);
+	if (pathname.startsWith('/app') && (!role || !id)) {
+		return NextResponse.redirect(new URL('/auth', req.url));
+	}
+
+	if (pathname.startsWith('/app') && role === ROLES.unconfirmed) {
+		return NextResponse.redirect(new URL('/app', req.url));
+	}
+
+	if (pathname.endsWith('app') && validRoles.has(role)) {
+		return NextResponse.redirect(new URL('/app/dashboard', req.url));
+	}
+});
+
+export const config = {
+	matcher: ['/((?!api|_next/static|_next/image|favicon.ico).*)'],
 };

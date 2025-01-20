@@ -14,7 +14,7 @@ export const Sidebar = ({ theme = 'light', sidebarContent, className, ...props }
 			})}
 			{...props}
 		>
-			<Link href='/app/dashboard' className={cn(styles.logoWrap)}>
+			<Link href='/app/dashboard' className={cn(styles.logoWrap)} prefetch={false}>
 				<HomeIcon className={cn(styles.home)} />
 				<LogoIcon className={cn(styles.logo)} />
 			</Link>
