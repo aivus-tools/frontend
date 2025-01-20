@@ -4,6 +4,9 @@ import { Montserrat } from 'next/font/google';
 import SessionProvider from '@/context/SessionProvider';
 import './globals.css';
 import { auth } from '@/auth';
+import { VersionLogger } from '@/components/VersionLogger';
+import fs from 'fs';
+import path from 'path';
 
 const montserrat = Montserrat({
 	subsets: ['latin'],
@@ -21,10 +24,15 @@ export default async function RootLayout({
 	children: React.ReactNode;
 }>) {
 	const session = await auth();
+	const packageJsonPath = path.join(process.cwd(), 'package.json');
+
+	const stats = fs.statSync(packageJsonPath);
+	const creationDate = stats.birthtime.toISOString(); // Преобразуем в строку для передачи клиенту
 
 	return (
 		<html lang='en'>
 			<body className={montserrat.className}>
+				<VersionLogger creationDate={creationDate} />
 				<StyledComponentsRegistry>
 					<SessionProvider session={session}>{children}</SessionProvider>
 				</StyledComponentsRegistry>
