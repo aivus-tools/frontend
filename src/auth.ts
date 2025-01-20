@@ -41,5 +41,8 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
 			session.user.id = aivusUser.id;
 			return session;
 		},
+		authorized: async ({ auth }) => {
+			return !!auth;
+		},
 	},
 });

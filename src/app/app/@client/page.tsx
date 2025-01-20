@@ -1,5 +1,10 @@
-import { redirect } from 'next/navigation';
+import { logout } from '@/app/actions/logout';
+import { Button } from 'antd';
 
 export default async function Page() {
-	redirect('/app/dashboard');
+	return (
+		<div>
+			<Button onClick={logout}>Logout</Button>
+		</div>
+	);
 }

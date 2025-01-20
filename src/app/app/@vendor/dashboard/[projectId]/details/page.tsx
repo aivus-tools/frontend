@@ -1,5 +1,5 @@
-import { Details } from '@/modules/vendor/Details';
+import ProjectDetails from '@/modules/vendor/project-details';
 
 export default function Page() {
-	return <Details />;
+	return <ProjectDetails />;
 }

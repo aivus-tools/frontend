@@ -1,5 +1,25 @@
 'use client';
 
-import { SessionProvider } from 'next-auth/react';
+import { logout } from '@/app/actions/logout';
+import { Session } from 'next-auth';
+import { SessionProvider as NextSessionProvider, useSession } from 'next-auth/react';
+import { PropsWithChildren, useEffect } from 'react';
 
-export default SessionProvider;
+const SessionGuard = ({ children }: PropsWithChildren) => {
+	const session = useSession();
+	useEffect(() => {
+		if (session.status === 'unauthenticated') {
+			logout();
+		}
+	}, [session.status]);
+
+	return session ? children : null;
+};
+
+export default function SessionProvider({ children, session }: PropsWithChildren<{ session: Session | null }>) {
+	return (
+		<NextSessionProvider session={session}>
+			<SessionGuard>{children}</SessionGuard>
+		</NextSessionProvider>
+	);
+}

@@ -8,7 +8,7 @@ export const InitialParameters: React.FC = () => {
 	return (
 		<>
 			<Flex gap={30} style={{ width: '100%' }}>
-				<Form.Item name='disabled' valuePropName='image' style={{ width: 'auto' }}>
+				<Form.Item name='previewImage' valuePropName='image' style={{ width: 'auto' }}>
 					<Uploader />
 				</Form.Item>
 				<Flex gap={20} flex={1}>
