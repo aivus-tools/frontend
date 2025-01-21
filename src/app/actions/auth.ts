@@ -1,7 +1,7 @@
 'use server';
 import { SignupFormSchema, FormState, PasswordSchema } from '@/app/lib/definitions';
 import { signIn } from '@/auth';
-import { routes } from '@/lib/service-routes';
+import { CALLBACK_URL, routes } from '@/lib/service-routes';
 import { checkEmail } from '@/services/authService';
 
 export async function signup(state: FormState, formData: FormData): Promise<FormState> {
@@ -16,7 +16,7 @@ export async function signup(state: FormState, formData: FormData): Promise<Form
 		await signIn('credentials', {
 			email,
 			password,
-			callbackUrl: 'http://localhost:3000/app/dashboard',
+			callbackUrl: CALLBACK_URL,
 		});
 		return;
 	}
@@ -55,7 +55,7 @@ export async function signup(state: FormState, formData: FormData): Promise<Form
 			await signIn('credentials', {
 				email,
 				password,
-				callbackUrl: 'http://localhost:3000/app/dashboard',
+				callbackUrl: CALLBACK_URL,
 			});
 		}
 		return;

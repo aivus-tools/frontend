@@ -1,6 +1,7 @@
 import styles from './styles.module.css';
 import { Button } from '@/components';
 import { signIn } from '@/auth';
+import { CALLBACK_URL } from '@/lib/service-routes';
 
 /**
  * check configuration https://authjs.dev/getting-started/providers/google#configuration
@@ -10,7 +11,7 @@ export async function Google() {
 		<form
 			action={async () => {
 				'use server';
-				await signIn('google', { callbackUrl: 'http://localhost:3000/app/dashboard' });
+				await signIn('google', { callbackUrl: CALLBACK_URL });
 			}}
 		>
 			<Button className={styles.authButton} color='transparent'>

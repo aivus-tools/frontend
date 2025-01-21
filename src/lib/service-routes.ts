@@ -1,5 +1,7 @@
 const BASE_URL = `${process.env.API_URL}/api/v1`;
 
+export const CALLBACK_URL = process.env.CALLBACK_URL;
+
 export const routes = {
 	GET_USERS: `${BASE_URL}/users`,
 	REGISTER: `${BASE_URL}/auth/register`,
