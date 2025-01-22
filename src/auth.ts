@@ -5,6 +5,7 @@ import { checkEmail, login, register } from './services/authService';
 import { fetchUserByEmail } from './services/userService';
 
 export const { handlers, signIn, signOut, auth } = NextAuth({
+	debug: Boolean(process.env.DEBUG),
 	providers: [
 		Google,
 		Credentials({
