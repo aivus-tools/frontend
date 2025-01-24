@@ -1,7 +1,7 @@
 import styles from './styles.module.css';
-import { Button } from '@/components';
 import { signIn } from '@/auth';
 import { CALLBACK_URL } from '@/lib/service-routes';
+import { Button } from 'antd';
 
 /**
  * check configuration https://authjs.dev/getting-started/providers/google#configuration
@@ -14,7 +14,7 @@ export async function Google() {
 				await signIn('google', { callbackUrl: CALLBACK_URL });
 			}}
 		>
-			<Button className={styles.authButton} color='transparent'>
+			<Button size='large' block htmlType='submit'>
 				<div className={styles.icon}>
 					<svg width='20' height='20' viewBox='0 0 19 19' fill='none' xmlns='http://www.w3.org/2000/svg'>
 						<path

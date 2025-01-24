@@ -23,7 +23,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
 				const exist = await checkEmail({ email: user.email as string });
 				if (!exist) {
 					if (name && email) {
-						const ok = await register({ name, email });
+						const ok = await register({ name, email, authType: 'GOOGLE' });
 						return Promise.resolve(ok);
 					} else {
 						console.error('No name and email', user);

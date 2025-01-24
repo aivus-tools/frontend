@@ -1,9 +1,9 @@
 'use client';
 import React from 'react';
 
-import { Button, Flex, Typography } from 'antd';
+import { Button, Flex, Typography, Form } from 'antd';
 import { useComponentSize } from '@/hooks/useComponentSize';
-import { Section, Header, Content, Form } from './styled';
+import { Section, Header, Content } from './styled';
 
 export const GuidanceAndControls = () => {
 	const { observedRef, width } = useComponentSize();
@@ -21,7 +21,7 @@ export const GuidanceAndControls = () => {
 					<Flex gap={8} align='center' justify='space-between'>
 						<Typography.Text type='secondary'>Saved at 02:14 pm</Typography.Text>
 						<Button type='text'>Cancel</Button>
-						<Form.Item label={null} style={{ width: 'auto', margin: 0 }}>
+						<Form.Item style={{ width: 'auto', margin: 0 }}>
 							<Button type='primary' htmlType='submit'>
 								Save
 							</Button>

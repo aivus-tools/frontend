@@ -1,6 +1,7 @@
 'use client';
 import styles from '../styles.module.css';
-import { Button, Input } from '@/components';
+import { Input } from '@/components';
+import { Button } from 'antd';
 import { FormHTMLAttributes } from 'react';
 
 export const PasswordForm = ({
@@ -25,10 +26,10 @@ export const PasswordForm = ({
 				{error && <p className={styles.error}>{error}</p>}
 			</div>
 			<div className={styles.buttonRowGroup}>
-				<Button className={styles.submit} type='reset'>
+				<Button htmlType='reset' block>
 					Back
 				</Button>
-				<Button className={styles.submit} type='submit'>
+				<Button type='primary' htmlType='submit' block>
 					Sign in
 				</Button>
 			</div>

@@ -25,8 +25,8 @@ export default auth((req) => {
 		return NextResponse.redirect(new URL('/auth', req.url));
 	}
 
-	if (pathname.startsWith('/app') && role === ROLES.unconfirmed) {
-		return NextResponse.redirect(new URL('/app', req.url));
+	if (!pathname.startsWith('/app/unconfirmed') && role === ROLES.unconfirmed) {
+		return NextResponse.redirect(new URL('/app/unconfirmed', req.url));
 	}
 
 	if (pathname.endsWith('app') && validRoles.has(role)) {

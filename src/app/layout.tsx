@@ -1,4 +1,6 @@
 import type { Metadata } from 'next';
+import { AntdRegistry } from '@ant-design/nextjs-registry';
+import { ConfigProvider } from 'antd';
 import StyledComponentsRegistry from './lib/registry';
 import { Montserrat } from 'next/font/google';
 import SessionProvider from '@/context/SessionProvider';
@@ -7,6 +9,7 @@ import { auth } from '@/auth';
 import { VersionLogger } from '@/components/VersionLogger';
 import fs from 'fs';
 import path from 'path';
+import theme from '@/lib/themeConfig';
 
 const montserrat = Montserrat({
 	subsets: ['latin'],
@@ -27,14 +30,18 @@ export default async function RootLayout({
 	const packageJsonPath = path.join(process.cwd(), 'package.json');
 
 	const stats = fs.statSync(packageJsonPath);
-	const creationDate = stats.birthtime.toISOString(); // Преобразуем в строку для передачи клиенту
+	const creationDate = stats.birthtime.toISOString();
 
 	return (
 		<html lang='en'>
 			<body className={montserrat.className}>
 				<VersionLogger creationDate={creationDate} />
 				<StyledComponentsRegistry>
-					<SessionProvider session={session}>{children}</SessionProvider>
+					<AntdRegistry>
+						<ConfigProvider theme={theme}>
+							<SessionProvider session={session}>{children}</SessionProvider>
+						</ConfigProvider>
+					</AntdRegistry>
 				</StyledComponentsRegistry>
 			</body>
 		</html>

@@ -9,7 +9,7 @@ const LabelContainer = styled.div`
 	align-items: center;
 `;
 
-const IconButton = styled.button`
+const IconButton = styled.div`
 	display: flex;
 	align-items: center;
 	justify-content: center;

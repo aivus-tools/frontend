@@ -1,35 +1,52 @@
 'use client';
-import cn from 'classnames';
-import { LayoutProps } from '@/layout/Layout.props';
-import { Header } from '@/layout/Header/Header';
-import { Sidebar } from '@/layout/Sidebar/Sidebar';
-
-import { SidebarDash, SidebarEst } from '@/components';
-import styles from '../../../../layout/Layout.module.css';
 import { PropsWithChildren } from 'react';
-import { usePathname } from 'next/navigation';
+import { Layout } from 'antd';
+import Sider from 'antd/es/layout/Sider';
+import { Logo } from './Logo';
+import { useLayoutTheme } from '@/hooks/useLayoutTheme';
+import { Profile } from '@/components';
+import styled from 'styled-components';
+import { useSelectedLayoutSegments } from 'next/navigation';
+import { ProjectNavbar } from './project-navbar';
+import { VendorNavbar } from './vendor-navbar';
 
-const Layout = ({ theme = 'light', sidebarContent, className, hideNavigation, children, ...props }: LayoutProps) => {
-	return (
-		<div className={cn(styles.layout, className)} {...props}>
-			<Header className={styles.header} hideNavigation={hideNavigation} />
-			<Sidebar theme={theme} sidebarContent={sidebarContent} className={styles.sidebar} />
-			<div className={styles.main}>{children}</div>
-		</div>
-	);
+const { Header, Content } = Layout;
+
+const siderStyle: React.CSSProperties = {
+	overflow: 'auto',
+	position: 'sticky',
+	height: '100vh',
+	insetInlineStart: 0,
+	top: 0,
+	bottom: 0,
+	scrollbarWidth: 'thin',
+	scrollbarGutter: 'stable',
 };
 
+const HeaderLayout = styled(Header)`
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: 16px;
+`;
+
 const VendorLayout = ({ children }: PropsWithChildren) => {
-	const pathname = usePathname();
-	const isRoot = (pathname?.split('/').length ?? 0) <= 3;
+	const theme = useLayoutTheme();
+	const segments = useSelectedLayoutSegments();
+	const isRoot = segments.length === 1;
 
 	return (
-		<Layout
-			theme={isRoot ? 'dark' : 'light'}
-			sidebarContent={isRoot ? <SidebarDash /> : <SidebarEst />}
-			hideNavigation={isRoot}
-		>
-			{children}
+		<Layout hasSider>
+			<Sider style={siderStyle} width={250} theme={theme}>
+				<Logo theme={theme} />
+			</Sider>
+			<Layout>
+				<HeaderLayout style={{ padding: '0 36px' }}>
+					{isRoot ? <VendorNavbar /> : <ProjectNavbar />}
+					<Profile />
+				</HeaderLayout>
+				<Content style={{ overflowY: 'auto', maxHeight: 'calc(100vh - 70px)' }}>{children}</Content>
+			</Layout>
 		</Layout>
 	);
 };

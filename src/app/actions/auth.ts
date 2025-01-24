@@ -48,6 +48,7 @@ export async function signup(state: FormState, formData: FormData): Promise<Form
 				email,
 				password,
 				name,
+				authType: 'CREDENTIALS',
 			}),
 		});
 

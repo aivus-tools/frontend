@@ -1,6 +1,4 @@
-export * from './Button/Button';
 export * from './Text/Text';
-export * from './Nav/Nav';
 export * from './Profile/Profile';
 export * from './Search/Search';
 export * from './SidebarNav/SidebarNav';

@@ -1,6 +1,7 @@
 'use client';
 import styles from '../styles.module.css';
-import { Button, Input } from '@/components';
+import { Input } from '@/components';
+import { Button } from 'antd';
 import { FormHTMLAttributes } from 'react';
 
 export const EmailForm = ({
@@ -16,7 +17,7 @@ export const EmailForm = ({
 				<Input className={styles.input} placeholder='Your email address' id='email' name='email' />
 				{error && <p className={styles.error}>{error}</p>}
 			</div>
-			<Button className={styles.submit} type='submit'>
+			<Button block type='primary' size='large' htmlType='submit'>
 				Next
 			</Button>
 		</form>

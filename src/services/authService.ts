@@ -31,7 +31,15 @@ export async function login(credentials: Partial<Record<'email' | 'password', un
  * Регистрация пользователя.
  * @returns Данные пользователя
  */
-export async function register({ name, email }: { name: string; email: string }): Promise<boolean> {
+export async function register({
+	name,
+	email,
+	authType,
+}: {
+	name: string;
+	email: string;
+	authType: 'CREDENTIALS' | 'GOOGLE';
+}): Promise<boolean> {
 	try {
 		const response = await fetch(routes.REGISTER, {
 			method: 'POST',
@@ -42,6 +50,7 @@ export async function register({ name, email }: { name: string; email: string })
 				email,
 				name,
 				password: PASSWORD,
+				authType,
 			}),
 		});
 		if (!response.ok) {
