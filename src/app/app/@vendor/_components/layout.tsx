@@ -4,7 +4,7 @@ import { Layout } from 'antd';
 import Sider from 'antd/es/layout/Sider';
 import { Logo } from './Logo';
 import { useLayoutTheme } from '@/hooks/useLayoutTheme';
-import { Profile } from '@/components';
+import { Profile } from '@/components/Profile/Profile';
 import styled from 'styled-components';
 import { useSelectedLayoutSegments } from 'next/navigation';
 import { ProjectNavbar } from './project-navbar';

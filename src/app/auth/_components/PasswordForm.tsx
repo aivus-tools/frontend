@@ -1,8 +1,8 @@
 'use client';
-import styles from '../styles.module.css';
-import { Input } from '@/components';
-import { Button } from 'antd';
+import { Button, Input } from 'antd';
 import { FormHTMLAttributes } from 'react';
+
+import styles from '../styles.module.css';
 
 export const PasswordForm = ({
 	action,
@@ -16,13 +16,7 @@ export const PasswordForm = ({
 	return (
 		<form action={action} onReset={onResetAction}>
 			<div className={styles.inputWrapper}>
-				<Input
-					className={styles.input}
-					placeholder='Enter your password'
-					type='password'
-					id='password'
-					name='password'
-				/>
+				<Input size='large' placeholder='Enter your password' type='password' id='password' name='password' />
 				{error && <p className={styles.error}>{error}</p>}
 			</div>
 			<div className={styles.buttonRowGroup}>

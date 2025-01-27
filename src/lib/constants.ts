@@ -37,4 +37,16 @@ export const VENDOR_PROJECT_TABS = [
 		key: 'offer',
 		label: 'Client’s offer',
 	},
+	{
+		key: 'timing',
+		label: 'Timing',
+	},
+	{
+		key: 'presentation',
+		label: 'Presentation',
+	},
+	{
+		key: 'analysis',
+		label: 'Analysis',
+	},
 ];

@@ -1,7 +1,6 @@
 'use client';
 import styles from '../styles.module.css';
-import { Input } from '@/components';
-import { Button } from 'antd';
+import { Button, Input } from 'antd';
 import { FormHTMLAttributes } from 'react';
 
 export const RegisterForm = ({
@@ -16,22 +15,16 @@ export const RegisterForm = ({
 	return (
 		<form action={action} onReset={onResetAction}>
 			<div className={styles.inputWrapper}>
-				<Input className={styles.input} placeholder='Name' type='text' id='name' name='name' />
+				<Input size='large' placeholder='Name' type='text' id='name' name='name' />
+				{error && <p className={styles.error}>{error}</p>}
+			</div>
+			<div className={styles.inputWrapper}>
+				<Input size='large' placeholder='Enter your password' type='password' id='password' name='password' />
 				{error && <p className={styles.error}>{error}</p>}
 			</div>
 			<div className={styles.inputWrapper}>
 				<Input
-					className={styles.input}
-					placeholder='Enter your password'
-					type='password'
-					id='password'
-					name='password'
-				/>
-				{error && <p className={styles.error}>{error}</p>}
-			</div>
-			<div className={styles.inputWrapper}>
-				<Input
-					className={styles.input}
+					size='large'
 					placeholder='Repeat your password'
 					type='password'
 					id='repeat-password'

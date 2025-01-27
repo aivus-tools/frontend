@@ -1,0 +1,20 @@
+[
+  {
+    "status": "DRAFT",
+    "details": "{\"crmId\":\"AAA\",\"projectName\":\"Best project EVER!222\",\"description\":\"Bla bla\",\"clientName\":\"Coca cola\",\"irsEin\":\"AAAA\",\"brandName\":\"Coca Cola\",\"managers\":[{\"manager\":\"John Dow\",\"position\":\"director\"},{\"manager\":\"Smith\",\"position\":\"manager\"}],\"projectDescription\":\"AAAA\",\"referenceVideos\":[{\"url\":\"http://www.bbc.com/lost\",\"comment\":\"aaaaa\"}],\"budget\":10000,\"distributionAndAdPlacements\":\"Bla\",\"territory\":\"New York\",\"term\":{\"length\":\"12\",\"unit\":\"years\"},\"mainVideoDuration\":{\"number\":\"12\",\"length\":\"12\",\"timeUnit\":\"minutes\",\"comment\":\"haha\"},\"cuts\":[{\"url\":\"\",\"comment\":\"haha\",\"number\":\"12\",\"length\":\"12\",\"timeUnit\":\"minutes\"},{\"number\":\"24\",\"length\":\"24\",\"timeUnit\":\"minutes\",\"comment\":\"adad\"},{\"number\":\"24\",\"length\":\"24\",\"timeUnit\":\"hours\",\"comment\":\"aaaa\"}],\"shootingDays\":{\"number\":\"12\",\"length\":\"12\",\"timeUnit\":\"days\",\"comment\":\"haha\"}}",
+    "clientId": 9,
+    "id": "6c1c4b0b-9846-4118-9726-5414cb82ccc0",
+    "uuid": "6351gfygf13",
+    "createdAt": "2025-01-26T17:04:59.231Z",
+    "updatedAt": null
+  },
+  {
+    "status": "DRAFT",
+    "details": "{\"crmId\":\"AAA\",\"projectName\":\"Best project EVER!\",\"description\":\"Bla bla\",\"clientName\":\"Coca cola\",\"irsEin\":\"AAAA\",\"brandName\":\"Coca Cola\",\"managers\":[{\"manager\":\"John Dow\",\"position\":\"director\"},{\"manager\":\"Smith\",\"position\":\"manager\"}],\"projectDescription\":\"AAAA\",\"referenceVideos\":[{\"url\":\"http://www.bbc.com/lost\",\"comment\":\"aaaaa\"}],\"budget\":10000,\"distributionAndAdPlacements\":\"Bla\",\"territory\":\"New York\",\"term\":{\"length\":\"12\",\"unit\":\"years\"},\"mainVideoDuration\":{\"number\":\"12\",\"length\":\"12\",\"timeUnit\":\"minutes\",\"comment\":\"haha\"},\"cuts\":[{\"url\":\"\",\"comment\":\"haha\",\"number\":\"12\",\"length\":\"12\",\"timeUnit\":\"minutes\"},{\"number\":\"24\",\"length\":\"24\",\"timeUnit\":\"minutes\",\"comment\":\"lalalal\"}],\"shootingDays\":{\"number\":\"12\",\"length\":\"12\",\"timeUnit\":\"days\",\"comment\":\"haha\"}}",
+    "clientId": 9,
+    "id": "392e4e9c-3442-42c2-a65d-bf06181d812c",
+    "uuid": "bae0f108-894a-428c-ba51-7e5ecf6a9125",
+    "createdAt": "2025-01-26T18:49:43.225Z",
+    "updatedAt": null
+  }
+]

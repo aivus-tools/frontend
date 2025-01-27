@@ -2,8 +2,9 @@
 import { ProjectItemProps } from './ProjectItem.props';
 import styles from './ProjectItem.module.css';
 import cn from 'classnames';
-import { Percent, PrStatus } from '@/components';
 import { formatPrice } from '@/helpers/helper';
+import { PrStatus } from '../PrStatus/PrStatus';
+import { Percent } from '../Percent/Percent';
 
 export const ProjectItem = ({ item, className, ...props }: ProjectItemProps) => {
 	return (

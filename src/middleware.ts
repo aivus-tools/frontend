@@ -5,6 +5,8 @@ import { ROLES } from './lib/constants';
 const validRoles = new Set<string | undefined>([ROLES.client, ROLES.vendor]);
 const changePathname = (pathname: string) => pathname.replace(/^\/service\//, '/api/v1/');
 
+const MOCK_ENDPOINTS = ['/api/v1/briefs'];
+
 export default auth((req) => {
 	if (req.nextUrl.pathname === '/') {
 		return NextResponse.redirect(new URL('/auth', req.url));
@@ -14,6 +16,10 @@ export default auth((req) => {
 
 	if (pathname.startsWith('/service/')) {
 		const newPathname = changePathname(pathname);
+
+		if (MOCK_ENDPOINTS.some((path) => newPathname.startsWith(path)) && process.env.MOCK_API) {
+			return NextResponse.rewrite(new URL(newPathname, req.url));
+		}
 		return NextResponse.rewrite(new URL(newPathname, process.env.API_URL));
 	}
 

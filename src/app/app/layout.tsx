@@ -1,5 +1,4 @@
 import { auth, signOut } from '@/auth';
-import { ModalProvider } from '@/context/ModalContext';
 import { ReduxStore } from '@/context/Redux';
 import { ROLES } from '@/lib/constants';
 
@@ -31,9 +30,5 @@ export default async function Layout({
 		}
 	};
 
-	return (
-		<ReduxStore>
-			<ModalProvider>{getComponent()}</ModalProvider>
-		</ReduxStore>
-	);
+	return <ReduxStore>{getComponent()}</ReduxStore>;
 }

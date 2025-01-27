@@ -1,12 +1,14 @@
 'use client';
 import styled from 'styled-components';
 
-import { Form as LibForm } from 'antd';
-
 export const Wrapper = styled.div`
 	display: flex;
 	gap: 30px;
 	padding: 24px 30px;
+
+	.budget label {
+		width: 100%;
+	}
 `;
 
 export const Section = styled.div`
@@ -39,14 +41,11 @@ export const Content = styled.div`
 	border-radius: 6px;
 	background-color: #fff;
 
-	box-shadow: 0px 5px 16.5px -11px rgba(0, 0, 0, 0.25);
-`;
-
-export const Form = styled(LibForm)`
-	& .ant-form-item {
+	& > * {
 		width: 100%;
-		margin-bottom: 20px;
 	}
+
+	box-shadow: 0px 5px 16.5px -11px rgba(0, 0, 0, 0.25);
 `;
 
 export const IconButton = styled.div`

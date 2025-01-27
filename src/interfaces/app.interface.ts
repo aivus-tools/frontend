@@ -50,7 +50,7 @@ export interface SubSection {
 }
 
 export interface Project {
-	id: number;
+	id: string;
 	title: string;
 	assignee: string;
 	clientName: string;

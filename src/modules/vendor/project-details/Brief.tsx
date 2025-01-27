@@ -1,13 +1,21 @@
 import React from 'react';
-import { Form, Input, Flex, InputNumber } from 'antd';
+import { Form, Input, Flex, InputNumber, Typography } from 'antd';
 import { ExtraMaterials } from './ExtraMaterials';
 import { LabelWithAdd } from './LabelWithAdd';
 import RemoveIcon from '@/icons/minus.svg';
 import { IconButton, AntdListWrapper } from './styled';
+import { LabelWithSide } from './LabelWithButton';
+
+import EyeCrossed from '@/icons/eye-crossed.svg';
+import Eye from '@/icons/eye.svg';
+import { Details } from '@/types/brief';
 
 const { TextArea } = Input;
 
 export const Brief: React.FC = () => {
+	const form = Form.useFormInstance<Details>();
+	const visibleForVendors = Form.useWatch('visibleForVendors', form);
+
 	return (
 		<>
 			<Form.Item
@@ -24,8 +32,9 @@ export const Brief: React.FC = () => {
 				<Form.List name='referenceVideos' initialValue={[{ url: '', comment: '' }]}>
 					{(fields, { add, remove }) => (
 						<Form.Item
-							label={<LabelWithAdd text='Reference video *' onClick={() => add()} />}
+							label={<LabelWithAdd text='Reference video' onClick={() => add()} />}
 							extra='Add links to relevant videos.'
+							rules={[{ required: true, message: 'At least one reference video is required' }]}
 						>
 							{fields.map((field) => (
 								<Flex gap={20} key={field.key}>
@@ -57,8 +66,29 @@ export const Brief: React.FC = () => {
 			<Flex gap={20}>
 				<Form.Item
 					name='budget'
-					label='Your Budget (US$)*'
+					className='budget'
+					labelCol={{ span: 24, flex: '1 1 100%' }}
+					label={
+						<LabelWithSide text='Client’s Budget (US$)'>
+							<Form.Item name='visibleForVendors' noStyle>
+								{visibleForVendors ? <Eye /> : <EyeCrossed />}
+								<Typography.Text
+									onClick={(e) => {
+										e.preventDefault();
+										form.setFieldsValue({ visibleForVendors: !visibleForVendors });
+									}}
+									style={{
+										marginLeft: '10px',
+										color: 'var(--main)',
+									}}
+								>
+									Visible for vendors
+								</Typography.Text>
+							</Form.Item>
+						</LabelWithSide>
+					}
 					extra='We will do our best to recommend creatives in your budget range'
+					rules={[{ required: true, message: 'Please input your budget!' }]}
 				>
 					<InputNumber
 						formatter={(value) => `$ ${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')}

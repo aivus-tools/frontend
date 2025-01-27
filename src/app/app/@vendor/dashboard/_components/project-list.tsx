@@ -1,25 +1,61 @@
 'use client';
-import { THeadItem, ProjectItem } from '@/components';
 import cn from 'classnames';
 import { dashboardTHeads } from '@/handbook/handbook';
 import { THead } from '@/interfaces/app.interface';
 import { Project } from '@/interfaces/app.interface';
 import { useRouter } from 'next/navigation';
 
-// import { initialData } from './mock';
 import styles from './project-list.module.css';
-import { useEffect } from 'react';
+import { useEffect, useMemo } from 'react';
+import { THeadItem } from '@/components/THeadItem/THeadItem';
+import { ProjectItem } from '@/components/ProjectItem/ProjectItem';
+import { useBriefs } from '@/hooks/useBriefs';
+import { Brief, Details } from '@/types/brief';
+import { format } from 'date-fns';
 
-const initialData: Project[] = [];
+const statusMap = {
+	DRAFT: 'Reviewing',
+	RFP: 'RFP',
+	REVIEWING: 'Reviewing',
+	ONGOING: 'Ongoing',
+} as const;
+
+const mapBriefsToProjects = (briefs: Brief[]): Project[] => {
+	if (!briefs || !Array.isArray(briefs)) {
+		return [];
+	}
+
+	return briefs.map((brief: Brief) => {
+		const details: Details = JSON.parse(brief.details);
+
+		return {
+			id: brief.id,
+			title: details.projectName,
+			assignee: details.internalManagersAndProducers,
+			clientName: details.clientName,
+			clientContact: '?????????',
+			status: statusMap[brief.status],
+			cost: details.budget,
+			expenses: 0,
+			profit: 0,
+			deadline: '?????????',
+			createdAt: format(new Date(brief.createdAt), 'MM/dd/yyyy'),
+		};
+	});
+};
 
 export const ProjectList = () => {
 	const router = useRouter();
 
+	const { data: briefs = [] } = useBriefs();
+
+	const data = useMemo(() => mapBriefsToProjects(briefs), [briefs]);
+
 	useEffect(() => {
-		initialData.forEach((item: Project) => {
+		data.forEach((item: Project) => {
 			router.prefetch(`/app/dashboard/${item.id}/details`);
 		});
-	}, [router]);
+	}, [router, data]);
 
 	return (
 		<main className={cn(styles.dashboard)}>
@@ -35,7 +71,7 @@ export const ProjectList = () => {
 				))}
 			</div>
 			<div className={cn(styles.content)}>
-				{initialData.map((item: Project) => (
+				{data.map((item: Project) => (
 					<ProjectItem
 						className={cn(styles.projectItem)}
 						key={`project_${item.id}`}

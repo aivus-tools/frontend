@@ -1,15 +1,8 @@
 import React from 'react';
-import { Form, Input, Flex } from 'antd';
-import styled from 'styled-components';
+import { Form, Input, Flex, Col, Row } from 'antd';
 import { LabelWithAdd } from './LabelWithAdd';
 import RemoveIcon from '@/icons/minus.svg';
 import { IconButton } from './styled';
-
-const WithDeleteContainer = styled(Flex)`
-	& .ant-form-item:last-child {
-		width: auto;
-	}
-`;
 
 export const Client: React.FC = () => {
 	return (
@@ -54,36 +47,29 @@ export const Client: React.FC = () => {
 							const extra = isLast ? 'Indicate the project managers responsible.' : null;
 
 							return (
-								<Flex key={field.key} gap={20} style={{ width: '100%' }}>
-									<WithDeleteContainer
-										gap={10}
-										style={{
-											flex: '1 0 300px',
-										}}
-									>
-										<Form.Item name={[field.name, 'manager']} label={managerLabel} extra={extra}>
+								<Row key={field.key}>
+									<Col span={14}>
+										<Flex gap={10} style={{ marginRight: '20px' }}>
+											<Form.Item name={[field.name, 'manager']} label={managerLabel} extra={extra} style={{ flex: 1 }}>
+												<Input placeholder='' />
+											</Form.Item>
+											<Form.Item label={isFirst ? ' ' : null}>
+												<IconButton
+													onClick={() => {
+														if (fields.length > 1) remove(field.name);
+													}}
+												>
+													<RemoveIcon />
+												</IconButton>
+											</Form.Item>
+										</Flex>
+									</Col>
+									<Col span={10}>
+										<Form.Item name={[field.name, 'position']} {...positionProps}>
 											<Input placeholder='' />
 										</Form.Item>
-										<Form.Item label={isFirst ? ' ' : null}>
-											<IconButton
-												onClick={() => {
-													if (fields.length > 1) remove(field.name);
-												}}
-											>
-												<RemoveIcon />
-											</IconButton>
-										</Form.Item>
-									</WithDeleteContainer>
-									<Form.Item
-										name={[field.name, 'position']}
-										style={{
-											flex: '3',
-										}}
-										{...positionProps}
-									>
-										<Input placeholder='' />
-									</Form.Item>
-								</Flex>
+									</Col>
+								</Row>
 							);
 						})}
 					</>
