@@ -1,6 +1,6 @@
 import useSWRMutation from 'swr/mutation';
 import { useSession } from 'next-auth/react';
-import { Brief } from '@/types/brief';
+import { Brief, Details } from '@/types/brief';
 
 async function createBrief(url: string, { arg: body }: { arg: Pick<Brief, 'details' | 'clientId' | 'status'> }) {
 	await fetch(url, {
@@ -28,11 +28,11 @@ export const useMutateBrief = () => {
 	const session = useSession();
 
 	return {
-		create: (details: object) => {
+		create: (details: Details) => {
 			if (session.data?.user?.id) {
 				create({
 					status: 'DRAFT',
-					details: JSON.stringify(details),
+					details,
 					clientId: session.data?.user?.id,
 				});
 			}

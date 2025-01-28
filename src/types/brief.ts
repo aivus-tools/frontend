@@ -3,7 +3,7 @@ export type BriefStatus = 'DRAFT' | 'RFP' | 'REVIEWING' | 'ONGOING';
 export interface Brief {
 	status: BriefStatus;
 	/** JSON stringified Details */
-	details: string;
+	details: Details;
 	clientId: string;
 	id: string;
 	uuid: string;

@@ -7,7 +7,7 @@ const Text = styled(Typography.Text)`
 	font-weight: 500 !important;
 	line-height: 12.19px !important;
 
-	margin-bottom: 24px;
+	margin-top: 36px;
 	vertical-align: bottom;
 `;
 
@@ -70,7 +70,7 @@ export const usePersonModal = (onSubmit?: (person: Person) => void) => {
 						</Form.Item>
 					</Col>
 					<Col span={12}>
-						<Flex justify='end' vertical>
+						<Flex vertical>
 							<Text type='secondary'>
 								Depending on the Role, the user will see or not see certain information. Choose one to find out.
 							</Text>

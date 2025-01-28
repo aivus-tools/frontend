@@ -1,5 +1,5 @@
 'use client';
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useCallback, useEffect } from 'react';
 
 import { InitialParameters } from './InitialParameters';
 import { Client } from './Client';
@@ -9,48 +9,33 @@ import { GuidanceAndControls } from './GuidanceAndControls';
 import { Wrapper, Section, Header, Column, Content } from './styled';
 import { Form } from 'antd';
 import { useMutateBrief } from '@/hooks/useMutateBrief';
-import { useAppSelector } from '@/lib/hooks';
-import { selectProjectId } from '@/store/slices/project';
-import { useBriefs } from '@/hooks/useBriefs';
-import { Brief as BriefType, Details as DetailsType } from '@/types/brief';
+import { Details as DetailsType } from '@/types/brief';
+import { useBrief } from '@/hooks/useBrief';
 
 export default function Details() {
 	const { create, update } = useMutateBrief();
-	const projectId = useAppSelector(selectProjectId);
-	const { data: briefs } = useBriefs();
+	const { data: brief, isLoading } = useBrief();
 	const [form] = Form.useForm<DetailsType>();
-	const initialized = useRef(false);
-	const [brief, setBrief] = useState<BriefType | null>(null);
 
 	useEffect(() => {
-		if (initialized.current) return;
-
-		try {
-			const brief = briefs?.find((brief) => brief.id === projectId);
-			if (brief) {
-				form.setFieldsValue(JSON.parse(brief.details));
-				setBrief(brief);
-				initialized.current = true;
-			}
-		} catch (error) {
-			console.warn('Failed to parse brief data', error);
+		if (!isLoading && brief && typeof brief.details === 'object') {
+			form.setFieldsValue(brief.details);
 		}
-	}, [projectId, briefs, form]);
+	}, [brief, form, isLoading]);
+
+	const handleSubmit = useCallback(
+		(details: DetailsType) => {
+			if (brief) {
+				update({ ...brief, details });
+			} else {
+				create(details);
+			}
+		},
+		[brief, create, update]
+	);
 
 	return (
-		<Form<DetailsType>
-			form={form}
-			layout='vertical'
-			disabled={false}
-			size='large'
-			onFinish={(details) => {
-				if (brief) {
-					update({ ...brief, details: JSON.stringify(details) });
-				} else {
-					create(details as object);
-				}
-			}}
-		>
+		<Form<DetailsType> form={form} layout='vertical' disabled={false} size='large' onFinish={handleSubmit}>
 			<Wrapper>
 				<Column style={{ flex: '1 1 70%' }}>
 					<Section>

@@ -3,16 +3,17 @@ import { Button } from 'antd';
 import { useRouter } from 'next/navigation';
 import { useEffect } from 'react';
 import { VendorTabs } from './vendor-tabs';
+import { NEW_BRIEF_SLUG } from '@/lib/constants';
 
 export const VendorNavbar = () => {
 	const router = useRouter();
 
 	useEffect(() => {
-		router.prefetch(`/app/dashboard/new-brief/details`);
+		router.prefetch(`/app/dashboard/${NEW_BRIEF_SLUG}/details`);
 	}, [router]);
 
 	const handleNewEstimation = () => {
-		router.push(`/app/dashboard/new-brief/details`);
+		router.push(`/app/dashboard/${NEW_BRIEF_SLUG}/details`);
 	};
 
 	return (

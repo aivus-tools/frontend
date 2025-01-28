@@ -26,8 +26,7 @@ const mapBriefsToProjects = (briefs: Brief[]): Project[] => {
 	}
 
 	return briefs.map((brief: Brief) => {
-		const details: Details = JSON.parse(brief.details);
-
+		const details: Details = brief.details;
 		return {
 			id: brief.id,
 			title: details.projectName,

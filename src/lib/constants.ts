@@ -50,3 +50,5 @@ export const VENDOR_PROJECT_TABS = [
 		label: 'Analysis',
 	},
 ];
+
+export const NEW_BRIEF_SLUG = 'new-brief';
