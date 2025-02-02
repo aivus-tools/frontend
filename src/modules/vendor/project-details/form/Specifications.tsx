@@ -1,6 +1,6 @@
 import React from 'react';
 import { Form, Input, Flex, Select } from 'antd';
-import { AntdListWrapper, IconButton } from './styled';
+import { AntdListWrapper, IconButton } from '../common/styled';
 import { LabelWithAdd } from './LabelWithAdd';
 import RemoveIcon from '@/icons/minus.svg';
 import { useGuidance } from '@/context/Guidance';

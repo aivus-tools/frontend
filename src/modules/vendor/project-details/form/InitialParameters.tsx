@@ -2,7 +2,7 @@ import React from 'react';
 import { Form, Input, Select, Flex, Row, Col } from 'antd';
 import { Uploader } from './Uploader';
 import { LabelWithAdd } from './LabelWithAdd';
-import { usePersonModal } from './hooks/usePersonModal';
+import { usePersonModal } from '../hooks/usePersonModal';
 import { Details, Person } from '@/types/brief';
 import { useGuidance } from '@/context/Guidance';
 

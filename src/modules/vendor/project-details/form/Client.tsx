@@ -2,7 +2,7 @@ import React from 'react';
 import { Form, Input, Flex, Col, Row } from 'antd';
 import { LabelWithAdd } from './LabelWithAdd';
 import RemoveIcon from '@/icons/minus.svg';
-import { IconButton } from './styled';
+import { IconButton } from '../common/styled';
 import { useGuidance } from '@/context/Guidance';
 
 export const Client: React.FC = () => {

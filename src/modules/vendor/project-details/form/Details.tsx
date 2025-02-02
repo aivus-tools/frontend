@@ -5,15 +5,18 @@ import { InitialParameters } from './InitialParameters';
 import { Client } from './Client';
 import { Brief } from './Brief';
 import { Specifications } from './Specifications';
-import { GuidanceAndControls } from './GuidanceAndControls';
-import { Wrapper, Section, Header, Column, Content } from './styled';
+import { GuidanceAndControls } from '../common/GuidanceAndControls';
+import { Wrapper, Section, Header, Column, Content } from '../common/styled';
 import { Form } from 'antd';
 import { useMutateBrief } from '@/hooks/useMutateBrief';
 import { Details as DetailsType } from '@/types/brief';
 import { useBrief } from '@/hooks/useBrief';
 import { GuidanceProvider } from '@/context/Guidance';
+import { useAppDispatch } from '@/lib/hooks';
+import { setMode } from '@/store/slices/project';
 
 export default function Details() {
+	const dispatch = useAppDispatch();
 	const { create, update } = useMutateBrief();
 	const { data: brief, isLoading } = useBrief();
 	const [form] = Form.useForm<DetailsType>();
@@ -31,8 +34,9 @@ export default function Details() {
 			} else {
 				create(details);
 			}
+			dispatch(setMode('view'));
 		},
-		[brief, create, update]
+		[brief, create, dispatch, update]
 	);
 
 	return (

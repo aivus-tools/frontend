@@ -3,7 +3,7 @@ import { Form, Input, Flex, InputNumber, Typography } from 'antd';
 import { ExtraMaterials } from './ExtraMaterials';
 import { LabelWithAdd } from './LabelWithAdd';
 import RemoveIcon from '@/icons/minus.svg';
-import { IconButton, AntdListWrapper } from './styled';
+import { IconButton, AntdListWrapper } from '../common/styled';
 import { LabelWithSide } from './LabelWithButton';
 
 import EyeCrossed from '@/icons/eye-crossed.svg';
