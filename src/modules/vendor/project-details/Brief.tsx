@@ -9,12 +9,14 @@ import { LabelWithSide } from './LabelWithButton';
 import EyeCrossed from '@/icons/eye-crossed.svg';
 import Eye from '@/icons/eye.svg';
 import { Details } from '@/types/brief';
+import { useGuidance } from '@/context/Guidance';
 
 const { TextArea } = Input;
 
 export const Brief: React.FC = () => {
 	const form = Form.useFormInstance<Details>();
 	const visibleForVendors = Form.useWatch('visibleForVendors', form);
+	const { handleFocus } = useGuidance();
 
 	return (
 		<>
@@ -25,6 +27,7 @@ export const Brief: React.FC = () => {
 			>
 				<TextArea
 					autoSize={{ minRows: 6, maxRows: 6 }}
+					onFocus={handleFocus('projectDescription')}
 					placeholder={`Objectives,\nAudience,\nTone and Style,\nKey Messages,\nPreferred Deadline\n`}
 				/>
 			</Form.Item>
@@ -43,10 +46,10 @@ export const Brief: React.FC = () => {
 										name={[field.name, 'url']}
 										rules={[{ type: 'url', warningOnly: true, message: 'Invalid URL' }]}
 									>
-										<Input placeholder='url only' />
+										<Input placeholder='url only' onFocus={handleFocus('referenceVideos')} />
 									</Form.Item>
 									<Form.Item noStyle name={[field.name, 'comment']}>
-										<Input placeholder='Comment' />
+										<Input placeholder='Comment' onFocus={handleFocus('referenceVideos')} />
 									</Form.Item>
 									<Form.Item noStyle>
 										<IconButton
@@ -69,17 +72,20 @@ export const Brief: React.FC = () => {
 					className='budget'
 					labelCol={{ span: 24, flex: '1 1 100%' }}
 					label={
-						<LabelWithSide text='Client’s Budget (US$)'>
+						<LabelWithSide
+							text='Client’s Budget (US$)'
+							onClick={(e) => {
+								e.preventDefault();
+								form.setFieldsValue({ visibleForVendors: !visibleForVendors });
+							}}
+						>
 							<Form.Item name='visibleForVendors' noStyle>
 								{visibleForVendors ? <Eye /> : <EyeCrossed />}
 								<Typography.Text
-									onClick={(e) => {
-										e.preventDefault();
-										form.setFieldsValue({ visibleForVendors: !visibleForVendors });
-									}}
 									style={{
 										marginLeft: '10px',
 										color: 'var(--main)',
+										userSelect: 'none',
 									}}
 								>
 									Visible for vendors
@@ -91,6 +97,7 @@ export const Brief: React.FC = () => {
 					rules={[{ required: true, message: 'Please input your budget!' }]}
 				>
 					<InputNumber
+						onFocus={handleFocus('budget')}
 						formatter={(value) => `$ ${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')}
 						placeholder='Number only'
 						suffix='$'

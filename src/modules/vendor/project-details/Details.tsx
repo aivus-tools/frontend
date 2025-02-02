@@ -11,6 +11,7 @@ import { Form } from 'antd';
 import { useMutateBrief } from '@/hooks/useMutateBrief';
 import { Details as DetailsType } from '@/types/brief';
 import { useBrief } from '@/hooks/useBrief';
+import { GuidanceProvider } from '@/context/Guidance';
 
 export default function Details() {
 	const { create, update } = useMutateBrief();
@@ -35,38 +36,48 @@ export default function Details() {
 	);
 
 	return (
-		<Form<DetailsType> form={form} layout='vertical' disabled={false} size='large' onFinish={handleSubmit}>
-			<Wrapper>
-				<Column style={{ flex: '1 1 70%' }}>
-					<Section>
-						<Header>Initial parameters</Header>
-						<Content>
-							<InitialParameters />
-						</Content>
-					</Section>
-					<Section>
-						<Header>the Client</Header>
-						<Content>
-							<Client />
-						</Content>
-					</Section>
-					<Section>
-						<Header>the Client’s brief</Header>
-						<Content>
-							<Brief />
-						</Content>
-					</Section>
-					<Section>
-						<Header>Rights and Technical Specifications</Header>
-						<Content>
-							<Specifications />
-						</Content>
-					</Section>
-				</Column>
-				<Column style={{ flex: '1 1 30%', justifyContent: 'space-between' }}>
-					<GuidanceAndControls />
-				</Column>
-			</Wrapper>
-		</Form>
+		<GuidanceProvider>
+			<Form<DetailsType>
+				form={form}
+				layout='vertical'
+				disabled={false}
+				size='large'
+				onFinish={handleSubmit}
+				scrollToFirstError
+				clearOnDestroy
+			>
+				<Wrapper>
+					<Column style={{ flex: '1 1 70%' }}>
+						<Section>
+							<Header>Initial parameters</Header>
+							<Content>
+								<InitialParameters />
+							</Content>
+						</Section>
+						<Section>
+							<Header>the Client</Header>
+							<Content>
+								<Client />
+							</Content>
+						</Section>
+						<Section>
+							<Header>the Client’s brief</Header>
+							<Content>
+								<Brief />
+							</Content>
+						</Section>
+						<Section>
+							<Header>Rights and Technical Specifications</Header>
+							<Content>
+								<Specifications />
+							</Content>
+						</Section>
+					</Column>
+					<Column style={{ flex: '1 1 30%', justifyContent: 'space-between' }}>
+						<GuidanceAndControls />
+					</Column>
+				</Wrapper>
+			</Form>
+		</GuidanceProvider>
 	);
 }

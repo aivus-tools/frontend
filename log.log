@@ -1,0 +1,2202 @@
+
+> aivus-web@0.1.0 dev
+> next dev
+
+  ▲ Next.js 15.0.1
+  - Local:        http://localhost:3000
+  - Environments: .env.local
+
+ ✓ Starting...
+ ✓ Ready in 5.9s
+ ○ Compiling /api/auth/[...nextauth] ...
+ ✓ Compiled /api/auth/[...nextauth] in 2.5s (773 modules)
+debug-enabled [ 0, [ 'debug-enabled' ] ]
+Error: Cannot find module '/home/blacksmith/projects/aivus/aivus-web/.next/server/vendor-chunks/lib/worker.js'
+    at Module._resolveFilename (node:internal/modules/cjs/loader:1048:15)
+    at Module._load (node:internal/modules/cjs/loader:901:27)
+    at Function.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:83:12)
+    at MessagePort.<anonymous> (node:internal/main/worker_thread:185:26)
+    at [nodejs.internal.kHybridDispatch] (node:internal/event_target:807:20)
+    at exports.emitMessage (node:internal/per_context/messageport:23:28) {
+  code: 'MODULE_NOT_FOUND',
+  requireStack: []
+}
+ ⨯ uncaughtException: Error: Cannot find module '/home/blacksmith/projects/aivus/aivus-web/.next/server/vendor-chunks/lib/worker.js'
+    at Module._resolveFilename (node:internal/modules/cjs/loader:1048:15)
+    at Module._load (node:internal/modules/cjs/loader:901:27)
+    at Function.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:83:12)
+    at MessagePort.<anonymous> (node:internal/main/worker_thread:185:26)
+    at [nodejs.internal.kHybridDispatch] (node:internal/event_target:807:20)
+    at exports.emitMessage (node:internal/per_context/messageport:23:28) {
+  code: 'MODULE_NOT_FOUND',
+  requireStack: []
+}
+ ⨯ uncaughtException: Error: Cannot find module '/home/blacksmith/projects/aivus/aivus-web/.next/server/vendor-chunks/lib/worker.js'
+    at Module._resolveFilename (node:internal/modules/cjs/loader:1048:15)
+    at Module._load (node:internal/modules/cjs/loader:901:27)
+    at Function.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:83:12)
+    at MessagePort.<anonymous> (node:internal/main/worker_thread:185:26)
+    at [nodejs.internal.kHybridDispatch] (node:internal/event_target:807:20)
+    at exports.emitMessage (node:internal/per_context/messageport:23:28) {
+  code: 'MODULE_NOT_FOUND',
+  requireStack: []
+}
+Error: the worker thread exited
+    at Worker.onWorkerExit (webpack-internal:///(rsc)/./node_modules/thread-stream/index.js:201:32)
+    at Worker.emit (node:events:514:28)
+    at [kOnExit] (node:internal/worker:315:10)
+    at Worker.<computed>.onexit (node:internal/worker:229:20)
+    at Worker.callbackTrampoline (node:internal/async_hooks:130:17)
+ ⨯ node_modules/thread-stream/index.js (201:1) @ Worker.onWorkerExit
+ ⨯ uncaughtException: Error: the worker thread exited
+    at Worker.onWorkerExit (webpack-internal:///(rsc)/./node_modules/thread-stream/index.js:201:32)
+    at Worker.emit (node:events:514:28)
+    at [kOnExit] (node:internal/worker:315:10)
+    at Worker.<computed>.onexit (node:internal/worker:229:20)
+    at Worker.callbackTrampoline (node:internal/async_hooks:130:17)
+[0m [90m 199 |[39m   stream[33m.[39mworker[33m.[39mexited [33m=[39m [36mtrue[39m[0m
+[0m [90m 200 |[39m   stream[33m.[39mworker[33m.[39moff([32m'exit'[39m[33m,[39m onWorkerExit)[0m
+[0m[31m[1m>[22m[39m[90m 201 |[39m   destroy(stream[33m,[39m code [33m!==[39m [35m0[39m [33m?[39m [36mnew[39m [33mError[39m([32m'the worker thread exited'[39m) [33m:[39m [36mnull[39m)[0m
+[0m [90m     |[39m [31m[1m^[22m[39m[0m
+[0m [90m 202 |[39m }[0m
+[0m [90m 203 |[39m[0m
+[0m [90m 204 |[39m [36mclass[39m [33mThreadStream[39m [36mextends[39m [33mEventEmitter[39m {[0m
+ ⨯ node_modules/thread-stream/index.js (201:1) @ Worker.onWorkerExit
+ ⨯ uncaughtException: Error: the worker thread exited
+    at Worker.onWorkerExit (webpack-internal:///(rsc)/./node_modules/thread-stream/index.js:201:32)
+    at Worker.emit (node:events:514:28)
+    at [kOnExit] (node:internal/worker:315:10)
+    at Worker.<computed>.onexit (node:internal/worker:229:20)
+    at Worker.callbackTrampoline (node:internal/async_hooks:130:17)
+[0m [90m 199 |[39m   stream[33m.[39mworker[33m.[39mexited [33m=[39m [36mtrue[39m[0m
+[0m [90m 200 |[39m   stream[33m.[39mworker[33m.[39moff([32m'exit'[39m[33m,[39m onWorkerExit)[0m
+[0m[31m[1m>[22m[39m[90m 201 |[39m   destroy(stream[33m,[39m code [33m!==[39m [35m0[39m [33m?[39m [36mnew[39m [33mError[39m([32m'the worker thread exited'[39m) [33m:[39m [36mnull[39m)[0m
+[0m [90m     |[39m [31m[1m^[22m[39m[0m
+[0m [90m 202 |[39m }[0m
+[0m [90m 203 |[39m[0m
+[0m [90m 204 |[39m [36mclass[39m [33mThreadStream[39m [36mextends[39m [33mEventEmitter[39m {[0m
+Error: the worker has exited
+    at ThreadStream.write (webpack-internal:///(rsc)/./node_modules/thread-stream/index.js:238:19)
+    at Pino.write (webpack-internal:///(rsc)/./node_modules/pino/lib/proto.js:219:10)
+    at Pino.LOG [as warn] (webpack-internal:///(rsc)/./node_modules/pino/lib/tools.js:71:21)
+    at warn (webpack-internal:///(rsc)/./src/auth.ts:73:65)
+    at Array.forEach (<anonymous>)
+    at Auth (webpack-internal:///(rsc)/./node_modules/@auth/core/index.js:93:25)
+    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)
+    at async AppRouteRouteModule.do (/home/blacksmith/projects/aivus/aivus-web/node_modules/next/dist/compiled/next-server/app-route.runtime.dev.js:10:32801)
+ ⨯ node_modules/thread-stream/index.js (238:1) @ ThreadStream.write
+ ⨯ uncaughtException: Error: the worker has exited
+    at ThreadStream.write (webpack-internal:///(rsc)/./node_modules/thread-stream/index.js:238:19)
+    at Pino.write (webpack-internal:///(rsc)/./node_modules/pino/lib/proto.js:219:10)
+    at Pino.LOG [as warn] (webpack-internal:///(rsc)/./node_modules/pino/lib/tools.js:71:21)
+    at warn (webpack-internal:///(rsc)/./src/auth.ts:73:65)
+    at Array.forEach (<anonymous>)
+    at Auth (webpack-internal:///(rsc)/./node_modules/@auth/core/index.js:93:25)
+    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)
+    at async AppRouteRouteModule.do (/home/blacksmith/projects/aivus/aivus-web/node_modules/next/dist/compiled/next-server/app-route.runtime.dev.js:10:32801)
+[0m [90m 236 |[39m   write (data) {[0m
+[0m [90m 237 |[39m     [36mif[39m ([36mthis[39m[kImpl][33m.[39mdestroyed) {[0m
+[0m[31m[1m>[22m[39m[90m 238 |[39m       error([36mthis[39m[33m,[39m [36mnew[39m [33mError[39m([32m'the worker has exited'[39m))[0m
+[0m [90m     |[39m [31m[1m^[22m[39m[0m
+[0m [90m 239 |[39m       [36mreturn[39m [36mfalse[39m[0m
+[0m [90m 240 |[39m     }[0m
+[0m [90m 241 |[39m[0m
+ ⨯ node_modules/thread-stream/index.js (238:1) @ ThreadStream.write
+ ⨯ uncaughtException: Error: the worker has exited
+    at ThreadStream.write (webpack-internal:///(rsc)/./node_modules/thread-stream/index.js:238:19)
+    at Pino.write (webpack-internal:///(rsc)/./node_modules/pino/lib/proto.js:219:10)
+    at Pino.LOG [as warn] (webpack-internal:///(rsc)/./node_modules/pino/lib/tools.js:71:21)
+    at warn (webpack-internal:///(rsc)/./src/auth.ts:73:65)
+    at Array.forEach (<anonymous>)
+    at Auth (webpack-internal:///(rsc)/./node_modules/@auth/core/index.js:93:25)
+    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)
+    at async AppRouteRouteModule.do (/home/blacksmith/projects/aivus/aivus-web/node_modules/next/dist/compiled/next-server/app-route.runtime.dev.js:10:32801)
+[0m [90m 236 |[39m   write (data) {[0m
+[0m [90m 237 |[39m     [36mif[39m ([36mthis[39m[kImpl][33m.[39mdestroyed) {[0m
+[0m[31m[1m>[22m[39m[90m 238 |[39m       error([36mthis[39m[33m,[39m [36mnew[39m [33mError[39m([32m'the worker has exited'[39m))[0m
+[0m [90m     |[39m [31m[1m^[22m[39m[0m
+[0m [90m 239 |[39m       [36mreturn[39m [36mfalse[39m[0m
+[0m [90m 240 |[39m     }[0m
+[0m [90m 241 |[39m[0m
+ GET /api/auth/session 200 in 3196ms
+ │ GET http://localhost:8000/api/v1/users/user?email=emelianovdmitriy%40gmail.com 200 in 15ms (cache hit)
+middleware {
+  nextUrl: '/service/briefs/1',
+  auth: {
+  user: {
+  name: 'Dmitrii Emelianov',
+  email: 'emelianovdmitriy@gmail.com',
+  image: 'https://lh3.googleusercontent.com/a/ACg8ocLA3vQBMdS4GkYPxFapJF7vRMErPbZrilBlCYHMNzdiOxxHE-4=s96-c',
+  role: 'VENDOR',
+  id: 9
+},
+  expires: '2025-03-04T11:45:57.468Z'
+},
+  request: {
+  cookies: RequestCookies {"authjs.csrf-token":{"name":"authjs.csrf-token","value":"1e34022c6a819e7026619ac6fa99f19326c4a8ff4dc0a3da4061104c750bd6fd|7d19b8311d52b57e2aac480a546abc84bc92137e0da848a7fd9a2de8489e015d"},"authjs.callback-url":{"name":"authjs.callback-url","value":"http://localhost:3000/auth"},"authjs.session-token":{"name":"authjs.session-token","value":"eyJhbGciOiJkaXIiLCJlbmMiOiJBMjU2Q0JDLUhTNTEyIiwia2lkIjoicEEzSTN1RDNwbjl2cGxGVVpvb0ZfTjYyeU0zMjdMakxhRnZseFd6Z3g5N1daaE5CbHNqbzdwQmpBSnBicG9LcWF1dGxoSjZEZWp0NEp5R3hpX1dWLUEifQ..feideLzUQ2kwna31Umv61Q.fvtYMzI9XgGAH3zcnGft7Zx2Ri8AQGgR3urKT5qdfusXgI51D216drBywnLU9FpDx0V78HqZ1iLq8mUn3Dy2xcDMlfpRT0XHciqM4xUxWQZUItK8C6VaOel-3BJt6YU0sU_vJNj_URQZlHDibuF1_suQMwvUZ7RNPRFgIOc-YwX0uGwPeJJn64wr3WM9B_L-urp7imjZP_-nv1CreaH2_NIYAaWkY4_Q1a5jzLARwmA7X83EiK2eKRAITf_T9tUP7KIAdMGvtPooItrMMjRawCSN_NDWUWwF3YVES3NLji_7e_LgVxCNEnwR0Q9gjK5Ll3VckT68jSO1fFTcnJPpAT2CzapRPoWF9Dxu8Km7Zob2YIxtsxNu_YUD1UZxvNlC2IFaDSunMZo6do6XmUO0LQ.S--LkiSFLH1OGIgEsDMnJvaS5zldZzc8PM4Ufg6DuqI"}},
+  nextUrl: {
+  href: 'http://localhost:3000/service/briefs/1',
+  origin: 'http://localhost:3000',
+  protocol: 'http:',
+  username: '',
+  password: '',
+  host: 'localhost:3000',
+  hostname: 'localhost',
+  port: '3000',
+  pathname: '/service/briefs/1',
+  search: '',
+  searchParams: URLSearchParams {  },
+  hash: ''
+},
+  url: 'http://localhost:3000/service/briefs/1',
+  bodyUsed: false,
+  cache: 'default',
+  credentials: 'same-origin',
+  destination: '',
+  headers: {
+  accept: '*/*',
+  accept-encoding: 'gzip, deflate, br, zstd',
+  accept-language: 'en-US,en;q=0.9,ru;q=0.8,sr;q=0.7',
+  connection: 'keep-alive',
+  cookie: 'authjs.csrf-token=1e34022c6a819e7026619ac6fa99f19326c4a8ff4dc0a3da4061104c750bd6fd%7C7d19b8311d52b57e2aac480a546abc84bc92137e0da848a7fd9a2de8489e015d; authjs.callback-url=http%3A%2F%2Flocalhost%3A3000%2Fauth; authjs.session-token=eyJhbGciOiJkaXIiLCJlbmMiOiJBMjU2Q0JDLUhTNTEyIiwia2lkIjoicEEzSTN1RDNwbjl2cGxGVVpvb0ZfTjYyeU0zMjdMakxhRnZseFd6Z3g5N1daaE5CbHNqbzdwQmpBSnBicG9LcWF1dGxoSjZEZWp0NEp5R3hpX1dWLUEifQ..feideLzUQ2kwna31Umv61Q.fvtYMzI9XgGAH3zcnGft7Zx2Ri8AQGgR3urKT5qdfusXgI51D216drBywnLU9FpDx0V78HqZ1iLq8mUn3Dy2xcDMlfpRT0XHciqM4xUxWQZUItK8C6VaOel-3BJt6YU0sU_vJNj_URQZlHDibuF1_suQMwvUZ7RNPRFgIOc-YwX0uGwPeJJn64wr3WM9B_L-urp7imjZP_-nv1CreaH2_NIYAaWkY4_Q1a5jzLARwmA7X83EiK2eKRAITf_T9tUP7KIAdMGvtPooItrMMjRawCSN_NDWUWwF3YVES3NLji_7e_LgVxCNEnwR0Q9gjK5Ll3VckT68jSO1fFTcnJPpAT2CzapRPoWF9Dxu8Km7Zob2YIxtsxNu_YUD1UZxvNlC2IFaDSunMZo6do6XmUO0LQ.S--LkiSFLH1OGIgEsDMnJvaS5zldZzc8PM4Ufg6DuqI',
+  dnt: '1',
+  host: 'localhost:3000',
+  referer: 'http://localhost:3000/app/dashboard/1/details',
+  sec-ch-ua: '"Not A(Brand";v="8", "Chromium";v="132", "Google Chrome";v="132"',
+  sec-ch-ua-mobile: '?0',
+  sec-ch-ua-platform: '"Windows"',
+  sec-fetch-dest: 'empty',
+  sec-fetch-mode: 'cors',
+  sec-fetch-site: 'same-origin',
+  user-agent: 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/132.0.0.0 Safari/537.36',
+  x-forwarded-for: '::1',
+  x-forwarded-host: 'localhost:3000',
+  x-forwarded-port: '3000',
+  x-forwarded-proto: 'http'
+},
+  integrity: '',
+  keepalive: false,
+  method: 'GET',
+  mode: 'cors',
+  redirect: 'follow',
+  referrer: 'about:client',
+  referrerPolicy: '',
+  signal: AbortSignal {
+  [Symbol(kEvents)]: SafeMap(0) {},
+  [Symbol(events.maxEventTargetListeners)]: 10,
+  [Symbol(events.maxEventTargetListenersWarned)]: false,
+  [Symbol(kHandlers)]: SafeMap(0) {},
+  [Symbol(kAborted)]: false,
+  [Symbol(kReason)]: undefined,
+  [Symbol(kOnabort)]: undefined,
+  [Symbol(realm)]: {
+  settingsObject: {
+  baseUrl: undefined,
+  origin: [Getter],
+  policyContainer: { referrerPolicy: 'strict-origin-when-cross-origin' }
+}
+}
+}
+}
+}
+proxying request { pathname: '/service/briefs/1', newPathname: '/api/v1/briefs/1' }
+middleware {
+  nextUrl: '/app/dashboard/1/details',
+  auth: {
+  user: {
+  name: 'Dmitrii Emelianov',
+  email: 'emelianovdmitriy@gmail.com',
+  image: 'https://lh3.googleusercontent.com/a/ACg8ocLA3vQBMdS4GkYPxFapJF7vRMErPbZrilBlCYHMNzdiOxxHE-4=s96-c',
+  role: 'VENDOR',
+  id: 9
+},
+  expires: '2025-03-04T11:45:57.614Z'
+},
+  request: {
+  cookies: RequestCookies {"authjs.csrf-token":{"name":"authjs.csrf-token","value":"1e34022c6a819e7026619ac6fa99f19326c4a8ff4dc0a3da4061104c750bd6fd|7d19b8311d52b57e2aac480a546abc84bc92137e0da848a7fd9a2de8489e015d"},"authjs.callback-url":{"name":"authjs.callback-url","value":"http://localhost:3000/auth"},"authjs.session-token":{"name":"authjs.session-token","value":"eyJhbGciOiJkaXIiLCJlbmMiOiJBMjU2Q0JDLUhTNTEyIiwia2lkIjoicEEzSTN1RDNwbjl2cGxGVVpvb0ZfTjYyeU0zMjdMakxhRnZseFd6Z3g5N1daaE5CbHNqbzdwQmpBSnBicG9LcWF1dGxoSjZEZWp0NEp5R3hpX1dWLUEifQ..feideLzUQ2kwna31Umv61Q.fvtYMzI9XgGAH3zcnGft7Zx2Ri8AQGgR3urKT5qdfusXgI51D216drBywnLU9FpDx0V78HqZ1iLq8mUn3Dy2xcDMlfpRT0XHciqM4xUxWQZUItK8C6VaOel-3BJt6YU0sU_vJNj_URQZlHDibuF1_suQMwvUZ7RNPRFgIOc-YwX0uGwPeJJn64wr3WM9B_L-urp7imjZP_-nv1CreaH2_NIYAaWkY4_Q1a5jzLARwmA7X83EiK2eKRAITf_T9tUP7KIAdMGvtPooItrMMjRawCSN_NDWUWwF3YVES3NLji_7e_LgVxCNEnwR0Q9gjK5Ll3VckT68jSO1fFTcnJPpAT2CzapRPoWF9Dxu8Km7Zob2YIxtsxNu_YUD1UZxvNlC2IFaDSunMZo6do6XmUO0LQ.S--LkiSFLH1OGIgEsDMnJvaS5zldZzc8PM4Ufg6DuqI"}},
+  nextUrl: {
+  href: 'http://localhost:3000/app/dashboard/1/details',
+  origin: 'http://localhost:3000',
+  protocol: 'http:',
+  username: '',
+  password: '',
+  host: 'localhost:3000',
+  hostname: 'localhost',
+  port: '3000',
+  pathname: '/app/dashboard/1/details',
+  search: '',
+  searchParams: URLSearchParams {  },
+  hash: ''
+},
+  url: 'http://localhost:3000/app/dashboard/1/details',
+  bodyUsed: false,
+  cache: 'default',
+  credentials: 'same-origin',
+  destination: '',
+  headers: {
+  accept: 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7',
+  accept-encoding: 'gzip, deflate, br, zstd',
+  accept-language: 'en-US,en;q=0.9,ru;q=0.8,sr;q=0.7',
+  cache-control: 'max-age=0',
+  connection: 'keep-alive',
+  cookie: 'authjs.csrf-token=1e34022c6a819e7026619ac6fa99f19326c4a8ff4dc0a3da4061104c750bd6fd%7C7d19b8311d52b57e2aac480a546abc84bc92137e0da848a7fd9a2de8489e015d; authjs.callback-url=http%3A%2F%2Flocalhost%3A3000%2Fauth; authjs.session-token=eyJhbGciOiJkaXIiLCJlbmMiOiJBMjU2Q0JDLUhTNTEyIiwia2lkIjoicEEzSTN1RDNwbjl2cGxGVVpvb0ZfTjYyeU0zMjdMakxhRnZseFd6Z3g5N1daaE5CbHNqbzdwQmpBSnBicG9LcWF1dGxoSjZEZWp0NEp5R3hpX1dWLUEifQ..feideLzUQ2kwna31Umv61Q.fvtYMzI9XgGAH3zcnGft7Zx2Ri8AQGgR3urKT5qdfusXgI51D216drBywnLU9FpDx0V78HqZ1iLq8mUn3Dy2xcDMlfpRT0XHciqM4xUxWQZUItK8C6VaOel-3BJt6YU0sU_vJNj_URQZlHDibuF1_suQMwvUZ7RNPRFgIOc-YwX0uGwPeJJn64wr3WM9B_L-urp7imjZP_-nv1CreaH2_NIYAaWkY4_Q1a5jzLARwmA7X83EiK2eKRAITf_T9tUP7KIAdMGvtPooItrMMjRawCSN_NDWUWwF3YVES3NLji_7e_LgVxCNEnwR0Q9gjK5Ll3VckT68jSO1fFTcnJPpAT2CzapRPoWF9Dxu8Km7Zob2YIxtsxNu_YUD1UZxvNlC2IFaDSunMZo6do6XmUO0LQ.S--LkiSFLH1OGIgEsDMnJvaS5zldZzc8PM4Ufg6DuqI',
+  dnt: '1',
+  host: 'localhost:3000',
+  referer: 'http://localhost:3000/app/dashboard/1/details',
+  sec-ch-ua: '"Not A(Brand";v="8", "Chromium";v="132", "Google Chrome";v="132"',
+  sec-ch-ua-mobile: '?0',
+  sec-ch-ua-platform: '"Windows"',
+  sec-fetch-dest: 'document',
+  sec-fetch-mode: 'navigate',
+  sec-fetch-site: 'same-origin',
+  sec-fetch-user: '?1',
+  upgrade-insecure-requests: '1',
+  user-agent: 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/132.0.0.0 Safari/537.36',
+  x-forwarded-for: '::1',
+  x-forwarded-host: 'localhost:3000',
+  x-forwarded-port: '3000',
+  x-forwarded-proto: 'http'
+},
+  integrity: '',
+  keepalive: false,
+  method: 'GET',
+  mode: 'cors',
+  redirect: 'follow',
+  referrer: 'about:client',
+  referrerPolicy: '',
+  signal: AbortSignal {
+  [Symbol(kEvents)]: SafeMap(0) {},
+  [Symbol(events.maxEventTargetListeners)]: 10,
+  [Symbol(events.maxEventTargetListenersWarned)]: false,
+  [Symbol(kHandlers)]: SafeMap(0) {},
+  [Symbol(kAborted)]: false,
+  [Symbol(kReason)]: undefined,
+  [Symbol(kOnabort)]: undefined,
+  [Symbol(realm)]: {
+  settingsObject: {
+  baseUrl: undefined,
+  origin: [Getter],
+  policyContainer: { referrerPolicy: 'strict-origin-when-cross-origin' }
+}
+}
+}
+}
+}
+ ○ Compiling /app/dashboard/[projectId]/details ...
+ ✓ Compiled /app/dashboard/[projectId]/details in 15.4s (6062 modules)
+Error: Cannot find module '/home/blacksmith/projects/aivus/aivus-web/.next/server/vendor-chunks/lib/worker.js'
+    at Module._resolveFilename (node:internal/modules/cjs/loader:1048:15)
+    at Module._load (node:internal/modules/cjs/loader:901:27)
+    at Function.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:83:12)
+    at MessagePort.<anonymous> (node:internal/main/worker_thread:185:26)
+    at [nodejs.internal.kHybridDispatch] (node:internal/event_target:807:20)
+    at exports.emitMessage (node:internal/per_context/messageport:23:28) {
+  code: 'MODULE_NOT_FOUND',
+  requireStack: []
+}
+ ⨯ uncaughtException: Error: Cannot find module '/home/blacksmith/projects/aivus/aivus-web/.next/server/vendor-chunks/lib/worker.js'
+    at Module._resolveFilename (node:internal/modules/cjs/loader:1048:15)
+    at Module._load (node:internal/modules/cjs/loader:901:27)
+    at Function.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:83:12)
+    at MessagePort.<anonymous> (node:internal/main/worker_thread:185:26)
+    at [nodejs.internal.kHybridDispatch] (node:internal/event_target:807:20)
+    at exports.emitMessage (node:internal/per_context/messageport:23:28) {
+  code: 'MODULE_NOT_FOUND',
+  requireStack: []
+}
+ ⨯ uncaughtException: Error: Cannot find module '/home/blacksmith/projects/aivus/aivus-web/.next/server/vendor-chunks/lib/worker.js'
+    at Module._resolveFilename (node:internal/modules/cjs/loader:1048:15)
+    at Module._load (node:internal/modules/cjs/loader:901:27)
+    at Function.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:83:12)
+    at MessagePort.<anonymous> (node:internal/main/worker_thread:185:26)
+    at [nodejs.internal.kHybridDispatch] (node:internal/event_target:807:20)
+    at exports.emitMessage (node:internal/per_context/messageport:23:28) {
+  code: 'MODULE_NOT_FOUND',
+  requireStack: []
+}
+Error: the worker thread exited
+    at Worker.onWorkerExit (webpack-internal:///(rsc)/./node_modules/thread-stream/index.js:201:32)
+    at Worker.emit (node:events:514:28)
+    at [kOnExit] (node:internal/worker:315:10)
+    at Worker.<computed>.onexit (node:internal/worker:229:20)
+    at Worker.callbackTrampoline (node:internal/async_hooks:130:17)
+ ⨯ node_modules/thread-stream/index.js (201:1) @ Worker.onWorkerExit
+ ⨯ uncaughtException: Error: the worker thread exited
+    at Worker.onWorkerExit (webpack-internal:///(rsc)/./node_modules/thread-stream/index.js:201:32)
+    at Worker.emit (node:events:514:28)
+    at [kOnExit] (node:internal/worker:315:10)
+    at Worker.<computed>.onexit (node:internal/worker:229:20)
+    at Worker.callbackTrampoline (node:internal/async_hooks:130:17)
+[0m [90m 199 |[39m   stream[33m.[39mworker[33m.[39mexited [33m=[39m [36mtrue[39m[0m
+[0m [90m 200 |[39m   stream[33m.[39mworker[33m.[39moff([32m'exit'[39m[33m,[39m onWorkerExit)[0m
+[0m[31m[1m>[22m[39m[90m 201 |[39m   destroy(stream[33m,[39m code [33m!==[39m [35m0[39m [33m?[39m [36mnew[39m [33mError[39m([32m'the worker thread exited'[39m) [33m:[39m [36mnull[39m)[0m
+[0m [90m     |[39m [31m[1m^[22m[39m[0m
+[0m [90m 202 |[39m }[0m
+[0m [90m 203 |[39m[0m
+[0m [90m 204 |[39m [36mclass[39m [33mThreadStream[39m [36mextends[39m [33mEventEmitter[39m {[0m
+ ⨯ node_modules/thread-stream/index.js (201:1) @ Worker.onWorkerExit
+ ⨯ uncaughtException: Error: the worker thread exited
+    at Worker.onWorkerExit (webpack-internal:///(rsc)/./node_modules/thread-stream/index.js:201:32)
+    at Worker.emit (node:events:514:28)
+    at [kOnExit] (node:internal/worker:315:10)
+    at Worker.<computed>.onexit (node:internal/worker:229:20)
+    at Worker.callbackTrampoline (node:internal/async_hooks:130:17)
+[0m [90m 199 |[39m   stream[33m.[39mworker[33m.[39mexited [33m=[39m [36mtrue[39m[0m
+[0m [90m 200 |[39m   stream[33m.[39mworker[33m.[39moff([32m'exit'[39m[33m,[39m onWorkerExit)[0m
+[0m[31m[1m>[22m[39m[90m 201 |[39m   destroy(stream[33m,[39m code [33m!==[39m [35m0[39m [33m?[39m [36mnew[39m [33mError[39m([32m'the worker thread exited'[39m) [33m:[39m [36mnull[39m)[0m
+[0m [90m     |[39m [31m[1m^[22m[39m[0m
+[0m [90m 202 |[39m }[0m
+[0m [90m 203 |[39m[0m
+[0m [90m 204 |[39m [36mclass[39m [33mThreadStream[39m [36mextends[39m [33mEventEmitter[39m {[0m
+ GET /api/auth/session 200 in 15587ms
+ │ GET http://localhost:8000/api/v1/users/user?email=emelianovdmitriy%40gmail.com 200 in 1ms (cache hit)
+styled-components: it looks like an unknown prop "themeType" is being sent through to the DOM, which will likely trigger a React console error. If you would like automatic filtering of unknown props, you can opt-into that behavior via `<StyleSheetManager shouldForwardProp={...}>` (connect an API like `@emotion/is-prop-valid`) or consider using transient props (`$` prefix for automatic filtering.)
+React does not recognize the `themeType` prop on a DOM element. If you intentionally want it to appear in the DOM as a custom attribute, spell it as lowercase `themetype` instead. If you accidentally passed it from a parent component, remove it from the DOM element.
+styled-components: it looks like an unknown prop "isActive" is being sent through to the DOM, which will likely trigger a React console error. If you would like automatic filtering of unknown props, you can opt-into that behavior via `<StyleSheetManager shouldForwardProp={...}>` (connect an API like `@emotion/is-prop-valid`) or consider using transient props (`$` prefix for automatic filtering.)
+React does not recognize the `isActive` prop on a DOM element. If you intentionally want it to appear in the DOM as a custom attribute, spell it as lowercase `isactive` instead. If you accidentally passed it from a parent component, remove it from the DOM element.
+Accessing element.ref was removed in React 19. ref is now a regular prop. It will be removed from the JSX Element type in a future release.
+ GET /app/dashboard/1/details 200 in 16271ms
+ │ GET http://localhost:8000/api/v1/users/user?email=emelianovdmitriy%40gmail.com 200 in 0ms (cache hit)
+middleware {
+  nextUrl: '/service/briefs/1',
+  auth: {
+  user: {
+  name: 'Dmitrii Emelianov',
+  email: 'emelianovdmitriy@gmail.com',
+  image: 'https://lh3.googleusercontent.com/a/ACg8ocLA3vQBMdS4GkYPxFapJF7vRMErPbZrilBlCYHMNzdiOxxHE-4=s96-c',
+  role: 'VENDOR',
+  id: 9
+},
+  expires: '2025-03-04T11:46:17.779Z'
+},
+  request: {
+  cookies: RequestCookies {"authjs.csrf-token":{"name":"authjs.csrf-token","value":"1e34022c6a819e7026619ac6fa99f19326c4a8ff4dc0a3da4061104c750bd6fd|7d19b8311d52b57e2aac480a546abc84bc92137e0da848a7fd9a2de8489e015d"},"authjs.callback-url":{"name":"authjs.callback-url","value":"http://localhost:3000/auth"},"authjs.session-token":{"name":"authjs.session-token","value":"eyJhbGciOiJkaXIiLCJlbmMiOiJBMjU2Q0JDLUhTNTEyIiwia2lkIjoicEEzSTN1RDNwbjl2cGxGVVpvb0ZfTjYyeU0zMjdMakxhRnZseFd6Z3g5N1daaE5CbHNqbzdwQmpBSnBicG9LcWF1dGxoSjZEZWp0NEp5R3hpX1dWLUEifQ..UP5zuvvcLFcgXvhfVrhFSQ._j4MrcYia_SnWtcXQfU-x8gc4lKuIA64N5lUA-Nj6thjXHNy2G4STtvRSVyQdf4kZE9vcNQYkhIXFJdoqCXaL0Qi5WcM7ArIVqFlli0S7pqkW3ArHosl9n4slesw5NP6FxRL7jNeEoeI4xvbOhGdorafbDAX_w2XTyFloA_84jr-ey61Rvsz5ndAc58TA-H5pLrugEoDI6-CQmh9BBeCiRbz0gDX7Gxm6tu6dGdclnlcrIuTu0ajHVO8GTkhWUZEL5K1Z__HUxRN1-taFjVrcXxBJ6603uh4LYgRaBAu03VOUKnP0elyWvzkLXNkfGvVuAZSaE5r8ngIadek7H2zPjxnq23a0pxk9TNUOb-Os3dG9-7n0daZXfQ9tm3mxUnP_f-9z07wtqSPKtQjXhn41Q.VoQRemGd9si2hApzhWpimtPtk6fp4hq1wn_8RPg8D_A"}},
+  nextUrl: {
+  href: 'http://localhost:3000/service/briefs/1',
+  origin: 'http://localhost:3000',
+  protocol: 'http:',
+  username: '',
+  password: '',
+  host: 'localhost:3000',
+  hostname: 'localhost',
+  port: '3000',
+  pathname: '/service/briefs/1',
+  search: '',
+  searchParams: URLSearchParams {  },
+  hash: ''
+},
+  url: 'http://localhost:3000/service/briefs/1',
+  bodyUsed: false,
+  cache: 'default',
+  credentials: 'same-origin',
+  destination: '',
+  headers: {
+  accept: '*/*',
+  accept-encoding: 'gzip, deflate, br, zstd',
+  accept-language: 'en-US,en;q=0.9,ru;q=0.8,sr;q=0.7',
+  connection: 'keep-alive',
+  cookie: 'authjs.csrf-token=1e34022c6a819e7026619ac6fa99f19326c4a8ff4dc0a3da4061104c750bd6fd%7C7d19b8311d52b57e2aac480a546abc84bc92137e0da848a7fd9a2de8489e015d; authjs.callback-url=http%3A%2F%2Flocalhost%3A3000%2Fauth; authjs.session-token=eyJhbGciOiJkaXIiLCJlbmMiOiJBMjU2Q0JDLUhTNTEyIiwia2lkIjoicEEzSTN1RDNwbjl2cGxGVVpvb0ZfTjYyeU0zMjdMakxhRnZseFd6Z3g5N1daaE5CbHNqbzdwQmpBSnBicG9LcWF1dGxoSjZEZWp0NEp5R3hpX1dWLUEifQ..UP5zuvvcLFcgXvhfVrhFSQ._j4MrcYia_SnWtcXQfU-x8gc4lKuIA64N5lUA-Nj6thjXHNy2G4STtvRSVyQdf4kZE9vcNQYkhIXFJdoqCXaL0Qi5WcM7ArIVqFlli0S7pqkW3ArHosl9n4slesw5NP6FxRL7jNeEoeI4xvbOhGdorafbDAX_w2XTyFloA_84jr-ey61Rvsz5ndAc58TA-H5pLrugEoDI6-CQmh9BBeCiRbz0gDX7Gxm6tu6dGdclnlcrIuTu0ajHVO8GTkhWUZEL5K1Z__HUxRN1-taFjVrcXxBJ6603uh4LYgRaBAu03VOUKnP0elyWvzkLXNkfGvVuAZSaE5r8ngIadek7H2zPjxnq23a0pxk9TNUOb-Os3dG9-7n0daZXfQ9tm3mxUnP_f-9z07wtqSPKtQjXhn41Q.VoQRemGd9si2hApzhWpimtPtk6fp4hq1wn_8RPg8D_A',
+  dnt: '1',
+  host: 'localhost:3000',
+  referer: 'http://localhost:3000/app/dashboard/1/details',
+  sec-ch-ua: '"Not A(Brand";v="8", "Chromium";v="132", "Google Chrome";v="132"',
+  sec-ch-ua-mobile: '?0',
+  sec-ch-ua-platform: '"Windows"',
+  sec-fetch-dest: 'empty',
+  sec-fetch-mode: 'cors',
+  sec-fetch-site: 'same-origin',
+  user-agent: 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/132.0.0.0 Safari/537.36',
+  x-forwarded-for: '::1',
+  x-forwarded-host: 'localhost:3000',
+  x-forwarded-port: '3000',
+  x-forwarded-proto: 'http'
+},
+  integrity: '',
+  keepalive: false,
+  method: 'GET',
+  mode: 'cors',
+  redirect: 'follow',
+  referrer: 'about:client',
+  referrerPolicy: '',
+  signal: AbortSignal {
+  [Symbol(kEvents)]: SafeMap(0) {},
+  [Symbol(events.maxEventTargetListeners)]: 10,
+  [Symbol(events.maxEventTargetListenersWarned)]: false,
+  [Symbol(kHandlers)]: SafeMap(0) {},
+  [Symbol(kAborted)]: false,
+  [Symbol(kReason)]: undefined,
+  [Symbol(kOnabort)]: undefined,
+  [Symbol(realm)]: {
+  settingsObject: {
+  baseUrl: undefined,
+  origin: [Getter],
+  policyContainer: { referrerPolicy: 'strict-origin-when-cross-origin' }
+}
+}
+}
+}
+}
+proxying request { pathname: '/service/briefs/1', newPathname: '/api/v1/briefs/1' }
+ GET /api/auth/session 200 in 80ms
+ │ GET http://localhost:8000/api/v1/users/user?email=emelianovdmitriy%40gmail.com 200 in 1ms (cache hit)
+middleware {
+  nextUrl: '/service/briefs/1',
+  auth: {
+  user: {
+  name: 'Dmitrii Emelianov',
+  email: 'emelianovdmitriy@gmail.com',
+  image: 'https://lh3.googleusercontent.com/a/ACg8ocLA3vQBMdS4GkYPxFapJF7vRMErPbZrilBlCYHMNzdiOxxHE-4=s96-c',
+  role: 'VENDOR',
+  id: 9
+},
+  expires: '2025-03-04T11:47:09.580Z'
+},
+  request: {
+  cookies: RequestCookies {"authjs.csrf-token":{"name":"authjs.csrf-token","value":"1e34022c6a819e7026619ac6fa99f19326c4a8ff4dc0a3da4061104c750bd6fd|7d19b8311d52b57e2aac480a546abc84bc92137e0da848a7fd9a2de8489e015d"},"authjs.callback-url":{"name":"authjs.callback-url","value":"http://localhost:3000/auth"},"authjs.session-token":{"name":"authjs.session-token","value":"eyJhbGciOiJkaXIiLCJlbmMiOiJBMjU2Q0JDLUhTNTEyIiwia2lkIjoicEEzSTN1RDNwbjl2cGxGVVpvb0ZfTjYyeU0zMjdMakxhRnZseFd6Z3g5N1daaE5CbHNqbzdwQmpBSnBicG9LcWF1dGxoSjZEZWp0NEp5R3hpX1dWLUEifQ..8qDwKlsoZja-BoZJObsFWQ.fu00TRokeMEuQJbY041-10aAcIG1u7r6k8r0qN4Ye9hSllUVmLBDSzu-jWrCeFD-WUxJ-ra-2Ej4kx4sBLQkR2cxr1UMJ9SRJDq1AWpegFbILHQU7NEwe9Niuy8PA4bw3IOnK3wmjcjBIE-Zk3aatB8h3q-kngte1hUwuptz2GtKkw1hNWBZXInNzQxYUEOE__upXccbYQwjcxcg7enYYZd4o513iEQRjYAxCqzSa7dcwWG3SpPCWLksJyIs6nkMPHm6ppU56p21CQle1EgG201fseEFvvvELjNIsQzpp8plJPihPLTd3kBOOctvlN2UOxf-L25zw2NguzUSpbDaUPil6NuECjqWxZtnXRioeaXaJESaLuAfV4K-OmHI3YpKVwd83uG6AuYqju5gzVmFFg.562cb3td_axL_74nEs-CjIzbuWVopJp8tipBWmg2jhM"}},
+  nextUrl: {
+  href: 'http://localhost:3000/service/briefs/1',
+  origin: 'http://localhost:3000',
+  protocol: 'http:',
+  username: '',
+  password: '',
+  host: 'localhost:3000',
+  hostname: 'localhost',
+  port: '3000',
+  pathname: '/service/briefs/1',
+  search: '',
+  searchParams: URLSearchParams {  },
+  hash: ''
+},
+  url: 'http://localhost:3000/service/briefs/1',
+  bodyUsed: false,
+  cache: 'default',
+  credentials: 'same-origin',
+  destination: '',
+  headers: {
+  accept: '*/*',
+  accept-encoding: 'gzip, deflate, br, zstd',
+  accept-language: 'en-US,en;q=0.9,ru;q=0.8,sr;q=0.7',
+  connection: 'keep-alive',
+  cookie: 'authjs.csrf-token=1e34022c6a819e7026619ac6fa99f19326c4a8ff4dc0a3da4061104c750bd6fd%7C7d19b8311d52b57e2aac480a546abc84bc92137e0da848a7fd9a2de8489e015d; authjs.callback-url=http%3A%2F%2Flocalhost%3A3000%2Fauth; authjs.session-token=eyJhbGciOiJkaXIiLCJlbmMiOiJBMjU2Q0JDLUhTNTEyIiwia2lkIjoicEEzSTN1RDNwbjl2cGxGVVpvb0ZfTjYyeU0zMjdMakxhRnZseFd6Z3g5N1daaE5CbHNqbzdwQmpBSnBicG9LcWF1dGxoSjZEZWp0NEp5R3hpX1dWLUEifQ..8qDwKlsoZja-BoZJObsFWQ.fu00TRokeMEuQJbY041-10aAcIG1u7r6k8r0qN4Ye9hSllUVmLBDSzu-jWrCeFD-WUxJ-ra-2Ej4kx4sBLQkR2cxr1UMJ9SRJDq1AWpegFbILHQU7NEwe9Niuy8PA4bw3IOnK3wmjcjBIE-Zk3aatB8h3q-kngte1hUwuptz2GtKkw1hNWBZXInNzQxYUEOE__upXccbYQwjcxcg7enYYZd4o513iEQRjYAxCqzSa7dcwWG3SpPCWLksJyIs6nkMPHm6ppU56p21CQle1EgG201fseEFvvvELjNIsQzpp8plJPihPLTd3kBOOctvlN2UOxf-L25zw2NguzUSpbDaUPil6NuECjqWxZtnXRioeaXaJESaLuAfV4K-OmHI3YpKVwd83uG6AuYqju5gzVmFFg.562cb3td_axL_74nEs-CjIzbuWVopJp8tipBWmg2jhM',
+  dnt: '1',
+  host: 'localhost:3000',
+  referer: 'http://localhost:3000/app/dashboard/1/details',
+  sec-ch-ua: '"Not A(Brand";v="8", "Chromium";v="132", "Google Chrome";v="132"',
+  sec-ch-ua-mobile: '?0',
+  sec-ch-ua-platform: '"Windows"',
+  sec-fetch-dest: 'empty',
+  sec-fetch-mode: 'cors',
+  sec-fetch-site: 'same-origin',
+  user-agent: 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/132.0.0.0 Safari/537.36',
+  x-forwarded-for: '::1',
+  x-forwarded-host: 'localhost:3000',
+  x-forwarded-port: '3000',
+  x-forwarded-proto: 'http'
+},
+  integrity: '',
+  keepalive: false,
+  method: 'GET',
+  mode: 'cors',
+  redirect: 'follow',
+  referrer: 'about:client',
+  referrerPolicy: '',
+  signal: AbortSignal {
+  [Symbol(kEvents)]: SafeMap(0) {},
+  [Symbol(events.maxEventTargetListeners)]: 10,
+  [Symbol(events.maxEventTargetListenersWarned)]: false,
+  [Symbol(kHandlers)]: SafeMap(0) {},
+  [Symbol(kAborted)]: false,
+  [Symbol(kReason)]: undefined,
+  [Symbol(kOnabort)]: undefined,
+  [Symbol(realm)]: {
+  settingsObject: {
+  baseUrl: undefined,
+  origin: [Getter],
+  policyContainer: { referrerPolicy: 'strict-origin-when-cross-origin' }
+}
+}
+}
+}
+}
+proxying request { pathname: '/service/briefs/1', newPathname: '/api/v1/briefs/1' }
+ GET /api/auth/session 200 in 27ms
+ │ GET http://localhost:8000/api/v1/users/user?email=emelianovdmitriy%40gmail.com 200 in 1ms (cache hit)
+ ✓ Compiled in 1322ms (6060 modules)
+ ✓ Compiled in 572ms (6060 modules)
+ GET /api/auth/session 200 in 107ms
+ │ GET http://localhost:8000/api/v1/users/user?email=emelianovdmitriy%40gmail.com 200 in 1ms (cache hit)
+middleware {
+  nextUrl: '/service/briefs/1',
+  auth: {
+  user: {
+  name: 'Dmitrii Emelianov',
+  email: 'emelianovdmitriy@gmail.com',
+  image: 'https://lh3.googleusercontent.com/a/ACg8ocLA3vQBMdS4GkYPxFapJF7vRMErPbZrilBlCYHMNzdiOxxHE-4=s96-c',
+  role: 'VENDOR',
+  id: 9
+},
+  expires: '2025-03-04T11:47:45.968Z'
+},
+  request: {
+  cookies: RequestCookies {"authjs.csrf-token":{"name":"authjs.csrf-token","value":"1e34022c6a819e7026619ac6fa99f19326c4a8ff4dc0a3da4061104c750bd6fd|7d19b8311d52b57e2aac480a546abc84bc92137e0da848a7fd9a2de8489e015d"},"authjs.callback-url":{"name":"authjs.callback-url","value":"http://localhost:3000/auth"},"authjs.session-token":{"name":"authjs.session-token","value":"eyJhbGciOiJkaXIiLCJlbmMiOiJBMjU2Q0JDLUhTNTEyIiwia2lkIjoicEEzSTN1RDNwbjl2cGxGVVpvb0ZfTjYyeU0zMjdMakxhRnZseFd6Z3g5N1daaE5CbHNqbzdwQmpBSnBicG9LcWF1dGxoSjZEZWp0NEp5R3hpX1dWLUEifQ..-pxUJDsoQC5x0M5rHm1hgw.AoNVwTZjfdbDiRpNmPKExuS0IWYXkodocs31oOtVueOgVC1eBhijkuDrPCPYQ0zHD1EnNviMK9dR1H2EovddWZyxyE99984UHH2-D8uHUzdYVFoutnxwxmuzIIQhuQag69pJs1IRZnbdjM6CiJjlkwMKiq3RPiU9_tJ-HnpQxwjnZaxaxF3OHYTEYwMpE1KJ5ih2oiJugMnsIGuXTst2qh9bzz9NTF6ULnNc67wem2m1dKqngxzOJ2x_ySoMoZCL0kO0z3R-RZZQAmBOQHzTv-aGPFPZPavd6PDN1XB0ey4aiYUBqylq8f4WS8xyK8CuisQAxc2ie3RbOxbwXD6NEXl1TeNxHTPnUCZkB7Xnlcrd54iTo5wnAzTHPLG9BEb0ktK5WK7vypkGqovOWGCtjA.kEVFbne-b9dNK7CBEQ-LMnVR6lMBS5Cii8LGy-QBPZE"}},
+  nextUrl: {
+  href: 'http://localhost:3000/service/briefs/1',
+  origin: 'http://localhost:3000',
+  protocol: 'http:',
+  username: '',
+  password: '',
+  host: 'localhost:3000',
+  hostname: 'localhost',
+  port: '3000',
+  pathname: '/service/briefs/1',
+  search: '',
+  searchParams: URLSearchParams {  },
+  hash: ''
+},
+  url: 'http://localhost:3000/service/briefs/1',
+  bodyUsed: false,
+  cache: 'default',
+  credentials: 'same-origin',
+  destination: '',
+  headers: {
+  accept: '*/*',
+  accept-encoding: 'gzip, deflate, br, zstd',
+  accept-language: 'en-US,en;q=0.9,ru;q=0.8,sr;q=0.7',
+  connection: 'keep-alive',
+  cookie: 'authjs.csrf-token=1e34022c6a819e7026619ac6fa99f19326c4a8ff4dc0a3da4061104c750bd6fd%7C7d19b8311d52b57e2aac480a546abc84bc92137e0da848a7fd9a2de8489e015d; authjs.callback-url=http%3A%2F%2Flocalhost%3A3000%2Fauth; authjs.session-token=eyJhbGciOiJkaXIiLCJlbmMiOiJBMjU2Q0JDLUhTNTEyIiwia2lkIjoicEEzSTN1RDNwbjl2cGxGVVpvb0ZfTjYyeU0zMjdMakxhRnZseFd6Z3g5N1daaE5CbHNqbzdwQmpBSnBicG9LcWF1dGxoSjZEZWp0NEp5R3hpX1dWLUEifQ..-pxUJDsoQC5x0M5rHm1hgw.AoNVwTZjfdbDiRpNmPKExuS0IWYXkodocs31oOtVueOgVC1eBhijkuDrPCPYQ0zHD1EnNviMK9dR1H2EovddWZyxyE99984UHH2-D8uHUzdYVFoutnxwxmuzIIQhuQag69pJs1IRZnbdjM6CiJjlkwMKiq3RPiU9_tJ-HnpQxwjnZaxaxF3OHYTEYwMpE1KJ5ih2oiJugMnsIGuXTst2qh9bzz9NTF6ULnNc67wem2m1dKqngxzOJ2x_ySoMoZCL0kO0z3R-RZZQAmBOQHzTv-aGPFPZPavd6PDN1XB0ey4aiYUBqylq8f4WS8xyK8CuisQAxc2ie3RbOxbwXD6NEXl1TeNxHTPnUCZkB7Xnlcrd54iTo5wnAzTHPLG9BEb0ktK5WK7vypkGqovOWGCtjA.kEVFbne-b9dNK7CBEQ-LMnVR6lMBS5Cii8LGy-QBPZE',
+  dnt: '1',
+  host: 'localhost:3000',
+  referer: 'http://localhost:3000/app/dashboard/1/details',
+  sec-ch-ua: '"Not A(Brand";v="8", "Chromium";v="132", "Google Chrome";v="132"',
+  sec-ch-ua-mobile: '?0',
+  sec-ch-ua-platform: '"Windows"',
+  sec-fetch-dest: 'empty',
+  sec-fetch-mode: 'cors',
+  sec-fetch-site: 'same-origin',
+  user-agent: 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/132.0.0.0 Safari/537.36',
+  x-forwarded-for: '::1',
+  x-forwarded-host: 'localhost:3000',
+  x-forwarded-port: '3000',
+  x-forwarded-proto: 'http'
+},
+  integrity: '',
+  keepalive: false,
+  method: 'GET',
+  mode: 'cors',
+  redirect: 'follow',
+  referrer: 'about:client',
+  referrerPolicy: '',
+  signal: AbortSignal {
+  [Symbol(kEvents)]: SafeMap(0) {},
+  [Symbol(events.maxEventTargetListeners)]: 10,
+  [Symbol(events.maxEventTargetListenersWarned)]: false,
+  [Symbol(kHandlers)]: SafeMap(0) {},
+  [Symbol(kAborted)]: false,
+  [Symbol(kReason)]: undefined,
+  [Symbol(kOnabort)]: undefined,
+  [Symbol(realm)]: {
+  settingsObject: {
+  baseUrl: undefined,
+  origin: [Getter],
+  policyContainer: { referrerPolicy: 'strict-origin-when-cross-origin' }
+}
+}
+}
+}
+}
+proxying request { pathname: '/service/briefs/1', newPathname: '/api/v1/briefs/1' }
+Error: Cannot find module '/home/blacksmith/projects/aivus/aivus-web/.next/server/vendor-chunks/lib/worker.js'
+    at Module._resolveFilename (node:internal/modules/cjs/loader:1048:15)
+    at Module._load (node:internal/modules/cjs/loader:901:27)
+    at Function.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:83:12)
+    at MessagePort.<anonymous> (node:internal/main/worker_thread:185:26)
+    at [nodejs.internal.kHybridDispatch] (node:internal/event_target:807:20)
+    at exports.emitMessage (node:internal/per_context/messageport:23:28) {
+  code: 'MODULE_NOT_FOUND',
+  requireStack: []
+}
+ ⨯ uncaughtException: Error: Cannot find module '/home/blacksmith/projects/aivus/aivus-web/.next/server/vendor-chunks/lib/worker.js'
+    at Module._resolveFilename (node:internal/modules/cjs/loader:1048:15)
+    at Module._load (node:internal/modules/cjs/loader:901:27)
+    at Function.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:83:12)
+    at MessagePort.<anonymous> (node:internal/main/worker_thread:185:26)
+    at [nodejs.internal.kHybridDispatch] (node:internal/event_target:807:20)
+    at exports.emitMessage (node:internal/per_context/messageport:23:28) {
+  code: 'MODULE_NOT_FOUND',
+  requireStack: []
+}
+ ⨯ uncaughtException: Error: Cannot find module '/home/blacksmith/projects/aivus/aivus-web/.next/server/vendor-chunks/lib/worker.js'
+    at Module._resolveFilename (node:internal/modules/cjs/loader:1048:15)
+    at Module._load (node:internal/modules/cjs/loader:901:27)
+    at Function.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:83:12)
+    at MessagePort.<anonymous> (node:internal/main/worker_thread:185:26)
+    at [nodejs.internal.kHybridDispatch] (node:internal/event_target:807:20)
+    at exports.emitMessage (node:internal/per_context/messageport:23:28) {
+  code: 'MODULE_NOT_FOUND',
+  requireStack: []
+}
+Error: the worker thread exited
+    at Worker.onWorkerExit (webpack-internal:///(rsc)/./node_modules/thread-stream/index.js:201:32)
+    at Worker.emit (node:events:514:28)
+    at [kOnExit] (node:internal/worker:315:10)
+    at Worker.<computed>.onexit (node:internal/worker:229:20)
+    at Worker.callbackTrampoline (node:internal/async_hooks:130:17)
+ ⨯ node_modules/thread-stream/index.js (201:1) @ Worker.onWorkerExit
+ ⨯ uncaughtException: Error: the worker thread exited
+    at Worker.onWorkerExit (webpack-internal:///(rsc)/./node_modules/thread-stream/index.js:201:32)
+    at Worker.emit (node:events:514:28)
+    at [kOnExit] (node:internal/worker:315:10)
+    at Worker.<computed>.onexit (node:internal/worker:229:20)
+    at Worker.callbackTrampoline (node:internal/async_hooks:130:17)
+[0m [90m 199 |[39m   stream[33m.[39mworker[33m.[39mexited [33m=[39m [36mtrue[39m[0m
+[0m [90m 200 |[39m   stream[33m.[39mworker[33m.[39moff([32m'exit'[39m[33m,[39m onWorkerExit)[0m
+[0m[31m[1m>[22m[39m[90m 201 |[39m   destroy(stream[33m,[39m code [33m!==[39m [35m0[39m [33m?[39m [36mnew[39m [33mError[39m([32m'the worker thread exited'[39m) [33m:[39m [36mnull[39m)[0m
+[0m [90m     |[39m [31m[1m^[22m[39m[0m
+[0m [90m 202 |[39m }[0m
+[0m [90m 203 |[39m[0m
+[0m [90m 204 |[39m [36mclass[39m [33mThreadStream[39m [36mextends[39m [33mEventEmitter[39m {[0m
+ ⨯ node_modules/thread-stream/index.js (201:1) @ Worker.onWorkerExit
+ ⨯ uncaughtException: Error: the worker thread exited
+    at Worker.onWorkerExit (webpack-internal:///(rsc)/./node_modules/thread-stream/index.js:201:32)
+    at Worker.emit (node:events:514:28)
+    at [kOnExit] (node:internal/worker:315:10)
+    at Worker.<computed>.onexit (node:internal/worker:229:20)
+    at Worker.callbackTrampoline (node:internal/async_hooks:130:17)
+[0m [90m 199 |[39m   stream[33m.[39mworker[33m.[39mexited [33m=[39m [36mtrue[39m[0m
+[0m [90m 200 |[39m   stream[33m.[39mworker[33m.[39moff([32m'exit'[39m[33m,[39m onWorkerExit)[0m
+[0m[31m[1m>[22m[39m[90m 201 |[39m   destroy(stream[33m,[39m code [33m!==[39m [35m0[39m [33m?[39m [36mnew[39m [33mError[39m([32m'the worker thread exited'[39m) [33m:[39m [36mnull[39m)[0m
+[0m [90m     |[39m [31m[1m^[22m[39m[0m
+[0m [90m 202 |[39m }[0m
+[0m [90m 203 |[39m[0m
+[0m [90m 204 |[39m [36mclass[39m [33mThreadStream[39m [36mextends[39m [33mEventEmitter[39m {[0m
+ GET /api/auth/session 200 in 21ms
+ │ GET http://localhost:8000/api/v1/users/user?email=emelianovdmitriy%40gmail.com 200 in 1ms (cache hit)
+middleware {
+  nextUrl: '/app/dashboard/1/details',
+  auth: {
+  user: {
+  name: 'Dmitrii Emelianov',
+  email: 'emelianovdmitriy@gmail.com',
+  image: 'https://lh3.googleusercontent.com/a/ACg8ocLA3vQBMdS4GkYPxFapJF7vRMErPbZrilBlCYHMNzdiOxxHE-4=s96-c',
+  role: 'VENDOR',
+  id: 9
+},
+  expires: '2025-03-04T11:47:47.929Z'
+},
+  request: {
+  cookies: RequestCookies {"authjs.csrf-token":{"name":"authjs.csrf-token","value":"1e34022c6a819e7026619ac6fa99f19326c4a8ff4dc0a3da4061104c750bd6fd|7d19b8311d52b57e2aac480a546abc84bc92137e0da848a7fd9a2de8489e015d"},"authjs.callback-url":{"name":"authjs.callback-url","value":"http://localhost:3000/auth"},"authjs.session-token":{"name":"authjs.session-token","value":"eyJhbGciOiJkaXIiLCJlbmMiOiJBMjU2Q0JDLUhTNTEyIiwia2lkIjoicEEzSTN1RDNwbjl2cGxGVVpvb0ZfTjYyeU0zMjdMakxhRnZseFd6Z3g5N1daaE5CbHNqbzdwQmpBSnBicG9LcWF1dGxoSjZEZWp0NEp5R3hpX1dWLUEifQ..GEDPLvwIq6YOiNL4UlJ5uw.AWq7JAKLJ6L_sKfMAhz3EMRBEwXRtDS8guAZFtnN449FZtByLwaIhq72VZmQjgjPRgM0ubNfESie-e0Rw8LZsAn8FwiFzS9D12jfgES9AMKb-QGXbpUPKcQ751fP4B6eeXoDS4PCWDlutY-WCj8q7Ilna4FFfmWD6PKL6oAn1RMr84xZ0LNF4iM4noViWBszB3zXoUtMDdT9J9Y-KyLpsYxEEFLchs8HoRXMYyG3z9bpWZAlI4eJNjHlLx4UTFHesWG5lKUnG7amcsjOf1cbfVLIItz5e2FCoEjHInYFVjh69WehdkAGN5LC_GikLF0aPVIQyIMvaMoWX6widGItBYQFuTuKJFiENivMTAoqJ6faK4ldOiMS9YqIScWiY2wYq-KgrEsVGHB9-TPLir2j3A.XUPsDs9knhHulAByig38le49hoIRObX1nWev7R9ZR1E"}},
+  nextUrl: {
+  href: 'http://localhost:3000/app/dashboard/1/details',
+  origin: 'http://localhost:3000',
+  protocol: 'http:',
+  username: '',
+  password: '',
+  host: 'localhost:3000',
+  hostname: 'localhost',
+  port: '3000',
+  pathname: '/app/dashboard/1/details',
+  search: '',
+  searchParams: URLSearchParams {  },
+  hash: ''
+},
+  url: 'http://localhost:3000/app/dashboard/1/details',
+  bodyUsed: false,
+  cache: 'default',
+  credentials: 'same-origin',
+  destination: '',
+  headers: {
+  accept: 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7',
+  accept-encoding: 'gzip, deflate, br, zstd',
+  accept-language: 'en-US,en;q=0.9,ru;q=0.8,sr;q=0.7',
+  cache-control: 'max-age=0',
+  connection: 'keep-alive',
+  cookie: 'authjs.csrf-token=1e34022c6a819e7026619ac6fa99f19326c4a8ff4dc0a3da4061104c750bd6fd%7C7d19b8311d52b57e2aac480a546abc84bc92137e0da848a7fd9a2de8489e015d; authjs.callback-url=http%3A%2F%2Flocalhost%3A3000%2Fauth; authjs.session-token=eyJhbGciOiJkaXIiLCJlbmMiOiJBMjU2Q0JDLUhTNTEyIiwia2lkIjoicEEzSTN1RDNwbjl2cGxGVVpvb0ZfTjYyeU0zMjdMakxhRnZseFd6Z3g5N1daaE5CbHNqbzdwQmpBSnBicG9LcWF1dGxoSjZEZWp0NEp5R3hpX1dWLUEifQ..GEDPLvwIq6YOiNL4UlJ5uw.AWq7JAKLJ6L_sKfMAhz3EMRBEwXRtDS8guAZFtnN449FZtByLwaIhq72VZmQjgjPRgM0ubNfESie-e0Rw8LZsAn8FwiFzS9D12jfgES9AMKb-QGXbpUPKcQ751fP4B6eeXoDS4PCWDlutY-WCj8q7Ilna4FFfmWD6PKL6oAn1RMr84xZ0LNF4iM4noViWBszB3zXoUtMDdT9J9Y-KyLpsYxEEFLchs8HoRXMYyG3z9bpWZAlI4eJNjHlLx4UTFHesWG5lKUnG7amcsjOf1cbfVLIItz5e2FCoEjHInYFVjh69WehdkAGN5LC_GikLF0aPVIQyIMvaMoWX6widGItBYQFuTuKJFiENivMTAoqJ6faK4ldOiMS9YqIScWiY2wYq-KgrEsVGHB9-TPLir2j3A.XUPsDs9knhHulAByig38le49hoIRObX1nWev7R9ZR1E',
+  dnt: '1',
+  host: 'localhost:3000',
+  referer: 'http://localhost:3000/app/dashboard/1/details',
+  sec-ch-ua: '"Not A(Brand";v="8", "Chromium";v="132", "Google Chrome";v="132"',
+  sec-ch-ua-mobile: '?0',
+  sec-ch-ua-platform: '"Windows"',
+  sec-fetch-dest: 'document',
+  sec-fetch-mode: 'navigate',
+  sec-fetch-site: 'same-origin',
+  sec-fetch-user: '?1',
+  upgrade-insecure-requests: '1',
+  user-agent: 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/132.0.0.0 Safari/537.36',
+  x-forwarded-for: '::1',
+  x-forwarded-host: 'localhost:3000',
+  x-forwarded-port: '3000',
+  x-forwarded-proto: 'http'
+},
+  integrity: '',
+  keepalive: false,
+  method: 'GET',
+  mode: 'cors',
+  redirect: 'follow',
+  referrer: 'about:client',
+  referrerPolicy: '',
+  signal: AbortSignal {
+  [Symbol(kEvents)]: SafeMap(0) {},
+  [Symbol(events.maxEventTargetListeners)]: 10,
+  [Symbol(events.maxEventTargetListenersWarned)]: false,
+  [Symbol(kHandlers)]: SafeMap(0) {},
+  [Symbol(kAborted)]: false,
+  [Symbol(kReason)]: undefined,
+  [Symbol(kOnabort)]: undefined,
+  [Symbol(realm)]: {
+  settingsObject: {
+  baseUrl: undefined,
+  origin: [Getter],
+  policyContainer: { referrerPolicy: 'strict-origin-when-cross-origin' }
+}
+}
+}
+}
+}
+styled-components: it looks like an unknown prop "themeType" is being sent through to the DOM, which will likely trigger a React console error. If you would like automatic filtering of unknown props, you can opt-into that behavior via `<StyleSheetManager shouldForwardProp={...}>` (connect an API like `@emotion/is-prop-valid`) or consider using transient props (`$` prefix for automatic filtering.)
+styled-components: it looks like an unknown prop "isActive" is being sent through to the DOM, which will likely trigger a React console error. If you would like automatic filtering of unknown props, you can opt-into that behavior via `<StyleSheetManager shouldForwardProp={...}>` (connect an API like `@emotion/is-prop-valid`) or consider using transient props (`$` prefix for automatic filtering.)
+ GET /app/dashboard/1/details 200 in 336ms
+ │ GET http://localhost:8000/api/v1/users/user?email=emelianovdmitriy%40gmail.com 200 in 0ms (cache hit)
+middleware {
+  nextUrl: '/service/briefs/1',
+  auth: {
+  user: {
+  name: 'Dmitrii Emelianov',
+  email: 'emelianovdmitriy@gmail.com',
+  image: 'https://lh3.googleusercontent.com/a/ACg8ocLA3vQBMdS4GkYPxFapJF7vRMErPbZrilBlCYHMNzdiOxxHE-4=s96-c',
+  role: 'VENDOR',
+  id: 9
+},
+  expires: '2025-03-04T11:47:49.907Z'
+},
+  request: {
+  cookies: RequestCookies {"authjs.csrf-token":{"name":"authjs.csrf-token","value":"1e34022c6a819e7026619ac6fa99f19326c4a8ff4dc0a3da4061104c750bd6fd|7d19b8311d52b57e2aac480a546abc84bc92137e0da848a7fd9a2de8489e015d"},"authjs.callback-url":{"name":"authjs.callback-url","value":"http://localhost:3000/auth"},"authjs.session-token":{"name":"authjs.session-token","value":"eyJhbGciOiJkaXIiLCJlbmMiOiJBMjU2Q0JDLUhTNTEyIiwia2lkIjoicEEzSTN1RDNwbjl2cGxGVVpvb0ZfTjYyeU0zMjdMakxhRnZseFd6Z3g5N1daaE5CbHNqbzdwQmpBSnBicG9LcWF1dGxoSjZEZWp0NEp5R3hpX1dWLUEifQ..2uYPrNh1E3npkcvShaicAQ.MLgZjfJb_KAO6Nr0A0fgjjD1rEIP_dNcbOi34GEwC0fCwa6QkQX2FqczsLvVDDUmjIzsLK31iOa3k6OHxYpY7WVP-_mcD6x-fxoFlU3XcpL-zQTxtUQ6w7gOuT7VkCkOox0HSUbnJ0C6AZL9qr80fpNwje0EWtGPSDNzrFSoNUyRO8MLJtxZh70tsZQQayMT2zvW6lrVy32xWBXJiX07U33n_jRZwBBpzJMCT0xHzdxlYQExgE1eFODi7y5RLmwCjsURVKyyOJO6Kqv9WoC84QUBjea0TsJpJ8Z-igOuOvCM6rqR9Cpy1i-QTajr2if0IPwWKhPO4RFwXyJvNjxqsmA-CCrI9mwrBpRW327CgMU0OkRo4TTSMtwUd0G49ggkSKljuzD_v__zobn59GkanQ.r5ZBc9_ujSg_TmKN04agbyglmMJ1OrysLc6fKLXDAKw"}},
+  nextUrl: {
+  href: 'http://localhost:3000/service/briefs/1',
+  origin: 'http://localhost:3000',
+  protocol: 'http:',
+  username: '',
+  password: '',
+  host: 'localhost:3000',
+  hostname: 'localhost',
+  port: '3000',
+  pathname: '/service/briefs/1',
+  search: '',
+  searchParams: URLSearchParams {  },
+  hash: ''
+},
+  url: 'http://localhost:3000/service/briefs/1',
+  bodyUsed: false,
+  cache: 'default',
+  credentials: 'same-origin',
+  destination: '',
+  headers: {
+  accept: '*/*',
+  accept-encoding: 'gzip, deflate, br, zstd',
+  accept-language: 'en-US,en;q=0.9,ru;q=0.8,sr;q=0.7',
+  connection: 'keep-alive',
+  cookie: 'authjs.csrf-token=1e34022c6a819e7026619ac6fa99f19326c4a8ff4dc0a3da4061104c750bd6fd%7C7d19b8311d52b57e2aac480a546abc84bc92137e0da848a7fd9a2de8489e015d; authjs.callback-url=http%3A%2F%2Flocalhost%3A3000%2Fauth; authjs.session-token=eyJhbGciOiJkaXIiLCJlbmMiOiJBMjU2Q0JDLUhTNTEyIiwia2lkIjoicEEzSTN1RDNwbjl2cGxGVVpvb0ZfTjYyeU0zMjdMakxhRnZseFd6Z3g5N1daaE5CbHNqbzdwQmpBSnBicG9LcWF1dGxoSjZEZWp0NEp5R3hpX1dWLUEifQ..2uYPrNh1E3npkcvShaicAQ.MLgZjfJb_KAO6Nr0A0fgjjD1rEIP_dNcbOi34GEwC0fCwa6QkQX2FqczsLvVDDUmjIzsLK31iOa3k6OHxYpY7WVP-_mcD6x-fxoFlU3XcpL-zQTxtUQ6w7gOuT7VkCkOox0HSUbnJ0C6AZL9qr80fpNwje0EWtGPSDNzrFSoNUyRO8MLJtxZh70tsZQQayMT2zvW6lrVy32xWBXJiX07U33n_jRZwBBpzJMCT0xHzdxlYQExgE1eFODi7y5RLmwCjsURVKyyOJO6Kqv9WoC84QUBjea0TsJpJ8Z-igOuOvCM6rqR9Cpy1i-QTajr2if0IPwWKhPO4RFwXyJvNjxqsmA-CCrI9mwrBpRW327CgMU0OkRo4TTSMtwUd0G49ggkSKljuzD_v__zobn59GkanQ.r5ZBc9_ujSg_TmKN04agbyglmMJ1OrysLc6fKLXDAKw',
+  dnt: '1',
+  host: 'localhost:3000',
+  referer: 'http://localhost:3000/app/dashboard/1/details',
+  sec-ch-ua: '"Not A(Brand";v="8", "Chromium";v="132", "Google Chrome";v="132"',
+  sec-ch-ua-mobile: '?0',
+  sec-ch-ua-platform: '"Windows"',
+  sec-fetch-dest: 'empty',
+  sec-fetch-mode: 'cors',
+  sec-fetch-site: 'same-origin',
+  user-agent: 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/132.0.0.0 Safari/537.36',
+  x-forwarded-for: '::1',
+  x-forwarded-host: 'localhost:3000',
+  x-forwarded-port: '3000',
+  x-forwarded-proto: 'http'
+},
+  integrity: '',
+  keepalive: false,
+  method: 'GET',
+  mode: 'cors',
+  redirect: 'follow',
+  referrer: 'about:client',
+  referrerPolicy: '',
+  signal: AbortSignal {
+  [Symbol(kEvents)]: SafeMap(0) {},
+  [Symbol(events.maxEventTargetListeners)]: 10,
+  [Symbol(events.maxEventTargetListenersWarned)]: false,
+  [Symbol(kHandlers)]: SafeMap(0) {},
+  [Symbol(kAborted)]: false,
+  [Symbol(kReason)]: undefined,
+  [Symbol(kOnabort)]: undefined,
+  [Symbol(realm)]: {
+  settingsObject: {
+  baseUrl: undefined,
+  origin: [Getter],
+  policyContainer: { referrerPolicy: 'strict-origin-when-cross-origin' }
+}
+}
+}
+}
+}
+proxying request { pathname: '/service/briefs/1', newPathname: '/api/v1/briefs/1' }
+ GET /api/auth/session 200 in 31ms
+ │ GET http://localhost:8000/api/v1/users/user?email=emelianovdmitriy%40gmail.com 200 in 0ms (cache hit)
+ GET /api/auth/session 200 in 24ms
+ │ GET http://localhost:8000/api/v1/users/user?email=emelianovdmitriy%40gmail.com 200 in 0ms (cache hit)
+middleware {
+  nextUrl: '/app/dashboard',
+  auth: {
+  user: {
+  name: 'Dmitrii Emelianov',
+  email: 'emelianovdmitriy@gmail.com',
+  image: 'https://lh3.googleusercontent.com/a/ACg8ocLA3vQBMdS4GkYPxFapJF7vRMErPbZrilBlCYHMNzdiOxxHE-4=s96-c',
+  role: 'VENDOR',
+  id: 9
+},
+  expires: '2025-03-04T11:48:03.048Z'
+},
+  request: {
+  cookies: RequestCookies {"authjs.csrf-token":{"name":"authjs.csrf-token","value":"1e34022c6a819e7026619ac6fa99f19326c4a8ff4dc0a3da4061104c750bd6fd|7d19b8311d52b57e2aac480a546abc84bc92137e0da848a7fd9a2de8489e015d"},"authjs.callback-url":{"name":"authjs.callback-url","value":"http://localhost:3000/auth"},"authjs.session-token":{"name":"authjs.session-token","value":"eyJhbGciOiJkaXIiLCJlbmMiOiJBMjU2Q0JDLUhTNTEyIiwia2lkIjoicEEzSTN1RDNwbjl2cGxGVVpvb0ZfTjYyeU0zMjdMakxhRnZseFd6Z3g5N1daaE5CbHNqbzdwQmpBSnBicG9LcWF1dGxoSjZEZWp0NEp5R3hpX1dWLUEifQ..5SrZcGC-8SKWg3oAOonTrQ.27dVCPgmn1aODyUsFRsHrOdy867L0bWrUqZfJcvw6Ryqo7YUqBokxV5tk-GbajI89DKwWjtwBtxirm2dcB7XgEufFZp7eSQOTMswVx87byjT5NokOxFMJ6NCoYwQadiB4szezGnCzgqVUrRnn5mjz059MsgUIlBXIxgTZVlyMRYO6ip56WwLBrj3jm0rIWDzmzps_xdfIu8BGL2rdzhcxBzZUQFuqQGJnQ5tscUzP6N1uPqjYYdtwImRHnjZEsV1i7Ar09qr5WLm_oc6dnoBQr_CL3v8PA_bY9yiPiCDPR5JbE0HEpfcFqMxBHX-wYqf8XMwRwI-X9QJ2nBD-H323SHgVYkX2ZAPWmED75nmiRJgsTn7a0t_PCP9KjdmtVkopXEo2BndnbSO9avPSTN1LQ.b2YoHvpaPVbu8ccwqBSHNzwM84wz72gje2LjUX1JpsU"}},
+  nextUrl: {
+  href: 'http://localhost:3000/app/dashboard',
+  origin: 'http://localhost:3000',
+  protocol: 'http:',
+  username: '',
+  password: '',
+  host: 'localhost:3000',
+  hostname: 'localhost',
+  port: '3000',
+  pathname: '/app/dashboard',
+  search: '',
+  searchParams: URLSearchParams {  },
+  hash: ''
+},
+  url: 'http://localhost:3000/app/dashboard',
+  bodyUsed: false,
+  cache: 'default',
+  credentials: 'same-origin',
+  destination: '',
+  headers: {
+  accept: '*/*',
+  accept-encoding: 'gzip, deflate, br, zstd',
+  accept-language: 'en-US,en;q=0.9,ru;q=0.8,sr;q=0.7',
+  connection: 'keep-alive',
+  cookie: 'authjs.csrf-token=1e34022c6a819e7026619ac6fa99f19326c4a8ff4dc0a3da4061104c750bd6fd%7C7d19b8311d52b57e2aac480a546abc84bc92137e0da848a7fd9a2de8489e015d; authjs.callback-url=http%3A%2F%2Flocalhost%3A3000%2Fauth; authjs.session-token=eyJhbGciOiJkaXIiLCJlbmMiOiJBMjU2Q0JDLUhTNTEyIiwia2lkIjoicEEzSTN1RDNwbjl2cGxGVVpvb0ZfTjYyeU0zMjdMakxhRnZseFd6Z3g5N1daaE5CbHNqbzdwQmpBSnBicG9LcWF1dGxoSjZEZWp0NEp5R3hpX1dWLUEifQ..5SrZcGC-8SKWg3oAOonTrQ.27dVCPgmn1aODyUsFRsHrOdy867L0bWrUqZfJcvw6Ryqo7YUqBokxV5tk-GbajI89DKwWjtwBtxirm2dcB7XgEufFZp7eSQOTMswVx87byjT5NokOxFMJ6NCoYwQadiB4szezGnCzgqVUrRnn5mjz059MsgUIlBXIxgTZVlyMRYO6ip56WwLBrj3jm0rIWDzmzps_xdfIu8BGL2rdzhcxBzZUQFuqQGJnQ5tscUzP6N1uPqjYYdtwImRHnjZEsV1i7Ar09qr5WLm_oc6dnoBQr_CL3v8PA_bY9yiPiCDPR5JbE0HEpfcFqMxBHX-wYqf8XMwRwI-X9QJ2nBD-H323SHgVYkX2ZAPWmED75nmiRJgsTn7a0t_PCP9KjdmtVkopXEo2BndnbSO9avPSTN1LQ.b2YoHvpaPVbu8ccwqBSHNzwM84wz72gje2LjUX1JpsU',
+  dnt: '1',
+  host: 'localhost:3000',
+  next-url: '/app/dashboard/1/details',
+  referer: 'http://localhost:3000/app/dashboard/1/details',
+  sec-ch-ua: '"Not A(Brand";v="8", "Chromium";v="132", "Google Chrome";v="132"',
+  sec-ch-ua-mobile: '?0',
+  sec-ch-ua-platform: '"Windows"',
+  sec-fetch-dest: 'empty',
+  sec-fetch-mode: 'cors',
+  sec-fetch-site: 'same-origin',
+  user-agent: 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/132.0.0.0 Safari/537.36',
+  x-forwarded-for: '::1',
+  x-forwarded-host: 'localhost:3000',
+  x-forwarded-port: '3000',
+  x-forwarded-proto: 'http'
+},
+  integrity: '',
+  keepalive: false,
+  method: 'GET',
+  mode: 'cors',
+  redirect: 'follow',
+  referrer: 'about:client',
+  referrerPolicy: '',
+  signal: AbortSignal {
+  [Symbol(kEvents)]: SafeMap(0) {},
+  [Symbol(events.maxEventTargetListeners)]: 10,
+  [Symbol(events.maxEventTargetListenersWarned)]: false,
+  [Symbol(kHandlers)]: SafeMap(0) {},
+  [Symbol(kAborted)]: false,
+  [Symbol(kReason)]: undefined,
+  [Symbol(kOnabort)]: undefined,
+  [Symbol(realm)]: {
+  settingsObject: {
+  baseUrl: undefined,
+  origin: [Getter],
+  policyContainer: { referrerPolicy: 'strict-origin-when-cross-origin' }
+}
+}
+}
+}
+}
+ ○ Compiling /app/dashboard ...
+ ✓ Compiled /app/dashboard in 1284ms (6177 modules)
+ ✓ Compiled /app/dashboard in 385ms (3395 modules)
+Error: Cannot find module '/home/blacksmith/projects/aivus/aivus-web/.next/server/vendor-chunks/lib/worker.js'
+    at Module._resolveFilename (node:internal/modules/cjs/loader:1048:15)
+    at Module._load (node:internal/modules/cjs/loader:901:27)
+    at Function.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:83:12)
+    at MessagePort.<anonymous> (node:internal/main/worker_thread:185:26)
+    at [nodejs.internal.kHybridDispatch] (node:internal/event_target:807:20)
+    at exports.emitMessage (node:internal/per_context/messageport:23:28) {
+  code: 'MODULE_NOT_FOUND',
+  requireStack: []
+}
+ ⨯ uncaughtException: Error: Cannot find module '/home/blacksmith/projects/aivus/aivus-web/.next/server/vendor-chunks/lib/worker.js'
+    at Module._resolveFilename (node:internal/modules/cjs/loader:1048:15)
+    at Module._load (node:internal/modules/cjs/loader:901:27)
+    at Function.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:83:12)
+    at MessagePort.<anonymous> (node:internal/main/worker_thread:185:26)
+    at [nodejs.internal.kHybridDispatch] (node:internal/event_target:807:20)
+    at exports.emitMessage (node:internal/per_context/messageport:23:28) {
+  code: 'MODULE_NOT_FOUND',
+  requireStack: []
+}
+ ⨯ uncaughtException: Error: Cannot find module '/home/blacksmith/projects/aivus/aivus-web/.next/server/vendor-chunks/lib/worker.js'
+    at Module._resolveFilename (node:internal/modules/cjs/loader:1048:15)
+    at Module._load (node:internal/modules/cjs/loader:901:27)
+    at Function.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:83:12)
+    at MessagePort.<anonymous> (node:internal/main/worker_thread:185:26)
+    at [nodejs.internal.kHybridDispatch] (node:internal/event_target:807:20)
+    at exports.emitMessage (node:internal/per_context/messageport:23:28) {
+  code: 'MODULE_NOT_FOUND',
+  requireStack: []
+}
+Error: the worker thread exited
+    at Worker.onWorkerExit (webpack-internal:///(rsc)/./node_modules/thread-stream/index.js:201:32)
+    at Worker.emit (node:events:514:28)
+    at [kOnExit] (node:internal/worker:315:10)
+    at Worker.<computed>.onexit (node:internal/worker:229:20)
+    at Worker.callbackTrampoline (node:internal/async_hooks:130:17)
+ ⨯ node_modules/thread-stream/index.js (201:1) @ Worker.onWorkerExit
+ ⨯ uncaughtException: Error: the worker thread exited
+    at Worker.onWorkerExit (webpack-internal:///(rsc)/./node_modules/thread-stream/index.js:201:32)
+    at Worker.emit (node:events:514:28)
+    at [kOnExit] (node:internal/worker:315:10)
+    at Worker.<computed>.onexit (node:internal/worker:229:20)
+    at Worker.callbackTrampoline (node:internal/async_hooks:130:17)
+[0m [90m 199 |[39m   stream[33m.[39mworker[33m.[39mexited [33m=[39m [36mtrue[39m[0m
+[0m [90m 200 |[39m   stream[33m.[39mworker[33m.[39moff([32m'exit'[39m[33m,[39m onWorkerExit)[0m
+[0m[31m[1m>[22m[39m[90m 201 |[39m   destroy(stream[33m,[39m code [33m!==[39m [35m0[39m [33m?[39m [36mnew[39m [33mError[39m([32m'the worker thread exited'[39m) [33m:[39m [36mnull[39m)[0m
+[0m [90m     |[39m [31m[1m^[22m[39m[0m
+[0m [90m 202 |[39m }[0m
+[0m [90m 203 |[39m[0m
+[0m [90m 204 |[39m [36mclass[39m [33mThreadStream[39m [36mextends[39m [33mEventEmitter[39m {[0m
+ ⨯ node_modules/thread-stream/index.js (201:1) @ Worker.onWorkerExit
+ ⨯ uncaughtException: Error: the worker thread exited
+    at Worker.onWorkerExit (webpack-internal:///(rsc)/./node_modules/thread-stream/index.js:201:32)
+    at Worker.emit (node:events:514:28)
+    at [kOnExit] (node:internal/worker:315:10)
+    at Worker.<computed>.onexit (node:internal/worker:229:20)
+    at Worker.callbackTrampoline (node:internal/async_hooks:130:17)
+[0m [90m 199 |[39m   stream[33m.[39mworker[33m.[39mexited [33m=[39m [36mtrue[39m[0m
+[0m [90m 200 |[39m   stream[33m.[39mworker[33m.[39moff([32m'exit'[39m[33m,[39m onWorkerExit)[0m
+[0m[31m[1m>[22m[39m[90m 201 |[39m   destroy(stream[33m,[39m code [33m!==[39m [35m0[39m [33m?[39m [36mnew[39m [33mError[39m([32m'the worker thread exited'[39m) [33m:[39m [36mnull[39m)[0m
+[0m [90m     |[39m [31m[1m^[22m[39m[0m
+[0m [90m 202 |[39m }[0m
+[0m [90m 203 |[39m[0m
+[0m [90m 204 |[39m [36mclass[39m [33mThreadStream[39m [36mextends[39m [33mEventEmitter[39m {[0m
+ GET /app/dashboard 200 in 1814ms
+middleware {
+  nextUrl: '/service/briefs',
+  auth: {
+  user: {
+  name: 'Dmitrii Emelianov',
+  email: 'emelianovdmitriy@gmail.com',
+  image: 'https://lh3.googleusercontent.com/a/ACg8ocLA3vQBMdS4GkYPxFapJF7vRMErPbZrilBlCYHMNzdiOxxHE-4=s96-c',
+  role: 'VENDOR',
+  id: 9
+},
+  expires: '2025-03-04T11:48:05.060Z'
+},
+  request: {
+  cookies: RequestCookies {"authjs.csrf-token":{"name":"authjs.csrf-token","value":"1e34022c6a819e7026619ac6fa99f19326c4a8ff4dc0a3da4061104c750bd6fd|7d19b8311d52b57e2aac480a546abc84bc92137e0da848a7fd9a2de8489e015d"},"authjs.callback-url":{"name":"authjs.callback-url","value":"http://localhost:3000/auth"},"authjs.session-token":{"name":"authjs.session-token","value":"eyJhbGciOiJkaXIiLCJlbmMiOiJBMjU2Q0JDLUhTNTEyIiwia2lkIjoicEEzSTN1RDNwbjl2cGxGVVpvb0ZfTjYyeU0zMjdMakxhRnZseFd6Z3g5N1daaE5CbHNqbzdwQmpBSnBicG9LcWF1dGxoSjZEZWp0NEp5R3hpX1dWLUEifQ..R19L-zKuK0Xwhnb0B-Ux1Q.eluU1HqAN9VpVlvcW5n8YH2VZ4wW71L52RFrSl44dXiEBEpHRlclGO7vHwbmEdmFEx3EEE58Y28EiHOsstvQGU32J28j8H7E4umx3K5pMCroilVqA9PoYhLMzvTScniuzvXlG6ya3Vg7O2BB8BmKr7NIZu9OGnfKG5pmnMVkMIz4dRuSOoJy44uT3FpucqrLo8rJaNh46tYoWgRWTmAx0zMRIk0yCq0qw4x-U2B-wAdnaU8C4W3lhx7duGCFVvPPj5sQkSOFGCKAYLdWeSBC7y0I1vR9SVpd2vLDBpKXudEv7deyl6m1AhX78lkeVHLWJ1IlcbOTT4a3SYbHOHKdWyenanqko5hLYyScBy6tqjX0YPK7JGqO0c7zSQBFHxYbid-1mlFK0tNJi26W2SXc3g.Iwo2vOGdvfYrgcWfhJQ34XlddXuyVpobgrgBSZ_zzjs"}},
+  nextUrl: {
+  href: 'http://localhost:3000/service/briefs',
+  origin: 'http://localhost:3000',
+  protocol: 'http:',
+  username: '',
+  password: '',
+  host: 'localhost:3000',
+  hostname: 'localhost',
+  port: '3000',
+  pathname: '/service/briefs',
+  search: '',
+  searchParams: URLSearchParams {  },
+  hash: ''
+},
+  url: 'http://localhost:3000/service/briefs',
+  bodyUsed: false,
+  cache: 'default',
+  credentials: 'same-origin',
+  destination: '',
+  headers: {
+  accept: '*/*',
+  accept-encoding: 'gzip, deflate, br, zstd',
+  accept-language: 'en-US,en;q=0.9,ru;q=0.8,sr;q=0.7',
+  connection: 'keep-alive',
+  cookie: 'authjs.csrf-token=1e34022c6a819e7026619ac6fa99f19326c4a8ff4dc0a3da4061104c750bd6fd%7C7d19b8311d52b57e2aac480a546abc84bc92137e0da848a7fd9a2de8489e015d; authjs.callback-url=http%3A%2F%2Flocalhost%3A3000%2Fauth; authjs.session-token=eyJhbGciOiJkaXIiLCJlbmMiOiJBMjU2Q0JDLUhTNTEyIiwia2lkIjoicEEzSTN1RDNwbjl2cGxGVVpvb0ZfTjYyeU0zMjdMakxhRnZseFd6Z3g5N1daaE5CbHNqbzdwQmpBSnBicG9LcWF1dGxoSjZEZWp0NEp5R3hpX1dWLUEifQ..R19L-zKuK0Xwhnb0B-Ux1Q.eluU1HqAN9VpVlvcW5n8YH2VZ4wW71L52RFrSl44dXiEBEpHRlclGO7vHwbmEdmFEx3EEE58Y28EiHOsstvQGU32J28j8H7E4umx3K5pMCroilVqA9PoYhLMzvTScniuzvXlG6ya3Vg7O2BB8BmKr7NIZu9OGnfKG5pmnMVkMIz4dRuSOoJy44uT3FpucqrLo8rJaNh46tYoWgRWTmAx0zMRIk0yCq0qw4x-U2B-wAdnaU8C4W3lhx7duGCFVvPPj5sQkSOFGCKAYLdWeSBC7y0I1vR9SVpd2vLDBpKXudEv7deyl6m1AhX78lkeVHLWJ1IlcbOTT4a3SYbHOHKdWyenanqko5hLYyScBy6tqjX0YPK7JGqO0c7zSQBFHxYbid-1mlFK0tNJi26W2SXc3g.Iwo2vOGdvfYrgcWfhJQ34XlddXuyVpobgrgBSZ_zzjs',
+  dnt: '1',
+  host: 'localhost:3000',
+  referer: 'http://localhost:3000/app/dashboard',
+  sec-ch-ua: '"Not A(Brand";v="8", "Chromium";v="132", "Google Chrome";v="132"',
+  sec-ch-ua-mobile: '?0',
+  sec-ch-ua-platform: '"Windows"',
+  sec-fetch-dest: 'empty',
+  sec-fetch-mode: 'cors',
+  sec-fetch-site: 'same-origin',
+  user-agent: 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/132.0.0.0 Safari/537.36',
+  x-forwarded-for: '::1',
+  x-forwarded-host: 'localhost:3000',
+  x-forwarded-port: '3000',
+  x-forwarded-proto: 'http'
+},
+  integrity: '',
+  keepalive: false,
+  method: 'GET',
+  mode: 'cors',
+  redirect: 'follow',
+  referrer: 'about:client',
+  referrerPolicy: '',
+  signal: AbortSignal {
+  [Symbol(kEvents)]: SafeMap(0) {},
+  [Symbol(events.maxEventTargetListeners)]: 10,
+  [Symbol(events.maxEventTargetListenersWarned)]: false,
+  [Symbol(kHandlers)]: SafeMap(0) {},
+  [Symbol(kAborted)]: false,
+  [Symbol(kReason)]: undefined,
+  [Symbol(kOnabort)]: undefined,
+  [Symbol(realm)]: {
+  settingsObject: {
+  baseUrl: undefined,
+  origin: [Getter],
+  policyContainer: { referrerPolicy: 'strict-origin-when-cross-origin' }
+}
+}
+}
+}
+}
+proxying request { pathname: '/service/briefs', newPathname: '/api/v1/briefs' }
+middleware {
+  nextUrl: '/app/dashboard/new-brief/details',
+  auth: {
+  user: {
+  name: 'Dmitrii Emelianov',
+  email: 'emelianovdmitriy@gmail.com',
+  image: 'https://lh3.googleusercontent.com/a/ACg8ocLA3vQBMdS4GkYPxFapJF7vRMErPbZrilBlCYHMNzdiOxxHE-4=s96-c',
+  role: 'VENDOR',
+  id: 9
+},
+  expires: '2025-03-04T11:48:06.191Z'
+},
+  request: {
+  cookies: RequestCookies {"authjs.csrf-token":{"name":"authjs.csrf-token","value":"1e34022c6a819e7026619ac6fa99f19326c4a8ff4dc0a3da4061104c750bd6fd|7d19b8311d52b57e2aac480a546abc84bc92137e0da848a7fd9a2de8489e015d"},"authjs.callback-url":{"name":"authjs.callback-url","value":"http://localhost:3000/auth"},"authjs.session-token":{"name":"authjs.session-token","value":"eyJhbGciOiJkaXIiLCJlbmMiOiJBMjU2Q0JDLUhTNTEyIiwia2lkIjoicEEzSTN1RDNwbjl2cGxGVVpvb0ZfTjYyeU0zMjdMakxhRnZseFd6Z3g5N1daaE5CbHNqbzdwQmpBSnBicG9LcWF1dGxoSjZEZWp0NEp5R3hpX1dWLUEifQ..tT-FiD5WIrejx8QxhrC9Nw.DKK5RBEr5OSMJDpUTXUGAoHKkRhepzOm935a42GnvBLB8rMpQjApwLj9Jk0aeC3RHdoarjFyQqlRGfeuZTsYv4j6bPy3yFu39LF46OIETrYuJr7Q7dXrSSoFuqlZeXT4Cbhs5LD1UylCzmH7aFbJfV_4cXH2mr-xH3uGUXrHzYWUAMcUxDJlhB2llZi-VxkUhvop7vhtQo16fllxpWcVZwsGTAmivtKnmhbBnKTNudTMqmlTbj8Hln0Ej6GNTeFg6qO9hbMDU-vL_YD5ZJwS7H6hIt_rYkRoBIxctUc2FUUq1MV_2cTp86IZmNOASoBuuXpm83AUvEKIBcndg5VplImqMQkFX4yj21HrNGscVwCfcXpofos8fLueR-JGPTrNC8k9UxvWyPWDaAbkKWr23g.TvX-dlCg7pArbGEru4DvUSubcJhdV92AI0XsAYb6SQk"}},
+  nextUrl: {
+  href: 'http://localhost:3000/app/dashboard/new-brief/details',
+  origin: 'http://localhost:3000',
+  protocol: 'http:',
+  username: '',
+  password: '',
+  host: 'localhost:3000',
+  hostname: 'localhost',
+  port: '3000',
+  pathname: '/app/dashboard/new-brief/details',
+  search: '',
+  searchParams: URLSearchParams {  },
+  hash: ''
+},
+  url: 'http://localhost:3000/app/dashboard/new-brief/details',
+  bodyUsed: false,
+  cache: 'default',
+  credentials: 'same-origin',
+  destination: '',
+  headers: {
+  accept: '*/*',
+  accept-encoding: 'gzip, deflate, br, zstd',
+  accept-language: 'en-US,en;q=0.9,ru;q=0.8,sr;q=0.7',
+  connection: 'keep-alive',
+  cookie: 'authjs.csrf-token=1e34022c6a819e7026619ac6fa99f19326c4a8ff4dc0a3da4061104c750bd6fd%7C7d19b8311d52b57e2aac480a546abc84bc92137e0da848a7fd9a2de8489e015d; authjs.callback-url=http%3A%2F%2Flocalhost%3A3000%2Fauth; authjs.session-token=eyJhbGciOiJkaXIiLCJlbmMiOiJBMjU2Q0JDLUhTNTEyIiwia2lkIjoicEEzSTN1RDNwbjl2cGxGVVpvb0ZfTjYyeU0zMjdMakxhRnZseFd6Z3g5N1daaE5CbHNqbzdwQmpBSnBicG9LcWF1dGxoSjZEZWp0NEp5R3hpX1dWLUEifQ..tT-FiD5WIrejx8QxhrC9Nw.DKK5RBEr5OSMJDpUTXUGAoHKkRhepzOm935a42GnvBLB8rMpQjApwLj9Jk0aeC3RHdoarjFyQqlRGfeuZTsYv4j6bPy3yFu39LF46OIETrYuJr7Q7dXrSSoFuqlZeXT4Cbhs5LD1UylCzmH7aFbJfV_4cXH2mr-xH3uGUXrHzYWUAMcUxDJlhB2llZi-VxkUhvop7vhtQo16fllxpWcVZwsGTAmivtKnmhbBnKTNudTMqmlTbj8Hln0Ej6GNTeFg6qO9hbMDU-vL_YD5ZJwS7H6hIt_rYkRoBIxctUc2FUUq1MV_2cTp86IZmNOASoBuuXpm83AUvEKIBcndg5VplImqMQkFX4yj21HrNGscVwCfcXpofos8fLueR-JGPTrNC8k9UxvWyPWDaAbkKWr23g.TvX-dlCg7pArbGEru4DvUSubcJhdV92AI0XsAYb6SQk',
+  dnt: '1',
+  host: 'localhost:3000',
+  next-url: '/app/dashboard',
+  referer: 'http://localhost:3000/app/dashboard',
+  sec-ch-ua: '"Not A(Brand";v="8", "Chromium";v="132", "Google Chrome";v="132"',
+  sec-ch-ua-mobile: '?0',
+  sec-ch-ua-platform: '"Windows"',
+  sec-fetch-dest: 'empty',
+  sec-fetch-mode: 'cors',
+  sec-fetch-site: 'same-origin',
+  user-agent: 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/132.0.0.0 Safari/537.36',
+  x-forwarded-for: '::1',
+  x-forwarded-host: 'localhost:3000',
+  x-forwarded-port: '3000',
+  x-forwarded-proto: 'http'
+},
+  integrity: '',
+  keepalive: false,
+  method: 'GET',
+  mode: 'cors',
+  redirect: 'follow',
+  referrer: 'about:client',
+  referrerPolicy: '',
+  signal: AbortSignal {
+  [Symbol(kEvents)]: SafeMap(0) {},
+  [Symbol(events.maxEventTargetListeners)]: 10,
+  [Symbol(events.maxEventTargetListenersWarned)]: false,
+  [Symbol(kHandlers)]: SafeMap(0) {},
+  [Symbol(kAborted)]: false,
+  [Symbol(kReason)]: undefined,
+  [Symbol(kOnabort)]: undefined,
+  [Symbol(realm)]: {
+  settingsObject: {
+  baseUrl: undefined,
+  origin: [Getter],
+  policyContainer: { referrerPolicy: 'strict-origin-when-cross-origin' }
+}
+}
+}
+}
+}
+ GET /app/dashboard/new-brief/details 200 in 41ms
+ ✓ Compiled in 1505ms (6178 modules)
+Error: Cannot find module '/home/blacksmith/projects/aivus/aivus-web/.next/server/vendor-chunks/lib/worker.js'
+    at Module._resolveFilename (node:internal/modules/cjs/loader:1048:15)
+    at Module._load (node:internal/modules/cjs/loader:901:27)
+    at Function.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:83:12)
+    at MessagePort.<anonymous> (node:internal/main/worker_thread:185:26)
+    at [nodejs.internal.kHybridDispatch] (node:internal/event_target:807:20)
+    at exports.emitMessage (node:internal/per_context/messageport:23:28) {
+  code: 'MODULE_NOT_FOUND',
+  requireStack: []
+}
+ ⨯ uncaughtException: Error: Cannot find module '/home/blacksmith/projects/aivus/aivus-web/.next/server/vendor-chunks/lib/worker.js'
+    at Module._resolveFilename (node:internal/modules/cjs/loader:1048:15)
+    at Module._load (node:internal/modules/cjs/loader:901:27)
+    at Function.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:83:12)
+    at MessagePort.<anonymous> (node:internal/main/worker_thread:185:26)
+    at [nodejs.internal.kHybridDispatch] (node:internal/event_target:807:20)
+    at exports.emitMessage (node:internal/per_context/messageport:23:28) {
+  code: 'MODULE_NOT_FOUND',
+  requireStack: []
+}
+ ⨯ uncaughtException: Error: Cannot find module '/home/blacksmith/projects/aivus/aivus-web/.next/server/vendor-chunks/lib/worker.js'
+    at Module._resolveFilename (node:internal/modules/cjs/loader:1048:15)
+    at Module._load (node:internal/modules/cjs/loader:901:27)
+    at Function.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:83:12)
+    at MessagePort.<anonymous> (node:internal/main/worker_thread:185:26)
+    at [nodejs.internal.kHybridDispatch] (node:internal/event_target:807:20)
+    at exports.emitMessage (node:internal/per_context/messageport:23:28) {
+  code: 'MODULE_NOT_FOUND',
+  requireStack: []
+}
+Error: the worker thread exited
+    at Worker.onWorkerExit (webpack-internal:///(rsc)/./node_modules/thread-stream/index.js:201:32)
+    at Worker.emit (node:events:514:28)
+    at [kOnExit] (node:internal/worker:315:10)
+    at Worker.<computed>.onexit (node:internal/worker:229:20)
+    at Worker.callbackTrampoline (node:internal/async_hooks:130:17)
+ ⨯ node_modules/thread-stream/index.js (201:1) @ Worker.onWorkerExit
+ ⨯ uncaughtException: Error: the worker thread exited
+    at Worker.onWorkerExit (webpack-internal:///(rsc)/./node_modules/thread-stream/index.js:201:32)
+    at Worker.emit (node:events:514:28)
+    at [kOnExit] (node:internal/worker:315:10)
+    at Worker.<computed>.onexit (node:internal/worker:229:20)
+    at Worker.callbackTrampoline (node:internal/async_hooks:130:17)
+[0m [90m 199 |[39m   stream[33m.[39mworker[33m.[39mexited [33m=[39m [36mtrue[39m[0m
+[0m [90m 200 |[39m   stream[33m.[39mworker[33m.[39moff([32m'exit'[39m[33m,[39m onWorkerExit)[0m
+[0m[31m[1m>[22m[39m[90m 201 |[39m   destroy(stream[33m,[39m code [33m!==[39m [35m0[39m [33m?[39m [36mnew[39m [33mError[39m([32m'the worker thread exited'[39m) [33m:[39m [36mnull[39m)[0m
+[0m [90m     |[39m [31m[1m^[22m[39m[0m
+[0m [90m 202 |[39m }[0m
+[0m [90m 203 |[39m[0m
+[0m [90m 204 |[39m [36mclass[39m [33mThreadStream[39m [36mextends[39m [33mEventEmitter[39m {[0m
+ ⨯ node_modules/thread-stream/index.js (201:1) @ Worker.onWorkerExit
+ ⨯ uncaughtException: Error: the worker thread exited
+    at Worker.onWorkerExit (webpack-internal:///(rsc)/./node_modules/thread-stream/index.js:201:32)
+    at Worker.emit (node:events:514:28)
+    at [kOnExit] (node:internal/worker:315:10)
+    at Worker.<computed>.onexit (node:internal/worker:229:20)
+    at Worker.callbackTrampoline (node:internal/async_hooks:130:17)
+[0m [90m 199 |[39m   stream[33m.[39mworker[33m.[39mexited [33m=[39m [36mtrue[39m[0m
+[0m [90m 200 |[39m   stream[33m.[39mworker[33m.[39moff([32m'exit'[39m[33m,[39m onWorkerExit)[0m
+[0m[31m[1m>[22m[39m[90m 201 |[39m   destroy(stream[33m,[39m code [33m!==[39m [35m0[39m [33m?[39m [36mnew[39m [33mError[39m([32m'the worker thread exited'[39m) [33m:[39m [36mnull[39m)[0m
+[0m [90m     |[39m [31m[1m^[22m[39m[0m
+[0m [90m 202 |[39m }[0m
+[0m [90m 203 |[39m[0m
+[0m [90m 204 |[39m [36mclass[39m [33mThreadStream[39m [36mextends[39m [33mEventEmitter[39m {[0m
+ GET /api/auth/session 200 in 127ms
+ │ GET http://localhost:8000/api/v1/users/user?email=emelianovdmitriy%40gmail.com 200 in 1ms (cache hit)
+ GET /api/auth/session 200 in 23ms
+ │ GET http://localhost:8000/api/v1/users/user?email=emelianovdmitriy%40gmail.com 200 in 1ms (cache hit)
+middleware {
+  nextUrl: '/app/dashboard',
+  auth: {
+  user: {
+  name: 'Dmitrii Emelianov',
+  email: 'emelianovdmitriy@gmail.com',
+  image: 'https://lh3.googleusercontent.com/a/ACg8ocLA3vQBMdS4GkYPxFapJF7vRMErPbZrilBlCYHMNzdiOxxHE-4=s96-c',
+  role: 'VENDOR',
+  id: 9
+},
+  expires: '2025-03-04T11:48:42.402Z'
+},
+  request: {
+  cookies: RequestCookies {"authjs.csrf-token":{"name":"authjs.csrf-token","value":"1e34022c6a819e7026619ac6fa99f19326c4a8ff4dc0a3da4061104c750bd6fd|7d19b8311d52b57e2aac480a546abc84bc92137e0da848a7fd9a2de8489e015d"},"authjs.callback-url":{"name":"authjs.callback-url","value":"http://localhost:3000/auth"},"authjs.session-token":{"name":"authjs.session-token","value":"eyJhbGciOiJkaXIiLCJlbmMiOiJBMjU2Q0JDLUhTNTEyIiwia2lkIjoicEEzSTN1RDNwbjl2cGxGVVpvb0ZfTjYyeU0zMjdMakxhRnZseFd6Z3g5N1daaE5CbHNqbzdwQmpBSnBicG9LcWF1dGxoSjZEZWp0NEp5R3hpX1dWLUEifQ..SnxQD7YogAGlsgbOC8qGRg.6p5tw61C3_YhSVydcpexQrtzM01FyY0JgjqOxPkbizix3IiK7FPZr8bb0EWZly4CL900jOYo4L9zmIOIFQ5nnYV6nrl1ZLJ3wLkPqvwZMJczzUrL0K5SgeF0Opokupi2c9N7s3PYg3EDKWdvzfHzYwRG5yzwwlG4ZM7FAin5TSMEndbqmSHiCRMOlWWz2jNDb0gM_IN5RLMIEe4-UN62ptqXu7VtQi-EPRj5Ht7OvmmtmjPcehwe0EasHzj9YzCNx_KX_6a4TjA8W8zwANgwoqI4g5sELBiSMklH0EQYLwCzkjAvABBemfepBB6B_-iaND_OukZ_75J3FWlOxUWaoTecOZ2crQcmYvmD6xPATO80he9oyQuyz6LIv4Y89v_U9zFpQO4eFmB2Kw-2sExxZA.YqY6-HPtSirHaQBdFlwyMMuGi3SMoluoKmdJAxhYLFE"}},
+  nextUrl: {
+  href: 'http://localhost:3000/app/dashboard',
+  origin: 'http://localhost:3000',
+  protocol: 'http:',
+  username: '',
+  password: '',
+  host: 'localhost:3000',
+  hostname: 'localhost',
+  port: '3000',
+  pathname: '/app/dashboard',
+  search: '',
+  searchParams: URLSearchParams {  },
+  hash: ''
+},
+  url: 'http://localhost:3000/app/dashboard',
+  bodyUsed: false,
+  cache: 'default',
+  credentials: 'same-origin',
+  destination: '',
+  headers: {
+  accept: '*/*',
+  accept-encoding: 'gzip, deflate, br, zstd',
+  accept-language: 'en-US,en;q=0.9,ru;q=0.8,sr;q=0.7',
+  connection: 'keep-alive',
+  cookie: 'authjs.csrf-token=1e34022c6a819e7026619ac6fa99f19326c4a8ff4dc0a3da4061104c750bd6fd%7C7d19b8311d52b57e2aac480a546abc84bc92137e0da848a7fd9a2de8489e015d; authjs.callback-url=http%3A%2F%2Flocalhost%3A3000%2Fauth; authjs.session-token=eyJhbGciOiJkaXIiLCJlbmMiOiJBMjU2Q0JDLUhTNTEyIiwia2lkIjoicEEzSTN1RDNwbjl2cGxGVVpvb0ZfTjYyeU0zMjdMakxhRnZseFd6Z3g5N1daaE5CbHNqbzdwQmpBSnBicG9LcWF1dGxoSjZEZWp0NEp5R3hpX1dWLUEifQ..SnxQD7YogAGlsgbOC8qGRg.6p5tw61C3_YhSVydcpexQrtzM01FyY0JgjqOxPkbizix3IiK7FPZr8bb0EWZly4CL900jOYo4L9zmIOIFQ5nnYV6nrl1ZLJ3wLkPqvwZMJczzUrL0K5SgeF0Opokupi2c9N7s3PYg3EDKWdvzfHzYwRG5yzwwlG4ZM7FAin5TSMEndbqmSHiCRMOlWWz2jNDb0gM_IN5RLMIEe4-UN62ptqXu7VtQi-EPRj5Ht7OvmmtmjPcehwe0EasHzj9YzCNx_KX_6a4TjA8W8zwANgwoqI4g5sELBiSMklH0EQYLwCzkjAvABBemfepBB6B_-iaND_OukZ_75J3FWlOxUWaoTecOZ2crQcmYvmD6xPATO80he9oyQuyz6LIv4Y89v_U9zFpQO4eFmB2Kw-2sExxZA.YqY6-HPtSirHaQBdFlwyMMuGi3SMoluoKmdJAxhYLFE',
+  dnt: '1',
+  host: 'localhost:3000',
+  next-url: '/app/dashboard/new-brief/details',
+  referer: 'http://localhost:3000/app/dashboard/new-brief/details',
+  sec-ch-ua: '"Not A(Brand";v="8", "Chromium";v="132", "Google Chrome";v="132"',
+  sec-ch-ua-mobile: '?0',
+  sec-ch-ua-platform: '"Windows"',
+  sec-fetch-dest: 'empty',
+  sec-fetch-mode: 'cors',
+  sec-fetch-site: 'same-origin',
+  user-agent: 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/132.0.0.0 Safari/537.36',
+  x-forwarded-for: '::1',
+  x-forwarded-host: 'localhost:3000',
+  x-forwarded-port: '3000',
+  x-forwarded-proto: 'http'
+},
+  integrity: '',
+  keepalive: false,
+  method: 'GET',
+  mode: 'cors',
+  redirect: 'follow',
+  referrer: 'about:client',
+  referrerPolicy: '',
+  signal: AbortSignal {
+  [Symbol(kEvents)]: SafeMap(0) {},
+  [Symbol(events.maxEventTargetListeners)]: 10,
+  [Symbol(events.maxEventTargetListenersWarned)]: false,
+  [Symbol(kHandlers)]: SafeMap(0) {},
+  [Symbol(kAborted)]: false,
+  [Symbol(kReason)]: undefined,
+  [Symbol(kOnabort)]: undefined,
+  [Symbol(realm)]: {
+  settingsObject: {
+  baseUrl: undefined,
+  origin: [Getter],
+  policyContainer: { referrerPolicy: 'strict-origin-when-cross-origin' }
+}
+}
+}
+}
+}
+ GET /app/dashboard 200 in 46ms
+middleware {
+  nextUrl: '/service/briefs',
+  auth: {
+  user: {
+  name: 'Dmitrii Emelianov',
+  email: 'emelianovdmitriy@gmail.com',
+  image: 'https://lh3.googleusercontent.com/a/ACg8ocLA3vQBMdS4GkYPxFapJF7vRMErPbZrilBlCYHMNzdiOxxHE-4=s96-c',
+  role: 'VENDOR',
+  id: 9
+},
+  expires: '2025-03-04T11:48:42.658Z'
+},
+  request: {
+  cookies: RequestCookies {"authjs.csrf-token":{"name":"authjs.csrf-token","value":"1e34022c6a819e7026619ac6fa99f19326c4a8ff4dc0a3da4061104c750bd6fd|7d19b8311d52b57e2aac480a546abc84bc92137e0da848a7fd9a2de8489e015d"},"authjs.callback-url":{"name":"authjs.callback-url","value":"http://localhost:3000/auth"},"authjs.session-token":{"name":"authjs.session-token","value":"eyJhbGciOiJkaXIiLCJlbmMiOiJBMjU2Q0JDLUhTNTEyIiwia2lkIjoicEEzSTN1RDNwbjl2cGxGVVpvb0ZfTjYyeU0zMjdMakxhRnZseFd6Z3g5N1daaE5CbHNqbzdwQmpBSnBicG9LcWF1dGxoSjZEZWp0NEp5R3hpX1dWLUEifQ..cFLISqRuoSBFPHfO3v-xzA.NWDKPzbcsW9mfY1sdpauqBZ_Ye-7hvfdmmBs830xCn-SUSoY8DBbFEXEMsMdzv9HO7gOUOJz3eYyy0IU_didjUzKtl7IuhqKPhu9vg7U41O7jLA0JAp0M4B53JUlDBnPbrKXaYAqKO1XBYyTMy8pL0U-3p9z1D_TzM-_qMka6tiL3N1qCVk-24vWWOeLJPe2QmJ7_CP0t4bx64fWjkylxBB0nYw2pqyHgqTNUqGd4ClUjd-qkjs_NZb7UsXsfYl_jVxU3k8T0b9HXCA9Gwx4lMp_1z8frEloiPvRiuIT2Waq6I5_sfPhmOLTs_VCSO3qr7IwOvrJoZuwxDSnVKWHMfw5DDQbheN5wQ4NPm0dkYN_dxIYPmRDLT_KkbWtBbng1UIX9LcGCvc4wuD1riLGqQ.mmbbQWmoN3QMfb7YAO9pUWwJ5j8gzdCLUlLB_jRwrg4"}},
+  nextUrl: {
+  href: 'http://localhost:3000/service/briefs',
+  origin: 'http://localhost:3000',
+  protocol: 'http:',
+  username: '',
+  password: '',
+  host: 'localhost:3000',
+  hostname: 'localhost',
+  port: '3000',
+  pathname: '/service/briefs',
+  search: '',
+  searchParams: URLSearchParams {  },
+  hash: ''
+},
+  url: 'http://localhost:3000/service/briefs',
+  bodyUsed: false,
+  cache: 'default',
+  credentials: 'same-origin',
+  destination: '',
+  headers: {
+  accept: '*/*',
+  accept-encoding: 'gzip, deflate, br, zstd',
+  accept-language: 'en-US,en;q=0.9,ru;q=0.8,sr;q=0.7',
+  connection: 'keep-alive',
+  cookie: 'authjs.csrf-token=1e34022c6a819e7026619ac6fa99f19326c4a8ff4dc0a3da4061104c750bd6fd%7C7d19b8311d52b57e2aac480a546abc84bc92137e0da848a7fd9a2de8489e015d; authjs.callback-url=http%3A%2F%2Flocalhost%3A3000%2Fauth; authjs.session-token=eyJhbGciOiJkaXIiLCJlbmMiOiJBMjU2Q0JDLUhTNTEyIiwia2lkIjoicEEzSTN1RDNwbjl2cGxGVVpvb0ZfTjYyeU0zMjdMakxhRnZseFd6Z3g5N1daaE5CbHNqbzdwQmpBSnBicG9LcWF1dGxoSjZEZWp0NEp5R3hpX1dWLUEifQ..cFLISqRuoSBFPHfO3v-xzA.NWDKPzbcsW9mfY1sdpauqBZ_Ye-7hvfdmmBs830xCn-SUSoY8DBbFEXEMsMdzv9HO7gOUOJz3eYyy0IU_didjUzKtl7IuhqKPhu9vg7U41O7jLA0JAp0M4B53JUlDBnPbrKXaYAqKO1XBYyTMy8pL0U-3p9z1D_TzM-_qMka6tiL3N1qCVk-24vWWOeLJPe2QmJ7_CP0t4bx64fWjkylxBB0nYw2pqyHgqTNUqGd4ClUjd-qkjs_NZb7UsXsfYl_jVxU3k8T0b9HXCA9Gwx4lMp_1z8frEloiPvRiuIT2Waq6I5_sfPhmOLTs_VCSO3qr7IwOvrJoZuwxDSnVKWHMfw5DDQbheN5wQ4NPm0dkYN_dxIYPmRDLT_KkbWtBbng1UIX9LcGCvc4wuD1riLGqQ.mmbbQWmoN3QMfb7YAO9pUWwJ5j8gzdCLUlLB_jRwrg4',
+  dnt: '1',
+  host: 'localhost:3000',
+  referer: 'http://localhost:3000/app/dashboard',
+  sec-ch-ua: '"Not A(Brand";v="8", "Chromium";v="132", "Google Chrome";v="132"',
+  sec-ch-ua-mobile: '?0',
+  sec-ch-ua-platform: '"Windows"',
+  sec-fetch-dest: 'empty',
+  sec-fetch-mode: 'cors',
+  sec-fetch-site: 'same-origin',
+  user-agent: 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/132.0.0.0 Safari/537.36',
+  x-forwarded-for: '::1',
+  x-forwarded-host: 'localhost:3000',
+  x-forwarded-port: '3000',
+  x-forwarded-proto: 'http'
+},
+  integrity: '',
+  keepalive: false,
+  method: 'GET',
+  mode: 'cors',
+  redirect: 'follow',
+  referrer: 'about:client',
+  referrerPolicy: '',
+  signal: AbortSignal {
+  [Symbol(kEvents)]: SafeMap(0) {},
+  [Symbol(events.maxEventTargetListeners)]: 10,
+  [Symbol(events.maxEventTargetListenersWarned)]: false,
+  [Symbol(kHandlers)]: SafeMap(0) {},
+  [Symbol(kAborted)]: false,
+  [Symbol(kReason)]: undefined,
+  [Symbol(kOnabort)]: undefined,
+  [Symbol(realm)]: {
+  settingsObject: {
+  baseUrl: undefined,
+  origin: [Getter],
+  policyContainer: { referrerPolicy: 'strict-origin-when-cross-origin' }
+}
+}
+}
+}
+}
+proxying request { pathname: '/service/briefs', newPathname: '/api/v1/briefs' }
+middleware {
+  nextUrl: '/app/dashboard',
+  auth: {
+  user: {
+  name: 'Dmitrii Emelianov',
+  email: 'emelianovdmitriy@gmail.com',
+  image: 'https://lh3.googleusercontent.com/a/ACg8ocLA3vQBMdS4GkYPxFapJF7vRMErPbZrilBlCYHMNzdiOxxHE-4=s96-c',
+  role: 'VENDOR',
+  id: 9
+},
+  expires: '2025-03-04T11:48:43.898Z'
+},
+  request: {
+  cookies: RequestCookies {"authjs.csrf-token":{"name":"authjs.csrf-token","value":"1e34022c6a819e7026619ac6fa99f19326c4a8ff4dc0a3da4061104c750bd6fd|7d19b8311d52b57e2aac480a546abc84bc92137e0da848a7fd9a2de8489e015d"},"authjs.callback-url":{"name":"authjs.callback-url","value":"http://localhost:3000/auth"},"authjs.session-token":{"name":"authjs.session-token","value":"eyJhbGciOiJkaXIiLCJlbmMiOiJBMjU2Q0JDLUhTNTEyIiwia2lkIjoicEEzSTN1RDNwbjl2cGxGVVpvb0ZfTjYyeU0zMjdMakxhRnZseFd6Z3g5N1daaE5CbHNqbzdwQmpBSnBicG9LcWF1dGxoSjZEZWp0NEp5R3hpX1dWLUEifQ..Rb5C7BeL75-1gCMUegkiXw._6yo_2eRTSOGcbpGEB56jDOHE7XVCpR-H8ImozQ106Xsou6L4r9Kj3TCIQkgWisbso3iVXMzJoCpVDRtEcvXUK5XFOeZV2kt7uQbCM3GmdtLc897YiiY41o-jCQPaWwIXLDUjJM6I-aztrgD2kT029qlCqepkfvvDNuctpkcWoUr1FzqSMukCjp1mbRpoQKkacwKctEYltJCtlLxl877mJHqEewqOLhfKr6HA6OK5cB4q3_opuZ_LV2YJQg8qV2D5CFopAU0m-_7A71W__wvBvHk0zlhCu26mpjexctWtmGNuoGaCQslTdK1FGtxyVsjm4g3tIdzjzRDQqjZ-_3QiQ_xxKiX18FIlqYNcieRW6sdwVhqvOB9N97eZTOyuBnyorx2YsvN-ciPas7FwD0lAA.tzvDpjiqpPJJ24PsyTrfYM4m8avNXA7rrzox9GAMz3s"}},
+  nextUrl: {
+  href: 'http://localhost:3000/app/dashboard',
+  origin: 'http://localhost:3000',
+  protocol: 'http:',
+  username: '',
+  password: '',
+  host: 'localhost:3000',
+  hostname: 'localhost',
+  port: '3000',
+  pathname: '/app/dashboard',
+  search: '',
+  searchParams: URLSearchParams {  },
+  hash: ''
+},
+  url: 'http://localhost:3000/app/dashboard',
+  bodyUsed: false,
+  cache: 'default',
+  credentials: 'same-origin',
+  destination: '',
+  headers: {
+  accept: 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7',
+  accept-encoding: 'gzip, deflate, br, zstd',
+  accept-language: 'en-US,en;q=0.9,ru;q=0.8,sr;q=0.7',
+  cache-control: 'max-age=0',
+  connection: 'keep-alive',
+  cookie: 'authjs.csrf-token=1e34022c6a819e7026619ac6fa99f19326c4a8ff4dc0a3da4061104c750bd6fd%7C7d19b8311d52b57e2aac480a546abc84bc92137e0da848a7fd9a2de8489e015d; authjs.callback-url=http%3A%2F%2Flocalhost%3A3000%2Fauth; authjs.session-token=eyJhbGciOiJkaXIiLCJlbmMiOiJBMjU2Q0JDLUhTNTEyIiwia2lkIjoicEEzSTN1RDNwbjl2cGxGVVpvb0ZfTjYyeU0zMjdMakxhRnZseFd6Z3g5N1daaE5CbHNqbzdwQmpBSnBicG9LcWF1dGxoSjZEZWp0NEp5R3hpX1dWLUEifQ..Rb5C7BeL75-1gCMUegkiXw._6yo_2eRTSOGcbpGEB56jDOHE7XVCpR-H8ImozQ106Xsou6L4r9Kj3TCIQkgWisbso3iVXMzJoCpVDRtEcvXUK5XFOeZV2kt7uQbCM3GmdtLc897YiiY41o-jCQPaWwIXLDUjJM6I-aztrgD2kT029qlCqepkfvvDNuctpkcWoUr1FzqSMukCjp1mbRpoQKkacwKctEYltJCtlLxl877mJHqEewqOLhfKr6HA6OK5cB4q3_opuZ_LV2YJQg8qV2D5CFopAU0m-_7A71W__wvBvHk0zlhCu26mpjexctWtmGNuoGaCQslTdK1FGtxyVsjm4g3tIdzjzRDQqjZ-_3QiQ_xxKiX18FIlqYNcieRW6sdwVhqvOB9N97eZTOyuBnyorx2YsvN-ciPas7FwD0lAA.tzvDpjiqpPJJ24PsyTrfYM4m8avNXA7rrzox9GAMz3s',
+  dnt: '1',
+  host: 'localhost:3000',
+  referer: 'http://localhost:3000/app/dashboard/1/details',
+  sec-ch-ua: '"Not A(Brand";v="8", "Chromium";v="132", "Google Chrome";v="132"',
+  sec-ch-ua-mobile: '?0',
+  sec-ch-ua-platform: '"Windows"',
+  sec-fetch-dest: 'document',
+  sec-fetch-mode: 'navigate',
+  sec-fetch-site: 'same-origin',
+  sec-fetch-user: '?1',
+  upgrade-insecure-requests: '1',
+  user-agent: 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/132.0.0.0 Safari/537.36',
+  x-forwarded-for: '::1',
+  x-forwarded-host: 'localhost:3000',
+  x-forwarded-port: '3000',
+  x-forwarded-proto: 'http'
+},
+  integrity: '',
+  keepalive: false,
+  method: 'GET',
+  mode: 'cors',
+  redirect: 'follow',
+  referrer: 'about:client',
+  referrerPolicy: '',
+  signal: AbortSignal {
+  [Symbol(kEvents)]: SafeMap(0) {},
+  [Symbol(events.maxEventTargetListeners)]: 10,
+  [Symbol(events.maxEventTargetListenersWarned)]: false,
+  [Symbol(kHandlers)]: SafeMap(0) {},
+  [Symbol(kAborted)]: false,
+  [Symbol(kReason)]: undefined,
+  [Symbol(kOnabort)]: undefined,
+  [Symbol(realm)]: {
+  settingsObject: {
+  baseUrl: undefined,
+  origin: [Getter],
+  policyContainer: { referrerPolicy: 'strict-origin-when-cross-origin' }
+}
+}
+}
+}
+}
+styled-components: it looks like an unknown prop "themeType" is being sent through to the DOM, which will likely trigger a React console error. If you would like automatic filtering of unknown props, you can opt-into that behavior via `<StyleSheetManager shouldForwardProp={...}>` (connect an API like `@emotion/is-prop-valid`) or consider using transient props (`$` prefix for automatic filtering.)
+styled-components: it looks like an unknown prop "isActive" is being sent through to the DOM, which will likely trigger a React console error. If you would like automatic filtering of unknown props, you can opt-into that behavior via `<StyleSheetManager shouldForwardProp={...}>` (connect an API like `@emotion/is-prop-valid`) or consider using transient props (`$` prefix for automatic filtering.)
+ GET /app/dashboard 200 in 204ms
+ │ GET http://localhost:8000/api/v1/users/user?email=emelianovdmitriy%40gmail.com 200 in 0ms (cache hit)
+middleware {
+  nextUrl: '/service/briefs',
+  auth: {
+  user: {
+  name: 'Dmitrii Emelianov',
+  email: 'emelianovdmitriy@gmail.com',
+  image: 'https://lh3.googleusercontent.com/a/ACg8ocLA3vQBMdS4GkYPxFapJF7vRMErPbZrilBlCYHMNzdiOxxHE-4=s96-c',
+  role: 'VENDOR',
+  id: 9
+},
+  expires: '2025-03-04T11:48:44.792Z'
+},
+  request: {
+  cookies: RequestCookies {"authjs.csrf-token":{"name":"authjs.csrf-token","value":"1e34022c6a819e7026619ac6fa99f19326c4a8ff4dc0a3da4061104c750bd6fd|7d19b8311d52b57e2aac480a546abc84bc92137e0da848a7fd9a2de8489e015d"},"authjs.callback-url":{"name":"authjs.callback-url","value":"http://localhost:3000/auth"},"authjs.session-token":{"name":"authjs.session-token","value":"eyJhbGciOiJkaXIiLCJlbmMiOiJBMjU2Q0JDLUhTNTEyIiwia2lkIjoicEEzSTN1RDNwbjl2cGxGVVpvb0ZfTjYyeU0zMjdMakxhRnZseFd6Z3g5N1daaE5CbHNqbzdwQmpBSnBicG9LcWF1dGxoSjZEZWp0NEp5R3hpX1dWLUEifQ..Vxlfk38AeldM6zB3od6ODw.XqB034BWBNr8enfPdN-XrcCmiAuQsLE7YzDOdyo2MpH1dzyQxj-VUaQ0sKdGKSb96n27Btq0af76QRItk9Wtz9RHqAupbe0vJ_9UlRdFnEcRV3lhmwspSHZsn2_IdVP0fI5pE3BBkQdDtJO1I3FtXNG0LUbHCqHXcUSuMMWk92OnZN3ccETDW9mbH1V_UlHZCpPEOXnsVypq8M7CIkFQOa7Fe86RMU66jssAggayQ3N__o7fUOIjOnBF11Hbbi2DcrGKYPXx84lsYUF1HQ7mRBlUnD1MUmzeN4RGeOtlERn-YNuNum14t-t86lus6kSscjoJchsWS3bVncV2dv2A-nlp8jteDFDIrIuKXvwSLtAwlXOrCCvXNlcSH5dk1FPSMIpVN4hJoFEzfq2pyRhoiw.PJWOsslWPaoW8jVDzivFZrn3eIHanYn8JYUi3M0tZmA"}},
+  nextUrl: {
+  href: 'http://localhost:3000/service/briefs',
+  origin: 'http://localhost:3000',
+  protocol: 'http:',
+  username: '',
+  password: '',
+  host: 'localhost:3000',
+  hostname: 'localhost',
+  port: '3000',
+  pathname: '/service/briefs',
+  search: '',
+  searchParams: URLSearchParams {  },
+  hash: ''
+},
+  url: 'http://localhost:3000/service/briefs',
+  bodyUsed: false,
+  cache: 'default',
+  credentials: 'same-origin',
+  destination: '',
+  headers: {
+  accept: '*/*',
+  accept-encoding: 'gzip, deflate, br, zstd',
+  accept-language: 'en-US,en;q=0.9,ru;q=0.8,sr;q=0.7',
+  connection: 'keep-alive',
+  cookie: 'authjs.csrf-token=1e34022c6a819e7026619ac6fa99f19326c4a8ff4dc0a3da4061104c750bd6fd%7C7d19b8311d52b57e2aac480a546abc84bc92137e0da848a7fd9a2de8489e015d; authjs.callback-url=http%3A%2F%2Flocalhost%3A3000%2Fauth; authjs.session-token=eyJhbGciOiJkaXIiLCJlbmMiOiJBMjU2Q0JDLUhTNTEyIiwia2lkIjoicEEzSTN1RDNwbjl2cGxGVVpvb0ZfTjYyeU0zMjdMakxhRnZseFd6Z3g5N1daaE5CbHNqbzdwQmpBSnBicG9LcWF1dGxoSjZEZWp0NEp5R3hpX1dWLUEifQ..Vxlfk38AeldM6zB3od6ODw.XqB034BWBNr8enfPdN-XrcCmiAuQsLE7YzDOdyo2MpH1dzyQxj-VUaQ0sKdGKSb96n27Btq0af76QRItk9Wtz9RHqAupbe0vJ_9UlRdFnEcRV3lhmwspSHZsn2_IdVP0fI5pE3BBkQdDtJO1I3FtXNG0LUbHCqHXcUSuMMWk92OnZN3ccETDW9mbH1V_UlHZCpPEOXnsVypq8M7CIkFQOa7Fe86RMU66jssAggayQ3N__o7fUOIjOnBF11Hbbi2DcrGKYPXx84lsYUF1HQ7mRBlUnD1MUmzeN4RGeOtlERn-YNuNum14t-t86lus6kSscjoJchsWS3bVncV2dv2A-nlp8jteDFDIrIuKXvwSLtAwlXOrCCvXNlcSH5dk1FPSMIpVN4hJoFEzfq2pyRhoiw.PJWOsslWPaoW8jVDzivFZrn3eIHanYn8JYUi3M0tZmA',
+  dnt: '1',
+  host: 'localhost:3000',
+  referer: 'http://localhost:3000/app/dashboard',
+  sec-ch-ua: '"Not A(Brand";v="8", "Chromium";v="132", "Google Chrome";v="132"',
+  sec-ch-ua-mobile: '?0',
+  sec-ch-ua-platform: '"Windows"',
+  sec-fetch-dest: 'empty',
+  sec-fetch-mode: 'cors',
+  sec-fetch-site: 'same-origin',
+  user-agent: 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/132.0.0.0 Safari/537.36',
+  x-forwarded-for: '::1',
+  x-forwarded-host: 'localhost:3000',
+  x-forwarded-port: '3000',
+  x-forwarded-proto: 'http'
+},
+  integrity: '',
+  keepalive: false,
+  method: 'GET',
+  mode: 'cors',
+  redirect: 'follow',
+  referrer: 'about:client',
+  referrerPolicy: '',
+  signal: AbortSignal {
+  [Symbol(kEvents)]: SafeMap(0) {},
+  [Symbol(events.maxEventTargetListeners)]: 10,
+  [Symbol(events.maxEventTargetListenersWarned)]: false,
+  [Symbol(kHandlers)]: SafeMap(0) {},
+  [Symbol(kAborted)]: false,
+  [Symbol(kReason)]: undefined,
+  [Symbol(kOnabort)]: undefined,
+  [Symbol(realm)]: {
+  settingsObject: {
+  baseUrl: undefined,
+  origin: [Getter],
+  policyContainer: { referrerPolicy: 'strict-origin-when-cross-origin' }
+}
+}
+}
+}
+}
+proxying request { pathname: '/service/briefs', newPathname: '/api/v1/briefs' }
+middleware {
+  nextUrl: '/app/dashboard/new-brief/details',
+  auth: {
+  user: {
+  name: 'Dmitrii Emelianov',
+  email: 'emelianovdmitriy@gmail.com',
+  image: 'https://lh3.googleusercontent.com/a/ACg8ocLA3vQBMdS4GkYPxFapJF7vRMErPbZrilBlCYHMNzdiOxxHE-4=s96-c',
+  role: 'VENDOR',
+  id: 9
+},
+  expires: '2025-03-04T11:48:45.832Z'
+},
+  request: {
+  cookies: RequestCookies {"authjs.csrf-token":{"name":"authjs.csrf-token","value":"1e34022c6a819e7026619ac6fa99f19326c4a8ff4dc0a3da4061104c750bd6fd|7d19b8311d52b57e2aac480a546abc84bc92137e0da848a7fd9a2de8489e015d"},"authjs.callback-url":{"name":"authjs.callback-url","value":"http://localhost:3000/auth"},"authjs.session-token":{"name":"authjs.session-token","value":"eyJhbGciOiJkaXIiLCJlbmMiOiJBMjU2Q0JDLUhTNTEyIiwia2lkIjoicEEzSTN1RDNwbjl2cGxGVVpvb0ZfTjYyeU0zMjdMakxhRnZseFd6Z3g5N1daaE5CbHNqbzdwQmpBSnBicG9LcWF1dGxoSjZEZWp0NEp5R3hpX1dWLUEifQ..UXR_QwFcQ1d9rG1gSkmT9g.437MeZLiGnWMPI9pzn8TqhymFyTGiaI4cKN9mbsok2drB3PRd21ZMxapFVRiQ0kSsYCO1M-RyC0khkPujRLTao2Ox1JqkKg-K-VjtTmpNjzoesif-EKEvD7qa-Yp_HQwqcqGgjrMJ4Qel2M_Z5vxks07-jH_EDMbNpLPbWbBkIWmOOSBurk8hR0NBr59bpShSUC4CprUqv1tllNIJ8EU6xvylZw_dqP8TApRQeW2PW7okWU0qU2U6qIIKRswCkWxvb5F3OukPCd912bpqTeVqxeSY0YC130bAH7UswA2Pn7ufmwZX9gVOdBgTJ7rXp5aGu_CCLwJCE6ODLwU3n5UizXtavUzhI0JKlZgthPQ1NOJvxW1csd3gfKTRLCWLp9DEvZaqXH1Ou8jx9lhx9nBSQ.z2btLABLUUzJczCUTSKnWpcdI_Nx5QppB5Km13hAipU"}},
+  nextUrl: {
+  href: 'http://localhost:3000/app/dashboard/new-brief/details',
+  origin: 'http://localhost:3000',
+  protocol: 'http:',
+  username: '',
+  password: '',
+  host: 'localhost:3000',
+  hostname: 'localhost',
+  port: '3000',
+  pathname: '/app/dashboard/new-brief/details',
+  search: '',
+  searchParams: URLSearchParams {  },
+  hash: ''
+},
+  url: 'http://localhost:3000/app/dashboard/new-brief/details',
+  bodyUsed: false,
+  cache: 'default',
+  credentials: 'same-origin',
+  destination: '',
+  headers: {
+  accept: '*/*',
+  accept-encoding: 'gzip, deflate, br, zstd',
+  accept-language: 'en-US,en;q=0.9,ru;q=0.8,sr;q=0.7',
+  connection: 'keep-alive',
+  cookie: 'authjs.csrf-token=1e34022c6a819e7026619ac6fa99f19326c4a8ff4dc0a3da4061104c750bd6fd%7C7d19b8311d52b57e2aac480a546abc84bc92137e0da848a7fd9a2de8489e015d; authjs.callback-url=http%3A%2F%2Flocalhost%3A3000%2Fauth; authjs.session-token=eyJhbGciOiJkaXIiLCJlbmMiOiJBMjU2Q0JDLUhTNTEyIiwia2lkIjoicEEzSTN1RDNwbjl2cGxGVVpvb0ZfTjYyeU0zMjdMakxhRnZseFd6Z3g5N1daaE5CbHNqbzdwQmpBSnBicG9LcWF1dGxoSjZEZWp0NEp5R3hpX1dWLUEifQ..UXR_QwFcQ1d9rG1gSkmT9g.437MeZLiGnWMPI9pzn8TqhymFyTGiaI4cKN9mbsok2drB3PRd21ZMxapFVRiQ0kSsYCO1M-RyC0khkPujRLTao2Ox1JqkKg-K-VjtTmpNjzoesif-EKEvD7qa-Yp_HQwqcqGgjrMJ4Qel2M_Z5vxks07-jH_EDMbNpLPbWbBkIWmOOSBurk8hR0NBr59bpShSUC4CprUqv1tllNIJ8EU6xvylZw_dqP8TApRQeW2PW7okWU0qU2U6qIIKRswCkWxvb5F3OukPCd912bpqTeVqxeSY0YC130bAH7UswA2Pn7ufmwZX9gVOdBgTJ7rXp5aGu_CCLwJCE6ODLwU3n5UizXtavUzhI0JKlZgthPQ1NOJvxW1csd3gfKTRLCWLp9DEvZaqXH1Ou8jx9lhx9nBSQ.z2btLABLUUzJczCUTSKnWpcdI_Nx5QppB5Km13hAipU',
+  dnt: '1',
+  host: 'localhost:3000',
+  next-url: '/app/dashboard/dashboard',
+  referer: 'http://localhost:3000/app/dashboard',
+  sec-ch-ua: '"Not A(Brand";v="8", "Chromium";v="132", "Google Chrome";v="132"',
+  sec-ch-ua-mobile: '?0',
+  sec-ch-ua-platform: '"Windows"',
+  sec-fetch-dest: 'empty',
+  sec-fetch-mode: 'cors',
+  sec-fetch-site: 'same-origin',
+  user-agent: 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/132.0.0.0 Safari/537.36',
+  x-forwarded-for: '::1',
+  x-forwarded-host: 'localhost:3000',
+  x-forwarded-port: '3000',
+  x-forwarded-proto: 'http'
+},
+  integrity: '',
+  keepalive: false,
+  method: 'GET',
+  mode: 'cors',
+  redirect: 'follow',
+  referrer: 'about:client',
+  referrerPolicy: '',
+  signal: AbortSignal {
+  [Symbol(kEvents)]: SafeMap(0) {},
+  [Symbol(events.maxEventTargetListeners)]: 10,
+  [Symbol(events.maxEventTargetListenersWarned)]: false,
+  [Symbol(kHandlers)]: SafeMap(0) {},
+  [Symbol(kAborted)]: false,
+  [Symbol(kReason)]: undefined,
+  [Symbol(kOnabort)]: undefined,
+  [Symbol(realm)]: {
+  settingsObject: {
+  baseUrl: undefined,
+  origin: [Getter],
+  policyContainer: { referrerPolicy: 'strict-origin-when-cross-origin' }
+}
+}
+}
+}
+}
+ GET /app/dashboard/new-brief/details 200 in 44ms
+ GET /api/auth/session 200 in 29ms
+ │ GET http://localhost:8000/api/v1/users/user?email=emelianovdmitriy%40gmail.com 200 in 0ms (cache hit)
+ GET /api/auth/session 200 in 24ms
+ │ GET http://localhost:8000/api/v1/users/user?email=emelianovdmitriy%40gmail.com 200 in 0ms (cache hit)
+ ✓ Compiled in 1625ms (6177 modules)
+ GET /api/auth/session 200 in 116ms
+ │ GET http://localhost:8000/api/v1/users/user?email=emelianovdmitriy%40gmail.com 200 in 1ms (cache hit)
+Error: Cannot find module '/home/blacksmith/projects/aivus/aivus-web/.next/server/vendor-chunks/lib/worker.js'
+    at Module._resolveFilename (node:internal/modules/cjs/loader:1048:15)
+    at Module._load (node:internal/modules/cjs/loader:901:27)
+    at Function.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:83:12)
+    at MessagePort.<anonymous> (node:internal/main/worker_thread:185:26)
+    at [nodejs.internal.kHybridDispatch] (node:internal/event_target:807:20)
+    at exports.emitMessage (node:internal/per_context/messageport:23:28) {
+  code: 'MODULE_NOT_FOUND',
+  requireStack: []
+}
+ ⨯ uncaughtException: Error: Cannot find module '/home/blacksmith/projects/aivus/aivus-web/.next/server/vendor-chunks/lib/worker.js'
+    at Module._resolveFilename (node:internal/modules/cjs/loader:1048:15)
+    at Module._load (node:internal/modules/cjs/loader:901:27)
+    at Function.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:83:12)
+    at MessagePort.<anonymous> (node:internal/main/worker_thread:185:26)
+    at [nodejs.internal.kHybridDispatch] (node:internal/event_target:807:20)
+    at exports.emitMessage (node:internal/per_context/messageport:23:28) {
+  code: 'MODULE_NOT_FOUND',
+  requireStack: []
+}
+ ⨯ uncaughtException: Error: Cannot find module '/home/blacksmith/projects/aivus/aivus-web/.next/server/vendor-chunks/lib/worker.js'
+    at Module._resolveFilename (node:internal/modules/cjs/loader:1048:15)
+    at Module._load (node:internal/modules/cjs/loader:901:27)
+    at Function.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:83:12)
+    at MessagePort.<anonymous> (node:internal/main/worker_thread:185:26)
+    at [nodejs.internal.kHybridDispatch] (node:internal/event_target:807:20)
+    at exports.emitMessage (node:internal/per_context/messageport:23:28) {
+  code: 'MODULE_NOT_FOUND',
+  requireStack: []
+}
+Error: the worker thread exited
+    at Worker.onWorkerExit (webpack-internal:///(rsc)/./node_modules/thread-stream/index.js:201:32)
+    at Worker.emit (node:events:514:28)
+    at [kOnExit] (node:internal/worker:315:10)
+    at Worker.<computed>.onexit (node:internal/worker:229:20)
+    at Worker.callbackTrampoline (node:internal/async_hooks:130:17)
+ ⨯ node_modules/thread-stream/index.js (201:1) @ Worker.onWorkerExit
+ ⨯ uncaughtException: Error: the worker thread exited
+    at Worker.onWorkerExit (webpack-internal:///(rsc)/./node_modules/thread-stream/index.js:201:32)
+    at Worker.emit (node:events:514:28)
+    at [kOnExit] (node:internal/worker:315:10)
+    at Worker.<computed>.onexit (node:internal/worker:229:20)
+    at Worker.callbackTrampoline (node:internal/async_hooks:130:17)
+[0m [90m 199 |[39m   stream[33m.[39mworker[33m.[39mexited [33m=[39m [36mtrue[39m[0m
+[0m [90m 200 |[39m   stream[33m.[39mworker[33m.[39moff([32m'exit'[39m[33m,[39m onWorkerExit)[0m
+[0m[31m[1m>[22m[39m[90m 201 |[39m   destroy(stream[33m,[39m code [33m!==[39m [35m0[39m [33m?[39m [36mnew[39m [33mError[39m([32m'the worker thread exited'[39m) [33m:[39m [36mnull[39m)[0m
+[0m [90m     |[39m [31m[1m^[22m[39m[0m
+[0m [90m 202 |[39m }[0m
+[0m [90m 203 |[39m[0m
+[0m [90m 204 |[39m [36mclass[39m [33mThreadStream[39m [36mextends[39m [33mEventEmitter[39m {[0m
+ ⨯ node_modules/thread-stream/index.js (201:1) @ Worker.onWorkerExit
+ ⨯ uncaughtException: Error: the worker thread exited
+    at Worker.onWorkerExit (webpack-internal:///(rsc)/./node_modules/thread-stream/index.js:201:32)
+    at Worker.emit (node:events:514:28)
+    at [kOnExit] (node:internal/worker:315:10)
+    at Worker.<computed>.onexit (node:internal/worker:229:20)
+    at Worker.callbackTrampoline (node:internal/async_hooks:130:17)
+[0m [90m 199 |[39m   stream[33m.[39mworker[33m.[39mexited [33m=[39m [36mtrue[39m[0m
+[0m [90m 200 |[39m   stream[33m.[39mworker[33m.[39moff([32m'exit'[39m[33m,[39m onWorkerExit)[0m
+[0m[31m[1m>[22m[39m[90m 201 |[39m   destroy(stream[33m,[39m code [33m!==[39m [35m0[39m [33m?[39m [36mnew[39m [33mError[39m([32m'the worker thread exited'[39m) [33m:[39m [36mnull[39m)[0m
+[0m [90m     |[39m [31m[1m^[22m[39m[0m
+[0m [90m 202 |[39m }[0m
+[0m [90m 203 |[39m[0m
+[0m [90m 204 |[39m [36mclass[39m [33mThreadStream[39m [36mextends[39m [33mEventEmitter[39m {[0m
+ GET /api/auth/session 200 in 24ms
+ │ GET http://localhost:8000/api/v1/users/user?email=emelianovdmitriy%40gmail.com 200 in 0ms (cache hit)
+middleware {
+  nextUrl: '/app/dashboard/new-brief/details',
+  auth: {
+  user: {
+  name: 'Dmitrii Emelianov',
+  email: 'emelianovdmitriy@gmail.com',
+  image: 'https://lh3.googleusercontent.com/a/ACg8ocLA3vQBMdS4GkYPxFapJF7vRMErPbZrilBlCYHMNzdiOxxHE-4=s96-c',
+  role: 'VENDOR',
+  id: 9
+},
+  expires: '2025-03-04T11:50:22.262Z'
+},
+  request: {
+  cookies: RequestCookies {"authjs.csrf-token":{"name":"authjs.csrf-token","value":"1e34022c6a819e7026619ac6fa99f19326c4a8ff4dc0a3da4061104c750bd6fd|7d19b8311d52b57e2aac480a546abc84bc92137e0da848a7fd9a2de8489e015d"},"authjs.callback-url":{"name":"authjs.callback-url","value":"http://localhost:3000/auth"},"authjs.session-token":{"name":"authjs.session-token","value":"eyJhbGciOiJkaXIiLCJlbmMiOiJBMjU2Q0JDLUhTNTEyIiwia2lkIjoicEEzSTN1RDNwbjl2cGxGVVpvb0ZfTjYyeU0zMjdMakxhRnZseFd6Z3g5N1daaE5CbHNqbzdwQmpBSnBicG9LcWF1dGxoSjZEZWp0NEp5R3hpX1dWLUEifQ..unprdjTkftaxIJrGvqYUkg.Iq_3-Oei5GeRZZRYxYPiuM-mthxHYiVHkxdOMvPby8kqiVw1dwYs-E7pZeM5HVInxhpS7GOKNT1Lisc8opHGSvioogRI53GrbwzWpJLCOIqJABKnvtUbFAARd9Qrt_NcmYdZFfi-xvmwfqxxdouXD9cxyhTJZejffzgmUTQopd8dPYk8sdNuA_zpiPX6Sf9kJ1Z6wf9ams2DVChuAHzZnInT1s4okn0bPrDIEyDtvDy0Byx_yuzETlP0gxCKJNDTrKy7c2WBLC18an0A0ZaIB_hofx-ji2MFLZ3EIwdxUXVk-cAIdng_orSEjM9BrxgOmN3HlHfClviEDT1myJNKu4TroM3TsnLdXiUEavX1MqMBOOr498pxIxC8Pad_pEOkKz4aWXW2Yi8vuP_PLAhjGA.R1_J9MNWuS3NEeoFtudjWOH0SxlB-7mY_aW8SHl4yPw"}},
+  nextUrl: {
+  href: 'http://localhost:3000/app/dashboard/new-brief/details',
+  origin: 'http://localhost:3000',
+  protocol: 'http:',
+  username: '',
+  password: '',
+  host: 'localhost:3000',
+  hostname: 'localhost',
+  port: '3000',
+  pathname: '/app/dashboard/new-brief/details',
+  search: '',
+  searchParams: URLSearchParams {  },
+  hash: ''
+},
+  url: 'http://localhost:3000/app/dashboard/new-brief/details',
+  bodyUsed: false,
+  cache: 'default',
+  credentials: 'same-origin',
+  destination: '',
+  headers: {
+  accept: 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7',
+  accept-encoding: 'gzip, deflate, br, zstd',
+  accept-language: 'en-US,en;q=0.9,ru;q=0.8,sr;q=0.7',
+  cache-control: 'max-age=0',
+  connection: 'keep-alive',
+  cookie: 'authjs.csrf-token=1e34022c6a819e7026619ac6fa99f19326c4a8ff4dc0a3da4061104c750bd6fd%7C7d19b8311d52b57e2aac480a546abc84bc92137e0da848a7fd9a2de8489e015d; authjs.callback-url=http%3A%2F%2Flocalhost%3A3000%2Fauth; authjs.session-token=eyJhbGciOiJkaXIiLCJlbmMiOiJBMjU2Q0JDLUhTNTEyIiwia2lkIjoicEEzSTN1RDNwbjl2cGxGVVpvb0ZfTjYyeU0zMjdMakxhRnZseFd6Z3g5N1daaE5CbHNqbzdwQmpBSnBicG9LcWF1dGxoSjZEZWp0NEp5R3hpX1dWLUEifQ..unprdjTkftaxIJrGvqYUkg.Iq_3-Oei5GeRZZRYxYPiuM-mthxHYiVHkxdOMvPby8kqiVw1dwYs-E7pZeM5HVInxhpS7GOKNT1Lisc8opHGSvioogRI53GrbwzWpJLCOIqJABKnvtUbFAARd9Qrt_NcmYdZFfi-xvmwfqxxdouXD9cxyhTJZejffzgmUTQopd8dPYk8sdNuA_zpiPX6Sf9kJ1Z6wf9ams2DVChuAHzZnInT1s4okn0bPrDIEyDtvDy0Byx_yuzETlP0gxCKJNDTrKy7c2WBLC18an0A0ZaIB_hofx-ji2MFLZ3EIwdxUXVk-cAIdng_orSEjM9BrxgOmN3HlHfClviEDT1myJNKu4TroM3TsnLdXiUEavX1MqMBOOr498pxIxC8Pad_pEOkKz4aWXW2Yi8vuP_PLAhjGA.R1_J9MNWuS3NEeoFtudjWOH0SxlB-7mY_aW8SHl4yPw',
+  dnt: '1',
+  host: 'localhost:3000',
+  referer: 'http://localhost:3000/app/dashboard/1/details',
+  sec-ch-ua: '"Not A(Brand";v="8", "Chromium";v="132", "Google Chrome";v="132"',
+  sec-ch-ua-mobile: '?0',
+  sec-ch-ua-platform: '"Windows"',
+  sec-fetch-dest: 'document',
+  sec-fetch-mode: 'navigate',
+  sec-fetch-site: 'same-origin',
+  sec-fetch-user: '?1',
+  upgrade-insecure-requests: '1',
+  user-agent: 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/132.0.0.0 Safari/537.36',
+  x-forwarded-for: '::1',
+  x-forwarded-host: 'localhost:3000',
+  x-forwarded-port: '3000',
+  x-forwarded-proto: 'http'
+},
+  integrity: '',
+  keepalive: false,
+  method: 'GET',
+  mode: 'cors',
+  redirect: 'follow',
+  referrer: 'about:client',
+  referrerPolicy: '',
+  signal: AbortSignal {
+  [Symbol(kEvents)]: SafeMap(0) {},
+  [Symbol(events.maxEventTargetListeners)]: 10,
+  [Symbol(events.maxEventTargetListenersWarned)]: false,
+  [Symbol(kHandlers)]: SafeMap(0) {},
+  [Symbol(kAborted)]: false,
+  [Symbol(kReason)]: undefined,
+  [Symbol(kOnabort)]: undefined,
+  [Symbol(realm)]: {
+  settingsObject: {
+  baseUrl: undefined,
+  origin: [Getter],
+  policyContainer: { referrerPolicy: 'strict-origin-when-cross-origin' }
+}
+}
+}
+}
+}
+styled-components: it looks like an unknown prop "themeType" is being sent through to the DOM, which will likely trigger a React console error. If you would like automatic filtering of unknown props, you can opt-into that behavior via `<StyleSheetManager shouldForwardProp={...}>` (connect an API like `@emotion/is-prop-valid`) or consider using transient props (`$` prefix for automatic filtering.)
+styled-components: it looks like an unknown prop "isActive" is being sent through to the DOM, which will likely trigger a React console error. If you would like automatic filtering of unknown props, you can opt-into that behavior via `<StyleSheetManager shouldForwardProp={...}>` (connect an API like `@emotion/is-prop-valid`) or consider using transient props (`$` prefix for automatic filtering.)
+ GET /app/dashboard/new-brief/details 200 in 309ms
+ │ GET http://localhost:8000/api/v1/users/user?email=emelianovdmitriy%40gmail.com 200 in 0ms (cache hit)
+ ✓ Compiled in 1541ms (6174 modules)
+ ⚠ ./src/modules/vendor/project-details/Specifications.tsx
+The generated code contains 'async/await' because this module is using "topLevelAwait".
+However, your target environment does not appear to support 'async/await'.
+As a result, the code may not run as expected or may cause runtime errors.
+
+Import trace for requested module:
+./src/modules/vendor/project-details/Specifications.tsx
+./src/modules/vendor/project-details/Details.tsx
+./src/modules/vendor/project-details/index.tsx
+ ✓ Compiled in 682ms (6174 modules)
+ ⨯ ./src/modules/vendor/project-details/Specifications.tsx
+Error:   [31mx[0m the name `countryOptions` is defined multiple times
+    ,-[[36;1;4m/home/blacksmith/projects/aivus/aivus-web/src/modules/vendor/project-details/Specifications.tsx[0m:18:1]
+ [2m15[0m | export const Specifications: React.FC = () => {
+ [2m16[0m |     const { handleFocus } = useGuidance();
+ [2m17[0m |     const countries = i18n.getNames('en', { select: 'official' });
+ [2m18[0m |     const countryOptions = Object.keys(countries).map((country) => ({
+    : [35;1m          ^^^^^^^|^^^^^^[0m
+    :                  [35;1m`-- [35;1mprevious definition of `countryOptions` here[0m[0m
+ [2m19[0m |         label: (
+ [2m20[0m |             <Flex gap={8} align='center'>
+ [2m21[0m |                 <Flag code={country} height='16' />
+ [2m22[0m |                 {countries[country]}c
+ [2m23[0m |             </Flex>
+ [2m24[0m |         ),
+ [2m25[0m |         value: country,
+ [2m26[0m |     }));
+ [2m27[0m | 
+ [2m28[0m |     const countryOptions = Object.keys(countries).map((country) => ({
+    : [33;1m          ^^^^^^^|^^^^^^[0m
+    :                  [33;1m`-- [33;1m`countryOptions` redefined here[0m[0m
+ [2m29[0m |         label: countries[country],
+ [2m30[0m |         value: country,
+ [2m31[0m |     }));
+    `----
+
+Import trace for requested module:
+./src/modules/vendor/project-details/Specifications.tsx
+./src/modules/vendor/project-details/Details.tsx
+./src/modules/vendor/project-details/index.tsx
+ ✓ Compiled in 2.2s (6176 modules)
+ ○ Compiling /api/auth/[...nextauth] ...
+ ✓ Compiled /api/auth/[...nextauth] in 567ms (3395 modules)
+ GET /api/auth/session 200 in 709ms
+ │ GET http://localhost:8000/api/v1/users/user?email=emelianovdmitriy%40gmail.com 200 in 1ms (cache hit)
+Error: Cannot find module '/home/blacksmith/projects/aivus/aivus-web/.next/server/vendor-chunks/lib/worker.js'
+    at Module._resolveFilename (node:internal/modules/cjs/loader:1048:15)
+    at Module._load (node:internal/modules/cjs/loader:901:27)
+    at Function.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:83:12)
+    at MessagePort.<anonymous> (node:internal/main/worker_thread:185:26)
+    at [nodejs.internal.kHybridDispatch] (node:internal/event_target:807:20)
+    at exports.emitMessage (node:internal/per_context/messageport:23:28) {
+  code: 'MODULE_NOT_FOUND',
+  requireStack: []
+}
+ ⨯ uncaughtException: Error: Cannot find module '/home/blacksmith/projects/aivus/aivus-web/.next/server/vendor-chunks/lib/worker.js'
+    at Module._resolveFilename (node:internal/modules/cjs/loader:1048:15)
+    at Module._load (node:internal/modules/cjs/loader:901:27)
+    at Function.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:83:12)
+    at MessagePort.<anonymous> (node:internal/main/worker_thread:185:26)
+    at [nodejs.internal.kHybridDispatch] (node:internal/event_target:807:20)
+    at exports.emitMessage (node:internal/per_context/messageport:23:28) {
+  code: 'MODULE_NOT_FOUND',
+  requireStack: []
+}
+ ⨯ uncaughtException: Error: Cannot find module '/home/blacksmith/projects/aivus/aivus-web/.next/server/vendor-chunks/lib/worker.js'
+    at Module._resolveFilename (node:internal/modules/cjs/loader:1048:15)
+    at Module._load (node:internal/modules/cjs/loader:901:27)
+    at Function.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:83:12)
+    at MessagePort.<anonymous> (node:internal/main/worker_thread:185:26)
+    at [nodejs.internal.kHybridDispatch] (node:internal/event_target:807:20)
+    at exports.emitMessage (node:internal/per_context/messageport:23:28) {
+  code: 'MODULE_NOT_FOUND',
+  requireStack: []
+}
+Error: the worker thread exited
+    at Worker.onWorkerExit (webpack-internal:///(rsc)/./node_modules/thread-stream/index.js:201:32)
+    at Worker.emit (node:events:514:28)
+    at [kOnExit] (node:internal/worker:315:10)
+    at Worker.<computed>.onexit (node:internal/worker:229:20)
+    at Worker.callbackTrampoline (node:internal/async_hooks:130:17)
+ ⨯ node_modules/thread-stream/index.js (201:1) @ Worker.onWorkerExit
+ ⨯ uncaughtException: Error: the worker thread exited
+    at Worker.onWorkerExit (webpack-internal:///(rsc)/./node_modules/thread-stream/index.js:201:32)
+    at Worker.emit (node:events:514:28)
+    at [kOnExit] (node:internal/worker:315:10)
+    at Worker.<computed>.onexit (node:internal/worker:229:20)
+    at Worker.callbackTrampoline (node:internal/async_hooks:130:17)
+[0m [90m 199 |[39m   stream[33m.[39mworker[33m.[39mexited [33m=[39m [36mtrue[39m[0m
+[0m [90m 200 |[39m   stream[33m.[39mworker[33m.[39moff([32m'exit'[39m[33m,[39m onWorkerExit)[0m
+[0m[31m[1m>[22m[39m[90m 201 |[39m   destroy(stream[33m,[39m code [33m!==[39m [35m0[39m [33m?[39m [36mnew[39m [33mError[39m([32m'the worker thread exited'[39m) [33m:[39m [36mnull[39m)[0m
+[0m [90m     |[39m [31m[1m^[22m[39m[0m
+[0m [90m 202 |[39m }[0m
+[0m [90m 203 |[39m[0m
+[0m [90m 204 |[39m [36mclass[39m [33mThreadStream[39m [36mextends[39m [33mEventEmitter[39m {[0m
+ ⨯ node_modules/thread-stream/index.js (201:1) @ Worker.onWorkerExit
+ ⨯ uncaughtException: Error: the worker thread exited
+    at Worker.onWorkerExit (webpack-internal:///(rsc)/./node_modules/thread-stream/index.js:201:32)
+    at Worker.emit (node:events:514:28)
+    at [kOnExit] (node:internal/worker:315:10)
+    at Worker.<computed>.onexit (node:internal/worker:229:20)
+    at Worker.callbackTrampoline (node:internal/async_hooks:130:17)
+[0m [90m 199 |[39m   stream[33m.[39mworker[33m.[39mexited [33m=[39m [36mtrue[39m[0m
+[0m [90m 200 |[39m   stream[33m.[39mworker[33m.[39moff([32m'exit'[39m[33m,[39m onWorkerExit)[0m
+[0m[31m[1m>[22m[39m[90m 201 |[39m   destroy(stream[33m,[39m code [33m!==[39m [35m0[39m [33m?[39m [36mnew[39m [33mError[39m([32m'the worker thread exited'[39m) [33m:[39m [36mnull[39m)[0m
+[0m [90m     |[39m [31m[1m^[22m[39m[0m
+[0m [90m 202 |[39m }[0m
+[0m [90m 203 |[39m[0m
+[0m [90m 204 |[39m [36mclass[39m [33mThreadStream[39m [36mextends[39m [33mEventEmitter[39m {[0m
+ GET /api/auth/session 200 in 19ms
+ │ GET http://localhost:8000/api/v1/users/user?email=emelianovdmitriy%40gmail.com 200 in 1ms (cache hit)
+ ✓ Compiled in 827ms (6180 modules)
+ GET /api/auth/session 200 in 97ms
+ │ GET http://localhost:8000/api/v1/users/user?email=emelianovdmitriy%40gmail.com 200 in 0ms (cache hit)
+Error: Cannot find module '/home/blacksmith/projects/aivus/aivus-web/.next/server/vendor-chunks/lib/worker.js'
+    at Module._resolveFilename (node:internal/modules/cjs/loader:1048:15)
+    at Module._load (node:internal/modules/cjs/loader:901:27)
+    at Function.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:83:12)
+    at MessagePort.<anonymous> (node:internal/main/worker_thread:185:26)
+    at [nodejs.internal.kHybridDispatch] (node:internal/event_target:807:20)
+    at exports.emitMessage (node:internal/per_context/messageport:23:28) {
+  code: 'MODULE_NOT_FOUND',
+  requireStack: []
+}
+ ⨯ uncaughtException: Error: Cannot find module '/home/blacksmith/projects/aivus/aivus-web/.next/server/vendor-chunks/lib/worker.js'
+    at Module._resolveFilename (node:internal/modules/cjs/loader:1048:15)
+    at Module._load (node:internal/modules/cjs/loader:901:27)
+    at Function.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:83:12)
+    at MessagePort.<anonymous> (node:internal/main/worker_thread:185:26)
+    at [nodejs.internal.kHybridDispatch] (node:internal/event_target:807:20)
+    at exports.emitMessage (node:internal/per_context/messageport:23:28) {
+  code: 'MODULE_NOT_FOUND',
+  requireStack: []
+}
+ ⨯ uncaughtException: Error: Cannot find module '/home/blacksmith/projects/aivus/aivus-web/.next/server/vendor-chunks/lib/worker.js'
+    at Module._resolveFilename (node:internal/modules/cjs/loader:1048:15)
+    at Module._load (node:internal/modules/cjs/loader:901:27)
+    at Function.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:83:12)
+    at MessagePort.<anonymous> (node:internal/main/worker_thread:185:26)
+    at [nodejs.internal.kHybridDispatch] (node:internal/event_target:807:20)
+    at exports.emitMessage (node:internal/per_context/messageport:23:28) {
+  code: 'MODULE_NOT_FOUND',
+  requireStack: []
+}
+Error: the worker thread exited
+    at Worker.onWorkerExit (webpack-internal:///(rsc)/./node_modules/thread-stream/index.js:201:32)
+    at Worker.emit (node:events:514:28)
+    at [kOnExit] (node:internal/worker:315:10)
+    at Worker.<computed>.onexit (node:internal/worker:229:20)
+    at Worker.callbackTrampoline (node:internal/async_hooks:130:17)
+ ⨯ node_modules/thread-stream/index.js (201:1) @ Worker.onWorkerExit
+ ⨯ uncaughtException: Error: the worker thread exited
+    at Worker.onWorkerExit (webpack-internal:///(rsc)/./node_modules/thread-stream/index.js:201:32)
+    at Worker.emit (node:events:514:28)
+    at [kOnExit] (node:internal/worker:315:10)
+    at Worker.<computed>.onexit (node:internal/worker:229:20)
+    at Worker.callbackTrampoline (node:internal/async_hooks:130:17)
+[0m [90m 199 |[39m   stream[33m.[39mworker[33m.[39mexited [33m=[39m [36mtrue[39m[0m
+[0m [90m 200 |[39m   stream[33m.[39mworker[33m.[39moff([32m'exit'[39m[33m,[39m onWorkerExit)[0m
+[0m[31m[1m>[22m[39m[90m 201 |[39m   destroy(stream[33m,[39m code [33m!==[39m [35m0[39m [33m?[39m [36mnew[39m [33mError[39m([32m'the worker thread exited'[39m) [33m:[39m [36mnull[39m)[0m
+[0m [90m     |[39m [31m[1m^[22m[39m[0m
+[0m [90m 202 |[39m }[0m
+[0m [90m 203 |[39m[0m
+[0m [90m 204 |[39m [36mclass[39m [33mThreadStream[39m [36mextends[39m [33mEventEmitter[39m {[0m
+ ⨯ node_modules/thread-stream/index.js (201:1) @ Worker.onWorkerExit
+ ⨯ uncaughtException: Error: the worker thread exited
+    at Worker.onWorkerExit (webpack-internal:///(rsc)/./node_modules/thread-stream/index.js:201:32)
+    at Worker.emit (node:events:514:28)
+    at [kOnExit] (node:internal/worker:315:10)
+    at Worker.<computed>.onexit (node:internal/worker:229:20)
+    at Worker.callbackTrampoline (node:internal/async_hooks:130:17)
+[0m [90m 199 |[39m   stream[33m.[39mworker[33m.[39mexited [33m=[39m [36mtrue[39m[0m
+[0m [90m 200 |[39m   stream[33m.[39mworker[33m.[39moff([32m'exit'[39m[33m,[39m onWorkerExit)[0m
+[0m[31m[1m>[22m[39m[90m 201 |[39m   destroy(stream[33m,[39m code [33m!==[39m [35m0[39m [33m?[39m [36mnew[39m [33mError[39m([32m'the worker thread exited'[39m) [33m:[39m [36mnull[39m)[0m
+[0m [90m     |[39m [31m[1m^[22m[39m[0m
+[0m [90m 202 |[39m }[0m
+[0m [90m 203 |[39m[0m
+[0m [90m 204 |[39m [36mclass[39m [33mThreadStream[39m [36mextends[39m [33mEventEmitter[39m {[0m
+ GET /api/auth/session 200 in 22ms
+ │ GET http://localhost:8000/api/v1/users/user?email=emelianovdmitriy%40gmail.com 200 in 0ms (cache hit)
+ GET /api/auth/session 200 in 27ms
+ │ GET http://localhost:8000/api/v1/users/user?email=emelianovdmitriy%40gmail.com 200 in 1ms (cache hit)
+ GET /api/auth/session 200 in 35ms
+ │ GET http://localhost:8000/api/v1/users/user?email=emelianovdmitriy%40gmail.com 200 in 0ms (cache hit)
+ GET /api/auth/session 200 in 44ms
+ │ GET http://localhost:8000/api/v1/users/user?email=emelianovdmitriy%40gmail.com 200 in 1ms (cache hit)
+ GET /api/auth/session 200 in 28ms
+ │ GET http://localhost:8000/api/v1/users/user?email=emelianovdmitriy%40gmail.com 200 in 0ms (cache hit)
+ ✓ Compiled in 1756ms (6180 modules)
+ GET /api/auth/session 200 in 405ms
+ │ GET http://localhost:8000/api/v1/users/user?email=emelianovdmitriy%40gmail.com 200 in 1ms (cache hit)
+Error: Cannot find module '/home/blacksmith/projects/aivus/aivus-web/.next/server/vendor-chunks/lib/worker.js'
+    at Module._resolveFilename (node:internal/modules/cjs/loader:1048:15)
+    at Module._load (node:internal/modules/cjs/loader:901:27)
+    at Function.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:83:12)
+    at MessagePort.<anonymous> (node:internal/main/worker_thread:185:26)
+    at [nodejs.internal.kHybridDispatch] (node:internal/event_target:807:20)
+    at exports.emitMessage (node:internal/per_context/messageport:23:28) {
+  code: 'MODULE_NOT_FOUND',
+  requireStack: []
+}
+ ⨯ uncaughtException: Error: Cannot find module '/home/blacksmith/projects/aivus/aivus-web/.next/server/vendor-chunks/lib/worker.js'
+    at Module._resolveFilename (node:internal/modules/cjs/loader:1048:15)
+    at Module._load (node:internal/modules/cjs/loader:901:27)
+    at Function.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:83:12)
+    at MessagePort.<anonymous> (node:internal/main/worker_thread:185:26)
+    at [nodejs.internal.kHybridDispatch] (node:internal/event_target:807:20)
+    at exports.emitMessage (node:internal/per_context/messageport:23:28) {
+  code: 'MODULE_NOT_FOUND',
+  requireStack: []
+}
+ ⨯ uncaughtException: Error: Cannot find module '/home/blacksmith/projects/aivus/aivus-web/.next/server/vendor-chunks/lib/worker.js'
+    at Module._resolveFilename (node:internal/modules/cjs/loader:1048:15)
+    at Module._load (node:internal/modules/cjs/loader:901:27)
+    at Function.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:83:12)
+    at MessagePort.<anonymous> (node:internal/main/worker_thread:185:26)
+    at [nodejs.internal.kHybridDispatch] (node:internal/event_target:807:20)
+    at exports.emitMessage (node:internal/per_context/messageport:23:28) {
+  code: 'MODULE_NOT_FOUND',
+  requireStack: []
+}
+Error: the worker thread exited
+    at Worker.onWorkerExit (webpack-internal:///(rsc)/./node_modules/thread-stream/index.js:201:32)
+    at Worker.emit (node:events:514:28)
+    at [kOnExit] (node:internal/worker:315:10)
+    at Worker.<computed>.onexit (node:internal/worker:229:20)
+    at Worker.callbackTrampoline (node:internal/async_hooks:130:17)
+ ⨯ node_modules/thread-stream/index.js (201:1) @ Worker.onWorkerExit
+ ⨯ uncaughtException: Error: the worker thread exited
+    at Worker.onWorkerExit (webpack-internal:///(rsc)/./node_modules/thread-stream/index.js:201:32)
+    at Worker.emit (node:events:514:28)
+    at [kOnExit] (node:internal/worker:315:10)
+    at Worker.<computed>.onexit (node:internal/worker:229:20)
+    at Worker.callbackTrampoline (node:internal/async_hooks:130:17)
+[0m [90m 199 |[39m   stream[33m.[39mworker[33m.[39mexited [33m=[39m [36mtrue[39m[0m
+[0m [90m 200 |[39m   stream[33m.[39mworker[33m.[39moff([32m'exit'[39m[33m,[39m onWorkerExit)[0m
+[0m[31m[1m>[22m[39m[90m 201 |[39m   destroy(stream[33m,[39m code [33m!==[39m [35m0[39m [33m?[39m [36mnew[39m [33mError[39m([32m'the worker thread exited'[39m) [33m:[39m [36mnull[39m)[0m
+[0m [90m     |[39m [31m[1m^[22m[39m[0m
+[0m [90m 202 |[39m }[0m
+[0m [90m 203 |[39m[0m
+[0m [90m 204 |[39m [36mclass[39m [33mThreadStream[39m [36mextends[39m [33mEventEmitter[39m {[0m
+ ⨯ node_modules/thread-stream/index.js (201:1) @ Worker.onWorkerExit
+ ⨯ uncaughtException: Error: the worker thread exited
+    at Worker.onWorkerExit (webpack-internal:///(rsc)/./node_modules/thread-stream/index.js:201:32)
+    at Worker.emit (node:events:514:28)
+    at [kOnExit] (node:internal/worker:315:10)
+    at Worker.<computed>.onexit (node:internal/worker:229:20)
+    at Worker.callbackTrampoline (node:internal/async_hooks:130:17)
+[0m [90m 199 |[39m   stream[33m.[39mworker[33m.[39mexited [33m=[39m [36mtrue[39m[0m
+[0m [90m 200 |[39m   stream[33m.[39mworker[33m.[39moff([32m'exit'[39m[33m,[39m onWorkerExit)[0m
+[0m[31m[1m>[22m[39m[90m 201 |[39m   destroy(stream[33m,[39m code [33m!==[39m [35m0[39m [33m?[39m [36mnew[39m [33mError[39m([32m'the worker thread exited'[39m) [33m:[39m [36mnull[39m)[0m
+[0m [90m     |[39m [31m[1m^[22m[39m[0m
+[0m [90m 202 |[39m }[0m
+[0m [90m 203 |[39m[0m
+[0m [90m 204 |[39m [36mclass[39m [33mThreadStream[39m [36mextends[39m [33mEventEmitter[39m {[0m
+ GET /api/auth/session 200 in 22ms
+ │ GET http://localhost:8000/api/v1/users/user?email=emelianovdmitriy%40gmail.com 200 in 0ms (cache hit)
+middleware {
+  nextUrl: '/app/dashboard/new-brief/details',
+  auth: {
+  user: {
+  name: 'Dmitrii Emelianov',
+  email: 'emelianovdmitriy@gmail.com',
+  image: 'https://lh3.googleusercontent.com/a/ACg8ocLA3vQBMdS4GkYPxFapJF7vRMErPbZrilBlCYHMNzdiOxxHE-4=s96-c',
+  role: 'VENDOR',
+  id: 9
+},
+  expires: '2025-03-04T11:56:44.679Z'
+},
+  request: {
+  cookies: RequestCookies {"authjs.csrf-token":{"name":"authjs.csrf-token","value":"1e34022c6a819e7026619ac6fa99f19326c4a8ff4dc0a3da4061104c750bd6fd|7d19b8311d52b57e2aac480a546abc84bc92137e0da848a7fd9a2de8489e015d"},"authjs.callback-url":{"name":"authjs.callback-url","value":"http://localhost:3000/auth"},"authjs.session-token":{"name":"authjs.session-token","value":"eyJhbGciOiJkaXIiLCJlbmMiOiJBMjU2Q0JDLUhTNTEyIiwia2lkIjoicEEzSTN1RDNwbjl2cGxGVVpvb0ZfTjYyeU0zMjdMakxhRnZseFd6Z3g5N1daaE5CbHNqbzdwQmpBSnBicG9LcWF1dGxoSjZEZWp0NEp5R3hpX1dWLUEifQ..wsMlGjKIV9Fxyzx-gdDLfg.1tf8svfnv-93dKRlBH7YVDtv7By-AFrQsd--ziEpU2UZZOMtZEpCN0oy3261bRp0l7XhcjUtYtppGJ3h9oYkAO0BOySWcdpt9SuTdIT_tZ9BfXJ35QMbc4GVp0yjIl5aLUe7jgbt1vu4kylmvm-jLCSVcvAFf9o6pWKC2COING5HGHzKRUpsbNGIBWYV7Z10vDGGzksH_UFYmyEq1P9ceEgjbrhsyuu_YBE596y7BxBA17Hy7sk_Jd9O6bW0gHaI0YFM6BKm_VIEV-r2WLmYAkugrvRJx-Wf98p_WiqwFRE5PnM7jdKMLBcK_rIarWNGnPGxAGVekiaHTFkuXNWoiGts2hyxLt_f7wb9fbGinedjZqDuOSVbMydhtgxdg8pnF-SXSvAXm4qct3-QcAxj6w.x-5BHooDvNQmHKp-HFzC7FPwxRDqUoaF9BI1t-5mzFY"}},
+  nextUrl: {
+  href: 'http://localhost:3000/app/dashboard/new-brief/details',
+  origin: 'http://localhost:3000',
+  protocol: 'http:',
+  username: '',
+  password: '',
+  host: 'localhost:3000',
+  hostname: 'localhost',
+  port: '3000',
+  pathname: '/app/dashboard/new-brief/details',
+  search: '',
+  searchParams: URLSearchParams {  },
+  hash: ''
+},
+  url: 'http://localhost:3000/app/dashboard/new-brief/details',
+  bodyUsed: false,
+  cache: 'default',
+  credentials: 'same-origin',
+  destination: '',
+  headers: {
+  accept: 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7',
+  accept-encoding: 'gzip, deflate, br, zstd',
+  accept-language: 'en-US,en;q=0.9,ru;q=0.8,sr;q=0.7',
+  cache-control: 'max-age=0',
+  connection: 'keep-alive',
+  cookie: 'authjs.csrf-token=1e34022c6a819e7026619ac6fa99f19326c4a8ff4dc0a3da4061104c750bd6fd%7C7d19b8311d52b57e2aac480a546abc84bc92137e0da848a7fd9a2de8489e015d; authjs.callback-url=http%3A%2F%2Flocalhost%3A3000%2Fauth; authjs.session-token=eyJhbGciOiJkaXIiLCJlbmMiOiJBMjU2Q0JDLUhTNTEyIiwia2lkIjoicEEzSTN1RDNwbjl2cGxGVVpvb0ZfTjYyeU0zMjdMakxhRnZseFd6Z3g5N1daaE5CbHNqbzdwQmpBSnBicG9LcWF1dGxoSjZEZWp0NEp5R3hpX1dWLUEifQ..wsMlGjKIV9Fxyzx-gdDLfg.1tf8svfnv-93dKRlBH7YVDtv7By-AFrQsd--ziEpU2UZZOMtZEpCN0oy3261bRp0l7XhcjUtYtppGJ3h9oYkAO0BOySWcdpt9SuTdIT_tZ9BfXJ35QMbc4GVp0yjIl5aLUe7jgbt1vu4kylmvm-jLCSVcvAFf9o6pWKC2COING5HGHzKRUpsbNGIBWYV7Z10vDGGzksH_UFYmyEq1P9ceEgjbrhsyuu_YBE596y7BxBA17Hy7sk_Jd9O6bW0gHaI0YFM6BKm_VIEV-r2WLmYAkugrvRJx-Wf98p_WiqwFRE5PnM7jdKMLBcK_rIarWNGnPGxAGVekiaHTFkuXNWoiGts2hyxLt_f7wb9fbGinedjZqDuOSVbMydhtgxdg8pnF-SXSvAXm4qct3-QcAxj6w.x-5BHooDvNQmHKp-HFzC7FPwxRDqUoaF9BI1t-5mzFY',
+  dnt: '1',
+  host: 'localhost:3000',
+  referer: 'http://localhost:3000/app/dashboard/1/details',
+  sec-ch-ua: '"Not A(Brand";v="8", "Chromium";v="132", "Google Chrome";v="132"',
+  sec-ch-ua-mobile: '?0',
+  sec-ch-ua-platform: '"Windows"',
+  sec-fetch-dest: 'document',
+  sec-fetch-mode: 'navigate',
+  sec-fetch-site: 'same-origin',
+  sec-fetch-user: '?1',
+  upgrade-insecure-requests: '1',
+  user-agent: 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/132.0.0.0 Safari/537.36',
+  x-forwarded-for: '::1',
+  x-forwarded-host: 'localhost:3000',
+  x-forwarded-port: '3000',
+  x-forwarded-proto: 'http'
+},
+  integrity: '',
+  keepalive: false,
+  method: 'GET',
+  mode: 'cors',
+  redirect: 'follow',
+  referrer: 'about:client',
+  referrerPolicy: '',
+  signal: AbortSignal {
+  [Symbol(kEvents)]: SafeMap(0) {},
+  [Symbol(events.maxEventTargetListeners)]: 10,
+  [Symbol(events.maxEventTargetListenersWarned)]: false,
+  [Symbol(kHandlers)]: SafeMap(0) {},
+  [Symbol(kAborted)]: false,
+  [Symbol(kReason)]: undefined,
+  [Symbol(kOnabort)]: undefined,
+  [Symbol(realm)]: {
+  settingsObject: {
+  baseUrl: undefined,
+  origin: [Getter],
+  policyContainer: { referrerPolicy: 'strict-origin-when-cross-origin' }
+}
+}
+}
+}
+}
+styled-components: it looks like an unknown prop "themeType" is being sent through to the DOM, which will likely trigger a React console error. If you would like automatic filtering of unknown props, you can opt-into that behavior via `<StyleSheetManager shouldForwardProp={...}>` (connect an API like `@emotion/is-prop-valid`) or consider using transient props (`$` prefix for automatic filtering.)
+styled-components: it looks like an unknown prop "isActive" is being sent through to the DOM, which will likely trigger a React console error. If you would like automatic filtering of unknown props, you can opt-into that behavior via `<StyleSheetManager shouldForwardProp={...}>` (connect an API like `@emotion/is-prop-valid`) or consider using transient props (`$` prefix for automatic filtering.)
+ GET /app/dashboard/new-brief/details 200 in 290ms
+ │ GET http://localhost:8000/api/v1/users/user?email=emelianovdmitriy%40gmail.com 200 in 0ms (cache hit)
+ ✓ Compiled in 1450ms (6176 modules)
+ ✓ Compiled /api/auth/[...nextauth] in 365ms (3395 modules)
+ GET /api/auth/session 200 in 492ms
+ │ GET http://localhost:8000/api/v1/users/user?email=emelianovdmitriy%40gmail.com 200 in 0ms (cache hit)
+Error: Cannot find module '/home/blacksmith/projects/aivus/aivus-web/.next/server/vendor-chunks/lib/worker.js'
+    at Module._resolveFilename (node:internal/modules/cjs/loader:1048:15)
+    at Module._load (node:internal/modules/cjs/loader:901:27)
+    at Function.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:83:12)
+    at MessagePort.<anonymous> (node:internal/main/worker_thread:185:26)
+    at [nodejs.internal.kHybridDispatch] (node:internal/event_target:807:20)
+    at exports.emitMessage (node:internal/per_context/messageport:23:28) {
+  code: 'MODULE_NOT_FOUND',
+  requireStack: []
+}
+ ⨯ uncaughtException: Error: Cannot find module '/home/blacksmith/projects/aivus/aivus-web/.next/server/vendor-chunks/lib/worker.js'
+    at Module._resolveFilename (node:internal/modules/cjs/loader:1048:15)
+    at Module._load (node:internal/modules/cjs/loader:901:27)
+    at Function.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:83:12)
+    at MessagePort.<anonymous> (node:internal/main/worker_thread:185:26)
+    at [nodejs.internal.kHybridDispatch] (node:internal/event_target:807:20)
+    at exports.emitMessage (node:internal/per_context/messageport:23:28) {
+  code: 'MODULE_NOT_FOUND',
+  requireStack: []
+}
+ ⨯ uncaughtException: Error: Cannot find module '/home/blacksmith/projects/aivus/aivus-web/.next/server/vendor-chunks/lib/worker.js'
+    at Module._resolveFilename (node:internal/modules/cjs/loader:1048:15)
+    at Module._load (node:internal/modules/cjs/loader:901:27)
+    at Function.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:83:12)
+    at MessagePort.<anonymous> (node:internal/main/worker_thread:185:26)
+    at [nodejs.internal.kHybridDispatch] (node:internal/event_target:807:20)
+    at exports.emitMessage (node:internal/per_context/messageport:23:28) {
+  code: 'MODULE_NOT_FOUND',
+  requireStack: []
+}
+Error: the worker thread exited
+    at Worker.onWorkerExit (webpack-internal:///(rsc)/./node_modules/thread-stream/index.js:201:32)
+    at Worker.emit (node:events:514:28)
+    at [kOnExit] (node:internal/worker:315:10)
+    at Worker.<computed>.onexit (node:internal/worker:229:20)
+    at Worker.callbackTrampoline (node:internal/async_hooks:130:17)
+ ⨯ node_modules/thread-stream/index.js (201:1) @ Worker.onWorkerExit
+ ⨯ uncaughtException: Error: the worker thread exited
+    at Worker.onWorkerExit (webpack-internal:///(rsc)/./node_modules/thread-stream/index.js:201:32)
+    at Worker.emit (node:events:514:28)
+    at [kOnExit] (node:internal/worker:315:10)
+    at Worker.<computed>.onexit (node:internal/worker:229:20)
+    at Worker.callbackTrampoline (node:internal/async_hooks:130:17)
+[0m [90m 199 |[39m   stream[33m.[39mworker[33m.[39mexited [33m=[39m [36mtrue[39m[0m
+[0m [90m 200 |[39m   stream[33m.[39mworker[33m.[39moff([32m'exit'[39m[33m,[39m onWorkerExit)[0m
+[0m[31m[1m>[22m[39m[90m 201 |[39m   destroy(stream[33m,[39m code [33m!==[39m [35m0[39m [33m?[39m [36mnew[39m [33mError[39m([32m'the worker thread exited'[39m) [33m:[39m [36mnull[39m)[0m
+[0m [90m     |[39m [31m[1m^[22m[39m[0m
+[0m [90m 202 |[39m }[0m
+[0m [90m 203 |[39m[0m
+[0m [90m 204 |[39m [36mclass[39m [33mThreadStream[39m [36mextends[39m [33mEventEmitter[39m {[0m
+ ⨯ node_modules/thread-stream/index.js (201:1) @ Worker.onWorkerExit
+ ⨯ uncaughtException: Error: the worker thread exited
+    at Worker.onWorkerExit (webpack-internal:///(rsc)/./node_modules/thread-stream/index.js:201:32)
+    at Worker.emit (node:events:514:28)
+    at [kOnExit] (node:internal/worker:315:10)
+    at Worker.<computed>.onexit (node:internal/worker:229:20)
+    at Worker.callbackTrampoline (node:internal/async_hooks:130:17)
+[0m [90m 199 |[39m   stream[33m.[39mworker[33m.[39mexited [33m=[39m [36mtrue[39m[0m
+[0m [90m 200 |[39m   stream[33m.[39mworker[33m.[39moff([32m'exit'[39m[33m,[39m onWorkerExit)[0m
+[0m[31m[1m>[22m[39m[90m 201 |[39m   destroy(stream[33m,[39m code [33m!==[39m [35m0[39m [33m?[39m [36mnew[39m [33mError[39m([32m'the worker thread exited'[39m) [33m:[39m [36mnull[39m)[0m
+[0m [90m     |[39m [31m[1m^[22m[39m[0m
+[0m [90m 202 |[39m }[0m
+[0m [90m 203 |[39m[0m
+[0m [90m 204 |[39m [36mclass[39m [33mThreadStream[39m [36mextends[39m [33mEventEmitter[39m {[0m
+ GET /api/auth/session 200 in 25ms
+ │ GET http://localhost:8000/api/v1/users/user?email=emelianovdmitriy%40gmail.com 200 in 1ms (cache hit)

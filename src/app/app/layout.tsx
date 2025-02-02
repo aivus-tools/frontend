@@ -23,7 +23,6 @@ export default async function Layout({
 			case ROLES.unconfirmed:
 				return unknown;
 			default: {
-				console.error('Unknown role:', role);
 				signOut();
 				return null;
 			}

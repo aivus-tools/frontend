@@ -1,3 +1,4 @@
+import logger from '@/lib/logger';
 import { routes } from '@/lib/service-routes';
 import { User } from '@/types/user';
 import { cache } from 'react';
@@ -14,7 +15,7 @@ export async function fetchUsers(): Promise<User[]> {
 		}
 		return await response.json();
 	} catch (error) {
-		console.error('Error fetching users:', error);
+		logger.error('Error fetching users:', error);
 		throw error;
 	}
 }
@@ -29,7 +30,10 @@ export const fetchUserByEmail = cache(async (email: string): Promise<User> => {
 	}
 
 	try {
-		const response = await fetch(routes.getUserByEmail(email), { cache: 'force-cache' });
+		const response = await fetch(routes.getUserByEmail(email), {
+			cache: 'force-cache',
+			next: { tags: ['user-email'] },
+		});
 
 		if (!response.ok) {
 			throw new Error(`Failed to fetch user by email: ${response.statusText}`);
@@ -37,6 +41,7 @@ export const fetchUserByEmail = cache(async (email: string): Promise<User> => {
 
 		return await response.json();
 	} catch (error) {
+		logger.error('Error fetching user by email:', error);
 		throw error;
 	}
 });

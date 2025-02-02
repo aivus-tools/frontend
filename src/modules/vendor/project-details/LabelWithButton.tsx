@@ -20,11 +20,12 @@ const Side = styled.div`
 
 interface Props {
 	text: string;
+	onClick?: React.MouseEventHandler<HTMLDivElement>;
 }
 
-export const LabelWithSide = ({ text, children }: PropsWithChildren<Props>) => {
+export const LabelWithSide = ({ text, children, onClick }: PropsWithChildren<Props>) => {
 	return (
-		<LabelContainer>
+		<LabelContainer onClick={onClick}>
 			<Typography.Text>{text}</Typography.Text>
 			<Side>{children}</Side>
 		</LabelContainer>

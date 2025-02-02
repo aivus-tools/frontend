@@ -1,3 +1,4 @@
+import logger from '@/lib/logger';
 import { routes } from '@/lib/service-routes';
 import { Roles, User } from '@/types/user';
 
@@ -22,7 +23,7 @@ export async function login(credentials: Partial<Record<'email' | 'password', un
 		const data = await response.json();
 		return data;
 	} catch (error) {
-		console.error('Error fetching:', error);
+		logger.error('Error login:', error);
 		throw error;
 	}
 }
@@ -58,7 +59,7 @@ export async function register({
 		}
 		return true;
 	} catch (error) {
-		console.error('Error fetching:', error);
+		logger.error('Error register:', error);
 		throw error;
 	}
 }
@@ -68,6 +69,7 @@ export async function register({
  * @returns boolean
  */
 export async function checkEmail({ email }: { email: string }): Promise<boolean> {
+	console.log('checkEmail', email);
 	try {
 		const response = await fetch(routes.CHECK_EMAIL, {
 			method: 'POST',
@@ -82,7 +84,7 @@ export async function checkEmail({ email }: { email: string }): Promise<boolean>
 		const data: { exist: boolean } = await response.json();
 		return data.exist;
 	} catch (error) {
-		console.error('Error fetching:', error);
+		logger.error('Error fetching:', error);
 		throw error;
 	}
 }
@@ -102,7 +104,7 @@ export async function changeRole(id: string, newRole: Roles): Promise<boolean> {
 		});
 		return response.ok;
 	} catch (error) {
-		console.error('Error fetching:', error);
+		logger.error('Error changing role:', error);
 		throw error;
 	}
 }

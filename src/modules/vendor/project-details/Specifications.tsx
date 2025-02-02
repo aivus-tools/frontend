@@ -3,8 +3,28 @@ import { Form, Input, Flex, Select } from 'antd';
 import { AntdListWrapper, IconButton } from './styled';
 import { LabelWithAdd } from './LabelWithAdd';
 import RemoveIcon from '@/icons/minus.svg';
+import { useGuidance } from '@/context/Guidance';
+
+import i18n from 'i18n-iso-countries';
+import Flag from 'react-world-flags';
+
+// Загрузка локалей
+// eslint-disable-next-line @typescript-eslint/no-require-imports
+i18n.registerLocale(require('i18n-iso-countries/langs/en.json'));
 
 export const Specifications: React.FC = () => {
+	const { handleFocus } = useGuidance();
+	const countries = i18n.getNames('en', { select: 'official' });
+	const countryOptions = Object.keys(countries).map((country) => ({
+		label: (
+			<Flex gap={8} align='center'>
+				<Flag code={country} height='16' width='16' />
+				{countries[country]}
+			</Flex>
+		),
+		value: country,
+	}));
+
 	return (
 		<>
 			<Form.Item
@@ -13,7 +33,7 @@ export const Specifications: React.FC = () => {
 				extra='Select at least one placement for your ad'
 				rules={[{ required: true, message: 'At least one placement is required' }]}
 			>
-				<Input placeholder='Ad placements' />
+				<Input placeholder='Ad placements' onFocus={handleFocus('distributionAndAdPlacements')} />
 			</Form.Item>
 			<Flex gap={16} style={{ width: '100%' }}>
 				<Form.Item
@@ -22,15 +42,16 @@ export const Specifications: React.FC = () => {
 					extra='Select all country/regions you need or “Worldwide”'
 					rules={[{ required: true }]}
 				>
-					<Input placeholder='Client' />
+					<Select showSearch placeholder='Client' onFocus={handleFocus('territory')} options={countryOptions} />
 				</Form.Item>
 				<Form.Item label='Term' extra='Set the period or Perpetuity' style={{ flex: '1 0 340px' }}>
 					<Flex gap={4}>
 						<Form.Item name={['term', 'length']} noStyle>
-							<Input placeholder='Length' />
+							<Input placeholder='Length' onFocus={handleFocus('term_length')} />
 						</Form.Item>
 						<Form.Item name={['term', 'unit']} noStyle>
 							<Select
+								onFocus={handleFocus('term_unit')}
 								placeholder='Choose'
 								options={[
 									{ label: 'Months', value: 'months' },
@@ -50,7 +71,7 @@ export const Specifications: React.FC = () => {
 				<Flex gap={16}>
 					<Flex gap={4} align='center'>
 						<Form.Item name={['mainVideoDuration', 'number']} noStyle>
-							<Input placeholder='Number' />
+							<Input placeholder='Number' onFocus={handleFocus('mainVideoDuration')} />
 						</Form.Item>
 						<Flex flex={'0 0 10px'} align='center'>
 							<svg xmlns='http://www.w3.org/2000/svg' width='10px' height='10px' viewBox='0 0 10 10' fill='none'>
@@ -65,10 +86,11 @@ export const Specifications: React.FC = () => {
 							</svg>
 						</Flex>
 						<Form.Item name={['mainVideoDuration', 'length']} noStyle>
-							<Input placeholder='Length' />
+							<Input placeholder='Length' onFocus={handleFocus('mainVideoDuration')} />
 						</Form.Item>
 						<Form.Item name={['mainVideoDuration', 'timeUnit']} noStyle>
 							<Select
+								onFocus={handleFocus('mainVideoDuration')}
 								placeholder='Choose'
 								options={[
 									{ label: 'Seconds', value: 'seconds' },
@@ -80,7 +102,7 @@ export const Specifications: React.FC = () => {
 					</Flex>
 					<Flex gap={4} align='center' style={{ flex: '1 0 340px' }}>
 						<Form.Item name={['mainVideoDuration', 'comment']} noStyle>
-							<Input placeholder='Comment' />
+							<Input placeholder='Comment' onFocus={handleFocus('mainVideoDuration')} />
 						</Form.Item>
 					</Flex>
 				</Flex>
@@ -96,7 +118,7 @@ export const Specifications: React.FC = () => {
 								<Flex key={field.key} gap={16}>
 									<Flex gap={4} align='center'>
 										<Form.Item noStyle name={[field.name, 'number']}>
-											<Input placeholder='Number' />
+											<Input placeholder='Number' onFocus={handleFocus('cuts')} />
 										</Form.Item>
 										<Flex flex={'0 0 10px'} align='center'>
 											<svg
@@ -117,7 +139,7 @@ export const Specifications: React.FC = () => {
 											</svg>
 										</Flex>
 										<Form.Item noStyle name={[field.name, 'length']}>
-											<Input placeholder='Length' />
+											<Input placeholder='Length' onFocus={handleFocus('cuts')} />
 										</Form.Item>
 										<Form.Item noStyle name={[field.name, 'timeUnit']}>
 											<Select
@@ -132,7 +154,7 @@ export const Specifications: React.FC = () => {
 									</Flex>
 									<Flex gap={4} align='center' style={{ flex: '1 0 340px' }}>
 										<Form.Item noStyle name={[field.name, 'comment']}>
-											<Input placeholder='Comment' />
+											<Input placeholder='Comment' onFocus={handleFocus('cuts')} />
 										</Form.Item>
 										<IconButton
 											onClick={() => {
@@ -156,7 +178,7 @@ export const Specifications: React.FC = () => {
 				<Flex gap={16}>
 					<Flex gap={4} align='center'>
 						<Form.Item name={['shootingDays', 'number']} noStyle>
-							<Input placeholder='Number' />
+							<Input placeholder='Number' onFocus={handleFocus('shootingDays')} />
 						</Form.Item>
 						<Flex flex={'0 0 10px'} align='center'>
 							<svg xmlns='http://www.w3.org/2000/svg' width='10px' height='10px' viewBox='0 0 10 10' fill='none'>
@@ -171,21 +193,12 @@ export const Specifications: React.FC = () => {
 							</svg>
 						</Flex>
 						<Form.Item name={['shootingDays', 'length']} noStyle>
-							<Input placeholder='Length' />
-						</Form.Item>
-						<Form.Item name={['shootingDays', 'timeUnit']} noStyle>
-							<Select
-								placeholder='Choose'
-								options={[
-									{ label: 'Hours', value: 'hours' },
-									{ label: 'Days', value: 'days' },
-								]}
-							/>
+							<Input placeholder='Length' onFocus={handleFocus('shootingDays')} />
 						</Form.Item>
 					</Flex>
 					<Flex gap={4} align='center' style={{ flex: '1 0 340px' }}>
 						<Form.Item name={['shootingDays', 'comment']} noStyle>
-							<Input placeholder='Comment' />
+							<Input onFocus={handleFocus('shootingDays')} placeholder='Comment' />
 						</Form.Item>
 					</Flex>
 				</Flex>
