@@ -1,33 +1,55 @@
 'use client';
-import { Button, Typography } from 'antd';
+import { Button, message, Typography } from 'antd';
+import { useState } from 'react';
 
-import styles from './form.module.css';
 import { ROLES } from '@/lib/constants';
 import { Roles } from '@/types/user';
-import useSWRMutation from 'swr/mutation';
+
+import styles from './form.module.css';
 
 const { Title } = Typography;
 
-const changeGroup = async (url: string, { arg: body }: { arg: { group: Roles } }) =>
-	await fetch(url, {
+const changeGroup = (group: Roles) =>
+	fetch('/api/v1/change-group', {
 		method: 'POST',
 		headers: {
 			'Content-Type': 'application/json',
 		},
-		body: JSON.stringify(body),
+		body: JSON.stringify({ group }),
 	});
 
 export function Form() {
-	const { trigger, isMutating } = useSWRMutation('/api/v1/change-group', changeGroup);
+	const [messageApi, contextHolder] = message.useMessage();
+	const [loading, setLoading] = useState(false);
+
+	const trigger = async (group: Roles) => {
+		setLoading(true);
+		try {
+			const response = await changeGroup(group);
+			const data = await response.json();
+			if (response.ok) {
+				window.location.href = '/app/dashboard';
+			} else {
+				console.error(data);
+				messageApi.error('An unexpected error occurred');
+			}
+		} catch (error) {
+			messageApi.error('An unexpected error occurred');
+			console.error('Failed to change role:', error);
+		} finally {
+			setLoading(false);
+		}
+	};
 
 	return (
 		<main className={styles.main}>
+			{contextHolder}
 			<div className={styles.container}>
 				<Title level={2}>Please, choose your role:</Title>
-				<Button type='primary' onClick={() => trigger({ group: ROLES.client })} loading={isMutating}>
+				<Button type='primary' onClick={() => trigger(ROLES.client)} loading={loading}>
 					I&apos;m a client
 				</Button>
-				<Button onClick={() => trigger({ group: ROLES.vendor })} loading={isMutating}>
+				<Button onClick={() => trigger(ROLES.vendor)} loading={loading}>
 					I&apos;m a vendor
 				</Button>
 			</div>
