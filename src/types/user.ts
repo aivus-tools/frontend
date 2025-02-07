@@ -1,5 +1,6 @@
-import { ROLES, AUTH_TYPES } from '../lib/constants';
+import { GROUPS, AUTH_TYPES, ROLES } from '../lib/constants';
 
+export type Groups = (typeof GROUPS)[keyof typeof GROUPS];
 export type Roles = (typeof ROLES)[keyof typeof ROLES];
 export type AuthTypes = (typeof AUTH_TYPES)[keyof typeof AUTH_TYPES];
 
@@ -9,7 +10,7 @@ export type User = {
 	email: string;
 	name: string;
 	password: string | null;
-	group: Roles;
+	group: Groups;
 	position: string | null;
 	authType: AuthTypes;
 	createdAt: string;

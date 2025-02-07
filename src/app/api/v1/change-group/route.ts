@@ -3,11 +3,11 @@ import logger from '@/lib/logger';
 import { auth } from '@/auth';
 import { changeRole } from '@/services/authService';
 import { invalidateUserCache } from '@/services/revalidate';
-import { Roles } from '@/types/user';
+import { Groups } from '@/types/user';
 
 export async function POST(req: Request) {
 	try {
-		const body: { group: Roles } | null = await req.json();
+		const body: { group: Groups } | null = await req.json();
 		const session = await auth();
 		const { id } = session?.user ?? {};
 		if (!id) {

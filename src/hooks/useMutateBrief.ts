@@ -1,42 +1,55 @@
-import useSWRMutation from 'swr/mutation';
+import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
 import { useSession } from 'next-auth/react';
 import { Brief, Details } from '@/types/brief';
+import { ROLES } from '@/lib/constants';
 
-async function createBrief(url: string, { arg: body }: { arg: Pick<Brief, 'details' | 'clientId' | 'status'> }) {
-	await fetch(url, {
-		method: 'POST',
-		headers: {
-			'Content-Type': 'application/json',
-		},
-		body: JSON.stringify(body),
-	});
-}
+export const briefApi = createApi({
+	reducerPath: 'briefApi',
+	baseQuery: fetchBaseQuery({ baseUrl: '/service' }),
+	endpoints: (builder) => ({
+		createBrief: builder.mutation<Brief, Pick<Brief, 'details' | 'clientId' | 'status' | 'team'>>({
+			query: (body) => ({
+				url: '/briefs',
+				method: 'POST',
+				body,
+			}),
+		}),
+		updateBrief: builder.mutation<Brief, Brief>({
+			query: (brief) => ({
+				url: `/briefs/${brief.id}`,
+				method: 'PATCH',
+				body: brief,
+			}),
+		}),
+	}),
+});
 
-async function updateBrief(url: string, { arg: body }: { arg: Brief }) {
-	await fetch(`${url}/${body.id}`, {
-		method: 'PATCH',
-		headers: {
-			'Content-Type': 'application/json',
-		},
-		body: JSON.stringify(body),
-	});
-}
+export const { useCreateBriefMutation, useUpdateBriefMutation } = briefApi;
 
 export const useMutateBrief = () => {
-	const { trigger: create } = useSWRMutation('/service/briefs', createBrief);
-	const { trigger: update } = useSWRMutation('/service/briefs', updateBrief);
 	const session = useSession();
+	const [createBrief, { isLoading: isCreating }] = useCreateBriefMutation();
+	const [updateBrief, { isLoading: isUpdating }] = useUpdateBriefMutation();
 
 	return {
-		create: (details: Details) => {
+		isLoading: isCreating || isUpdating,
+		create: async (details: Details) => {
 			if (session.data?.user?.id) {
-				create({
+				return await createBrief({
 					status: 'DRAFT',
 					details,
-					clientId: session.data?.user?.id,
-				});
+					clientId: Number(session.data.user.id),
+					team: [
+						{
+							role: ROLES.ADMIN,
+							userId: Number(session.data.user.id) as unknown as number,
+						},
+					],
+				}).unwrap();
 			}
 		},
-		update,
+		update: async (brief: Brief) => {
+			await updateBrief(brief).unwrap();
+		},
 	};
 };

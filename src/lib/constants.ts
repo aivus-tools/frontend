@@ -4,6 +4,12 @@ export const AUTH_TYPES = {
 } as const;
 
 export const ROLES = {
+	ADMIN: 'ADMIN',
+	INTERNAL: 'INTERNAL',
+	EXTERNAL: 'EXTERNAL',
+};
+
+export const GROUPS = {
 	client: 'CLIENT',
 	vendor: 'VENDOR',
 	unconfirmed: 'UNCONFIRMED',

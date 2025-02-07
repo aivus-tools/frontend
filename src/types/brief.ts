@@ -1,14 +1,22 @@
+import { Roles } from './user';
+
 export type BriefStatus = 'DRAFT' | 'RFP' | 'REVIEWING' | 'ONGOING';
 
 export interface Brief {
 	status: BriefStatus;
 	/** JSON stringified Details */
 	details: Details;
-	clientId: string;
+	clientId: number;
+	team: Team[];
 	id: string;
 	uuid: string;
 	createdAt: string;
 	updatedAt: string | null;
+}
+
+export interface Team {
+	userId: number;
+	role: Roles;
 }
 
 export interface Person {

@@ -1,12 +1,12 @@
 import { auth } from '@/auth';
 import { NextResponse } from 'next/server';
-import { ROLES } from './lib/constants';
+import { GROUPS } from './lib/constants';
 import logger from './lib/logger';
 
 const changePathname = (pathname: string) => pathname.replace(/^\/service\//, '/api/v1/');
 
 const MOCK_ENDPOINTS = ['/api/v1/briefs'];
-const validRoles = new Set<string | undefined>([ROLES.client, ROLES.vendor]);
+const validRoles = new Set<string | undefined>([GROUPS.client, GROUPS.vendor]);
 
 export default auth((req) => {
 	if (req.nextUrl.pathname === '/') {
@@ -32,7 +32,7 @@ export default auth((req) => {
 			logger.info('redirecting to /app/dashboard');
 			return NextResponse.redirect(new URL('/app/dashboard', req.url));
 		}
-		if (role === ROLES.unconfirmed) {
+		if (role === GROUPS.unconfirmed) {
 			logger.info('redirecting to /app/unconfirmed');
 			return NextResponse.redirect(new URL('/app/unconfirmed', req.url));
 		}

@@ -1,6 +1,6 @@
 import logger from '@/lib/logger';
 import { routes } from '@/lib/service-routes';
-import { Roles, User } from '@/types/user';
+import { Groups, User } from '@/types/user';
 
 /**
  * Аутентификация пользователя.
@@ -95,7 +95,7 @@ export async function checkEmail({ email }: { email: string }): Promise<boolean>
  * Меняет роль пользователя.
  * @returns boolean
  */
-export async function changeRole(id: string, newGroup: Roles): Promise<boolean> {
+export async function changeRole(id: string, newGroup: Groups): Promise<boolean> {
 	try {
 		const res = await fetch(routes.changeRole(id), {
 			method: 'PATCH',

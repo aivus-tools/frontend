@@ -1,6 +1,6 @@
 import { auth, signOut } from '@/auth';
 import { ReduxStore } from '@/context/Redux';
-import { ROLES } from '@/lib/constants';
+import { GROUPS } from '@/lib/constants';
 
 export default async function Layout({
 	vendor,
@@ -16,11 +16,11 @@ export default async function Layout({
 
 	const getComponent = () => {
 		switch (role) {
-			case ROLES.vendor:
+			case GROUPS.vendor:
 				return vendor;
-			case ROLES.client:
+			case GROUPS.client:
 				return client;
-			case ROLES.unconfirmed:
+			case GROUPS.unconfirmed:
 				return unknown;
 			default: {
 				signOut();

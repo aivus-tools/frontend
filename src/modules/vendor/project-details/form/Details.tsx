@@ -1,5 +1,6 @@
 'use client';
 import React, { useCallback, useEffect } from 'react';
+import { useRouter } from 'next/navigation';
 
 import { InitialParameters } from './InitialParameters';
 import { Client } from './Client';
@@ -7,7 +8,7 @@ import { Brief } from './Brief';
 import { Specifications } from './Specifications';
 import { GuidanceAndControls } from '../common/GuidanceAndControls';
 import { Wrapper, Section, Header, Column, Content } from '../common/styled';
-import { Form } from 'antd';
+import { Form, message } from 'antd';
 import { useMutateBrief } from '@/hooks/useMutateBrief';
 import { Details as DetailsType } from '@/types/brief';
 import { useBrief } from '@/hooks/useBrief';
@@ -17,9 +18,11 @@ import { setMode } from '@/store/slices/project';
 
 export default function Details() {
 	const dispatch = useAppDispatch();
-	const { create, update } = useMutateBrief();
+	const { create, update, isLoading: isMutating } = useMutateBrief();
 	const { data: brief, isLoading } = useBrief();
 	const [form] = Form.useForm<DetailsType>();
+	const [messageApi, context] = message.useMessage();
+	const router = useRouter();
 
 	useEffect(() => {
 		if (!isLoading && brief && typeof brief.details === 'object') {
@@ -28,23 +31,40 @@ export default function Details() {
 	}, [brief, form, isLoading]);
 
 	const handleSubmit = useCallback(
-		(details: DetailsType) => {
-			if (brief) {
-				update({ ...brief, details });
-			} else {
-				create(details);
+		async (details: DetailsType) => {
+			try {
+				let briefId: string | undefined;
+				if (brief) {
+					briefId = brief.id;
+					await update({ ...brief, details });
+				} else {
+					const data = await create(details);
+					briefId = data?.id;
+				}
+				messageApi.success('Details saved successfully');
+				if (briefId) {
+					dispatch(setMode('view'));
+					router.push(`/app/dashboard/${briefId}/details`);
+				} else {
+					messageApi.error('An error occurred while saving the details');
+				}
+			} catch (error) {
+				console.error(error);
+				messageApi.error(
+					(error as { data?: { message?: string } })?.data?.message || 'An error occurred while saving the details'
+				);
 			}
-			dispatch(setMode('view'));
 		},
-		[brief, create, dispatch, update]
+		[brief, create, dispatch, messageApi, router, update]
 	);
 
 	return (
 		<GuidanceProvider>
+			{context}
 			<Form<DetailsType>
 				form={form}
 				layout='vertical'
-				disabled={false}
+				disabled={isMutating}
 				size='large'
 				onFinish={handleSubmit}
 				scrollToFirstError

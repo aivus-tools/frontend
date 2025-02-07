@@ -1,11 +1,11 @@
 import { configureStore } from '@reduxjs/toolkit';
-import { projectSlice } from '../store/slices/project';
+import { rootReducer } from '@/store/rootReducer';
+import { briefApi } from '@/hooks/useMutateBrief';
 
 export const makeStore = () => {
 	return configureStore({
-		reducer: {
-			[projectSlice.reducerPath]: projectSlice.reducer,
-		},
+		reducer: rootReducer,
+		middleware: (getDefaultMiddleware) => getDefaultMiddleware().concat(briefApi.middleware),
 	});
 };
 
