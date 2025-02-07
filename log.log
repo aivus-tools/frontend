@@ -9193,3 +9193,1616 @@ middleware {
 }
 }
 proxying request { pathname: '/service/briefs/3', newPathname: '/api/v1/briefs/3' }
+
+> aivus-web@0.1.0 dev
+> next dev
+
+  ▲ Next.js 15.0.1
+  - Local:        http://localhost:3000
+  - Environments: .env.local
+
+ ✓ Starting...
+ ✓ Ready in 1876ms
+ ○ Compiling /api/auth/[...nextauth] ...
+ ✓ Compiled /src/middleware in 1675ms (773 modules)
+debug-enabled [ 0, [ 'debug-enabled' ] ]
+Error: Cannot find module '/home/blacksmith/projects/aivus/aivus-web/.next/server/vendor-chunks/lib/worker.js'
+    at Module._resolveFilename (node:internal/modules/cjs/loader:1048:15)
+    at Module._load (node:internal/modules/cjs/loader:901:27)
+    at Function.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:83:12)
+    at MessagePort.<anonymous> (node:internal/main/worker_thread:185:26)
+    at [nodejs.internal.kHybridDispatch] (node:internal/event_target:807:20)
+    at exports.emitMessage (node:internal/per_context/messageport:23:28) {
+  code: 'MODULE_NOT_FOUND',
+  requireStack: []
+}
+ ⨯ uncaughtException: Error: Cannot find module '/home/blacksmith/projects/aivus/aivus-web/.next/server/vendor-chunks/lib/worker.js'
+    at Module._resolveFilename (node:internal/modules/cjs/loader:1048:15)
+    at Module._load (node:internal/modules/cjs/loader:901:27)
+    at Function.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:83:12)
+    at MessagePort.<anonymous> (node:internal/main/worker_thread:185:26)
+    at [nodejs.internal.kHybridDispatch] (node:internal/event_target:807:20)
+    at exports.emitMessage (node:internal/per_context/messageport:23:28) {
+  code: 'MODULE_NOT_FOUND',
+  requireStack: []
+}
+ ⨯ uncaughtException: Error: Cannot find module '/home/blacksmith/projects/aivus/aivus-web/.next/server/vendor-chunks/lib/worker.js'
+    at Module._resolveFilename (node:internal/modules/cjs/loader:1048:15)
+    at Module._load (node:internal/modules/cjs/loader:901:27)
+    at Function.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:83:12)
+    at MessagePort.<anonymous> (node:internal/main/worker_thread:185:26)
+    at [nodejs.internal.kHybridDispatch] (node:internal/event_target:807:20)
+    at exports.emitMessage (node:internal/per_context/messageport:23:28) {
+  code: 'MODULE_NOT_FOUND',
+  requireStack: []
+}
+Error: the worker thread exited
+    at Worker.onWorkerExit (webpack-internal:///(rsc)/./node_modules/thread-stream/index.js:201:32)
+    at Worker.emit (node:events:514:28)
+    at [kOnExit] (node:internal/worker:315:10)
+    at Worker.<computed>.onexit (node:internal/worker:229:20)
+    at Worker.callbackTrampoline (node:internal/async_hooks:130:17)
+ GET /api/auth/session 200 in 2709ms
+Error: the worker has exited
+    at ThreadStream.write (webpack-internal:///(rsc)/./node_modules/thread-stream/index.js:238:19)
+    at Pino.write (webpack-internal:///(rsc)/./node_modules/pino/lib/proto.js:219:10)
+    at Pino.LOG [as warn] (webpack-internal:///(rsc)/./node_modules/pino/lib/tools.js:71:21)
+    at warn (webpack-internal:///(rsc)/./src/auth.ts:88:65)
+    at Array.forEach (<anonymous>)
+    at Auth (webpack-internal:///(rsc)/./node_modules/@auth/core/index.js:93:25)
+    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)
+    at async AppRouteRouteModule.do (/home/blacksmith/projects/aivus/aivus-web/node_modules/next/dist/compiled/next-server/app-route.runtime.dev.js:10:32801)
+Error: the worker has exited
+    at ThreadStream.write (webpack-internal:///(rsc)/./node_modules/thread-stream/index.js:238:19)
+    at Pino.write (webpack-internal:///(rsc)/./node_modules/pino/lib/proto.js:219:10)
+    at Pino.LOG [as info] (webpack-internal:///(rsc)/./node_modules/pino/lib/tools.js:71:21)
+    at Object.session (webpack-internal:///(rsc)/./src/auth.ts:76:65)
+    at async Module.session (webpack-internal:///(rsc)/./node_modules/@auth/core/lib/actions/session.js:41:36)
+    at async AuthInternal (webpack-internal:///(rsc)/./node_modules/@auth/core/lib/index.js:51:24)
+    at async Auth (webpack-internal:///(rsc)/./node_modules/@auth/core/index.js:130:34)
+    at async AppRouteRouteModule.do (/home/blacksmith/projects/aivus/aivus-web/node_modules/next/dist/compiled/next-server/app-route.runtime.dev.js:10:32801)
+    at async AppRouteRouteModule.handle (/home/blacksmith/projects/aivus/aivus-web/node_modules/next/dist/compiled/next-server/app-route.runtime.dev.js:10:38302)
+    at async doRender (/home/blacksmith/projects/aivus/aivus-web/node_modules/next/dist/server/base-server.js:1493:42)
+    at async responseGenerator (/home/blacksmith/projects/aivus/aivus-web/node_modules/next/dist/server/base-server.js:1834:28)
+    at async DevServer.renderToResponseWithComponentsImpl (/home/blacksmith/projects/aivus/aivus-web/node_modules/next/dist/server/base-server.js:1878:28)
+    at async DevServer.renderPageComponent (/home/blacksmith/projects/aivus/aivus-web/node_modules/next/dist/server/base-server.js:2292:24)
+    at async DevServer.renderToResponseImpl (/home/blacksmith/projects/aivus/aivus-web/node_modules/next/dist/server/base-server.js:2330:32)
+    at async DevServer.pipeImpl (/home/blacksmith/projects/aivus/aivus-web/node_modules/next/dist/server/base-server.js:984:25)
+    at async NextNodeServer.handleCatchallRenderRequest (/home/blacksmith/projects/aivus/aivus-web/node_modules/next/dist/server/next-server.js:281:17)
+    at async DevServer.handleRequestImpl (/home/blacksmith/projects/aivus/aivus-web/node_modules/next/dist/server/base-server.js:877:17)
+    at async /home/blacksmith/projects/aivus/aivus-web/node_modules/next/dist/server/dev/next-dev-server.js:373:20
+    at async Span.traceAsyncFn (/home/blacksmith/projects/aivus/aivus-web/node_modules/next/dist/trace/trace.js:157:20)
+    at async DevServer.handleRequest (/home/blacksmith/projects/aivus/aivus-web/node_modules/next/dist/server/dev/next-dev-server.js:370:24)
+    at async invokeRender (/home/blacksmith/projects/aivus/aivus-web/node_modules/next/dist/server/lib/router-server.js:183:21)
+    at async handleRequest (/home/blacksmith/projects/aivus/aivus-web/node_modules/next/dist/server/lib/router-server.js:360:24)
+    at async requestHandlerImpl (/home/blacksmith/projects/aivus/aivus-web/node_modules/next/dist/server/lib/router-server.js:384:13)
+    at async Server.requestListener (/home/blacksmith/projects/aivus/aivus-web/node_modules/next/dist/server/lib/start-server.js:142:13)
+ ⨯ node_modules/thread-stream/index.js (201:1) @ Worker.onWorkerExit
+ ⨯ uncaughtException: Error: the worker thread exited
+    at Worker.onWorkerExit (webpack-internal:///(rsc)/./node_modules/thread-stream/index.js:201:32)
+    at Worker.emit (node:events:514:28)
+    at [kOnExit] (node:internal/worker:315:10)
+    at Worker.<computed>.onexit (node:internal/worker:229:20)
+    at Worker.callbackTrampoline (node:internal/async_hooks:130:17)
+[0m [90m 199 |[39m   stream[33m.[39mworker[33m.[39mexited [33m=[39m [36mtrue[39m[0m
+[0m [90m 200 |[39m   stream[33m.[39mworker[33m.[39moff([32m'exit'[39m[33m,[39m onWorkerExit)[0m
+[0m[31m[1m>[22m[39m[90m 201 |[39m   destroy(stream[33m,[39m code [33m!==[39m [35m0[39m [33m?[39m [36mnew[39m [33mError[39m([32m'the worker thread exited'[39m) [33m:[39m [36mnull[39m)[0m
+[0m [90m     |[39m [31m[1m^[22m[39m[0m
+[0m [90m 202 |[39m }[0m
+[0m [90m 203 |[39m[0m
+[0m [90m 204 |[39m [36mclass[39m [33mThreadStream[39m [36mextends[39m [33mEventEmitter[39m {[0m
+ ⨯ node_modules/thread-stream/index.js (201:1) @ Worker.onWorkerExit
+ ⨯ uncaughtException: Error: the worker thread exited
+    at Worker.onWorkerExit (webpack-internal:///(rsc)/./node_modules/thread-stream/index.js:201:32)
+    at Worker.emit (node:events:514:28)
+    at [kOnExit] (node:internal/worker:315:10)
+    at Worker.<computed>.onexit (node:internal/worker:229:20)
+    at Worker.callbackTrampoline (node:internal/async_hooks:130:17)
+[0m [90m 199 |[39m   stream[33m.[39mworker[33m.[39mexited [33m=[39m [36mtrue[39m[0m
+[0m [90m 200 |[39m   stream[33m.[39mworker[33m.[39moff([32m'exit'[39m[33m,[39m onWorkerExit)[0m
+[0m[31m[1m>[22m[39m[90m 201 |[39m   destroy(stream[33m,[39m code [33m!==[39m [35m0[39m [33m?[39m [36mnew[39m [33mError[39m([32m'the worker thread exited'[39m) [33m:[39m [36mnull[39m)[0m
+[0m [90m     |[39m [31m[1m^[22m[39m[0m
+[0m [90m 202 |[39m }[0m
+[0m [90m 203 |[39m[0m
+[0m [90m 204 |[39m [36mclass[39m [33mThreadStream[39m [36mextends[39m [33mEventEmitter[39m {[0m
+ ⨯ node_modules/thread-stream/index.js (238:1) @ ThreadStream.write
+ ⨯ uncaughtException: Error: the worker has exited
+    at ThreadStream.write (webpack-internal:///(rsc)/./node_modules/thread-stream/index.js:238:19)
+    at Pino.write (webpack-internal:///(rsc)/./node_modules/pino/lib/proto.js:219:10)
+    at Pino.LOG [as warn] (webpack-internal:///(rsc)/./node_modules/pino/lib/tools.js:71:21)
+    at warn (webpack-internal:///(rsc)/./src/auth.ts:88:65)
+    at Array.forEach (<anonymous>)
+    at Auth (webpack-internal:///(rsc)/./node_modules/@auth/core/index.js:93:25)
+    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)
+    at async AppRouteRouteModule.do (/home/blacksmith/projects/aivus/aivus-web/node_modules/next/dist/compiled/next-server/app-route.runtime.dev.js:10:32801)
+[0m [90m 236 |[39m   write (data) {[0m
+[0m [90m 237 |[39m     [36mif[39m ([36mthis[39m[kImpl][33m.[39mdestroyed) {[0m
+[0m[31m[1m>[22m[39m[90m 238 |[39m       error([36mthis[39m[33m,[39m [36mnew[39m [33mError[39m([32m'the worker has exited'[39m))[0m
+[0m [90m     |[39m [31m[1m^[22m[39m[0m
+[0m [90m 239 |[39m       [36mreturn[39m [36mfalse[39m[0m
+[0m [90m 240 |[39m     }[0m
+[0m [90m 241 |[39m[0m
+ ⨯ node_modules/thread-stream/index.js (238:1) @ ThreadStream.write
+ ⨯ uncaughtException: Error: the worker has exited
+    at ThreadStream.write (webpack-internal:///(rsc)/./node_modules/thread-stream/index.js:238:19)
+    at Pino.write (webpack-internal:///(rsc)/./node_modules/pino/lib/proto.js:219:10)
+    at Pino.LOG [as warn] (webpack-internal:///(rsc)/./node_modules/pino/lib/tools.js:71:21)
+    at warn (webpack-internal:///(rsc)/./src/auth.ts:88:65)
+    at Array.forEach (<anonymous>)
+    at Auth (webpack-internal:///(rsc)/./node_modules/@auth/core/index.js:93:25)
+    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)
+    at async AppRouteRouteModule.do (/home/blacksmith/projects/aivus/aivus-web/node_modules/next/dist/compiled/next-server/app-route.runtime.dev.js:10:32801)
+[0m [90m 236 |[39m   write (data) {[0m
+[0m [90m 237 |[39m     [36mif[39m ([36mthis[39m[kImpl][33m.[39mdestroyed) {[0m
+[0m[31m[1m>[22m[39m[90m 238 |[39m       error([36mthis[39m[33m,[39m [36mnew[39m [33mError[39m([32m'the worker has exited'[39m))[0m
+[0m [90m     |[39m [31m[1m^[22m[39m[0m
+[0m [90m 239 |[39m       [36mreturn[39m [36mfalse[39m[0m
+[0m [90m 240 |[39m     }[0m
+[0m [90m 241 |[39m[0m
+ ⨯ node_modules/thread-stream/index.js (238:1) @ ThreadStream.write
+ ⨯ uncaughtException: Error: the worker has exited
+    at ThreadStream.write (webpack-internal:///(rsc)/./node_modules/thread-stream/index.js:238:19)
+    at Pino.write (webpack-internal:///(rsc)/./node_modules/pino/lib/proto.js:219:10)
+    at Pino.LOG [as info] (webpack-internal:///(rsc)/./node_modules/pino/lib/tools.js:71:21)
+    at Object.session (webpack-internal:///(rsc)/./src/auth.ts:76:65)
+    at async Module.session (webpack-internal:///(rsc)/./node_modules/@auth/core/lib/actions/session.js:41:36)
+    at async AuthInternal (webpack-internal:///(rsc)/./node_modules/@auth/core/lib/index.js:51:24)
+    at async Auth (webpack-internal:///(rsc)/./node_modules/@auth/core/index.js:130:34)
+    at async AppRouteRouteModule.do (/home/blacksmith/projects/aivus/aivus-web/node_modules/next/dist/compiled/next-server/app-route.runtime.dev.js:10:32801)
+    at async AppRouteRouteModule.handle (/home/blacksmith/projects/aivus/aivus-web/node_modules/next/dist/compiled/next-server/app-route.runtime.dev.js:10:38302)
+    at async doRender (/home/blacksmith/projects/aivus/aivus-web/node_modules/next/dist/server/base-server.js:1493:42)
+    at async responseGenerator (/home/blacksmith/projects/aivus/aivus-web/node_modules/next/dist/server/base-server.js:1834:28)
+    at async DevServer.renderToResponseWithComponentsImpl (/home/blacksmith/projects/aivus/aivus-web/node_modules/next/dist/server/base-server.js:1878:28)
+    at async DevServer.renderPageComponent (/home/blacksmith/projects/aivus/aivus-web/node_modules/next/dist/server/base-server.js:2292:24)
+    at async DevServer.renderToResponseImpl (/home/blacksmith/projects/aivus/aivus-web/node_modules/next/dist/server/base-server.js:2330:32)
+    at async DevServer.pipeImpl (/home/blacksmith/projects/aivus/aivus-web/node_modules/next/dist/server/base-server.js:984:25)
+    at async NextNodeServer.handleCatchallRenderRequest (/home/blacksmith/projects/aivus/aivus-web/node_modules/next/dist/server/next-server.js:281:17)
+    at async DevServer.handleRequestImpl (/home/blacksmith/projects/aivus/aivus-web/node_modules/next/dist/server/base-server.js:877:17)
+    at async /home/blacksmith/projects/aivus/aivus-web/node_modules/next/dist/server/dev/next-dev-server.js:373:20
+    at async Span.traceAsyncFn (/home/blacksmith/projects/aivus/aivus-web/node_modules/next/dist/trace/trace.js:157:20)
+    at async DevServer.handleRequest (/home/blacksmith/projects/aivus/aivus-web/node_modules/next/dist/server/dev/next-dev-server.js:370:24)
+    at async invokeRender (/home/blacksmith/projects/aivus/aivus-web/node_modules/next/dist/server/lib/router-server.js:183:21)
+    at async handleRequest (/home/blacksmith/projects/aivus/aivus-web/node_modules/next/dist/server/lib/router-server.js:360:24)
+    at async requestHandlerImpl (/home/blacksmith/projects/aivus/aivus-web/node_modules/next/dist/server/lib/router-server.js:384:13)
+    at async Server.requestListener (/home/blacksmith/projects/aivus/aivus-web/node_modules/next/dist/server/lib/start-server.js:142:13)
+[0m [90m 236 |[39m   write (data) {[0m
+[0m [90m 237 |[39m     [36mif[39m ([36mthis[39m[kImpl][33m.[39mdestroyed) {[0m
+[0m[31m[1m>[22m[39m[90m 238 |[39m       error([36mthis[39m[33m,[39m [36mnew[39m [33mError[39m([32m'the worker has exited'[39m))[0m
+[0m [90m     |[39m [31m[1m^[22m[39m[0m
+[0m [90m 239 |[39m       [36mreturn[39m [36mfalse[39m[0m
+[0m [90m 240 |[39m     }[0m
+[0m [90m 241 |[39m[0m
+ ⨯ node_modules/thread-stream/index.js (238:1) @ ThreadStream.write
+ ⨯ uncaughtException: Error: the worker has exited
+    at ThreadStream.write (webpack-internal:///(rsc)/./node_modules/thread-stream/index.js:238:19)
+    at Pino.write (webpack-internal:///(rsc)/./node_modules/pino/lib/proto.js:219:10)
+    at Pino.LOG [as info] (webpack-internal:///(rsc)/./node_modules/pino/lib/tools.js:71:21)
+    at Object.session (webpack-internal:///(rsc)/./src/auth.ts:76:65)
+    at async Module.session (webpack-internal:///(rsc)/./node_modules/@auth/core/lib/actions/session.js:41:36)
+    at async AuthInternal (webpack-internal:///(rsc)/./node_modules/@auth/core/lib/index.js:51:24)
+    at async Auth (webpack-internal:///(rsc)/./node_modules/@auth/core/index.js:130:34)
+    at async AppRouteRouteModule.do (/home/blacksmith/projects/aivus/aivus-web/node_modules/next/dist/compiled/next-server/app-route.runtime.dev.js:10:32801)
+    at async AppRouteRouteModule.handle (/home/blacksmith/projects/aivus/aivus-web/node_modules/next/dist/compiled/next-server/app-route.runtime.dev.js:10:38302)
+    at async doRender (/home/blacksmith/projects/aivus/aivus-web/node_modules/next/dist/server/base-server.js:1493:42)
+    at async responseGenerator (/home/blacksmith/projects/aivus/aivus-web/node_modules/next/dist/server/base-server.js:1834:28)
+    at async DevServer.renderToResponseWithComponentsImpl (/home/blacksmith/projects/aivus/aivus-web/node_modules/next/dist/server/base-server.js:1878:28)
+    at async DevServer.renderPageComponent (/home/blacksmith/projects/aivus/aivus-web/node_modules/next/dist/server/base-server.js:2292:24)
+    at async DevServer.renderToResponseImpl (/home/blacksmith/projects/aivus/aivus-web/node_modules/next/dist/server/base-server.js:2330:32)
+    at async DevServer.pipeImpl (/home/blacksmith/projects/aivus/aivus-web/node_modules/next/dist/server/base-server.js:984:25)
+    at async NextNodeServer.handleCatchallRenderRequest (/home/blacksmith/projects/aivus/aivus-web/node_modules/next/dist/server/next-server.js:281:17)
+    at async DevServer.handleRequestImpl (/home/blacksmith/projects/aivus/aivus-web/node_modules/next/dist/server/base-server.js:877:17)
+    at async /home/blacksmith/projects/aivus/aivus-web/node_modules/next/dist/server/dev/next-dev-server.js:373:20
+    at async Span.traceAsyncFn (/home/blacksmith/projects/aivus/aivus-web/node_modules/next/dist/trace/trace.js:157:20)
+    at async DevServer.handleRequest (/home/blacksmith/projects/aivus/aivus-web/node_modules/next/dist/server/dev/next-dev-server.js:370:24)
+    at async invokeRender (/home/blacksmith/projects/aivus/aivus-web/node_modules/next/dist/server/lib/router-server.js:183:21)
+    at async handleRequest (/home/blacksmith/projects/aivus/aivus-web/node_modules/next/dist/server/lib/router-server.js:360:24)
+    at async requestHandlerImpl (/home/blacksmith/projects/aivus/aivus-web/node_modules/next/dist/server/lib/router-server.js:384:13)
+    at async Server.requestListener (/home/blacksmith/projects/aivus/aivus-web/node_modules/next/dist/server/lib/start-server.js:142:13)
+[0m [90m 236 |[39m   write (data) {[0m
+[0m [90m 237 |[39m     [36mif[39m ([36mthis[39m[kImpl][33m.[39mdestroyed) {[0m
+[0m[31m[1m>[22m[39m[90m 238 |[39m       error([36mthis[39m[33m,[39m [36mnew[39m [33mError[39m([32m'the worker has exited'[39m))[0m
+[0m [90m     |[39m [31m[1m^[22m[39m[0m
+[0m [90m 239 |[39m       [36mreturn[39m [36mfalse[39m[0m
+[0m [90m 240 |[39m     }[0m
+[0m [90m 241 |[39m[0m
+update session {
+  user: {
+  name: 'Dmitrii Emelianov',
+  email: 'emelianovdmitriy@gmail.com',
+  image: 'https://lh3.googleusercontent.com/a/ACg8ocLA3vQBMdS4GkYPxFapJF7vRMErPbZrilBlCYHMNzdiOxxHE-4=s96-c',
+  role: 'UNCONFIRMED',
+  id: 'bbf03d45-8c18-483c-8bcf-264df3a5e2d9'
+},
+  expires: '2025-03-07T15:57:12.131Z'
+}
+redirecting to /auth
+update session {
+  user: {
+  name: 'Dmitrii Emelianov',
+  email: 'emelianovdmitriy@gmail.com',
+  image: 'https://lh3.googleusercontent.com/a/ACg8ocLA3vQBMdS4GkYPxFapJF7vRMErPbZrilBlCYHMNzdiOxxHE-4=s96-c',
+  role: 'UNCONFIRMED',
+  id: 'bbf03d45-8c18-483c-8bcf-264df3a5e2d9'
+},
+  expires: '2025-03-07T15:57:12.353Z'
+}
+ ○ Compiling /auth ...
+ ✓ Compiled /auth in 3.3s (1873 modules)
+Error: Cannot find module '/home/blacksmith/projects/aivus/aivus-web/.next/server/vendor-chunks/lib/worker.js'
+    at Module._resolveFilename (node:internal/modules/cjs/loader:1048:15)
+    at Module._load (node:internal/modules/cjs/loader:901:27)
+    at Function.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:83:12)
+    at MessagePort.<anonymous> (node:internal/main/worker_thread:185:26)
+    at [nodejs.internal.kHybridDispatch] (node:internal/event_target:807:20)
+    at exports.emitMessage (node:internal/per_context/messageport:23:28) {
+  code: 'MODULE_NOT_FOUND',
+  requireStack: []
+}
+ ⨯ uncaughtException: Error: Cannot find module '/home/blacksmith/projects/aivus/aivus-web/.next/server/vendor-chunks/lib/worker.js'
+    at Module._resolveFilename (node:internal/modules/cjs/loader:1048:15)
+    at Module._load (node:internal/modules/cjs/loader:901:27)
+    at Function.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:83:12)
+    at MessagePort.<anonymous> (node:internal/main/worker_thread:185:26)
+    at [nodejs.internal.kHybridDispatch] (node:internal/event_target:807:20)
+    at exports.emitMessage (node:internal/per_context/messageport:23:28) {
+  code: 'MODULE_NOT_FOUND',
+  requireStack: []
+}
+ ⨯ uncaughtException: Error: Cannot find module '/home/blacksmith/projects/aivus/aivus-web/.next/server/vendor-chunks/lib/worker.js'
+    at Module._resolveFilename (node:internal/modules/cjs/loader:1048:15)
+    at Module._load (node:internal/modules/cjs/loader:901:27)
+    at Function.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:83:12)
+    at MessagePort.<anonymous> (node:internal/main/worker_thread:185:26)
+    at [nodejs.internal.kHybridDispatch] (node:internal/event_target:807:20)
+    at exports.emitMessage (node:internal/per_context/messageport:23:28) {
+  code: 'MODULE_NOT_FOUND',
+  requireStack: []
+}
+Error: the worker thread exited
+    at Worker.onWorkerExit (webpack-internal:///(rsc)/./node_modules/thread-stream/index.js:201:32)
+    at Worker.emit (node:events:514:28)
+    at [kOnExit] (node:internal/worker:315:10)
+    at Worker.<computed>.onexit (node:internal/worker:229:20)
+    at Worker.callbackTrampoline (node:internal/async_hooks:130:17)
+ ⨯ node_modules/thread-stream/index.js (201:1) @ Worker.onWorkerExit
+ ⨯ uncaughtException: Error: the worker thread exited
+    at Worker.onWorkerExit (webpack-internal:///(rsc)/./node_modules/thread-stream/index.js:201:32)
+    at Worker.emit (node:events:514:28)
+    at [kOnExit] (node:internal/worker:315:10)
+    at Worker.<computed>.onexit (node:internal/worker:229:20)
+    at Worker.callbackTrampoline (node:internal/async_hooks:130:17)
+[0m [90m 199 |[39m   stream[33m.[39mworker[33m.[39mexited [33m=[39m [36mtrue[39m[0m
+[0m [90m 200 |[39m   stream[33m.[39mworker[33m.[39moff([32m'exit'[39m[33m,[39m onWorkerExit)[0m
+[0m[31m[1m>[22m[39m[90m 201 |[39m   destroy(stream[33m,[39m code [33m!==[39m [35m0[39m [33m?[39m [36mnew[39m [33mError[39m([32m'the worker thread exited'[39m) [33m:[39m [36mnull[39m)[0m
+[0m [90m     |[39m [31m[1m^[22m[39m[0m
+[0m [90m 202 |[39m }[0m
+[0m [90m 203 |[39m[0m
+[0m [90m 204 |[39m [36mclass[39m [33mThreadStream[39m [36mextends[39m [33mEventEmitter[39m {[0m
+ ⨯ node_modules/thread-stream/index.js (201:1) @ Worker.onWorkerExit
+ ⨯ uncaughtException: Error: the worker thread exited
+    at Worker.onWorkerExit (webpack-internal:///(rsc)/./node_modules/thread-stream/index.js:201:32)
+    at Worker.emit (node:events:514:28)
+    at [kOnExit] (node:internal/worker:315:10)
+    at Worker.<computed>.onexit (node:internal/worker:229:20)
+    at Worker.callbackTrampoline (node:internal/async_hooks:130:17)
+[0m [90m 199 |[39m   stream[33m.[39mworker[33m.[39mexited [33m=[39m [36mtrue[39m[0m
+[0m [90m 200 |[39m   stream[33m.[39mworker[33m.[39moff([32m'exit'[39m[33m,[39m onWorkerExit)[0m
+[0m[31m[1m>[22m[39m[90m 201 |[39m   destroy(stream[33m,[39m code [33m!==[39m [35m0[39m [33m?[39m [36mnew[39m [33mError[39m([32m'the worker thread exited'[39m) [33m:[39m [36mnull[39m)[0m
+[0m [90m     |[39m [31m[1m^[22m[39m[0m
+[0m [90m 202 |[39m }[0m
+[0m [90m 203 |[39m[0m
+[0m [90m 204 |[39m [36mclass[39m [33mThreadStream[39m [36mextends[39m [33mEventEmitter[39m {[0m
+Error: the worker has exited
+    at ThreadStream.write (webpack-internal:///(rsc)/./node_modules/thread-stream/index.js:238:19)
+    at Pino.write (webpack-internal:///(rsc)/./node_modules/pino/lib/proto.js:219:10)
+    at Pino.LOG [as warn] (webpack-internal:///(rsc)/./node_modules/pino/lib/tools.js:71:21)
+    at warn (webpack-internal:///(rsc)/./src/auth.ts:88:65)
+    at Array.forEach (<anonymous>)
+    at Auth (webpack-internal:///(rsc)/./node_modules/@auth/core/index.js:93:25)
+    at runNextTicks (node:internal/process/task_queues:60:5)
+    at process.processImmediate (node:internal/timers:449:9)
+    at process.callbackTrampoline (node:internal/async_hooks:130:17)
+ ⨯ node_modules/thread-stream/index.js (238:1) @ ThreadStream.write
+ ⨯ uncaughtException: Error: the worker has exited
+    at ThreadStream.write (webpack-internal:///(rsc)/./node_modules/thread-stream/index.js:238:19)
+    at Pino.write (webpack-internal:///(rsc)/./node_modules/pino/lib/proto.js:219:10)
+    at Pino.LOG [as warn] (webpack-internal:///(rsc)/./node_modules/pino/lib/tools.js:71:21)
+    at warn (webpack-internal:///(rsc)/./src/auth.ts:88:65)
+    at Array.forEach (<anonymous>)
+    at Auth (webpack-internal:///(rsc)/./node_modules/@auth/core/index.js:93:25)
+    at runNextTicks (node:internal/process/task_queues:60:5)
+    at process.processImmediate (node:internal/timers:449:9)
+    at process.callbackTrampoline (node:internal/async_hooks:130:17)
+[0m [90m 236 |[39m   write (data) {[0m
+[0m [90m 237 |[39m     [36mif[39m ([36mthis[39m[kImpl][33m.[39mdestroyed) {[0m
+[0m[31m[1m>[22m[39m[90m 238 |[39m       error([36mthis[39m[33m,[39m [36mnew[39m [33mError[39m([32m'the worker has exited'[39m))[0m
+[0m [90m     |[39m [31m[1m^[22m[39m[0m
+[0m [90m 239 |[39m       [36mreturn[39m [36mfalse[39m[0m
+[0m [90m 240 |[39m     }[0m
+[0m [90m 241 |[39m[0m
+ ⨯ node_modules/thread-stream/index.js (238:1) @ ThreadStream.write
+ ⨯ uncaughtException: Error: the worker has exited
+    at ThreadStream.write (webpack-internal:///(rsc)/./node_modules/thread-stream/index.js:238:19)
+    at Pino.write (webpack-internal:///(rsc)/./node_modules/pino/lib/proto.js:219:10)
+    at Pino.LOG [as warn] (webpack-internal:///(rsc)/./node_modules/pino/lib/tools.js:71:21)
+    at warn (webpack-internal:///(rsc)/./src/auth.ts:88:65)
+    at Array.forEach (<anonymous>)
+    at Auth (webpack-internal:///(rsc)/./node_modules/@auth/core/index.js:93:25)
+    at runNextTicks (node:internal/process/task_queues:60:5)
+    at process.processImmediate (node:internal/timers:449:9)
+    at process.callbackTrampoline (node:internal/async_hooks:130:17)
+[0m [90m 236 |[39m   write (data) {[0m
+[0m [90m 237 |[39m     [36mif[39m ([36mthis[39m[kImpl][33m.[39mdestroyed) {[0m
+[0m[31m[1m>[22m[39m[90m 238 |[39m       error([36mthis[39m[33m,[39m [36mnew[39m [33mError[39m([32m'the worker has exited'[39m))[0m
+[0m [90m     |[39m [31m[1m^[22m[39m[0m
+[0m [90m 239 |[39m       [36mreturn[39m [36mfalse[39m[0m
+[0m [90m 240 |[39m     }[0m
+[0m [90m 241 |[39m[0m
+Error: the worker has exited
+    at ThreadStream.write (webpack-internal:///(rsc)/./node_modules/thread-stream/index.js:238:19)
+    at Pino.write (webpack-internal:///(rsc)/./node_modules/pino/lib/proto.js:219:10)
+    at Pino.LOG [as info] (webpack-internal:///(rsc)/./node_modules/pino/lib/tools.js:71:21)
+    at Object.session (webpack-internal:///(rsc)/./src/auth.ts:76:65)
+    at async Object.session (webpack-internal:///(rsc)/./node_modules/next-auth/lib/index.js:33:18)
+    at async Module.session (webpack-internal:///(rsc)/./node_modules/@auth/core/lib/actions/session.js:41:36)
+    at async AuthInternal (webpack-internal:///(rsc)/./node_modules/@auth/core/lib/index.js:51:24)
+    at async Auth (webpack-internal:///(rsc)/./node_modules/@auth/core/index.js:130:34)
+    at async RootLayout (webpack-internal:///(rsc)/./src/app/layout.tsx:42:21)
+ ⨯ node_modules/thread-stream/index.js (238:1) @ ThreadStream.write
+ ⨯ uncaughtException: Error: the worker has exited
+    at ThreadStream.write (webpack-internal:///(rsc)/./node_modules/thread-stream/index.js:238:19)
+    at Pino.write (webpack-internal:///(rsc)/./node_modules/pino/lib/proto.js:219:10)
+    at Pino.LOG [as info] (webpack-internal:///(rsc)/./node_modules/pino/lib/tools.js:71:21)
+    at Object.session (webpack-internal:///(rsc)/./src/auth.ts:76:65)
+    at async Object.session (webpack-internal:///(rsc)/./node_modules/next-auth/lib/index.js:33:18)
+    at async Module.session (webpack-internal:///(rsc)/./node_modules/@auth/core/lib/actions/session.js:41:36)
+    at async AuthInternal (webpack-internal:///(rsc)/./node_modules/@auth/core/lib/index.js:51:24)
+    at async Auth (webpack-internal:///(rsc)/./node_modules/@auth/core/index.js:130:34)
+    at async RootLayout (webpack-internal:///(rsc)/./src/app/layout.tsx:42:21)
+[0m [90m 236 |[39m   write (data) {[0m
+[0m [90m 237 |[39m     [36mif[39m ([36mthis[39m[kImpl][33m.[39mdestroyed) {[0m
+[0m[31m[1m>[22m[39m[90m 238 |[39m       error([36mthis[39m[33m,[39m [36mnew[39m [33mError[39m([32m'the worker has exited'[39m))[0m
+[0m [90m     |[39m [31m[1m^[22m[39m[0m
+[0m [90m 239 |[39m       [36mreturn[39m [36mfalse[39m[0m
+[0m [90m 240 |[39m     }[0m
+[0m [90m 241 |[39m[0m
+ ⨯ node_modules/thread-stream/index.js (238:1) @ ThreadStream.write
+ ⨯ uncaughtException: Error: the worker has exited
+    at ThreadStream.write (webpack-internal:///(rsc)/./node_modules/thread-stream/index.js:238:19)
+    at Pino.write (webpack-internal:///(rsc)/./node_modules/pino/lib/proto.js:219:10)
+    at Pino.LOG [as info] (webpack-internal:///(rsc)/./node_modules/pino/lib/tools.js:71:21)
+    at Object.session (webpack-internal:///(rsc)/./src/auth.ts:76:65)
+    at async Object.session (webpack-internal:///(rsc)/./node_modules/next-auth/lib/index.js:33:18)
+    at async Module.session (webpack-internal:///(rsc)/./node_modules/@auth/core/lib/actions/session.js:41:36)
+    at async AuthInternal (webpack-internal:///(rsc)/./node_modules/@auth/core/lib/index.js:51:24)
+    at async Auth (webpack-internal:///(rsc)/./node_modules/@auth/core/index.js:130:34)
+    at async RootLayout (webpack-internal:///(rsc)/./src/app/layout.tsx:42:21)
+[0m [90m 236 |[39m   write (data) {[0m
+[0m [90m 237 |[39m     [36mif[39m ([36mthis[39m[kImpl][33m.[39mdestroyed) {[0m
+[0m[31m[1m>[22m[39m[90m 238 |[39m       error([36mthis[39m[33m,[39m [36mnew[39m [33mError[39m([32m'the worker has exited'[39m))[0m
+[0m [90m     |[39m [31m[1m^[22m[39m[0m
+[0m [90m 239 |[39m       [36mreturn[39m [36mfalse[39m[0m
+[0m [90m 240 |[39m     }[0m
+[0m [90m 241 |[39m[0m
+Accessing element.ref was removed in React 19. ref is now a regular prop. It will be removed from the JSX Element type in a future release.
+ GET /auth 200 in 3919ms
+ │ GET http://localhost:8000/api/v1/users/user?email=emelianovdmitriy%40gmail.com 200 in 1ms (cache hit)
+Error: the worker has exited
+    at ThreadStream.write (webpack-internal:///(rsc)/./node_modules/thread-stream/index.js:238:19)
+    at Pino.write (webpack-internal:///(rsc)/./node_modules/pino/lib/proto.js:219:10)
+    at Pino.LOG [as info] (webpack-internal:///(rsc)/./node_modules/pino/lib/tools.js:71:21)
+    at Object.session (webpack-internal:///(rsc)/./src/auth.ts:76:65)
+    at async Module.session (webpack-internal:///(rsc)/./node_modules/@auth/core/lib/actions/session.js:41:36)
+    at async AuthInternal (webpack-internal:///(rsc)/./node_modules/@auth/core/lib/index.js:51:24)
+    at async Auth (webpack-internal:///(rsc)/./node_modules/@auth/core/index.js:130:34)
+    at async AppRouteRouteModule.do (/home/blacksmith/projects/aivus/aivus-web/node_modules/next/dist/compiled/next-server/app-route.runtime.dev.js:10:32801)
+    at async AppRouteRouteModule.handle (/home/blacksmith/projects/aivus/aivus-web/node_modules/next/dist/compiled/next-server/app-route.runtime.dev.js:10:38302)
+    at async doRender (/home/blacksmith/projects/aivus/aivus-web/node_modules/next/dist/server/base-server.js:1493:42)
+    at async responseGenerator (/home/blacksmith/projects/aivus/aivus-web/node_modules/next/dist/server/base-server.js:1834:28)
+    at async DevServer.renderToResponseWithComponentsImpl (/home/blacksmith/projects/aivus/aivus-web/node_modules/next/dist/server/base-server.js:1878:28)
+    at async DevServer.renderPageComponent (/home/blacksmith/projects/aivus/aivus-web/node_modules/next/dist/server/base-server.js:2292:24)
+    at async DevServer.renderToResponseImpl (/home/blacksmith/projects/aivus/aivus-web/node_modules/next/dist/server/base-server.js:2330:32)
+    at async DevServer.pipeImpl (/home/blacksmith/projects/aivus/aivus-web/node_modules/next/dist/server/base-server.js:984:25)
+    at async NextNodeServer.handleCatchallRenderRequest (/home/blacksmith/projects/aivus/aivus-web/node_modules/next/dist/server/next-server.js:281:17)
+    at async DevServer.handleRequestImpl (/home/blacksmith/projects/aivus/aivus-web/node_modules/next/dist/server/base-server.js:877:17)
+    at async /home/blacksmith/projects/aivus/aivus-web/node_modules/next/dist/server/dev/next-dev-server.js:373:20
+    at async Span.traceAsyncFn (/home/blacksmith/projects/aivus/aivus-web/node_modules/next/dist/trace/trace.js:157:20)
+    at async DevServer.handleRequest (/home/blacksmith/projects/aivus/aivus-web/node_modules/next/dist/server/dev/next-dev-server.js:370:24)
+    at async invokeRender (/home/blacksmith/projects/aivus/aivus-web/node_modules/next/dist/server/lib/router-server.js:183:21)
+    at async handleRequest (/home/blacksmith/projects/aivus/aivus-web/node_modules/next/dist/server/lib/router-server.js:360:24)
+    at async requestHandlerImpl (/home/blacksmith/projects/aivus/aivus-web/node_modules/next/dist/server/lib/router-server.js:384:13)
+    at async Server.requestListener (/home/blacksmith/projects/aivus/aivus-web/node_modules/next/dist/server/lib/start-server.js:142:13)
+ ⨯ node_modules/thread-stream/index.js (238:1) @ ThreadStream.write
+ ⨯ uncaughtException: Error: the worker has exited
+    at ThreadStream.write (webpack-internal:///(rsc)/./node_modules/thread-stream/index.js:238:19)
+    at Pino.write (webpack-internal:///(rsc)/./node_modules/pino/lib/proto.js:219:10)
+    at Pino.LOG [as info] (webpack-internal:///(rsc)/./node_modules/pino/lib/tools.js:71:21)
+    at Object.session (webpack-internal:///(rsc)/./src/auth.ts:76:65)
+    at async Module.session (webpack-internal:///(rsc)/./node_modules/@auth/core/lib/actions/session.js:41:36)
+    at async AuthInternal (webpack-internal:///(rsc)/./node_modules/@auth/core/lib/index.js:51:24)
+    at async Auth (webpack-internal:///(rsc)/./node_modules/@auth/core/index.js:130:34)
+    at async AppRouteRouteModule.do (/home/blacksmith/projects/aivus/aivus-web/node_modules/next/dist/compiled/next-server/app-route.runtime.dev.js:10:32801)
+    at async AppRouteRouteModule.handle (/home/blacksmith/projects/aivus/aivus-web/node_modules/next/dist/compiled/next-server/app-route.runtime.dev.js:10:38302)
+    at async doRender (/home/blacksmith/projects/aivus/aivus-web/node_modules/next/dist/server/base-server.js:1493:42)
+    at async responseGenerator (/home/blacksmith/projects/aivus/aivus-web/node_modules/next/dist/server/base-server.js:1834:28)
+    at async DevServer.renderToResponseWithComponentsImpl (/home/blacksmith/projects/aivus/aivus-web/node_modules/next/dist/server/base-server.js:1878:28)
+    at async DevServer.renderPageComponent (/home/blacksmith/projects/aivus/aivus-web/node_modules/next/dist/server/base-server.js:2292:24)
+    at async DevServer.renderToResponseImpl (/home/blacksmith/projects/aivus/aivus-web/node_modules/next/dist/server/base-server.js:2330:32)
+    at async DevServer.pipeImpl (/home/blacksmith/projects/aivus/aivus-web/node_modules/next/dist/server/base-server.js:984:25)
+    at async NextNodeServer.handleCatchallRenderRequest (/home/blacksmith/projects/aivus/aivus-web/node_modules/next/dist/server/next-server.js:281:17)
+    at async DevServer.handleRequestImpl (/home/blacksmith/projects/aivus/aivus-web/node_modules/next/dist/server/base-server.js:877:17)
+    at async /home/blacksmith/projects/aivus/aivus-web/node_modules/next/dist/server/dev/next-dev-server.js:373:20
+    at async Span.traceAsyncFn (/home/blacksmith/projects/aivus/aivus-web/node_modules/next/dist/trace/trace.js:157:20)
+    at async DevServer.handleRequest (/home/blacksmith/projects/aivus/aivus-web/node_modules/next/dist/server/dev/next-dev-server.js:370:24)
+    at async invokeRender (/home/blacksmith/projects/aivus/aivus-web/node_modules/next/dist/server/lib/router-server.js:183:21)
+    at async handleRequest (/home/blacksmith/projects/aivus/aivus-web/node_modules/next/dist/server/lib/router-server.js:360:24)
+    at async requestHandlerImpl (/home/blacksmith/projects/aivus/aivus-web/node_modules/next/dist/server/lib/router-server.js:384:13)
+    at async Server.requestListener (/home/blacksmith/projects/aivus/aivus-web/node_modules/next/dist/server/lib/start-server.js:142:13)
+[0m [90m 236 |[39m   write (data) {[0m
+[0m [90m 237 |[39m     [36mif[39m ([36mthis[39m[kImpl][33m.[39mdestroyed) {[0m
+[0m[31m[1m>[22m[39m[90m 238 |[39m       error([36mthis[39m[33m,[39m [36mnew[39m [33mError[39m([32m'the worker has exited'[39m))[0m
+[0m [90m     |[39m [31m[1m^[22m[39m[0m
+[0m [90m 239 |[39m       [36mreturn[39m [36mfalse[39m[0m
+[0m [90m 240 |[39m     }[0m
+[0m [90m 241 |[39m[0m
+ ⨯ node_modules/thread-stream/index.js (238:1) @ ThreadStream.write
+ ⨯ uncaughtException: Error: the worker has exited
+    at ThreadStream.write (webpack-internal:///(rsc)/./node_modules/thread-stream/index.js:238:19)
+    at Pino.write (webpack-internal:///(rsc)/./node_modules/pino/lib/proto.js:219:10)
+    at Pino.LOG [as info] (webpack-internal:///(rsc)/./node_modules/pino/lib/tools.js:71:21)
+    at Object.session (webpack-internal:///(rsc)/./src/auth.ts:76:65)
+    at async Module.session (webpack-internal:///(rsc)/./node_modules/@auth/core/lib/actions/session.js:41:36)
+    at async AuthInternal (webpack-internal:///(rsc)/./node_modules/@auth/core/lib/index.js:51:24)
+    at async Auth (webpack-internal:///(rsc)/./node_modules/@auth/core/index.js:130:34)
+    at async AppRouteRouteModule.do (/home/blacksmith/projects/aivus/aivus-web/node_modules/next/dist/compiled/next-server/app-route.runtime.dev.js:10:32801)
+    at async AppRouteRouteModule.handle (/home/blacksmith/projects/aivus/aivus-web/node_modules/next/dist/compiled/next-server/app-route.runtime.dev.js:10:38302)
+    at async doRender (/home/blacksmith/projects/aivus/aivus-web/node_modules/next/dist/server/base-server.js:1493:42)
+    at async responseGenerator (/home/blacksmith/projects/aivus/aivus-web/node_modules/next/dist/server/base-server.js:1834:28)
+    at async DevServer.renderToResponseWithComponentsImpl (/home/blacksmith/projects/aivus/aivus-web/node_modules/next/dist/server/base-server.js:1878:28)
+    at async DevServer.renderPageComponent (/home/blacksmith/projects/aivus/aivus-web/node_modules/next/dist/server/base-server.js:2292:24)
+    at async DevServer.renderToResponseImpl (/home/blacksmith/projects/aivus/aivus-web/node_modules/next/dist/server/base-server.js:2330:32)
+    at async DevServer.pipeImpl (/home/blacksmith/projects/aivus/aivus-web/node_modules/next/dist/server/base-server.js:984:25)
+    at async NextNodeServer.handleCatchallRenderRequest (/home/blacksmith/projects/aivus/aivus-web/node_modules/next/dist/server/next-server.js:281:17)
+    at async DevServer.handleRequestImpl (/home/blacksmith/projects/aivus/aivus-web/node_modules/next/dist/server/base-server.js:877:17)
+    at async /home/blacksmith/projects/aivus/aivus-web/node_modules/next/dist/server/dev/next-dev-server.js:373:20
+    at async Span.traceAsyncFn (/home/blacksmith/projects/aivus/aivus-web/node_modules/next/dist/trace/trace.js:157:20)
+    at async DevServer.handleRequest (/home/blacksmith/projects/aivus/aivus-web/node_modules/next/dist/server/dev/next-dev-server.js:370:24)
+    at async invokeRender (/home/blacksmith/projects/aivus/aivus-web/node_modules/next/dist/server/lib/router-server.js:183:21)
+    at async handleRequest (/home/blacksmith/projects/aivus/aivus-web/node_modules/next/dist/server/lib/router-server.js:360:24)
+    at async requestHandlerImpl (/home/blacksmith/projects/aivus/aivus-web/node_modules/next/dist/server/lib/router-server.js:384:13)
+    at async Server.requestListener (/home/blacksmith/projects/aivus/aivus-web/node_modules/next/dist/server/lib/start-server.js:142:13)
+[0m [90m 236 |[39m   write (data) {[0m
+[0m [90m 237 |[39m     [36mif[39m ([36mthis[39m[kImpl][33m.[39mdestroyed) {[0m
+[0m[31m[1m>[22m[39m[90m 238 |[39m       error([36mthis[39m[33m,[39m [36mnew[39m [33mError[39m([32m'the worker has exited'[39m))[0m
+[0m [90m     |[39m [31m[1m^[22m[39m[0m
+[0m [90m 239 |[39m       [36mreturn[39m [36mfalse[39m[0m
+[0m [90m 240 |[39m     }[0m
+[0m [90m 241 |[39m[0m
+ GET /api/auth/session 200 in 68ms
+ │ GET http://localhost:8000/api/v1/users/user?email=emelianovdmitriy%40gmail.com 200 in 1ms (cache hit)
+Error: the worker has exited
+    at ThreadStream.write (webpack-internal:///(rsc)/./node_modules/thread-stream/index.js:238:19)
+    at Pino.write (webpack-internal:///(rsc)/./node_modules/pino/lib/proto.js:219:10)
+    at Pino.LOG [as info] (webpack-internal:///(rsc)/./node_modules/pino/lib/tools.js:71:21)
+    at Object.session (webpack-internal:///(rsc)/./src/auth.ts:76:65)
+    at async Module.session (webpack-internal:///(rsc)/./node_modules/@auth/core/lib/actions/session.js:41:36)
+    at async AuthInternal (webpack-internal:///(rsc)/./node_modules/@auth/core/lib/index.js:51:24)
+    at async Auth (webpack-internal:///(rsc)/./node_modules/@auth/core/index.js:130:34)
+    at async AppRouteRouteModule.do (/home/blacksmith/projects/aivus/aivus-web/node_modules/next/dist/compiled/next-server/app-route.runtime.dev.js:10:32801)
+    at async AppRouteRouteModule.handle (/home/blacksmith/projects/aivus/aivus-web/node_modules/next/dist/compiled/next-server/app-route.runtime.dev.js:10:38302)
+    at async doRender (/home/blacksmith/projects/aivus/aivus-web/node_modules/next/dist/server/base-server.js:1493:42)
+    at async responseGenerator (/home/blacksmith/projects/aivus/aivus-web/node_modules/next/dist/server/base-server.js:1834:28)
+    at async DevServer.renderToResponseWithComponentsImpl (/home/blacksmith/projects/aivus/aivus-web/node_modules/next/dist/server/base-server.js:1878:28)
+    at async DevServer.renderPageComponent (/home/blacksmith/projects/aivus/aivus-web/node_modules/next/dist/server/base-server.js:2292:24)
+    at async DevServer.renderToResponseImpl (/home/blacksmith/projects/aivus/aivus-web/node_modules/next/dist/server/base-server.js:2330:32)
+    at async DevServer.pipeImpl (/home/blacksmith/projects/aivus/aivus-web/node_modules/next/dist/server/base-server.js:984:25)
+    at async NextNodeServer.handleCatchallRenderRequest (/home/blacksmith/projects/aivus/aivus-web/node_modules/next/dist/server/next-server.js:281:17)
+    at async DevServer.handleRequestImpl (/home/blacksmith/projects/aivus/aivus-web/node_modules/next/dist/server/base-server.js:877:17)
+    at async /home/blacksmith/projects/aivus/aivus-web/node_modules/next/dist/server/dev/next-dev-server.js:373:20
+    at async Span.traceAsyncFn (/home/blacksmith/projects/aivus/aivus-web/node_modules/next/dist/trace/trace.js:157:20)
+    at async DevServer.handleRequest (/home/blacksmith/projects/aivus/aivus-web/node_modules/next/dist/server/dev/next-dev-server.js:370:24)
+    at async invokeRender (/home/blacksmith/projects/aivus/aivus-web/node_modules/next/dist/server/lib/router-server.js:183:21)
+    at async handleRequest (/home/blacksmith/projects/aivus/aivus-web/node_modules/next/dist/server/lib/router-server.js:360:24)
+    at async requestHandlerImpl (/home/blacksmith/projects/aivus/aivus-web/node_modules/next/dist/server/lib/router-server.js:384:13)
+    at async Server.requestListener (/home/blacksmith/projects/aivus/aivus-web/node_modules/next/dist/server/lib/start-server.js:142:13)
+ ⨯ node_modules/thread-stream/index.js (238:1) @ ThreadStream.write
+ ⨯ uncaughtException: Error: the worker has exited
+    at ThreadStream.write (webpack-internal:///(rsc)/./node_modules/thread-stream/index.js:238:19)
+    at Pino.write (webpack-internal:///(rsc)/./node_modules/pino/lib/proto.js:219:10)
+    at Pino.LOG [as info] (webpack-internal:///(rsc)/./node_modules/pino/lib/tools.js:71:21)
+    at Object.session (webpack-internal:///(rsc)/./src/auth.ts:76:65)
+    at async Module.session (webpack-internal:///(rsc)/./node_modules/@auth/core/lib/actions/session.js:41:36)
+    at async AuthInternal (webpack-internal:///(rsc)/./node_modules/@auth/core/lib/index.js:51:24)
+    at async Auth (webpack-internal:///(rsc)/./node_modules/@auth/core/index.js:130:34)
+    at async AppRouteRouteModule.do (/home/blacksmith/projects/aivus/aivus-web/node_modules/next/dist/compiled/next-server/app-route.runtime.dev.js:10:32801)
+    at async AppRouteRouteModule.handle (/home/blacksmith/projects/aivus/aivus-web/node_modules/next/dist/compiled/next-server/app-route.runtime.dev.js:10:38302)
+    at async doRender (/home/blacksmith/projects/aivus/aivus-web/node_modules/next/dist/server/base-server.js:1493:42)
+    at async responseGenerator (/home/blacksmith/projects/aivus/aivus-web/node_modules/next/dist/server/base-server.js:1834:28)
+    at async DevServer.renderToResponseWithComponentsImpl (/home/blacksmith/projects/aivus/aivus-web/node_modules/next/dist/server/base-server.js:1878:28)
+    at async DevServer.renderPageComponent (/home/blacksmith/projects/aivus/aivus-web/node_modules/next/dist/server/base-server.js:2292:24)
+    at async DevServer.renderToResponseImpl (/home/blacksmith/projects/aivus/aivus-web/node_modules/next/dist/server/base-server.js:2330:32)
+    at async DevServer.pipeImpl (/home/blacksmith/projects/aivus/aivus-web/node_modules/next/dist/server/base-server.js:984:25)
+    at async NextNodeServer.handleCatchallRenderRequest (/home/blacksmith/projects/aivus/aivus-web/node_modules/next/dist/server/next-server.js:281:17)
+    at async DevServer.handleRequestImpl (/home/blacksmith/projects/aivus/aivus-web/node_modules/next/dist/server/base-server.js:877:17)
+    at async /home/blacksmith/projects/aivus/aivus-web/node_modules/next/dist/server/dev/next-dev-server.js:373:20
+    at async Span.traceAsyncFn (/home/blacksmith/projects/aivus/aivus-web/node_modules/next/dist/trace/trace.js:157:20)
+    at async DevServer.handleRequest (/home/blacksmith/projects/aivus/aivus-web/node_modules/next/dist/server/dev/next-dev-server.js:370:24)
+    at async invokeRender (/home/blacksmith/projects/aivus/aivus-web/node_modules/next/dist/server/lib/router-server.js:183:21)
+    at async handleRequest (/home/blacksmith/projects/aivus/aivus-web/node_modules/next/dist/server/lib/router-server.js:360:24)
+    at async requestHandlerImpl (/home/blacksmith/projects/aivus/aivus-web/node_modules/next/dist/server/lib/router-server.js:384:13)
+    at async Server.requestListener (/home/blacksmith/projects/aivus/aivus-web/node_modules/next/dist/server/lib/start-server.js:142:13)
+[0m [90m 236 |[39m   write (data) {[0m
+[0m [90m 237 |[39m     [36mif[39m ([36mthis[39m[kImpl][33m.[39mdestroyed) {[0m
+[0m[31m[1m>[22m[39m[90m 238 |[39m       error([36mthis[39m[33m,[39m [36mnew[39m [33mError[39m([32m'the worker has exited'[39m))[0m
+[0m [90m     |[39m [31m[1m^[22m[39m[0m
+[0m [90m 239 |[39m       [36mreturn[39m [36mfalse[39m[0m
+[0m [90m 240 |[39m     }[0m
+[0m [90m 241 |[39m[0m
+ ⨯ node_modules/thread-stream/index.js (238:1) @ ThreadStream.write
+ ⨯ uncaughtException: Error: the worker has exited
+    at ThreadStream.write (webpack-internal:///(rsc)/./node_modules/thread-stream/index.js:238:19)
+    at Pino.write (webpack-internal:///(rsc)/./node_modules/pino/lib/proto.js:219:10)
+    at Pino.LOG [as info] (webpack-internal:///(rsc)/./node_modules/pino/lib/tools.js:71:21)
+    at Object.session (webpack-internal:///(rsc)/./src/auth.ts:76:65)
+    at async Module.session (webpack-internal:///(rsc)/./node_modules/@auth/core/lib/actions/session.js:41:36)
+    at async AuthInternal (webpack-internal:///(rsc)/./node_modules/@auth/core/lib/index.js:51:24)
+    at async Auth (webpack-internal:///(rsc)/./node_modules/@auth/core/index.js:130:34)
+    at async AppRouteRouteModule.do (/home/blacksmith/projects/aivus/aivus-web/node_modules/next/dist/compiled/next-server/app-route.runtime.dev.js:10:32801)
+    at async AppRouteRouteModule.handle (/home/blacksmith/projects/aivus/aivus-web/node_modules/next/dist/compiled/next-server/app-route.runtime.dev.js:10:38302)
+    at async doRender (/home/blacksmith/projects/aivus/aivus-web/node_modules/next/dist/server/base-server.js:1493:42)
+    at async responseGenerator (/home/blacksmith/projects/aivus/aivus-web/node_modules/next/dist/server/base-server.js:1834:28)
+    at async DevServer.renderToResponseWithComponentsImpl (/home/blacksmith/projects/aivus/aivus-web/node_modules/next/dist/server/base-server.js:1878:28)
+    at async DevServer.renderPageComponent (/home/blacksmith/projects/aivus/aivus-web/node_modules/next/dist/server/base-server.js:2292:24)
+    at async DevServer.renderToResponseImpl (/home/blacksmith/projects/aivus/aivus-web/node_modules/next/dist/server/base-server.js:2330:32)
+    at async DevServer.pipeImpl (/home/blacksmith/projects/aivus/aivus-web/node_modules/next/dist/server/base-server.js:984:25)
+    at async NextNodeServer.handleCatchallRenderRequest (/home/blacksmith/projects/aivus/aivus-web/node_modules/next/dist/server/next-server.js:281:17)
+    at async DevServer.handleRequestImpl (/home/blacksmith/projects/aivus/aivus-web/node_modules/next/dist/server/base-server.js:877:17)
+    at async /home/blacksmith/projects/aivus/aivus-web/node_modules/next/dist/server/dev/next-dev-server.js:373:20
+    at async Span.traceAsyncFn (/home/blacksmith/projects/aivus/aivus-web/node_modules/next/dist/trace/trace.js:157:20)
+    at async DevServer.handleRequest (/home/blacksmith/projects/aivus/aivus-web/node_modules/next/dist/server/dev/next-dev-server.js:370:24)
+    at async invokeRender (/home/blacksmith/projects/aivus/aivus-web/node_modules/next/dist/server/lib/router-server.js:183:21)
+    at async handleRequest (/home/blacksmith/projects/aivus/aivus-web/node_modules/next/dist/server/lib/router-server.js:360:24)
+    at async requestHandlerImpl (/home/blacksmith/projects/aivus/aivus-web/node_modules/next/dist/server/lib/router-server.js:384:13)
+    at async Server.requestListener (/home/blacksmith/projects/aivus/aivus-web/node_modules/next/dist/server/lib/start-server.js:142:13)
+[0m [90m 236 |[39m   write (data) {[0m
+[0m [90m 237 |[39m     [36mif[39m ([36mthis[39m[kImpl][33m.[39mdestroyed) {[0m
+[0m[31m[1m>[22m[39m[90m 238 |[39m       error([36mthis[39m[33m,[39m [36mnew[39m [33mError[39m([32m'the worker has exited'[39m))[0m
+[0m [90m     |[39m [31m[1m^[22m[39m[0m
+[0m [90m 239 |[39m       [36mreturn[39m [36mfalse[39m[0m
+[0m [90m 240 |[39m     }[0m
+[0m [90m 241 |[39m[0m
+ GET /api/auth/session 200 in 37ms
+ │ GET http://localhost:8000/api/v1/users/user?email=emelianovdmitriy%40gmail.com 200 in 1ms (cache hit)
+ ⚠ Found a change in next.config.mjs. Restarting the server to apply the changes...
+  ▲ Next.js 15.0.1
+  - Local:        http://localhost:3000
+  - Environments: .env.local
+
+ ✓ Starting...
+
+> aivus-web@0.1.0 dev
+> next dev
+
+  ▲ Next.js 15.0.1
+  - Local:        http://localhost:3000
+  - Environments: .env.local
+
+ ✓ Starting...
+ ✓ Ready in 4.3s
+ ○ Compiling /src/middleware ...
+ ✓ Compiled /src/middleware in 1562ms (249 modules)
+debug-enabled [ 0, [ 'debug-enabled' ] ]
+update session {
+  user: {
+  name: 'Dmitrii Emelianov',
+  email: 'emelianovdmitriy@gmail.com',
+  image: 'https://lh3.googleusercontent.com/a/ACg8ocLA3vQBMdS4GkYPxFapJF7vRMErPbZrilBlCYHMNzdiOxxHE-4=s96-c',
+  role: 'UNCONFIRMED',
+  id: 'bbf03d45-8c18-483c-8bcf-264df3a5e2d9'
+},
+  expires: '2025-03-07T16:00:27.562Z'
+}
+redirecting to /auth
+ ○ Compiling /api/auth/[...nextauth] ...
+ ✓ Compiled /api/auth/[...nextauth] in 2.1s (519 modules)
+[17:00:35.454] [33mWARN[39m (7993): [36mdebug-enabled[39m
+[17:00:35.474] [32mINFO[39m (7993): [36mupdate session[39m
+update session {
+  user: {
+  name: 'Dmitrii Emelianov',
+  email: 'emelianovdmitriy@gmail.com',
+  image: 'https://lh3.googleusercontent.com/a/ACg8ocLA3vQBMdS4GkYPxFapJF7vRMErPbZrilBlCYHMNzdiOxxHE-4=s96-c',
+  role: 'UNCONFIRMED',
+  id: 'bbf03d45-8c18-483c-8bcf-264df3a5e2d9'
+},
+  expires: '2025-03-07T16:00:46.846Z'
+}
+redirecting to /auth
+update session {
+  user: {
+  name: 'Dmitrii Emelianov',
+  email: 'emelianovdmitriy@gmail.com',
+  image: 'https://lh3.googleusercontent.com/a/ACg8ocLA3vQBMdS4GkYPxFapJF7vRMErPbZrilBlCYHMNzdiOxxHE-4=s96-c',
+  role: 'UNCONFIRMED',
+  id: 'bbf03d45-8c18-483c-8bcf-264df3a5e2d9'
+},
+  expires: '2025-03-07T16:00:46.943Z'
+}
+ ○ Compiling /auth ...
+ ✓ Compiled /auth in 6.6s (1906 modules)
+Accessing element.ref was removed in React 19. ref is now a regular prop. It will be removed from the JSX Element type in a future release.
+[17:00:53.882] [33mWARN[39m (7993): [36mdebug-enabled[39m
+[17:00:53.888] [32mINFO[39m (7993): [36mupdate session[39m
+ GET /auth 200 in 7022ms
+ │ GET http://localhost:8000/api/v1/users/user?email=emelianovdmitriy%40gmail.com 200 in 0ms (cache hit)
+ GET /api/auth/session 200 in 42ms
+ │ GET http://localhost:8000/api/v1/users/user?email=emelianovdmitriy%40gmail.com 200 in 0ms (cache hit)
+ GET /api/auth/session 200 in 19ms
+ │ GET http://localhost:8000/api/v1/users/user?email=emelianovdmitriy%40gmail.com 200 in 0ms (cache hit)
+[17:01:08.620] [32mINFO[39m (7993): [36mupdate session[39m
+[17:01:08.653] [32mINFO[39m (7993): [36mupdate session[39m
+ GET /api/auth/session 200 in 43ms
+ │ GET http://localhost:8000/api/v1/users/user?email=emelianovdmitriy%40gmail.com 200 in 0ms (cache hit)
+ GET /api/auth/session 200 in 33ms
+ │ GET http://localhost:8000/api/v1/users/user?email=emelianovdmitriy%40gmail.com 200 in 1ms (cache hit)
+[17:03:36.559] [32mINFO[39m (7993): [36mupdate session[39m
+[17:03:36.608] [32mINFO[39m (7993): [36mupdate session[39m
+ GET /api/auth/session 200 in 48ms
+ │ GET http://localhost:8000/api/v1/users/user?email=emelianovdmitriy%40gmail.com 200 in 0ms (cache hit)
+ GET /api/auth/session 200 in 24ms
+ │ GET http://localhost:8000/api/v1/users/user?email=emelianovdmitriy%40gmail.com 200 in 0ms (cache hit)
+[17:13:54.255] [32mINFO[39m (7993): [36mupdate session[39m
+[17:13:54.291] [32mINFO[39m (7993): [36mupdate session[39m
+ ✓ Compiled in 323ms (250 modules)
+ ✓ Compiled in 84ms (250 modules)
+ GET /api/auth/session 200 in 44ms
+ │ GET http://localhost:8000/api/v1/users/user?email=emelianovdmitriy%40gmail.com 200 in 0ms (cache hit)
+ GET /api/auth/session 200 in 25ms
+ │ GET http://localhost:8000/api/v1/users/user?email=emelianovdmitriy%40gmail.com 200 in 0ms (cache hit)
+[17:19:03.740] [32mINFO[39m (7993): [36mupdate session[39m
+[17:19:03.776] [32mINFO[39m (7993): [36mupdate session[39m
+ ✓ Compiled in 187ms (250 modules)
+ GET /api/auth/session 200 in 50ms
+ │ GET http://localhost:8000/api/v1/users/user?email=emelianovdmitriy%40gmail.com 200 in 1ms (cache hit)
+ GET /api/auth/session 200 in 27ms
+ │ GET http://localhost:8000/api/v1/users/user?email=emelianovdmitriy%40gmail.com 200 in 1ms (cache hit)
+[17:20:32.966] [32mINFO[39m (7993): [36mupdate session[39m
+[17:20:33.004] [32mINFO[39m (7993): [36mupdate session[39m
+debug-enabled [ 0, [ 'debug-enabled' ] ]
+update session {
+  user: {
+  name: 'Dmitrii Emelianov',
+  email: 'emelianovdmitriy@gmail.com',
+  image: 'https://lh3.googleusercontent.com/a/ACg8ocLA3vQBMdS4GkYPxFapJF7vRMErPbZrilBlCYHMNzdiOxxHE-4=s96-c',
+  role: 'UNCONFIRMED',
+  id: 'bbf03d45-8c18-483c-8bcf-264df3a5e2d9'
+},
+  expires: '2025-03-07T16:20:34.701Z'
+}
+ GET /auth 200 in 150ms
+ │ GET http://localhost:8000/api/v1/users/user?email=emelianovdmitriy%40gmail.com 200 in 0ms (cache hit)
+[17:20:35.118] [32mINFO[39m (7993): [36mupdate session[39m
+ ○ Compiling /favicon.ico ...
+ ✓ Compiled /favicon.ico in 542ms (1230 modules)
+ GET /favicon.ico 200 in 609ms
+ GET /api/auth/session 200 in 98ms
+ │ GET http://localhost:8000/api/v1/users/user?email=emelianovdmitriy%40gmail.com 200 in 1ms (cache hit)
+ GET /api/auth/session 200 in 21ms
+ │ GET http://localhost:8000/api/v1/users/user?email=emelianovdmitriy%40gmail.com 200 in 1ms (cache hit)
+[17:20:39.500] [33mWARN[39m (7993): [36mdebug-enabled[39m
+[17:20:39.511] [32mINFO[39m (7993): [36mupdate session[39m
+[17:20:39.546] [32mINFO[39m (7993): [36mupdate session[39m
+ ✓ Compiled in 169ms (250 modules)
+ GET /api/auth/session 200 in 51ms
+ │ GET http://localhost:8000/api/v1/users/user?email=emelianovdmitriy%40gmail.com 200 in 0ms (cache hit)
+ GET /api/auth/session 200 in 30ms
+ │ GET http://localhost:8000/api/v1/users/user?email=emelianovdmitriy%40gmail.com 200 in 0ms (cache hit)
+[17:22:02.011] [32mINFO[39m (7993): [36mupdate session[39m
+[17:22:02.058] [32mINFO[39m (7993): [36mupdate session[39m
+debug-enabled [ 0, [ 'debug-enabled' ] ]
+update session {
+  user: {
+  name: 'Dmitrii Emelianov',
+  email: 'emelianovdmitriy@gmail.com',
+  image: 'https://lh3.googleusercontent.com/a/ACg8ocLA3vQBMdS4GkYPxFapJF7vRMErPbZrilBlCYHMNzdiOxxHE-4=s96-c',
+  role: 'UNCONFIRMED',
+  id: 'bbf03d45-8c18-483c-8bcf-264df3a5e2d9'
+},
+  expires: '2025-03-07T16:22:03.525Z'
+}
+redirecting to /app/unconfirmed
+update session {
+  user: {
+  name: 'Dmitrii Emelianov',
+  email: 'emelianovdmitriy@gmail.com',
+  image: 'https://lh3.googleusercontent.com/a/ACg8ocLA3vQBMdS4GkYPxFapJF7vRMErPbZrilBlCYHMNzdiOxxHE-4=s96-c',
+  role: 'UNCONFIRMED',
+  id: 'bbf03d45-8c18-483c-8bcf-264df3a5e2d9'
+},
+  expires: '2025-03-07T16:22:03.647Z'
+}
+ ○ Compiling /app/unconfirmed ...
+ ✓ Compiled /app/unconfirmed in 2.5s (2183 modules)
+[17:22:06.439] [33mWARN[39m (7993): [36mdebug-enabled[39m
+[17:22:06.447] [32mINFO[39m (7993): [36mupdate session[39m
+[17:22:06.448] [32mINFO[39m (7993): [36mupdate session[39m
+ReadonlyRequestCookiesError: Cookies can only be modified in a Server Action or Route Handler. Read more: https://nextjs.org/docs/app/api-reference/functions/cookies#cookiessetname-value-options
+    at Proxy.callable (/home/blacksmith/projects/aivus/aivus-web/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:154:74570)
+    at signOut (webpack-internal:///(rsc)/./node_modules/next-auth/lib/actions.js:77:19)
+ ⨯ next/dist/src/server/web/spec-extension/adapters/request-cookies.ts (22:11) @ Proxy.callable
+ ⨯ unhandledRejection: ReadonlyRequestCookiesError: Cookies can only be modified in a Server Action or Route Handler. Read more: https://nextjs.org/docs/app/api-reference/functions/cookies#cookiessetname-value-options
+    at Proxy.callable (/home/blacksmith/projects/aivus/aivus-web/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:154:74570)
+    at signOut (webpack-internal:///(rsc)/./node_modules/next-auth/lib/actions.js:77:19)
+[0m [90m 20 |[39m[0m
+[0m [90m 21 |[39m   [36mpublic[39m [36mstatic[39m callable() {[0m
+[0m[31m[1m>[22m[39m[90m 22 |[39m     [36mthrow[39m [36mnew[39m [33mReadonlyRequestCookiesError[39m()[0m
+[0m [90m    |[39m           [31m[1m^[22m[39m[0m
+[0m [90m 23 |[39m   }[0m
+[0m [90m 24 |[39m }[0m
+[0m [90m 25 |[39m[0m
+ ⨯ next/dist/src/server/web/spec-extension/adapters/request-cookies.ts (22:11) @ Proxy.callable
+ ⨯ unhandledRejection: ReadonlyRequestCookiesError: Cookies can only be modified in a Server Action or Route Handler. Read more: https://nextjs.org/docs/app/api-reference/functions/cookies#cookiessetname-value-options
+    at Proxy.callable (/home/blacksmith/projects/aivus/aivus-web/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:154:74570)
+    at signOut (webpack-internal:///(rsc)/./node_modules/next-auth/lib/actions.js:77:19)
+[0m [90m 20 |[39m[0m
+[0m [90m 21 |[39m   [36mpublic[39m [36mstatic[39m callable() {[0m
+[0m[31m[1m>[22m[39m[90m 22 |[39m     [36mthrow[39m [36mnew[39m [33mReadonlyRequestCookiesError[39m()[0m
+[0m [90m    |[39m           [31m[1m^[22m[39m[0m
+[0m [90m 23 |[39m   }[0m
+[0m [90m 24 |[39m }[0m
+[0m [90m 25 |[39m[0m
+ GET /app/unconfirmed 200 in 3020ms
+ │ GET http://localhost:8000/api/v1/users/user?email=emelianovdmitriy%40gmail.com 200 in 0ms (cache hit)
+ ✓ Compiled /favicon.ico in 256ms (1405 modules)
+ GET /favicon.ico 200 in 329ms
+ ✓ Compiled in 479ms (1405 modules)
+update session {
+  user: {
+  name: 'Dmitrii Emelianov',
+  email: 'emelianovdmitriy@gmail.com',
+  image: 'https://lh3.googleusercontent.com/a/ACg8ocLA3vQBMdS4GkYPxFapJF7vRMErPbZrilBlCYHMNzdiOxxHE-4=s96-c',
+  role: 'UNCONFIRMED',
+  id: 'bbf03d45-8c18-483c-8bcf-264df3a5e2d9'
+},
+  expires: '2025-03-07T16:22:30.156Z'
+}
+role undefined
+ReadonlyRequestCookiesError: Cookies can only be modified in a Server Action or Route Handler. Read more: https://nextjs.org/docs/app/api-reference/functions/cookies#cookiessetname-value-options
+    at Proxy.callable (/home/blacksmith/projects/aivus/aivus-web/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:154:74570)
+    at signOut (webpack-internal:///(rsc)/./node_modules/next-auth/lib/actions.js:77:19)
+[17:22:30.343] [33mWARN[39m (7993): [36mdebug-enabled[39m
+[17:22:30.351] [32mINFO[39m (7993): [36mupdate session[39m
+[17:22:30.352] [32mINFO[39m (7993): [36mupdate session[39m
+ ⨯ next/dist/src/server/web/spec-extension/adapters/request-cookies.ts (22:11) @ Proxy.callable
+ ⨯ unhandledRejection: ReadonlyRequestCookiesError: Cookies can only be modified in a Server Action or Route Handler. Read more: https://nextjs.org/docs/app/api-reference/functions/cookies#cookiessetname-value-options
+    at Proxy.callable (/home/blacksmith/projects/aivus/aivus-web/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:154:74570)
+    at signOut (webpack-internal:///(rsc)/./node_modules/next-auth/lib/actions.js:77:19)
+[0m [90m 20 |[39m[0m
+[0m [90m 21 |[39m   [36mpublic[39m [36mstatic[39m callable() {[0m
+[0m[31m[1m>[22m[39m[90m 22 |[39m     [36mthrow[39m [36mnew[39m [33mReadonlyRequestCookiesError[39m()[0m
+[0m [90m    |[39m           [31m[1m^[22m[39m[0m
+[0m [90m 23 |[39m   }[0m
+[0m [90m 24 |[39m }[0m
+[0m [90m 25 |[39m[0m
+ ⨯ next/dist/src/server/web/spec-extension/adapters/request-cookies.ts (22:11) @ Proxy.callable
+ ⨯ unhandledRejection: ReadonlyRequestCookiesError: Cookies can only be modified in a Server Action or Route Handler. Read more: https://nextjs.org/docs/app/api-reference/functions/cookies#cookiessetname-value-options
+    at Proxy.callable (/home/blacksmith/projects/aivus/aivus-web/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:154:74570)
+    at signOut (webpack-internal:///(rsc)/./node_modules/next-auth/lib/actions.js:77:19)
+[0m [90m 20 |[39m[0m
+[0m [90m 21 |[39m   [36mpublic[39m [36mstatic[39m callable() {[0m
+[0m[31m[1m>[22m[39m[90m 22 |[39m     [36mthrow[39m [36mnew[39m [33mReadonlyRequestCookiesError[39m()[0m
+[0m [90m    |[39m           [31m[1m^[22m[39m[0m
+[0m [90m 23 |[39m   }[0m
+[0m [90m 24 |[39m }[0m
+[0m [90m 25 |[39m[0m
+ GET /app/unconfirmed 200 in 242ms
+ GET /api/auth/session 200 in 51ms
+ │ GET http://localhost:8000/api/v1/users/user?email=emelianovdmitriy%40gmail.com 200 in 1ms (cache hit)
+ GET /api/auth/session 200 in 21ms
+ │ GET http://localhost:8000/api/v1/users/user?email=emelianovdmitriy%40gmail.com 200 in 1ms (cache hit)
+[17:22:30.773] [32mINFO[39m (7993): [36mupdate session[39m
+[17:22:30.812] [32mINFO[39m (7993): [36mupdate session[39m
+update session {
+  user: {
+  name: 'Dmitrii Emelianov',
+  email: 'emelianovdmitriy@gmail.com',
+  image: 'https://lh3.googleusercontent.com/a/ACg8ocLA3vQBMdS4GkYPxFapJF7vRMErPbZrilBlCYHMNzdiOxxHE-4=s96-c',
+  role: 'UNCONFIRMED',
+  id: 'bbf03d45-8c18-483c-8bcf-264df3a5e2d9'
+},
+  expires: '2025-03-07T16:22:39.976Z'
+}
+role undefined
+ReadonlyRequestCookiesError: Cookies can only be modified in a Server Action or Route Handler. Read more: https://nextjs.org/docs/app/api-reference/functions/cookies#cookiessetname-value-options
+    at Proxy.callable (/home/blacksmith/projects/aivus/aivus-web/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:154:74570)
+    at signOut (webpack-internal:///(rsc)/./node_modules/next-auth/lib/actions.js:77:19)
+ ⨯ next/dist/src/server/web/spec-extension/adapters/request-cookies.ts (22:11) @ Proxy.callable
+ ⨯ unhandledRejection: ReadonlyRequestCookiesError: Cookies can only be modified in a Server Action or Route Handler. Read more: https://nextjs.org/docs/app/api-reference/functions/cookies#cookiessetname-value-options
+    at Proxy.callable (/home/blacksmith/projects/aivus/aivus-web/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:154:74570)
+    at signOut (webpack-internal:///(rsc)/./node_modules/next-auth/lib/actions.js:77:19)
+[0m [90m 20 |[39m[0m
+[0m [90m 21 |[39m   [36mpublic[39m [36mstatic[39m callable() {[0m
+[0m[31m[1m>[22m[39m[90m 22 |[39m     [36mthrow[39m [36mnew[39m [33mReadonlyRequestCookiesError[39m()[0m
+[0m [90m    |[39m           [31m[1m^[22m[39m[0m
+[0m [90m 23 |[39m   }[0m
+[0m [90m 24 |[39m }[0m
+[0m [90m 25 |[39m[0m
+ ⨯ next/dist/src/server/web/spec-extension/adapters/request-cookies.ts (22:11) @ Proxy.callable
+ ⨯ unhandledRejection: ReadonlyRequestCookiesError: Cookies can only be modified in a Server Action or Route Handler. Read more: https://nextjs.org/docs/app/api-reference/functions/cookies#cookiessetname-value-options
+    at Proxy.callable (/home/blacksmith/projects/aivus/aivus-web/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:154:74570)
+    at signOut (webpack-internal:///(rsc)/./node_modules/next-auth/lib/actions.js:77:19)
+[0m [90m 20 |[39m[0m
+[0m [90m 21 |[39m   [36mpublic[39m [36mstatic[39m callable() {[0m
+[0m[31m[1m>[22m[39m[90m 22 |[39m     [36mthrow[39m [36mnew[39m [33mReadonlyRequestCookiesError[39m()[0m
+[0m [90m    |[39m           [31m[1m^[22m[39m[0m
+[0m [90m 23 |[39m   }[0m
+[0m [90m 24 |[39m }[0m
+[0m [90m 25 |[39m[0m
+ GET /app/unconfirmed 200 in 272ms
+ │ GET http://localhost:8000/api/v1/users/user?email=emelianovdmitriy%40gmail.com 200 in 0ms (cache hit)
+[17:22:40.120] [32mINFO[39m (7993): [36mupdate session[39m
+[17:22:40.121] [32mINFO[39m (7993): [36mupdate session[39m
+ GET /favicon.ico 200 in 37ms
+
+> aivus-web@0.1.0 dev
+> next dev
+
+  ▲ Next.js 15.0.1
+  - Local:        http://localhost:3000
+  - Environments: .env.local
+
+ ✓ Starting...
+ ✓ Ready in 1502ms
+ ○ Compiling /api/auth/[...nextauth] ...
+ ✓ Compiled /api/auth/[...nextauth] in 2.7s (519 modules)
+[17:26:16.978] [33mWARN[39m (26191): [36mdebug-enabled[39m
+[17:26:17.308] [32mINFO[39m (26191): [36mupdate session[39m
+ ○ Compiling /src/middleware ...
+ ✓ Compiled /src/middleware in 816ms (250 modules)
+debug-enabled [ 0, [ 'debug-enabled' ] ]
+update session {
+  user: {
+  name: 'Dmitrii Emelianov',
+  email: 'emelianovdmitriy@gmail.com',
+  image: 'https://lh3.googleusercontent.com/a/ACg8ocLA3vQBMdS4GkYPxFapJF7vRMErPbZrilBlCYHMNzdiOxxHE-4=s96-c',
+  role: 'UNCONFIRMED',
+  id: 'bbf03d45-8c18-483c-8bcf-264df3a5e2d9'
+},
+  expires: '2025-03-07T16:26:20.040Z'
+}
+redirecting to /auth
+update session {
+  user: {
+  name: 'Dmitrii Emelianov',
+  email: 'emelianovdmitriy@gmail.com',
+  image: 'https://lh3.googleusercontent.com/a/ACg8ocLA3vQBMdS4GkYPxFapJF7vRMErPbZrilBlCYHMNzdiOxxHE-4=s96-c',
+  role: 'UNCONFIRMED',
+  id: 'bbf03d45-8c18-483c-8bcf-264df3a5e2d9'
+},
+  expires: '2025-03-07T16:26:20.132Z'
+}
+redirecting to /app/unconfirmed
+update session {
+  user: {
+  name: 'Dmitrii Emelianov',
+  email: 'emelianovdmitriy@gmail.com',
+  image: 'https://lh3.googleusercontent.com/a/ACg8ocLA3vQBMdS4GkYPxFapJF7vRMErPbZrilBlCYHMNzdiOxxHE-4=s96-c',
+  role: 'UNCONFIRMED',
+  id: 'bbf03d45-8c18-483c-8bcf-264df3a5e2d9'
+},
+  expires: '2025-03-07T16:26:20.215Z'
+}
+ ○ Compiling /app/unconfirmed ...
+ ✓ Compiled /app/unconfirmed in 6.6s (2093 modules)
+role UNCONFIRMED
+[17:26:27.143] [33mWARN[39m (26191): [36mdebug-enabled[39m
+[17:26:27.153] [32mINFO[39m (26191): [36mupdate session[39m
+[17:26:27.154] [32mINFO[39m (26191): [36mupdate session[39m
+Accessing element.ref was removed in React 19. ref is now a regular prop. It will be removed from the JSX Element type in a future release.
+ GET /app/unconfirmed 200 in 7044ms
+ │ GET http://localhost:8000/api/v1/users/user?email=emelianovdmitriy%40gmail.com 200 in 1ms (cache hit)
+ ✓ Compiled in 439ms (1298 modules)
+update session {
+  user: {
+  name: 'Dmitrii Emelianov',
+  email: 'emelianovdmitriy@gmail.com',
+  image: 'https://lh3.googleusercontent.com/a/ACg8ocLA3vQBMdS4GkYPxFapJF7vRMErPbZrilBlCYHMNzdiOxxHE-4=s96-c',
+  role: 'UNCONFIRMED',
+  id: 'bbf03d45-8c18-483c-8bcf-264df3a5e2d9'
+},
+  expires: '2025-03-07T16:28:16.792Z'
+}
+[17:28:17.123] [33mWARN[39m (26191): [36mdebug-enabled[39m
+[17:28:17.135] [32mINFO[39m (26191): [36mupdate session[39m
+[17:28:17.135] [32mINFO[39m (26191): [36mupdate session[39m
+ GET /app/unconfirmed 200 in 425ms
+ │ GET http://localhost:8000/api/v1/users/user?email=emelianovdmitriy%40gmail.com 200 in 2ms (cache hit)
+ ✓ Compiled /favicon.ico in 452ms (1338 modules)
+ GET /favicon.ico 200 in 528ms
+ ✓ Compiled in 734ms (2123 modules)
+ ⚠ Fast Refresh had to perform a full reload due to a runtime error.
+update session {
+  user: {
+  name: 'Dmitrii Emelianov',
+  email: 'emelianovdmitriy@gmail.com',
+  image: 'https://lh3.googleusercontent.com/a/ACg8ocLA3vQBMdS4GkYPxFapJF7vRMErPbZrilBlCYHMNzdiOxxHE-4=s96-c',
+  role: 'UNCONFIRMED',
+  id: 'bbf03d45-8c18-483c-8bcf-264df3a5e2d9'
+},
+  expires: '2025-03-07T16:29:17.331Z'
+}
+[17:29:17.798] [33mWARN[39m (26191): [36mdebug-enabled[39m
+[17:29:17.804] [32mINFO[39m (26191): [36mupdate session[39m
+[17:29:17.805] [32mINFO[39m (26191): [36mupdate session[39m
+ GET /app/unconfirmed 200 in 464ms
+ │ GET http://localhost:8000/api/v1/users/user?email=emelianovdmitriy%40gmail.com 200 in 0ms (cache hit)
+ GET /favicon.ico 200 in 23ms
+ ✓ Compiled in 296ms (2123 modules)
+ ⚠ Fast Refresh had to perform a full reload due to a runtime error.
+update session {
+  user: {
+  name: 'Dmitrii Emelianov',
+  email: 'emelianovdmitriy@gmail.com',
+  image: 'https://lh3.googleusercontent.com/a/ACg8ocLA3vQBMdS4GkYPxFapJF7vRMErPbZrilBlCYHMNzdiOxxHE-4=s96-c',
+  role: 'UNCONFIRMED',
+  id: 'bbf03d45-8c18-483c-8bcf-264df3a5e2d9'
+},
+  expires: '2025-03-07T16:29:24.544Z'
+}
+[17:29:24.668] [33mWARN[39m (26191): [36mdebug-enabled[39m
+[17:29:24.677] [32mINFO[39m (26191): [36mupdate session[39m
+[17:29:24.677] [32mINFO[39m (26191): [36mupdate session[39m
+ GET /app/unconfirmed 200 in 142ms
+ │ GET http://localhost:8000/api/v1/users/user?email=emelianovdmitriy%40gmail.com 200 in 0ms (cache hit)
+ GET /favicon.ico 200 in 18ms
+ ✓ Compiled in 599ms (1991 modules)
+ ⚠ Fast Refresh had to perform a full reload due to a runtime error.
+update session {
+  user: {
+  name: 'Dmitrii Emelianov',
+  email: 'emelianovdmitriy@gmail.com',
+  image: 'https://lh3.googleusercontent.com/a/ACg8ocLA3vQBMdS4GkYPxFapJF7vRMErPbZrilBlCYHMNzdiOxxHE-4=s96-c',
+  role: 'UNCONFIRMED',
+  id: 'bbf03d45-8c18-483c-8bcf-264df3a5e2d9'
+},
+  expires: '2025-03-07T16:29:28.501Z'
+}
+[17:29:28.663] [33mWARN[39m (26191): [36mdebug-enabled[39m
+[17:29:28.666] [32mINFO[39m (26191): [36mupdate session[39m
+[17:29:28.666] [32mINFO[39m (26191): [36mupdate session[39m
+ GET /app/unconfirmed 200 in 188ms
+ │ GET http://localhost:8000/api/v1/users/user?email=emelianovdmitriy%40gmail.com 200 in 0ms (cache hit)
+ GET /favicon.ico 200 in 32ms
+ ✓ Compiled /api/auth/[...nextauth] in 320ms (1285 modules)
+(node:26191) MaxListenersExceededWarning: Possible EventEmitter memory leak detected. 11 exit listeners added to [process]. Use emitter.setMaxListeners() to increase limit
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:26191) MaxListenersExceededWarning: Possible EventEmitter memory leak detected. 12 unpipe listeners added to [Socket]. Use emitter.setMaxListeners() to increase limit
+(node:26191) MaxListenersExceededWarning: Possible EventEmitter memory leak detected. 12 error listeners added to [Socket]. Use emitter.setMaxListeners() to increase limit
+(node:26191) MaxListenersExceededWarning: Possible EventEmitter memory leak detected. 12 close listeners added to [Socket]. Use emitter.setMaxListeners() to increase limit
+(node:26191) MaxListenersExceededWarning: Possible EventEmitter memory leak detected. 12 finish listeners added to [Socket]. Use emitter.setMaxListeners() to increase limit
+(node:26191) MaxListenersExceededWarning: Possible EventEmitter memory leak detected. 12 unpipe listeners added to [Socket]. Use emitter.setMaxListeners() to increase limit
+(node:26191) MaxListenersExceededWarning: Possible EventEmitter memory leak detected. 12 error listeners added to [Socket]. Use emitter.setMaxListeners() to increase limit
+(node:26191) MaxListenersExceededWarning: Possible EventEmitter memory leak detected. 12 close listeners added to [Socket]. Use emitter.setMaxListeners() to increase limit
+(node:26191) MaxListenersExceededWarning: Possible EventEmitter memory leak detected. 12 finish listeners added to [Socket]. Use emitter.setMaxListeners() to increase limit
+ GET /api/auth/session 200 in 396ms
+ │ GET http://localhost:8000/api/v1/users/user?email=emelianovdmitriy%40gmail.com 200 in 1ms (cache hit)
+ GET /api/auth/session 200 in 24ms
+ │ GET http://localhost:8000/api/v1/users/user?email=emelianovdmitriy%40gmail.com 200 in 1ms (cache hit)
+[17:29:32.608] [33mWARN[39m (26191): [36mdebug-enabled[39m
+[17:29:32.615] [32mINFO[39m (26191): [36mupdate session[39m
+[17:29:32.652] [32mINFO[39m (26191): [36mupdate session[39m
+(node:26191) MaxListenersExceededWarning: Possible EventEmitter memory leak detected. 11 beforeExit listeners added to [process]. Use emitter.setMaxListeners() to increase limit
+ ✓ Compiled in 208ms (1285 modules)
+update session {
+  user: {
+  name: 'Dmitrii Emelianov',
+  email: 'emelianovdmitriy@gmail.com',
+  image: 'https://lh3.googleusercontent.com/a/ACg8ocLA3vQBMdS4GkYPxFapJF7vRMErPbZrilBlCYHMNzdiOxxHE-4=s96-c',
+  role: 'UNCONFIRMED',
+  id: 'bbf03d45-8c18-483c-8bcf-264df3a5e2d9'
+},
+  expires: '2025-03-07T16:29:45.112Z'
+}
+role
+ GET /app/unconfirmed 200 in 81ms
+[17:29:45.236] [33mWARN[39m (26191): [36mdebug-enabled[39m
+[17:29:45.258] [32mINFO[39m (26191): [36mupdate session[39m
+[17:29:45.259] [32mINFO[39m (26191): [36mupdate session[39m
+ ✓ Compiled in 198ms (1285 modules)
+update session {
+  user: {
+  name: 'Dmitrii Emelianov',
+  email: 'emelianovdmitriy@gmail.com',
+  image: 'https://lh3.googleusercontent.com/a/ACg8ocLA3vQBMdS4GkYPxFapJF7vRMErPbZrilBlCYHMNzdiOxxHE-4=s96-c',
+  role: 'UNCONFIRMED',
+  id: 'bbf03d45-8c18-483c-8bcf-264df3a5e2d9'
+},
+  expires: '2025-03-07T16:29:49.296Z'
+}
+role UNCONFIRMED
+ GET /app/unconfirmed 200 in 60ms
+[17:29:49.385] [33mWARN[39m (26191): [36mdebug-enabled[39m
+[17:29:49.387] [32mINFO[39m (26191): [36mupdate session[39m
+[17:29:49.389] [32mINFO[39m (26191): [36mupdate session[39m
+ GET /api/auth/session 200 in 112ms
+ │ GET http://localhost:8000/api/v1/users/user?email=emelianovdmitriy%40gmail.com 200 in 0ms (cache hit)
+ GET /api/auth/session 200 in 21ms
+ │ GET http://localhost:8000/api/v1/users/user?email=emelianovdmitriy%40gmail.com 200 in 1ms (cache hit)
+[17:29:51.769] [32mINFO[39m (26191): [36mupdate session[39m
+[17:29:51.804] [32mINFO[39m (26191): [36mupdate session[39m
+update session {
+  user: {
+  name: 'Dmitrii Emelianov',
+  email: 'emelianovdmitriy@gmail.com',
+  image: 'https://lh3.googleusercontent.com/a/ACg8ocLA3vQBMdS4GkYPxFapJF7vRMErPbZrilBlCYHMNzdiOxxHE-4=s96-c',
+  role: 'UNCONFIRMED',
+  id: 'bbf03d45-8c18-483c-8bcf-264df3a5e2d9'
+},
+  expires: '2025-03-07T16:29:53.902Z'
+}
+role UNCONFIRMED
+ GET /app/unconfirmed 200 in 94ms
+ │ GET http://localhost:8000/api/v1/users/user?email=emelianovdmitriy%40gmail.com 200 in 0ms (cache hit)
+ GET /favicon.ico 200 in 28ms
+[17:29:53.988] [32mINFO[39m (26191): [36mupdate session[39m
+[17:29:53.988] [32mINFO[39m (26191): [36mupdate session[39m
+update session {
+  user: {
+  name: 'Dmitrii Emelianov',
+  email: 'emelianovdmitriy@gmail.com',
+  image: 'https://lh3.googleusercontent.com/a/ACg8ocLA3vQBMdS4GkYPxFapJF7vRMErPbZrilBlCYHMNzdiOxxHE-4=s96-c',
+  role: 'UNCONFIRMED',
+  id: 'bbf03d45-8c18-483c-8bcf-264df3a5e2d9'
+},
+  expires: '2025-03-07T16:30:01.944Z'
+}
+ POST /app/unconfirmed 200 in 87ms
+[17:30:02.087] [33mWARN[39m (26191): [36mdebug-enabled[39m
+[17:30:02.093] [32mINFO[39m (26191): [36mupdate session[39m
+[17:30:02.108] [31mERROR[39m (26191): [36mFailed to change role[39m
+ GET /api/auth/session 200 in 40ms
+ │ GET http://localhost:8000/api/v1/users/user?email=emelianovdmitriy%40gmail.com 200 in 0ms (cache hit)
+ GET /api/auth/session 200 in 26ms
+ │ GET http://localhost:8000/api/v1/users/user?email=emelianovdmitriy%40gmail.com 200 in 1ms (cache hit)
+[17:30:18.534] [32mINFO[39m (26191): [36mupdate session[39m
+[17:30:18.573] [32mINFO[39m (26191): [36mupdate session[39m
+ GET /api/auth/session 200 in 38ms
+ │ GET http://localhost:8000/api/v1/users/user?email=emelianovdmitriy%40gmail.com 200 in 0ms (cache hit)
+ GET /api/auth/session 200 in 24ms
+ │ GET http://localhost:8000/api/v1/users/user?email=emelianovdmitriy%40gmail.com 200 in 1ms (cache hit)
+[17:30:18.917] [32mINFO[39m (26191): [36mupdate session[39m
+[17:30:18.951] [32mINFO[39m (26191): [36mupdate session[39m
+ GET /api/auth/session 200 in 35ms
+ │ GET http://localhost:8000/api/v1/users/user?email=emelianovdmitriy%40gmail.com 200 in 1ms (cache hit)
+ GET /api/auth/session 200 in 26ms
+ │ GET http://localhost:8000/api/v1/users/user?email=emelianovdmitriy%40gmail.com 200 in 0ms (cache hit)
+ GET /api/auth/session 200 in 36ms
+ │ GET http://localhost:8000/api/v1/users/user?email=emelianovdmitriy%40gmail.com 200 in 0ms (cache hit)
+ GET /api/auth/session 200 in 22ms
+ │ GET http://localhost:8000/api/v1/users/user?email=emelianovdmitriy%40gmail.com 200 in 0ms (cache hit)
+[17:30:22.225] [32mINFO[39m (26191): [36mupdate session[39m
+[17:30:22.265] [32mINFO[39m (26191): [36mupdate session[39m
+[17:30:22.820] [32mINFO[39m (26191): [36mupdate session[39m
+[17:30:22.852] [32mINFO[39m (26191): [36mupdate session[39m
+ GET /api/auth/session 200 in 51ms
+ │ GET http://localhost:8000/api/v1/users/user?email=emelianovdmitriy%40gmail.com 200 in 0ms (cache hit)
+ GET /api/auth/session 200 in 21ms
+ │ GET http://localhost:8000/api/v1/users/user?email=emelianovdmitriy%40gmail.com 200 in 0ms (cache hit)
+[17:31:15.144] [32mINFO[39m (26191): [36mupdate session[39m
+[17:31:15.180] [32mINFO[39m (26191): [36mupdate session[39m
+ GET /api/auth/session 200 in 33ms
+ │ GET http://localhost:8000/api/v1/users/user?email=emelianovdmitriy%40gmail.com 200 in 1ms (cache hit)
+ GET /api/auth/session 200 in 28ms
+ │ GET http://localhost:8000/api/v1/users/user?email=emelianovdmitriy%40gmail.com 200 in 1ms (cache hit)
+[17:31:17.173] [32mINFO[39m (26191): [36mupdate session[39m
+[17:31:17.216] [32mINFO[39m (26191): [36mupdate session[39m
+ ✓ Compiled in 761ms (1492 modules)
+debug-enabled [ 0, [ 'debug-enabled' ] ]
+update session {
+  user: {
+  name: 'Dmitrii Emelianov',
+  email: 'emelianovdmitriy@gmail.com',
+  image: 'https://lh3.googleusercontent.com/a/ACg8ocLA3vQBMdS4GkYPxFapJF7vRMErPbZrilBlCYHMNzdiOxxHE-4=s96-c',
+  role: 'UNCONFIRMED',
+  id: 'bbf03d45-8c18-483c-8bcf-264df3a5e2d9'
+},
+  expires: '2025-03-07T16:32:24.411Z'
+}
+role UNCONFIRMED
+ GET /app/unconfirmed 200 in 294ms
+[17:32:25.010] [33mWARN[39m (26191): [36mdebug-enabled[39m
+[17:32:25.023] [32mINFO[39m (26191): [36mupdate session[39m
+[17:32:25.024] [32mINFO[39m (26191): [36mupdate session[39m
+ ✓ Compiled in 411ms (1492 modules)
+debug-enabled [ 0, [ 'debug-enabled' ] ]
+update session {
+  user: {
+  name: 'Dmitrii Emelianov',
+  email: 'emelianovdmitriy@gmail.com',
+  image: 'https://lh3.googleusercontent.com/a/ACg8ocLA3vQBMdS4GkYPxFapJF7vRMErPbZrilBlCYHMNzdiOxxHE-4=s96-c',
+  role: 'UNCONFIRMED',
+  id: 'bbf03d45-8c18-483c-8bcf-264df3a5e2d9'
+},
+  expires: '2025-03-07T16:33:01.357Z'
+}
+role UNCONFIRMED
+ GET /app/unconfirmed 200 in 116ms
+[17:33:01.527] [33mWARN[39m (26191): [36mdebug-enabled[39m
+[17:33:01.544] [32mINFO[39m (26191): [36mupdate session[39m
+[17:33:01.545] [32mINFO[39m (26191): [36mupdate session[39m
+ ✓ Compiled /api/auth/[...nextauth] in 373ms (1247 modules)
+ GET /api/auth/session 200 in 520ms
+ │ GET http://localhost:8000/api/v1/users/user?email=emelianovdmitriy%40gmail.com 200 in 2ms (cache hit)
+[17:34:35.749] [33mWARN[39m (26191): [36mdebug-enabled[39m
+[17:34:35.761] [32mINFO[39m (26191): [36mupdate session[39m
+ GET /api/auth/session 200 in 27ms
+ │ GET http://localhost:8000/api/v1/users/user?email=emelianovdmitriy%40gmail.com 200 in 1ms (cache hit)
+[17:34:35.828] [32mINFO[39m (26191): [36mupdate session[39m
+update session {
+  user: {
+  name: 'Dmitrii Emelianov',
+  email: 'emelianovdmitriy@gmail.com',
+  image: 'https://lh3.googleusercontent.com/a/ACg8ocLA3vQBMdS4GkYPxFapJF7vRMErPbZrilBlCYHMNzdiOxxHE-4=s96-c',
+  role: 'UNCONFIRMED',
+  id: 'bbf03d45-8c18-483c-8bcf-264df3a5e2d9'
+},
+  expires: '2025-03-07T16:34:35.798Z'
+}
+role UNCONFIRMED
+ GET /app/unconfirmed 200 in 60ms
+[17:34:35.937] [32mINFO[39m (26191): [36mupdate session[39m
+[17:34:35.938] [32mINFO[39m (26191): [36mupdate session[39m
+update session {
+  user: {
+  name: 'Dmitrii Emelianov',
+  email: 'emelianovdmitriy@gmail.com',
+  image: 'https://lh3.googleusercontent.com/a/ACg8ocLA3vQBMdS4GkYPxFapJF7vRMErPbZrilBlCYHMNzdiOxxHE-4=s96-c',
+  role: 'UNCONFIRMED',
+  id: 'bbf03d45-8c18-483c-8bcf-264df3a5e2d9'
+},
+  expires: '2025-03-07T16:34:36.177Z'
+}
+role UNCONFIRMED
+[17:34:36.450] [32mINFO[39m (26191): [36mupdate session[39m
+[17:34:36.450] [32mINFO[39m (26191): [36mupdate session[39m
+ GET /app/unconfirmed 200 in 334ms
+ │ GET http://localhost:8000/api/v1/users/user?email=emelianovdmitriy%40gmail.com 200 in 0ms (cache hit)
+ ✓ Compiled /favicon.ico in 365ms (1285 modules)
+ GET /favicon.ico 200 in 429ms
+ ✓ Compiled in 898ms (1994 modules)
+ GET /api/auth/session 200 in 106ms
+ │ GET http://localhost:8000/api/v1/users/user?email=emelianovdmitriy%40gmail.com 200 in 1ms (cache hit)
+ GET /api/auth/session 200 in 23ms
+ │ GET http://localhost:8000/api/v1/users/user?email=emelianovdmitriy%40gmail.com 200 in 0ms (cache hit)
+[17:35:16.312] [33mWARN[39m (26191): [36mdebug-enabled[39m
+[17:35:16.321] [32mINFO[39m (26191): [36mupdate session[39m
+[17:35:16.362] [32mINFO[39m (26191): [36mupdate session[39m
+ GET /api/auth/session 200 in 51ms
+ │ GET http://localhost:8000/api/v1/users/user?email=emelianovdmitriy%40gmail.com 200 in 0ms (cache hit)
+ GET /api/auth/session 200 in 22ms
+ │ GET http://localhost:8000/api/v1/users/user?email=emelianovdmitriy%40gmail.com 200 in 0ms (cache hit)
+[17:35:23.312] [32mINFO[39m (26191): [36mupdate session[39m
+[17:35:23.353] [32mINFO[39m (26191): [36mupdate session[39m
+ ✓ Compiled in 330ms (1994 modules)
+ GET /api/auth/session 200 in 79ms
+ │ GET http://localhost:8000/api/v1/users/user?email=emelianovdmitriy%40gmail.com 200 in 1ms (cache hit)
+ GET /api/auth/session 200 in 28ms
+ │ GET http://localhost:8000/api/v1/users/user?email=emelianovdmitriy%40gmail.com 200 in 1ms (cache hit)
+[17:35:29.314] [33mWARN[39m (26191): [36mdebug-enabled[39m
+[17:35:29.322] [32mINFO[39m (26191): [36mupdate session[39m
+[17:35:29.365] [32mINFO[39m (26191): [36mupdate session[39m
+update session {
+  user: {
+  name: 'Dmitrii Emelianov',
+  email: 'emelianovdmitriy@gmail.com',
+  image: 'https://lh3.googleusercontent.com/a/ACg8ocLA3vQBMdS4GkYPxFapJF7vRMErPbZrilBlCYHMNzdiOxxHE-4=s96-c',
+  role: 'UNCONFIRMED',
+  id: 'bbf03d45-8c18-483c-8bcf-264df3a5e2d9'
+},
+  expires: '2025-03-07T16:35:33.867Z'
+}
+ POST /app/unconfirmed 200 in 114ms
+[17:35:34.022] [33mWARN[39m (26191): [36mdebug-enabled[39m
+[17:35:34.029] [32mINFO[39m (26191): [36mupdate session[39m
+[17:35:34.061] [31mERROR[39m (26191): [36mFailed to change role[39m
+ GET /api/auth/session 200 in 40ms
+ │ GET http://localhost:8000/api/v1/users/user?email=emelianovdmitriy%40gmail.com 200 in 1ms (cache hit)
+ GET /api/auth/session 200 in 15ms
+ │ GET http://localhost:8000/api/v1/users/user?email=emelianovdmitriy%40gmail.com 200 in 0ms (cache hit)
+[17:35:42.875] [32mINFO[39m (26191): [36mupdate session[39m
+[17:35:42.903] [32mINFO[39m (26191): [36mupdate session[39m
+ GET /api/auth/session 200 in 42ms
+ │ GET http://localhost:8000/api/v1/users/user?email=emelianovdmitriy%40gmail.com 200 in 1ms (cache hit)
+ GET /api/auth/session 200 in 33ms
+ │ GET http://localhost:8000/api/v1/users/user?email=emelianovdmitriy%40gmail.com 200 in 1ms (cache hit)
+[17:35:59.871] [32mINFO[39m (26191): [36mupdate session[39m
+[17:35:59.920] [32mINFO[39m (26191): [36mupdate session[39m
+ GET /api/auth/session 200 in 42ms
+ │ GET http://localhost:8000/api/v1/users/user?email=emelianovdmitriy%40gmail.com 200 in 0ms (cache hit)
+ GET /api/auth/session 200 in 28ms
+ │ GET http://localhost:8000/api/v1/users/user?email=emelianovdmitriy%40gmail.com 200 in 0ms (cache hit)
+[17:36:03.861] [32mINFO[39m (26191): [36mupdate session[39m
+[17:36:03.903] [32mINFO[39m (26191): [36mupdate session[39m
+ GET /api/auth/session 200 in 40ms
+ │ GET http://localhost:8000/api/v1/users/user?email=emelianovdmitriy%40gmail.com 200 in 1ms (cache hit)
+ GET /api/auth/session 200 in 29ms
+ │ GET http://localhost:8000/api/v1/users/user?email=emelianovdmitriy%40gmail.com 200 in 1ms (cache hit)
+[17:36:08.473] [32mINFO[39m (26191): [36mupdate session[39m
+[17:36:08.512] [32mINFO[39m (26191): [36mupdate session[39m
+ GET /api/auth/session 200 in 42ms
+ │ GET http://localhost:8000/api/v1/users/user?email=emelianovdmitriy%40gmail.com 200 in 0ms (cache hit)
+ GET /api/auth/session 200 in 22ms
+ │ GET http://localhost:8000/api/v1/users/user?email=emelianovdmitriy%40gmail.com 200 in 0ms (cache hit)
+[17:36:35.132] [32mINFO[39m (26191): [36mupdate session[39m
+[17:36:35.165] [32mINFO[39m (26191): [36mupdate session[39m
+ ✓ Compiled in 807ms (1247 modules)
+update session {
+  user: {
+  name: 'Dmitrii Emelianov',
+  email: 'emelianovdmitriy@gmail.com',
+  image: 'https://lh3.googleusercontent.com/a/ACg8ocLA3vQBMdS4GkYPxFapJF7vRMErPbZrilBlCYHMNzdiOxxHE-4=s96-c',
+  role: 'UNCONFIRMED',
+  id: 'bbf03d45-8c18-483c-8bcf-264df3a5e2d9'
+},
+  expires: '2025-03-07T16:36:58.095Z'
+}
+ GET /app/unconfirmed 200 in 209ms
+[17:36:58.345] [33mWARN[39m (26191): [36mdebug-enabled[39m
+[17:36:58.367] [32mINFO[39m (26191): [36mupdate session[39m
+[17:36:58.368] [32mINFO[39m (26191): [36mupdate session[39m
+ ✓ Compiled in 879ms (1492 modules)
+debug-enabled [ 0, [ 'debug-enabled' ] ]
+update session {
+  user: {
+  name: 'Dmitrii Emelianov',
+  email: 'emelianovdmitriy@gmail.com',
+  image: 'https://lh3.googleusercontent.com/a/ACg8ocLA3vQBMdS4GkYPxFapJF7vRMErPbZrilBlCYHMNzdiOxxHE-4=s96-c',
+  role: 'UNCONFIRMED',
+  id: '1'
+},
+  expires: '2025-03-07T16:38:09.935Z'
+}
+ GET /app/unconfirmed 200 in 174ms
+[17:38:10.415] [33mWARN[39m (26191): [36mdebug-enabled[39m
+[17:38:10.431] [32mINFO[39m (26191): [36mupdate session[39m
+[17:38:10.431] [32mINFO[39m (26191): [36mupdate session[39m
+ ✓ Compiled /api/auth/[...nextauth] in 191ms (1247 modules)
+ GET /api/auth/session 200 in 324ms
+ │ GET http://localhost:8000/api/v1/users/user?email=emelianovdmitriy%40gmail.com 200 in 1ms (cache hit)
+ GET /api/auth/session 200 in 36ms
+ │ GET http://localhost:8000/api/v1/users/user?email=emelianovdmitriy%40gmail.com 200 in 0ms (cache hit)
+update session {
+  user: {
+  name: 'Dmitrii Emelianov',
+  email: 'emelianovdmitriy@gmail.com',
+  image: 'https://lh3.googleusercontent.com/a/ACg8ocLA3vQBMdS4GkYPxFapJF7vRMErPbZrilBlCYHMNzdiOxxHE-4=s96-c',
+  role: 'UNCONFIRMED',
+  id: '1'
+},
+  expires: '2025-03-07T16:38:19.016Z'
+}
+[17:38:18.980] [33mWARN[39m (26191): [36mdebug-enabled[39m
+[17:38:18.988] [32mINFO[39m (26191): [36mupdate session[39m
+[17:38:19.043] [32mINFO[39m (26191): [36mupdate session[39m
+ GET /app/unconfirmed 200 in 64ms
+[17:38:19.121] [32mINFO[39m (26191): [36mupdate session[39m
+[17:38:19.122] [32mINFO[39m (26191): [36mupdate session[39m
+update session {
+  user: {
+  name: 'Dmitrii Emelianov',
+  email: 'emelianovdmitriy@gmail.com',
+  image: 'https://lh3.googleusercontent.com/a/ACg8ocLA3vQBMdS4GkYPxFapJF7vRMErPbZrilBlCYHMNzdiOxxHE-4=s96-c',
+  role: 'UNCONFIRMED',
+  id: '1'
+},
+  expires: '2025-03-07T16:38:20.864Z'
+}
+ GET /app/unconfirmed 200 in 175ms
+ │ GET http://localhost:8000/api/v1/users/user?email=emelianovdmitriy%40gmail.com 200 in 0ms (cache hit)
+[17:38:20.995] [32mINFO[39m (26191): [36mupdate session[39m
+[17:38:20.995] [32mINFO[39m (26191): [36mupdate session[39m
+ ✓ Compiled /favicon.ico in 295ms (1285 modules)
+ GET /favicon.ico 200 in 390ms
+update session {
+  user: {
+  name: 'Dmitrii Emelianov',
+  email: 'emelianovdmitriy@gmail.com',
+  image: 'https://lh3.googleusercontent.com/a/ACg8ocLA3vQBMdS4GkYPxFapJF7vRMErPbZrilBlCYHMNzdiOxxHE-4=s96-c',
+  role: 'UNCONFIRMED',
+  id: '1'
+},
+  expires: '2025-03-07T16:38:25.935Z'
+}
+[17:38:26.086] [33mWARN[39m (26191): [36mdebug-enabled[39m
+[17:38:26.091] [32mINFO[39m (26191): [36mupdate session[39m
+[17:38:26.266] [33mWARN[39m (26191): [36mdebug-enabled[39m
+ POST /app/unconfirmed 200 in 290ms
+[17:38:26.307] [32mINFO[39m (26191): [36mupdate session[39m
+[17:38:26.307] [32mINFO[39m (26191): [36mupdate session[39m
+[17:38:26.239] [31mERROR[39m (26191): [36mFailed to change role[39m
+[17:38:26.239] [32mINFO[39m (26191): [36mInvalidating user cache[39m
+ GET /api/auth/session 200 in 129ms
+ │ GET http://localhost:8000/api/v1/users/user?email=emelianovdmitriy%40gmail.com 200 in 1ms (cache hit)
+ GET /api/auth/session 200 in 30ms
+ │ GET http://localhost:8000/api/v1/users/user?email=emelianovdmitriy%40gmail.com 200 in 0ms (cache hit)
+ GET /api/auth/session 200 in 32ms
+ │ GET http://localhost:8000/api/v1/users/user?email=emelianovdmitriy%40gmail.com 200 in 1ms (cache hit)
+ GET /api/auth/session 200 in 28ms
+ │ GET http://localhost:8000/api/v1/users/user?email=emelianovdmitriy%40gmail.com 200 in 0ms (cache hit)
+[17:39:22.721] [32mINFO[39m (26191): [36mupdate session[39m
+[17:39:22.769] [32mINFO[39m (26191): [36mupdate session[39m
+[17:39:22.814] [32mINFO[39m (26191): [36mupdate session[39m
+[17:39:22.849] [32mINFO[39m (26191): [36mupdate session[39m
+ GET /api/auth/session 200 in 37ms
+ │ GET http://localhost:8000/api/v1/users/user?email=emelianovdmitriy%40gmail.com 200 in 0ms (cache hit)
+ GET /api/auth/session 200 in 28ms
+ │ GET http://localhost:8000/api/v1/users/user?email=emelianovdmitriy%40gmail.com 200 in 1ms (cache hit)
+[17:39:41.233] [32mINFO[39m (26191): [36mupdate session[39m
+[17:39:41.273] [32mINFO[39m (26191): [36mupdate session[39m
+ GET /api/auth/session 200 in 41ms
+ │ GET http://localhost:8000/api/v1/users/user?email=emelianovdmitriy%40gmail.com 200 in 0ms (cache hit)
+ GET /api/auth/session 200 in 38ms
+ │ GET http://localhost:8000/api/v1/users/user?email=emelianovdmitriy%40gmail.com 200 in 0ms (cache hit)
+[17:39:45.108] [32mINFO[39m (26191): [36mupdate session[39m
+[17:39:45.156] [32mINFO[39m (26191): [36mupdate session[39m
+update session {
+  user: {
+  name: 'Dmitrii Emelianov',
+  email: 'emelianovdmitriy@gmail.com',
+  image: 'https://lh3.googleusercontent.com/a/ACg8ocLA3vQBMdS4GkYPxFapJF7vRMErPbZrilBlCYHMNzdiOxxHE-4=s96-c',
+  role: 'VENDOR',
+  id: '1'
+},
+  expires: '2025-03-07T16:39:47.328Z'
+}
+ GET /app/unconfirmed 404 in 201ms
+ │ GET http://localhost:8000/api/v1/users/user?email=emelianovdmitriy%40gmail.com 200 in 0ms (cache hit)
+[17:39:47.544] [32mINFO[39m (26191): [36mupdate session[39m
+[17:39:47.545] [32mINFO[39m (26191): [36mupdate session[39m
+ GET /favicon.ico 200 in 21ms
+ GET /api/auth/session 200 in 42ms
+ │ GET http://localhost:8000/api/v1/users/user?email=emelianovdmitriy%40gmail.com 200 in 1ms (cache hit)
+ GET /api/auth/session 200 in 33ms
+ │ GET http://localhost:8000/api/v1/users/user?email=emelianovdmitriy%40gmail.com 200 in 1ms (cache hit)
+[17:40:23.287] [32mINFO[39m (26191): [36mupdate session[39m
+[17:40:23.337] [32mINFO[39m (26191): [36mupdate session[39m
+ GET /api/auth/session 200 in 44ms
+ │ GET http://localhost:8000/api/v1/users/user?email=emelianovdmitriy%40gmail.com 200 in 0ms (cache hit)
+ GET /api/auth/session 200 in 38ms
+ │ GET http://localhost:8000/api/v1/users/user?email=emelianovdmitriy%40gmail.com 200 in 1ms (cache hit)
+[17:44:10.933] [32mINFO[39m (26191): [36mupdate session[39m
+[17:44:10.981] [32mINFO[39m (26191): [36mupdate session[39m
+update session {
+  user: {
+  name: 'Dmitrii Emelianov',
+  email: 'emelianovdmitriy@gmail.com',
+  image: 'https://lh3.googleusercontent.com/a/ACg8ocLA3vQBMdS4GkYPxFapJF7vRMErPbZrilBlCYHMNzdiOxxHE-4=s96-c',
+  role: 'VENDOR',
+  id: '1'
+},
+  expires: '2025-03-07T16:44:12.453Z'
+}
+ GET /app/unconfirmed 404 in 65ms
+ │ GET http://localhost:8000/api/v1/users/user?email=emelianovdmitriy%40gmail.com 200 in 0ms (cache hit)
+[17:44:13.027] [32mINFO[39m (26191): [36mupdate session[39m
+[17:44:13.027] [32mINFO[39m (26191): [36mupdate session[39m
+ GET /favicon.ico 200 in 19ms
+ GET /api/auth/session 200 in 49ms
+ │ GET http://localhost:8000/api/v1/users/user?email=emelianovdmitriy%40gmail.com 200 in 0ms (cache hit)
+ GET /api/auth/session 200 in 40ms
+ │ GET http://localhost:8000/api/v1/users/user?email=emelianovdmitriy%40gmail.com 200 in 1ms (cache hit)
+[17:46:20.895] [32mINFO[39m (26191): [36mupdate session[39m
+[17:46:20.952] [32mINFO[39m (26191): [36mupdate session[39m
+ GET /api/auth/session 200 in 43ms
+ │ GET http://localhost:8000/api/v1/users/user?email=emelianovdmitriy%40gmail.com 200 in 0ms (cache hit)
+ GET /api/auth/session 200 in 30ms
+ │ GET http://localhost:8000/api/v1/users/user?email=emelianovdmitriy%40gmail.com 200 in 1ms (cache hit)
+[17:46:22.044] [32mINFO[39m (26191): [36mupdate session[39m
+[17:46:22.085] [32mINFO[39m (26191): [36mupdate session[39m
+[17:48:46.629] [32mINFO[39m (26191): [36mupdate session[39m
+ GET /api/auth/session 200 in 58ms
+ │ GET http://localhost:8000/api/v1/users/user?email=emelianovdmitriy%40gmail.com 200 in 1ms (cache hit)
+ GET /api/auth/session 200 in 34ms
+ │ GET http://localhost:8000/api/v1/users/user?email=emelianovdmitriy%40gmail.com 200 in 0ms (cache hit)
+[17:48:46.682] [32mINFO[39m (26191): [36mupdate session[39m
+ ✓ Compiled in 814ms (1492 modules)
+debug-enabled [ 0, [ 'debug-enabled' ] ]
+update session {
+  user: {
+  name: 'Dmitrii Emelianov',
+  email: 'emelianovdmitriy@gmail.com',
+  image: 'https://lh3.googleusercontent.com/a/ACg8ocLA3vQBMdS4GkYPxFapJF7vRMErPbZrilBlCYHMNzdiOxxHE-4=s96-c',
+  role: 'VENDOR',
+  id: '1'
+},
+  expires: '2025-03-07T16:50:06.748Z'
+}
+update session {
+  user: {
+  name: 'Dmitrii Emelianov',
+  email: 'emelianovdmitriy@gmail.com',
+  image: 'https://lh3.googleusercontent.com/a/ACg8ocLA3vQBMdS4GkYPxFapJF7vRMErPbZrilBlCYHMNzdiOxxHE-4=s96-c',
+  role: 'VENDOR',
+  id: '1'
+},
+  expires: '2025-03-07T16:50:06.744Z'
+}
+[17:50:07.240] [33mWARN[39m (26191): [36mdebug-enabled[39m
+[17:50:07.249] [32mINFO[39m (26191): [36mupdate session[39m
+[17:50:07.250] [32mINFO[39m (26191): [36mupdate session[39m
+ GET /app/unconfirmed 200 in 279ms
+[17:50:07.326] [32mINFO[39m (26191): [36mupdate session[39m
+[17:50:07.326] [32mINFO[39m (26191): [36mupdate session[39m
+ GET /app/unconfirmed 404 in 298ms
+ │ GET http://localhost:8000/api/v1/users/user?email=emelianovdmitriy%40gmail.com 200 in 0ms (cache hit)
+ ✓ Compiled /favicon.ico in 189ms (1282 modules)
+ GET /favicon.ico 200 in 253ms
+ GET /favicon.ico 200 in 15ms
+ GET /favicon.ico 200 in 16ms
+ ✓ Compiled in 964ms (1991 modules)
+ ✓ Compiled in 556ms (1991 modules)
+ ✓ Compiled /api/auth/[...nextauth] in 439ms (1247 modules)
+ GET /api/auth/session 200 in 604ms
+ │ GET http://localhost:8000/api/v1/users/user?email=emelianovdmitriy%40gmail.com 200 in 1ms (cache hit)
+[17:51:45.971] [33mWARN[39m (26191): [36mdebug-enabled[39m
+[17:51:45.982] [32mINFO[39m (26191): [36mupdate session[39m
+ GET /api/auth/session 200 in 27ms
+ │ GET http://localhost:8000/api/v1/users/user?email=emelianovdmitriy%40gmail.com 200 in 1ms (cache hit)
+[17:51:46.059] [32mINFO[39m (26191): [36mupdate session[39m
+update session {
+  user: {
+  name: 'Dmitrii Emelianov',
+  email: 'emelianovdmitriy@gmail.com',
+  image: 'https://lh3.googleusercontent.com/a/ACg8ocLA3vQBMdS4GkYPxFapJF7vRMErPbZrilBlCYHMNzdiOxxHE-4=s96-c',
+  role: 'VENDOR',
+  id: '1'
+},
+  expires: '2025-03-07T16:51:46.032Z'
+}
+update session {
+  user: {
+  name: 'Dmitrii Emelianov',
+  email: 'emelianovdmitriy@gmail.com',
+  image: 'https://lh3.googleusercontent.com/a/ACg8ocLA3vQBMdS4GkYPxFapJF7vRMErPbZrilBlCYHMNzdiOxxHE-4=s96-c',
+  role: 'VENDOR',
+  id: '1'
+},
+  expires: '2025-03-07T16:51:46.026Z'
+}
+ GET /app/unconfirmed 200 in 372ms
+ GET /app/unconfirmed 404 in 381ms
+ │ GET http://localhost:8000/api/v1/users/user?email=emelianovdmitriy%40gmail.com 200 in 0ms (cache hit)
+[17:51:46.387] [32mINFO[39m (26191): [36mupdate session[39m
+[17:51:46.388] [32mINFO[39m (26191): [36mupdate session[39m
+[17:51:46.389] [32mINFO[39m (26191): [36mupdate session[39m
+[17:51:46.389] [32mINFO[39m (26191): [36mupdate session[39m
+ ✓ Compiled /favicon.ico in 166ms (1285 modules)
+ GET /favicon.ico 200 in 235ms
+update session {
+  user: {
+  name: 'Dmitrii Emelianov',
+  email: 'emelianovdmitriy@gmail.com',
+  image: 'https://lh3.googleusercontent.com/a/ACg8ocLA3vQBMdS4GkYPxFapJF7vRMErPbZrilBlCYHMNzdiOxxHE-4=s96-c',
+  role: 'VENDOR',
+  id: '1'
+},
+  expires: '2025-03-07T16:51:56.767Z'
+}
+ ○ Compiling /app/dashboard ...
+ ✓ Compiled /app/dashboard in 10.5s (5672 modules)
+ GET /api/auth/session 200 in 4800ms
+ │ GET http://localhost:8000/api/v1/users/user?email=emelianovdmitriy%40gmail.com 200 in 1ms (cache hit)
+[17:52:07.462] [33mWARN[39m (26191): [36mdebug-enabled[39m
+[17:52:07.474] [32mINFO[39m (26191): [36mupdate session[39m
+ ○ Compiling /app/dashboard ...
+ ✓ Compiled /app/dashboard in 525ms (3102 modules)
+styled-components: it looks like an unknown prop "themeType" is being sent through to the DOM, which will likely trigger a React console error. If you would like automatic filtering of unknown props, you can opt-into that behavior via `<StyleSheetManager shouldForwardProp={...}>` (connect an API like `@emotion/is-prop-valid`) or consider using transient props (`$` prefix for automatic filtering.)
+React does not recognize the `themeType` prop on a DOM element. If you intentionally want it to appear in the DOM as a custom attribute, spell it as lowercase `themetype` instead. If you accidentally passed it from a parent component, remove it from the DOM element.
+styled-components: it looks like an unknown prop "isActive" is being sent through to the DOM, which will likely trigger a React console error. If you would like automatic filtering of unknown props, you can opt-into that behavior via `<StyleSheetManager shouldForwardProp={...}>` (connect an API like `@emotion/is-prop-valid`) or consider using transient props (`$` prefix for automatic filtering.)
+React does not recognize the `isActive` prop on a DOM element. If you intentionally want it to appear in the DOM as a custom attribute, spell it as lowercase `isactive` instead. If you accidentally passed it from a parent component, remove it from the DOM element.
+ GET /api/auth/session 200 in 1286ms
+[17:52:08.636] [33mWARN[39m (26191): [36mdebug-enabled[39m
+[17:52:08.646] [32mINFO[39m (26191): [36mupdate session[39m
+[17:52:08.647] [32mINFO[39m (26191): [36mupdate session[39m
+[17:52:08.780] [32mINFO[39m (26191): [36mupdate session[39m
+ GET /app/dashboard 200 in 12035ms
+ │ GET http://localhost:8000/api/v1/users/user?email=emelianovdmitriy%40gmail.com 200 in 0ms (cache hit)
+update session {
+  user: {
+  name: 'Dmitrii Emelianov',
+  email: 'emelianovdmitriy@gmail.com',
+  image: 'https://lh3.googleusercontent.com/a/ACg8ocLA3vQBMdS4GkYPxFapJF7vRMErPbZrilBlCYHMNzdiOxxHE-4=s96-c',
+  role: 'VENDOR',
+  id: '1'
+},
+  expires: '2025-03-07T16:52:10.752Z'
+}
+proxying request { pathname: '/service/briefs', newPathname: '/api/v1/briefs' }
+ ✓ Compiled /_not-found in 462ms (5621 modules)
+[17:52:11.359] [33mWARN[39m (26191): [36mdebug-enabled[39m
+[17:52:11.362] [32mINFO[39m (26191): [36mupdate session[39m
+ GET /service/briefs 404 in 587ms
+ │ GET http://localhost:8000/api/v1/users/user?email=emelianovdmitriy%40gmail.com 200 in 0ms (cache hit)
+ ✓ Compiled in 578ms (250 modules)
+debug-enabled [ 0, [ 'debug-enabled' ] ]
+ GET /api/auth/session 200 in 169ms
+ │ GET http://localhost:8000/api/v1/users/user?email=emelianovdmitriy%40gmail.com 200 in 1ms (cache hit)
+update session {
+  user: {
+  name: 'Dmitrii Emelianov',
+  email: 'emelianovdmitriy@gmail.com',
+  image: 'https://lh3.googleusercontent.com/a/ACg8ocLA3vQBMdS4GkYPxFapJF7vRMErPbZrilBlCYHMNzdiOxxHE-4=s96-c',
+  role: 'VENDOR',
+  id: '1'
+},
+  expires: '2025-03-07T16:53:03.721Z'
+}
+proxying request { pathname: '/service/briefs', newPathname: '/api/v1/briefs' }
+[17:53:03.767] [33mWARN[39m (26191): [36mdebug-enabled[39m
+[17:53:03.771] [32mINFO[39m (26191): [36mupdate session[39m
+ GET /api/auth/session 200 in 138ms
+ │ GET http://localhost:8000/api/v1/users/user?email=emelianovdmitriy%40gmail.com 200 in 1ms (cache hit)
+[17:53:03.962] [32mINFO[39m (26191): [36mupdate session[39m
+ GET /service/briefs 404 in 133ms
+ │ GET http://localhost:8000/api/v1/users/user?email=emelianovdmitriy%40gmail.com 200 in 1ms (cache hit)
+[17:53:03.899] [32mINFO[39m (26191): [36mupdate session[39m
+update session {
+  user: {
+  name: 'Dmitrii Emelianov',
+  email: 'emelianovdmitriy@gmail.com',
+  image: 'https://lh3.googleusercontent.com/a/ACg8ocLA3vQBMdS4GkYPxFapJF7vRMErPbZrilBlCYHMNzdiOxxHE-4=s96-c',
+  role: 'VENDOR',
+  id: '1'
+},
+  expires: '2025-03-07T16:53:09.831Z'
+}
+[17:53:09.933] [33mWARN[39m (26191): [36mdebug-enabled[39m
+ ○ Compiling /auth ...
+ ✓ Compiled /auth in 1285ms (5682 modules)
+ GET /auth 200 in 1498ms
+[17:53:11.418] [33mWARN[39m (26191): [36mdebug-enabled[39m
+ POST /app/dashboard 303 in 1601ms
+ GET /auth 200 in 38ms
+ GET /auth 200 in 36ms
+checkEmail test@test.ru
+ POST /auth 200 in 138ms
+ POST /auth 200 in 39ms
+[17:53:33.023] [31mERROR[39m (26191): [36mError register:[39m
+[17:53:33.024] [31mERROR[39m (26191): [36mError signing up:[39m
+ GET /api/auth/session 200 in 57ms
+ GET /api/auth/session 200 in 52ms
+ GET /auth 200 in 62ms
+ POST /auth 303 in 130ms
+ GET /auth 200 in 41ms
+[17:53:48.274] [33mWARN[39m (26191): [36mdebug-enabled[39m
+ ✓ Compiled in 1696ms (3358 modules)
+debug-enabled [ 0, [ 'debug-enabled' ] ]
+ GET /auth 200 in 183ms
+[17:59:06.313] [33mWARN[39m (26191): [36mdebug-enabled[39m
+ ✓ Compiled in 447ms (3358 modules)
+debug-enabled [ 0, [ 'debug-enabled' ] ]
+ GET /auth 200 in 117ms
+[17:59:21.458] [33mWARN[39m (26191): [36mdebug-enabled[39m
+ ✓ Compiled in 402ms (3358 modules)
+debug-enabled [ 0, [ 'debug-enabled' ] ]
+ GET /auth 200 in 67ms
+[17:59:25.318] [33mWARN[39m (26191): [36mdebug-enabled[39m
+ ✓ Compiled in 505ms (3358 modules)
+debug-enabled [ 0, [ 'debug-enabled' ] ]
+ GET /auth 200 in 59ms
+[17:59:50.137] [33mWARN[39m (26191): [36mdebug-enabled[39m
+ ✓ Compiled in 487ms (3358 modules)
+debug-enabled [ 0, [ 'debug-enabled' ] ]
+ GET /auth 200 in 111ms
+[18:00:29.697] [33mWARN[39m (26191): [36mdebug-enabled[39m
+ ✓ Compiled in 415ms (3358 modules)
+debug-enabled [ 0, [ 'debug-enabled' ] ]
+ GET /auth 200 in 51ms
+[18:00:44.134] [33mWARN[39m (26191): [36mdebug-enabled[39m
+checkEmail test@test.ru
+ POST /auth 200 in 388ms
+ POST /auth 200 in 28ms
+[18:01:11.603] [32mINFO[39m (26191): [36mRegistering user:[39m
+[18:01:11.610] [32mINFO[39m (26191): [36mRegister response:[39m
+[18:01:11.610] [31mERROR[39m (26191): [36mError register:[39m
+[18:01:11.610] [31mERROR[39m (26191): [36mError signing up:[39m

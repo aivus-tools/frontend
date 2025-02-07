@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server';
 import { promises as fs } from 'fs';
 import path from 'path';
 import { v4 as uuidv4 } from 'uuid';
+import logger from '@/lib/logger';
 
 const filePath = path.join(process.cwd(), 'db.json');
 
@@ -41,7 +42,7 @@ export async function POST(req: Request) {
 
 		return NextResponse.json({ success: true, data: newBrief }, { status: 200 });
 	} catch (error) {
-		console.error('Ошибка обработки запроса:', error);
+		logger.error('Ошибка обработки запроса:', error);
 		return NextResponse.json({ error: 'Произошла ошибка на сервере' }, { status: 500 });
 	}
 }
@@ -59,7 +60,7 @@ export async function GET() {
 
 		return NextResponse.json(fileData, { status: 200 });
 	} catch (error) {
-		console.error('Ошибка обработки запроса:', error);
+		logger.error('Ошибка обработки запроса:', error);
 		return NextResponse.json({ error: 'Произошла ошибка на сервере' }, { status: 500 });
 	}
 }

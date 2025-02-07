@@ -2,8 +2,6 @@ import logger from '@/lib/logger';
 import { routes } from '@/lib/service-routes';
 import { Roles, User } from '@/types/user';
 
-const PASSWORD = '123';
-
 /**
  * Аутентификация пользователя.
  * @returns Данные пользователя
@@ -36,12 +34,15 @@ export async function register({
 	name,
 	email,
 	authType,
+	password,
 }: {
 	name: string;
 	email: string;
+	password?: string;
 	authType: 'CREDENTIALS' | 'GOOGLE';
 }): Promise<boolean> {
 	try {
+		logger.info('Registering user:', { name, email, authType, password });
 		const response = await fetch(routes.REGISTER, {
 			method: 'POST',
 			headers: {
@@ -50,10 +51,12 @@ export async function register({
 			body: JSON.stringify({
 				email,
 				name,
-				password: PASSWORD,
 				authType,
+				password,
 			}),
 		});
+		logger.info('Register response:', response);
+
 		if (!response.ok) {
 			throw new Error(`Failed to fetch ${routes.LOGIN}: ${response.statusText}`);
 		}
@@ -69,7 +72,6 @@ export async function register({
  * @returns boolean
  */
 export async function checkEmail({ email }: { email: string }): Promise<boolean> {
-	console.log('checkEmail', email);
 	try {
 		const response = await fetch(routes.CHECK_EMAIL, {
 			method: 'POST',
@@ -93,16 +95,20 @@ export async function checkEmail({ email }: { email: string }): Promise<boolean>
  * Меняет роль пользователя.
  * @returns boolean
  */
-export async function changeRole(id: string, newRole: Roles): Promise<boolean> {
+export async function changeRole(id: string, newGroup: Roles): Promise<boolean> {
 	try {
-		const response = await fetch(routes.changeRole(id), {
+		const res = await fetch(routes.changeRole(id), {
 			method: 'PATCH',
 			headers: {
 				'Content-Type': 'application/json',
 			},
-			body: JSON.stringify({ newRole }),
+			body: JSON.stringify({ newGroup }),
 		});
-		return response.ok;
+		if (!res.ok) {
+			const message = await res.json();
+			throw new Error(`Failed to fetch ${routes.changeRole(id)}: ${res.statusText} ${message}`);
+		}
+		return true;
 	} catch (error) {
 		logger.error('Error changing role:', error);
 		throw error;

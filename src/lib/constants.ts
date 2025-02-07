@@ -1,3 +1,8 @@
+export const AUTH_TYPES = {
+	google: 'GOOGLE',
+	credentials: 'CREDENTIALS',
+} as const;
+
 export const ROLES = {
 	client: 'CLIENT',
 	vendor: 'VENDOR',

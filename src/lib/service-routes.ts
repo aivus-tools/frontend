@@ -7,6 +7,6 @@ export const routes = {
 	REGISTER: `${BASE_URL}/auth/register`,
 	LOGIN: `${BASE_URL}/auth/login`,
 	CHECK_EMAIL: `${BASE_URL}/auth/check-email`,
-	changeRole: (id: number | string) => `${BASE_URL}/auth/change-role/${id}`,
+	changeRole: (id: number | string) => `${BASE_URL}/auth/change-group/${id}`,
 	getUserByEmail: (email: string) => `${BASE_URL}/users/user?email=${encodeURIComponent(email)}`,
 };

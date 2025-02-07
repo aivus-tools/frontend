@@ -1,0 +1,17 @@
+'use client';
+import { useSelectedLayoutSegments } from 'next/navigation';
+import { useEffect } from 'react';
+import { selectProjectId, setProjectId } from '@/store/slices/project';
+import { useAppDispatch, useAppSelector } from '@/lib/hooks';
+
+export const useSetProject = () => {
+	const [, projectId] = useSelectedLayoutSegments();
+	const storedProjectId = useAppSelector(selectProjectId);
+	const dispatch = useAppDispatch();
+
+	useEffect(() => {
+		if (storedProjectId !== projectId) {
+			dispatch(setProjectId(projectId));
+		}
+	}, [projectId, dispatch, storedProjectId]);
+};

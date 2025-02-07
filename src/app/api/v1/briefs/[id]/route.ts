@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server';
 import { promises as fs } from 'fs';
 import path from 'path';
 import { Brief } from '@/types/brief';
+import logger from '@/lib/logger';
 
 const filePath = path.join(process.cwd(), 'db.json');
 
@@ -39,7 +40,7 @@ export async function PATCH(req: Request, { params }: { params: Promise<{ id: st
 
 		return NextResponse.json({ success: true, data: newBrief }, { status: 200 });
 	} catch (error) {
-		console.error('Ошибка обработки запроса:', error);
+		logger.error('Ошибка обработки запроса:', error);
 		return NextResponse.json({ error: 'Произошла ошибка на сервере' }, { status: 500 });
 	}
 }

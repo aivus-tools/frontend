@@ -14,7 +14,22 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
 				email: {},
 				password: {},
 			},
-			authorize: login,
+			authorize: async (credentials) => {
+				try {
+					const user = await login(credentials);
+
+					return {
+						id: `${user.id}`,
+						name: user.name,
+						email: user.email,
+						image: null,
+						role: user.group,
+					};
+				} catch (error) {
+					logger.error('authorize error', error);
+					return null;
+				}
+			},
 		}),
 	],
 	callbacks: {
@@ -27,20 +42,21 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
 						const ok = await register({ name, email, authType: 'GOOGLE' });
 						return Promise.resolve(ok);
 					} else {
-						console.error('No name and email', user);
+						logger.error('No name and email', user);
 						return Promise.resolve(false);
 					}
 				}
 				return Promise.resolve(true);
 			} catch (error) {
-				console.error(error);
+				logger.error('signIn error', error);
 				return Promise.resolve(false);
 			}
 		},
 		async session({ session }) {
 			const aivusUser = await fetchUserByEmail(session.user.email);
-			session.user.role = aivusUser.role;
-			session.user.id = aivusUser.id;
+			session.user.role = aivusUser.group;
+			session.user.id = `${aivusUser.id}`;
+			logger.info('update session', session);
 			return session;
 		},
 		authorized: async ({ auth }) => {

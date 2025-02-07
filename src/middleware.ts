@@ -3,17 +3,12 @@ import { NextResponse } from 'next/server';
 import { ROLES } from './lib/constants';
 import logger from './lib/logger';
 
-const validRoles = new Set<string | undefined>([ROLES.client, ROLES.vendor]);
 const changePathname = (pathname: string) => pathname.replace(/^\/service\//, '/api/v1/');
 
 const MOCK_ENDPOINTS = ['/api/v1/briefs'];
+const validRoles = new Set<string | undefined>([ROLES.client, ROLES.vendor]);
 
 export default auth((req) => {
-	logger.info('middleware', {
-		nextUrl: req.nextUrl.pathname,
-		auth: req.auth,
-		request: req,
-	});
 	if (req.nextUrl.pathname === '/') {
 		logger.info('redirecting to /auth');
 		return NextResponse.redirect(new URL('/auth', req.url));
@@ -28,26 +23,22 @@ export default auth((req) => {
 			logger.info('mocking request', { pathname, newPathname });
 			return NextResponse.rewrite(new URL(newPathname, req.url));
 		}
-		logger.info('proxying request', { pathname, newPathname });
+		logger.info('proxying request', { apiUrl: process.env.API_URL, newPathname, pathname });
 		return NextResponse.rewrite(new URL(newPathname, process.env.API_URL));
 	}
 
 	if (pathname.startsWith('/auth') && id) {
-		logger.info('redirecting to /app');
-		return NextResponse.redirect(new URL('/app', req.url));
+		if (validRoles.has(role)) {
+			logger.info('redirecting to /app/dashboard');
+			return NextResponse.redirect(new URL('/app/dashboard', req.url));
+		}
+		if (role === ROLES.unconfirmed) {
+			logger.info('redirecting to /app/unconfirmed');
+			return NextResponse.redirect(new URL('/app/unconfirmed', req.url));
+		}
 	}
 
-	if (pathname.startsWith('/app') && (!role || !id)) {
-		logger.info('redirecting to /auth');
-		return NextResponse.redirect(new URL('/auth', req.url));
-	}
-
-	if (!pathname.startsWith('/app') && pathname !== '/app/unconfirmed' && role === ROLES.unconfirmed) {
-		logger.info('redirecting to /app/unconfirmed');
-		return NextResponse.redirect(new URL('/app/unconfirmed', req.url));
-	}
-
-	if (pathname.endsWith('app') && validRoles.has(role)) {
+	if (pathname.startsWith('/app/unconfirmed') && validRoles.has(role)) {
 		logger.info('redirecting to /app/dashboard');
 		return NextResponse.redirect(new URL('/app/dashboard', req.url));
 	}

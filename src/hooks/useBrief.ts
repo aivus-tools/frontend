@@ -1,6 +1,5 @@
-import { NEW_BRIEF_SLUG } from '@/lib/constants';
 import { useAppSelector } from '@/lib/hooks';
-import { selectProjectId } from '@/store/slices/project';
+import { selectIsNewBrief, selectProjectId } from '@/store/slices/project';
 import { Brief } from '@/types/brief';
 import useSWR from 'swr';
 
@@ -15,7 +14,8 @@ async function getBrief(url: string): Promise<Brief> {
 }
 
 export const useBrief = () => {
+	const isNew = useAppSelector(selectIsNewBrief);
 	const projectId = useAppSelector(selectProjectId);
 
-	return useSWR<Brief>(projectId === NEW_BRIEF_SLUG ? null : `/service/briefs/${projectId}`, getBrief);
+	return useSWR<Brief>(isNew ? null : `/service/briefs/${projectId}`, getBrief);
 };

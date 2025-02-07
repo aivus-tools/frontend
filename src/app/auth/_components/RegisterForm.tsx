@@ -1,45 +1,137 @@
 'use client';
-import styles from '../styles.module.css';
-import { Button, Input } from 'antd';
-import { FormHTMLAttributes } from 'react';
+import { Button, Form, Input, message } from 'antd';
+import { signIn } from 'next-auth/react';
 
-export const RegisterForm = ({
-	action,
-	error,
-	onResetAction,
+import styles from '../styles.module.css';
+import { useState } from 'react';
+import { CALLBACK_URL } from '@/lib/service-routes';
+
+export interface ResponseData {
+	statusCode: number;
+	timestamp: string;
+	path: string;
+	message: string;
+	errorDetails: ErrorDetails;
+}
+
+export interface ErrorDetails {
+	message: string[];
+	error: string;
+	statusCode: number;
+}
+
+const register = async ({
+	name,
+	email,
+	authType,
+	password,
 }: {
-	action: FormHTMLAttributes<HTMLFormElement>['action'];
-	onResetAction: () => void;
-	error?: string;
-}) => {
+	name: string;
+	email: string;
+	password?: string;
+	authType: 'CREDENTIALS' | 'GOOGLE';
+}) =>
+	await fetch('service/auth/register', {
+		method: 'POST',
+		headers: {
+			'Content-Type': 'application/json',
+		},
+		body: JSON.stringify({
+			email,
+			name,
+			authType,
+			password,
+		}),
+	});
+
+type RegisterFormFields = {
+	name: string;
+	password: string;
+	repeatPassword: string;
+};
+
+export const RegisterForm = ({ email, prevStepAction }: { email: string; prevStepAction: () => void }) => {
+	const [messageApi, contextHolder] = message.useMessage();
+	const [form] = Form.useForm();
+	const [loading, setLoading] = useState(false);
+
+	const handleFinish = async ({ name, password, repeatPassword }: RegisterFormFields) => {
+		if (loading) {
+			return;
+		}
+		if (password !== repeatPassword) {
+			messageApi.error('Passwords do not match');
+			form.setFields([{ name: 'repeatPassword', errors: [''] }]);
+			return;
+		}
+		setLoading(true);
+
+		try {
+			const response = await register({
+				name,
+				email,
+				password,
+				authType: 'CREDENTIALS',
+			});
+			if (!response.ok) {
+				const data: ResponseData | null = await response.json();
+				if (data) {
+					data.errorDetails.message.forEach((message) => {
+						messageApi.error(message);
+					});
+				} else {
+					messageApi.error('Failed to register');
+				}
+				return;
+			}
+			messageApi.success('Registration successful');
+			const signInResult = await signIn('credentials', { email, password, redirect: false });
+			if (signInResult?.error) {
+				messageApi.error('Invalid credentials');
+				form.resetFields();
+				form.setFields([{ name: 'password', errors: [''] }]);
+			} else {
+				window.location.href = CALLBACK_URL ?? '/';
+			}
+		} catch (error) {
+			messageApi.error('An unexpected error occurred');
+			console.error('Error checking email:', error);
+		} finally {
+			setLoading(false);
+		}
+	};
 	return (
-		<form action={action} onReset={onResetAction}>
+		<Form form={form} layout='vertical' onFinish={handleFinish}>
+			{contextHolder}
 			<div className={styles.inputWrapper}>
-				<Input size='large' placeholder='Name' type='text' id='name' name='name' />
-				{error && <p className={styles.error}>{error}</p>}
+				<Form.Item name='name'>
+					<Input size='large' placeholder='Name' type='text' id='name' name='name' />
+				</Form.Item>
 			</div>
 			<div className={styles.inputWrapper}>
-				<Input size='large' placeholder='Enter your password' type='password' id='password' name='password' />
-				{error && <p className={styles.error}>{error}</p>}
+				<Form.Item name='password'>
+					<Input size='large' placeholder='Enter your password' type='password' id='password' name='password' />
+				</Form.Item>
 			</div>
 			<div className={styles.inputWrapper}>
-				<Input
-					size='large'
-					placeholder='Repeat your password'
-					type='password'
-					id='repeat-password'
-					name='repeat-password'
-				/>
-				{error && <p className={styles.error}>{error}</p>}
+				<Form.Item name='repeatPassword'>
+					<Input
+						size='large'
+						placeholder='Repeat your password'
+						type='password'
+						id='repeatPassword'
+						name='repeatPassword'
+					/>
+				</Form.Item>
 			</div>
 			<div className={styles.buttonRowGroup}>
-				<Button htmlType='reset' block>
+				<Button htmlType='reset' block onClick={prevStepAction}>
 					Back
 				</Button>
 				<Button type='primary' htmlType='submit' block>
 					Sign up
 				</Button>
 			</div>
-		</form>
+		</Form>
 	);
 };
