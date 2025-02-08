@@ -2,7 +2,7 @@ import { NextResponse } from 'next/server';
 import logger from '@/lib/logger';
 import { auth } from '@/auth';
 import { changeRole } from '@/services/authService';
-import { invalidateUserCache } from '@/services/revalidate';
+// import { invalidateUserCache } from '@/services/revalidate';
 import { Groups } from '@/types/user';
 
 export async function POST(req: Request) {
@@ -26,7 +26,7 @@ export async function POST(req: Request) {
 			NextResponse.json({ message: 'Failed to change role' }, { status: 500 });
 			return;
 		}
-		invalidateUserCache();
+		// invalidateUserCache();
 		return NextResponse.redirect(new URL('/app/dashboard', req.url));
 	} catch (error) {
 		logger.error('Ошибка обработки запроса:', error);
