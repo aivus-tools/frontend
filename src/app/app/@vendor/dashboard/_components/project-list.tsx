@@ -30,7 +30,7 @@ const mapBriefsToProjects = (briefs: Brief[]): Project[] => {
 		return {
 			id: brief.id,
 			title: details.projectName,
-			assignee: details.collaborators?.map(({ person }) => (person as unknown as { value?: string })?.value).join(', '),
+			assignee: details.collaborators?.map((it) => (it?.person as unknown as { value?: string })?.value).join(', '),
 			clientName: details.clientName,
 			clientContact: '?????????',
 			status: statusMap[brief.status],
