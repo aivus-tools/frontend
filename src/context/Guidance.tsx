@@ -50,13 +50,17 @@ const GuidanceDictionary = {
 		label: 'Project Description',
 		description: 'Set a description to the project if needed. Visible by your team only',
 	},
-	internalManagersAndProducers: {
-		label: 'Internal Managers and Producers',
-		description: "The internal team can see the client's prices and the project's profit",
-	},
-	lineProducersAndExternals: {
-		label: 'Line Producers and Externals',
-		description: 'The external team can see the client’s prices and the project’s profit',
+	collaborators: {
+		label: 'Collaborators',
+		description: (
+			<>
+				<b>Add internal managers.</b> They can only view the projects they are invited to and have access to client
+				pricing and profit details.
+				<br />
+				<b>Or add freelancers and external producers.</b> They NEVER see client pricing or project profit. They can only
+				edit internal costs and expenses to help manage the project.
+			</>
+		),
 	},
 	distributionAndAdPlacements: {
 		label: 'Distribution and Ad Placements',
@@ -93,7 +97,7 @@ type GuidanceDictionaryKeys = keyof GuidanceDictionaryType;
 
 interface GuidanceContextType {
 	handleFocus: (name: GuidanceDictionaryKeys) => () => void;
-	focusedField: { label: string; description: string } | null;
+	focusedField: { label: string; description: string | ReactNode } | null;
 }
 
 const GuidanceContext = createContext<GuidanceContextType | undefined>(undefined);

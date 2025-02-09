@@ -1,16 +1,14 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Form, Input, Flex, Select } from 'antd';
 import { AntdListWrapper, IconButton } from '../common/styled';
 import { LabelWithAdd } from './LabelWithAdd';
 import RemoveIcon from '@/icons/minus.svg';
+import CrossIcon from '@/icons/cross.svg';
 import { useGuidance } from '@/context/Guidance';
 
 import i18n from 'i18n-iso-countries';
 import Flag from 'react-world-flags';
-
-// Загрузка локалей
-// eslint-disable-next-line @typescript-eslint/no-require-imports
-i18n.registerLocale(require('i18n-iso-countries/langs/en.json'));
+import { Details } from '@/types/brief';
 
 export const Specifications: React.FC = () => {
 	const { handleFocus } = useGuidance();
@@ -24,6 +22,15 @@ export const Specifications: React.FC = () => {
 		),
 		value: country,
 	}));
+
+	const form = Form.useFormInstance<Details>();
+	const unitTerm = Form.useWatch(['term', 'unit'], form);
+
+	useEffect(() => {
+		if (unitTerm === 'perpetuity') {
+			form.setFieldsValue({ term: { length: '', unit: 'perpetuity' } });
+		}
+	}, [form, unitTerm]);
 
 	return (
 		<>
@@ -41,13 +48,21 @@ export const Specifications: React.FC = () => {
 					label='Territory'
 					extra='Select all country/regions you need or “Worldwide”'
 					rules={[{ required: true }]}
+					initialValue={['US', 'CA']}
 				>
-					<Select showSearch placeholder='Client' onFocus={handleFocus('territory')} options={countryOptions} />
+					<Select
+						mode='multiple'
+						allowClear
+						showSearch
+						placeholder='Client'
+						onFocus={handleFocus('territory')}
+						options={countryOptions}
+					/>
 				</Form.Item>
 				<Form.Item label='Term' extra='Set the period or Perpetuity' style={{ flex: '1 0 340px' }}>
 					<Flex gap={4}>
 						<Form.Item name={['term', 'length']} noStyle>
-							<Input placeholder='Length' onFocus={handleFocus('term_length')} />
+							<Input placeholder='Length' onFocus={handleFocus('term_length')} disabled={unitTerm === 'perpetuity'} />
 						</Form.Item>
 						<Form.Item name={['term', 'unit']} noStyle>
 							<Select
@@ -108,7 +123,7 @@ export const Specifications: React.FC = () => {
 				</Flex>
 			</Form.Item>
 			<AntdListWrapper>
-				<Form.List name='cuts' initialValue={[{ url: '', comment: '' }]}>
+				<Form.List name='cuts' initialValue={[{ number: '', length: '', comment: '' }]}>
 					{(fields, { add, remove }) => (
 						<Form.Item
 							label={<LabelWithAdd text='Cuts' onClick={() => add()} />}
@@ -121,22 +136,7 @@ export const Specifications: React.FC = () => {
 											<Input placeholder='Number' onFocus={handleFocus('cuts')} />
 										</Form.Item>
 										<Flex flex={'0 0 10px'} align='center'>
-											<svg
-												xmlns='http://www.w3.org/2000/svg'
-												width='10px'
-												height='10px'
-												viewBox='0 0 10 10'
-												fill='none'
-											>
-												<path
-													d='M1 9L9 1M9 9L1 1'
-													stroke='#99A1B7'
-													strokeWidth='1.5'
-													strokeMiterlimit='10'
-													strokeLinecap='round'
-													strokeLinejoin='round'
-												/>
-											</svg>
+											<CrossIcon />
 										</Flex>
 										<Form.Item noStyle name={[field.name, 'length']}>
 											<Input placeholder='Length' onFocus={handleFocus('cuts')} />

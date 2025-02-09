@@ -39,9 +39,8 @@ export interface Details {
 	projectDescription: string;
 	referenceVideos: ReferenceVideo[];
 	distributionAndAdPlacements: string;
-	territory: string;
-	internalManagersAndProducers: string;
-	lineProducersAndExternals: string;
+	territory: string[];
+	collaborators: { person: string }[];
 	term: Term;
 	mainVideoDuration: MainVideoDuration;
 	cuts: Cut[];
@@ -50,8 +49,7 @@ export interface Details {
 	budget: number;
 	visibleForVendors: boolean;
 	options?: {
-		external?: Person[];
-		internal?: Person[];
+		collaborators?: Person[];
 	};
 }
 
@@ -67,16 +65,18 @@ export interface ReferenceVideo {
 
 export interface Term {
 	length: string;
+	unit: string;
 }
 
 export interface MainVideoDuration {
 	number: string;
 	length: string;
+	timeUnit: string;
 	comment: string;
 }
 
 export interface Cut {
-	url: string;
+	timeUnit: string;
 	comment: string;
 	number: string;
 	length: string;
@@ -86,4 +86,5 @@ export interface ShootingDays {
 	number: string;
 	length: string;
 	comment: string;
+	timeUnit: string;
 }

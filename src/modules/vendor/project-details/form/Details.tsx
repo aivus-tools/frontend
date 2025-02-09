@@ -15,6 +15,7 @@ import { useBrief } from '@/hooks/useBrief';
 import { GuidanceProvider } from '@/context/Guidance';
 import { useAppDispatch } from '@/lib/hooks';
 import { setMode } from '@/store/slices/project';
+import { initialValues } from './initialValues';
 
 export default function Details() {
 	const dispatch = useAppDispatch();
@@ -25,6 +26,7 @@ export default function Details() {
 	const router = useRouter();
 
 	useEffect(() => {
+		form.setFieldsValue(initialValues);
 		if (!isLoading && brief && typeof brief.details === 'object') {
 			form.setFieldsValue(brief.details);
 		}
@@ -32,6 +34,7 @@ export default function Details() {
 
 	const handleSubmit = useCallback(
 		async (details: DetailsType) => {
+			console.log('details', details);
 			try {
 				let briefId: string | undefined;
 				if (brief) {
@@ -66,9 +69,17 @@ export default function Details() {
 				layout='vertical'
 				disabled={isMutating}
 				size='large'
+				initialValues={initialValues}
 				onFinish={handleSubmit}
 				scrollToFirstError
 				clearOnDestroy
+				onValuesChange={(changedValues, { collaborators }) => {
+					if (changedValues.collaborators) {
+						if (collaborators.every(({ person }) => !!person)) {
+							form.setFieldsValue({ collaborators: [...collaborators, {}] });
+						}
+					}
+				}}
 			>
 				<Wrapper>
 					<Column style={{ flex: '1 1 70%' }}>

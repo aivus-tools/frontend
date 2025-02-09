@@ -1,54 +1,43 @@
-import React from 'react';
-import { Form, Input, Select, Flex, Row, Col } from 'antd';
+import React, { useRef } from 'react';
+import { Form, Input, Select, Flex, Row, Col, Typography } from 'antd';
 import { Uploader } from './Uploader';
 import { LabelWithAdd } from './LabelWithAdd';
 import { usePersonModal } from '../hooks/usePersonModal';
 import { Details, Person } from '@/types/brief';
 import { useGuidance } from '@/context/Guidance';
+import RemoveIcon from '@/icons/minus.svg';
+import { AntdListWrapper, IconButton } from '../common/styled';
 
 const { TextArea } = Input;
 
 export const InitialParameters: React.FC = () => {
+	const addPersonEmptyRow = useRef<() => void>();
 	const { handleFocus } = useGuidance();
 	const form = Form.useFormInstance<Details>();
-	const addInternalPerson = (user: Person) => {
+	const addPerson = (user: Person) => {
 		const currentValues: Details = form.getFieldsValue();
 		form.setFieldsValue({
 			...currentValues,
 			options: {
 				...(currentValues.options ?? {}),
-				internal: [...(currentValues.options?.internal ?? []), user],
+				collaborators: [...(currentValues.options?.collaborators ?? []), user],
 			},
 		});
 	};
 
-	const addExternalPerson = (user: Person) => {
-		const currentValues: Details = form.getFieldsValue();
-		form.setFieldsValue({
-			...currentValues,
-			options: {
-				...(currentValues.options ?? {}),
-				external: [...(currentValues.options?.external ?? []), user],
-			},
-		});
-	};
-	const { showModal: showInternalModal, modal: internalModal } = usePersonModal(addInternalPerson);
-	const { showModal: showExternalModal, modal: externalModal } = usePersonModal(addExternalPerson);
+	const { showModal, modal: internalModal } = usePersonModal(addPerson);
 	const options = Form.useWatch('options', form);
+	const collaborators = Form.useWatch('collaborators', form);
 
-	const internalOptions = options?.internal?.map((person: Person) => ({
-		label: `${person.firstName} ${person.surname}`,
-		value: person.email,
-	}));
-
-	const externalOptions = options?.external?.map((person: Person) => ({
-		label: `${person.firstName} ${person.surname}`,
-		value: person.email,
-	}));
+	const internalOptions = options?.collaborators
+		?.map((person: Person) => ({
+			label: `${person.firstName} ${person.surname}`,
+			value: person.email,
+		}))
+		.filter((person) => !collaborators.some((collaborator) => collaborator.person === person.value));
 
 	return (
 		<>
-			{externalModal}
 			{internalModal}
 			<Form.Item name='options' hidden />
 			<Flex gap={30} style={{ width: '100%' }}>
@@ -97,34 +86,55 @@ export const InitialParameters: React.FC = () => {
 					autoSize={{ minRows: 2, maxRows: 2 }}
 				/>
 			</Form.Item>
-			<Row>
+			<Row gutter={20}>
 				<Col span={12}>
-					<Form.Item
-						name='internalManagersAndProducers'
-						label={<LabelWithAdd text='Internal managers and producers' onClick={showInternalModal} />}
-						extra={`The internal team can see the client\'s prices and the project's profit`}
-						style={{ marginRight: '10px' }}
-					>
-						<Select
-							placeholder='Select a person'
-							onFocus={handleFocus('internalManagersAndProducers')}
-							options={internalOptions}
-						/>
-					</Form.Item>
+					<AntdListWrapper>
+						<Form.List name='collaborators' initialValue={[{}]}>
+							{(fields, { add, remove }) => {
+								addPersonEmptyRow.current = () => {
+									add();
+								};
+								return (
+									<Form.Item label={<LabelWithAdd text='Collaborators' onClick={() => showModal()} />}>
+										{fields.map((field, index) => (
+											<Flex gap={20} key={field.key}>
+												<Form.Item noStyle name={[field.name, 'person']}>
+													<Select
+														placeholder='Select a person'
+														onFocus={handleFocus('collaborators')}
+														options={internalOptions}
+														labelInValue
+													/>
+												</Form.Item>
+												{fields.length > 1 && fields.length - 1 !== index && (
+													<Form.Item noStyle>
+														<IconButton
+															onClick={() => {
+																if (fields.length > 1) remove(field.name);
+															}}
+														>
+															<RemoveIcon />
+														</IconButton>
+													</Form.Item>
+												)}
+											</Flex>
+										))}
+									</Form.Item>
+								);
+							}}
+						</Form.List>
+					</AntdListWrapper>
 				</Col>
 				<Col span={12}>
-					<Form.Item
-						name='lineProducersAndExternals'
-						label={<LabelWithAdd text='Line producers and externals' onClick={showExternalModal} />}
-						extra={`Freelancers and externals NEVER see the client's prices and the project's profit`}
-						style={{ marginLeft: '10px' }}
-					>
-						<Select
-							placeholder='Select a person'
-							onFocus={handleFocus('lineProducersAndExternals')}
-							options={externalOptions}
-						/>
-					</Form.Item>
+					<Typography.Text>
+						<b>Add internal managers.</b> They can only view the projects they are invited to and have access to client
+						pricing and profit details.
+					</Typography.Text>
+					<br />
+					<Typography.Text>
+						<b>Or add freelancers and external producers.</b> They NEVER see client pricing or project profit. They can
+						only edit internal costs and expenses to help manage the project.
+					</Typography.Text>
 				</Col>
 			</Row>
 		</>
