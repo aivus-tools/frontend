@@ -6,7 +6,7 @@ export const initialValues: Details = {
 	estimationTemplate: '',
 	visibleForVendors: false,
 	projectName: '',
-	collaborators: [{ person: '' }],
+	collaborators: [''],
 	managers: [
 		{
 			manager: '',
@@ -19,7 +19,6 @@ export const initialValues: Details = {
 			comment: '',
 		},
 	],
-	budget: 0,
 	distributionAndAdPlacements: '',
 	territory: ['US', 'CA'],
 	term: {
@@ -50,4 +49,7 @@ export const initialValues: Details = {
 	clientName: '',
 	description: '',
 	irsEin: '',
+	options: {
+		collaborators: [],
+	},
 };

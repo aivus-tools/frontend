@@ -13,15 +13,21 @@ import { Details } from '@/types/brief';
 export const Specifications: React.FC = () => {
 	const { handleFocus } = useGuidance();
 	const countries = i18n.getNames('en', { select: 'official' });
-	const countryOptions = Object.keys(countries).map((country) => ({
-		label: (
-			<Flex gap={8} align='center'>
-				<Flag code={country} height='16' width='16' />
-				{countries[country]}
-			</Flex>
-		),
-		value: country,
-	}));
+	const countryOptions = [
+		{
+			label: 'Worldwide',
+			value: 'worldwide',
+		},
+		...Object.keys(countries).map((country) => ({
+			label: (
+				<Flex gap={8} align='center'>
+					<Flag code={country} height='16' width='16' />
+					{countries[country]}
+				</Flex>
+			),
+			value: country,
+		})),
+	];
 
 	const form = Form.useFormInstance<Details>();
 	const unitTerm = Form.useWatch(['term', 'unit'], form);
@@ -48,7 +54,6 @@ export const Specifications: React.FC = () => {
 					label='Territory'
 					extra='Select all country/regions you need or “Worldwide”'
 					rules={[{ required: true }]}
-					initialValue={['US', 'CA']}
 				>
 					<Select
 						mode='multiple'
@@ -123,7 +128,7 @@ export const Specifications: React.FC = () => {
 				</Flex>
 			</Form.Item>
 			<AntdListWrapper>
-				<Form.List name='cuts' initialValue={[{ number: '', length: '', comment: '' }]}>
+				<Form.List name='cuts'>
 					{(fields, { add, remove }) => (
 						<Form.Item
 							label={<LabelWithAdd text='Cuts' onClick={() => add()} />}

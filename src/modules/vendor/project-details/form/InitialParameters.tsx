@@ -15,17 +15,11 @@ export const InitialParameters: React.FC = () => {
 	const { handleFocus } = useGuidance();
 	const form = Form.useFormInstance<Details>();
 	const addPerson = (user: Person) => {
-		const currentValues: Details = form.getFieldsValue();
-		form.setFieldsValue({
-			...currentValues,
-			options: {
-				...(currentValues.options ?? {}),
-				collaborators: [...(currentValues.options?.collaborators ?? []), user],
-			},
-		});
+		const currentValues: Person[] = form.getFieldValue(['options', 'collaborators']) ?? [];
+		form.setFieldValue(['options', 'collaborators'], [...currentValues, user]);
 	};
 
-	const { showModal, modal: internalModal } = usePersonModal(addPerson);
+	const { showModal, modal } = usePersonModal(addPerson);
 	const options = Form.useWatch('options', form);
 	const collaborators = Form.useWatch('collaborators', form);
 
@@ -34,11 +28,11 @@ export const InitialParameters: React.FC = () => {
 			label: `${person.firstName} ${person.surname}`,
 			value: person.email,
 		}))
-		.filter((person) => !collaborators.some((collaborator) => collaborator.person === person.value));
+		.filter((option) => !collaborators.some((collaborator) => collaborator === option.value));
 
 	return (
 		<>
-			{internalModal}
+			{modal}
 			<Form.Item name='options' hidden />
 			<Flex gap={30} style={{ width: '100%' }}>
 				<Form.Item name='previewImage' valuePropName='image' style={{ width: 'auto' }}>
@@ -89,7 +83,7 @@ export const InitialParameters: React.FC = () => {
 			<Row gutter={20}>
 				<Col span={12}>
 					<AntdListWrapper>
-						<Form.List name='collaborators' initialValue={[{}]}>
+						<Form.List name='collaborators'>
 							{(fields, { add, remove }) => {
 								addPersonEmptyRow.current = () => {
 									add();
@@ -98,12 +92,11 @@ export const InitialParameters: React.FC = () => {
 									<Form.Item label={<LabelWithAdd text='Collaborators' onClick={() => showModal()} />}>
 										{fields.map((field, index) => (
 											<Flex gap={20} key={field.key}>
-												<Form.Item noStyle name={[field.name, 'person']}>
+												<Form.Item noStyle name={field.name}>
 													<Select
 														placeholder='Select a person'
 														onFocus={handleFocus('collaborators')}
 														options={internalOptions}
-														labelInValue
 													/>
 												</Form.Item>
 												{fields.length > 1 && fields.length - 1 !== index && (

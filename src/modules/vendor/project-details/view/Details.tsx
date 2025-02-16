@@ -124,7 +124,7 @@ export default function Details() {
 								<Col span={12}>
 									<Item
 										label='Collaborators'
-										value={details.collaborators.map(({ person }) => {
+										value={details.collaborators?.map((person) => {
 											const label = (person as unknown as { label: string })?.label;
 
 											if (label) {

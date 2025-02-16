@@ -24,8 +24,7 @@ export interface Person {
 	surname: string;
 	email: string;
 	position: string;
-	role: string;
-	description: string;
+	role: 'admin' | 'internal_user' | 'external_user';
 }
 
 export interface Details {
@@ -40,13 +39,13 @@ export interface Details {
 	referenceVideos: ReferenceVideo[];
 	distributionAndAdPlacements: string;
 	territory: string[];
-	collaborators: { person: string }[];
+	collaborators: string[];
 	term: Term;
 	mainVideoDuration: MainVideoDuration;
 	cuts: Cut[];
 	shootingDays: ShootingDays;
 	estimationTemplate: string;
-	budget: number;
+	budget?: number;
 	visibleForVendors: boolean;
 	options?: {
 		collaborators?: Person[];

@@ -32,7 +32,7 @@ export const Brief: React.FC = () => {
 				/>
 			</Form.Item>
 			<AntdListWrapper>
-				<Form.List name='referenceVideos' initialValue={[{ url: '', comment: '' }]}>
+				<Form.List name='referenceVideos'>
 					{(fields, { add, remove }) => (
 						<Form.Item
 							label={<LabelWithAdd text='Reference video' onClick={() => add()} />}
@@ -98,7 +98,7 @@ export const Brief: React.FC = () => {
 				>
 					<InputNumber
 						onFocus={handleFocus('budget')}
-						formatter={(value) => `$ ${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')}
+						formatter={(value) => `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')}
 						placeholder='Number only'
 						suffix='$'
 						controls={false}

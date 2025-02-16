@@ -75,8 +75,8 @@ export default function Details() {
 				clearOnDestroy
 				onValuesChange={(changedValues, { collaborators }) => {
 					if (changedValues.collaborators) {
-						if (collaborators.every(({ person }) => !!person)) {
-							form.setFieldsValue({ collaborators: [...collaborators, {}] });
+						if (collaborators?.every((person) => !!person)) {
+							form.setFieldsValue({ collaborators: [...collaborators, ''] });
 						}
 					}
 				}}

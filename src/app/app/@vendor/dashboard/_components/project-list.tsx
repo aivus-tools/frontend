@@ -10,7 +10,7 @@ import { useEffect, useMemo } from 'react';
 import { THeadItem } from '@/components/THeadItem/THeadItem';
 import { ProjectItem } from '@/components/ProjectItem/ProjectItem';
 import { useBriefs } from '@/hooks/useBriefs';
-import { Brief, Details } from '@/types/brief';
+import { Brief } from '@/types/brief';
 import { format } from 'date-fns';
 
 const statusMap = {
@@ -26,15 +26,28 @@ const mapBriefsToProjects = (briefs: Brief[]): Project[] => {
 	}
 
 	return briefs.map((brief: Brief) => {
-		const details: Details = brief.details;
+		const { details } = brief;
+
+		const { options } = details;
+		const assignee = details.collaborators
+			.map((email) => {
+				const collaborator = options?.collaborators?.find((person) => person.email === email);
+				if (!collaborator) {
+					return null;
+				}
+				return `${collaborator.firstName} ${collaborator.surname}`;
+			})
+			.filter(Boolean)
+			.join(', ');
+
 		return {
 			id: brief.id,
 			title: details.projectName,
-			assignee: details.collaborators?.map((it) => (it?.person as unknown as { value?: string })?.value).join(', '),
+			assignee,
 			clientName: details.clientName,
 			clientContact: '?????????',
 			status: statusMap[brief.status],
-			cost: details.budget,
+			cost: details.budget ?? 0,
 			expenses: 0,
 			profit: 0,
 			deadline: '?????????',

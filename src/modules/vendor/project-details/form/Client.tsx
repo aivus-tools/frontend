@@ -34,7 +34,7 @@ export const Client: React.FC = () => {
 			<Form.Item name='brandName' label='Brand name' extra='Specify the specific brand within your company, if needed.'>
 				<Input placeholder='Brand name' onFocus={handleFocus('brandName')} />
 			</Form.Item>
-			<Form.List name='managers' initialValue={[{ manager: null, position: '' }]}>
+			<Form.List name='managers'>
 				{(fields, { add, remove }) => (
 					<>
 						{fields.map((field, index) => {
