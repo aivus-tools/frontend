@@ -1,20 +1,28 @@
 'use client';
-import { ProjectItemProps } from './ProjectItem.props';
 import styles from './ProjectItem.module.css';
 import cn from 'classnames';
-import { formatPrice } from '@/helpers/helper';
 import { PrStatus } from '../PrStatus/PrStatus';
 import { Percent } from '../Percent/Percent';
+import { Project } from '@/types/project';
+import { PROJECT_STATUS } from '@/lib/constants';
 
-export const ProjectItem = ({ item, className, ...props }: ProjectItemProps) => {
+interface Props {
+	item: Project;
+	className?: string;
+	onClick?: () => void;
+}
+
+export const ProjectItem = ({ item, onClick, className }: Props) => {
 	return (
 		<div
 			className={cn(styles.project, className, {
-				[styles.rfp]: item.status === 'RFP',
-				[styles.reviewing]: item.status === 'Reviewing',
-				[styles.ongoing]: item.status === 'Ongoing',
+				[styles.rfp]: item.status === PROJECT_STATUS.RFP,
+				[styles.reviewing]: item.status === PROJECT_STATUS.REVIEWING,
+				[styles.ongoing]: item.status === PROJECT_STATUS.ONGOING,
+				[styles.draft]: item.status === PROJECT_STATUS.DRAFT,
+				[styles.completed]: item.status === PROJECT_STATUS.COMPLETED,
 			})}
-			{...props}
+			onClick={onClick}
 		>
 			<div className={cn(styles.column, styles.main)}>
 				<div className={cn(styles.title)}>{item.title}</div>
@@ -30,11 +38,11 @@ export const ProjectItem = ({ item, className, ...props }: ProjectItemProps) => 
 				</div>
 			</div>
 			<div className={cn(styles.column, styles.alignRight)}>
-				<div className={cn(styles.cost)}>$ {formatPrice(item.cost)}</div>
-				<div className={cn(styles.expenses)}>$ {formatPrice(item.expenses)}</div>
+				<div className={cn(styles.cost)}>$ {item.cost}</div>
+				<div className={cn(styles.expenses)}>$ {item.expenses}</div>
 			</div>
 			<div className={cn(styles.column, styles.alignRight)}>
-				<div className={cn(styles.cost, styles.blue)}>$ {formatPrice(item.profit)}</div>
+				<div className={cn(styles.cost, styles.blue)}>$ {item.profit}</div>
 				<Percent className={cn(styles.percent)} mark='average' size='s' type='transparent' count={36} />
 			</div>
 			<div className={cn(styles.column)}>

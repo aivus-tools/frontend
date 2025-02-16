@@ -1,17 +1,24 @@
 'use client';
-import { PrStatusProps } from './PrStatus.props';
 import styles from './PrStatus.module.css';
 import cn from 'classnames';
+import { ProjectStatus } from '@/types/project';
+import { PROJECT_STATUS } from '@/lib/constants';
 
-export const PrStatus = ({ status, className, ...props }: PrStatusProps) => {
+interface Props {
+	status: ProjectStatus;
+}
+
+export const PrStatus = ({ status }: Props) => {
+	console.log('status:', status);
 	return (
 		<div
-			className={cn(styles.status, className, {
-				[styles.rfp]: status === 'RFP',
-				[styles.reviewing]: status === 'Reviewing',
-				[styles.ongoing]: status === 'Ongoing',
+			className={cn(styles.status, {
+				[styles.rfp]: status === PROJECT_STATUS.RFP,
+				[styles.reviewing]: status === PROJECT_STATUS.REVIEWING,
+				[styles.ongoing]: status === PROJECT_STATUS.ONGOING,
+				[styles.draft]: status === PROJECT_STATUS.DRAFT,
+				[styles.completed]: status === PROJECT_STATUS.COMPLETED,
 			})}
-			{...props}
 		>
 			{status}
 		</div>

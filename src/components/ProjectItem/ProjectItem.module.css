@@ -21,6 +21,14 @@
   background-color: var(--bg-light-green);
 }
 
+.project.draft {
+  background-color: var(--bg-gray-page);
+}
+
+.project.completed {
+  background-color: var(--bg-light-green);
+}
+
 .alignRight {
   text-align: right;
 }
@@ -52,6 +60,10 @@
   background-color: var(--green-darker);
 }
 
+.draft .main::before {
+  background-color: var(--gray-dark);
+}
+
 .title {
   font-size: 14px;
   font-weight: 700;
@@ -77,6 +89,7 @@
 
 .cost {
   font-weight: 600;
+  text-wrap: wrap;
 }
 
 .expenses,

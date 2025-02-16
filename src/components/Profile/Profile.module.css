@@ -15,7 +15,7 @@
   align-items: center;
   padding: 5px 10px;
   cursor: pointer;
-  background-color: var(--bg-gray-ligth);
+  background-color: var(--bg-gray-light);
   border-radius: 30px;
 }
 

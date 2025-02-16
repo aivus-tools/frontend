@@ -30,6 +30,10 @@ const HeaderLayout = styled(Header)`
 	gap: 16px;
 `;
 
+const ContentLayout = styled(Content)`
+	box-shadow: inset 0 5px 16.5px -11px rgb(0 0 0 / 25%);
+`;
+
 const VendorLayout = ({ children }: PropsWithChildren) => {
 	const theme = useLayoutTheme();
 	const segments = useSelectedLayoutSegments();
@@ -45,7 +49,7 @@ const VendorLayout = ({ children }: PropsWithChildren) => {
 					{isRoot ? <VendorNavbar /> : <ProjectNavbar />}
 					<Profile />
 				</HeaderLayout>
-				<Content style={{ overflowY: 'auto', maxHeight: 'calc(100vh - 70px)' }}>{children}</Content>
+				<ContentLayout style={{ overflowY: 'auto', maxHeight: 'calc(100vh - 70px)' }}>{children}</ContentLayout>
 			</Layout>
 		</Layout>
 	);

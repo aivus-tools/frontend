@@ -63,3 +63,11 @@ export const VENDOR_PROJECT_TABS = [
 ];
 
 export const NEW_BRIEF_SLUG = 'new-brief';
+
+export const PROJECT_STATUS = {
+	DRAFT: 'DRAFT',
+	RFP: 'RFP',
+	REVIEWING: 'Reviewing',
+	ONGOING: 'Ongoing',
+	COMPLETED: 'Completed',
+} as const;

@@ -1,9 +1,8 @@
+import { ProjectStatus } from './project';
 import { Roles } from './user';
 
-export type BriefStatus = 'DRAFT' | 'RFP' | 'REVIEWING' | 'ONGOING';
-
 export interface Brief {
-	status: BriefStatus;
+	status: ProjectStatus;
 	/** JSON stringified Details */
 	details: Details;
 	clientId: number;

@@ -12,6 +12,7 @@ const theme: ThemeConfig = {
 	components: {
 		Layout: {
 			siderBg: mainDark,
+			bodyBg: white,
 			headerBg: white,
 			triggerBg: '#121b3ef5',
 			headerHeight: '70px',

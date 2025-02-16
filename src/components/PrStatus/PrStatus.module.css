@@ -23,3 +23,12 @@
   background-color: var(--bg-green);
   border: 1px solid var(--green-darker);
 }
+
+.status.draft,
+.status.completed {
+  color: var(--gray-dark);
+  background-color: var(--bg-gray-light);
+  border: 1px solid var(--gray-dark);
+}
+
+

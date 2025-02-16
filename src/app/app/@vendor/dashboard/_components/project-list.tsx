@@ -2,7 +2,6 @@
 import cn from 'classnames';
 import { dashboardTHeads } from '@/handbook/handbook';
 import { THead } from '@/interfaces/app.interface';
-import { Project } from '@/interfaces/app.interface';
 import { useRouter } from 'next/navigation';
 
 import styles from './project-list.module.css';
@@ -12,13 +11,9 @@ import { ProjectItem } from '@/components/ProjectItem/ProjectItem';
 import { useBriefs } from '@/hooks/useBriefs';
 import { Brief } from '@/types/brief';
 import { format } from 'date-fns';
-
-const statusMap = {
-	DRAFT: 'Reviewing',
-	RFP: 'RFP',
-	REVIEWING: 'Reviewing',
-	ONGOING: 'Ongoing',
-} as const;
+import { Project } from '@/types/project';
+import { formatPrice } from '@/helpers/helper';
+import Spinner from '@/components/Spinner';
 
 const mapBriefsToProjects = (briefs: Brief[]): Project[] => {
 	if (!briefs || !Array.isArray(briefs)) {
@@ -46,10 +41,10 @@ const mapBriefsToProjects = (briefs: Brief[]): Project[] => {
 			assignee,
 			clientName: details.clientName,
 			clientContact: '?????????',
-			status: statusMap[brief.status],
-			cost: details.budget ?? 0,
-			expenses: 0,
-			profit: 0,
+			status: brief.status,
+			cost: formatPrice(details.budget ?? 0),
+			expenses: formatPrice(0),
+			profit: formatPrice(0),
 			deadline: '?????????',
 			createdAt: format(new Date(brief.createdAt), 'MM/dd/yyyy'),
 		};
@@ -59,7 +54,7 @@ const mapBriefsToProjects = (briefs: Brief[]): Project[] => {
 export const ProjectList = () => {
 	const router = useRouter();
 
-	const { data: briefs = [] } = useBriefs();
+	const { data: briefs = [], isLoading } = useBriefs();
 
 	const data = useMemo(() => mapBriefsToProjects(briefs), [briefs]);
 
@@ -68,6 +63,10 @@ export const ProjectList = () => {
 			router.prefetch(`/app/dashboard/${item.id}/details`);
 		});
 	}, [router, data]);
+
+	if (isLoading) {
+		return <Spinner />;
+	}
 
 	return (
 		<main className={cn(styles.dashboard)}>
