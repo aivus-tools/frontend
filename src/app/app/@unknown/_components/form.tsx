@@ -6,33 +6,31 @@ import { GROUPS } from '@/lib/constants';
 import { Groups } from '@/types/user';
 
 import styles from './form.module.css';
+import { useChangeGroup } from '@/hooks/useChangeGroup';
+import { useRouter } from 'next/navigation';
 
 const { Title } = Typography;
 
-const changeGroup = (group: Groups) =>
-	fetch('/api/v1/change-group', {
+const invalidateUser = () =>
+	fetch('/api/v1/invalidate', {
 		method: 'POST',
 		headers: {
 			'Content-Type': 'application/json',
 		},
-		body: JSON.stringify({ group }),
 	});
 
 export function Form() {
 	const [messageApi, contextHolder] = message.useMessage();
 	const [loading, setLoading] = useState(false);
+	const { change } = useChangeGroup();
+	const router = useRouter();
 
-	const trigger = async (group: Groups) => {
+	const trigger = (group: Groups) => async () => {
 		setLoading(true);
 		try {
-			const response = await changeGroup(group);
-			const data = await response.json();
-			if (response.ok) {
-				window.location.href = '/app/dashboard';
-			} else {
-				console.error(data);
-				messageApi.error('An unexpected error occurred');
-			}
+			await invalidateUser();
+			await change(group);
+			router.push(`/app/dashboard`);
 		} catch (error) {
 			messageApi.error('An unexpected error occurred');
 			console.error('Failed to change role:', error);
@@ -46,10 +44,10 @@ export function Form() {
 			{contextHolder}
 			<div className={styles.container}>
 				<Title level={2}>Please, choose your role:</Title>
-				<Button type='primary' onClick={() => trigger(GROUPS.client)} loading={loading}>
+				<Button type='primary' onClick={trigger(GROUPS.client)} loading={loading}>
 					I&apos;m a client
 				</Button>
-				<Button onClick={() => trigger(GROUPS.vendor)} loading={loading}>
+				<Button onClick={trigger(GROUPS.vendor)} loading={loading}>
 					I&apos;m a vendor
 				</Button>
 			</div>
