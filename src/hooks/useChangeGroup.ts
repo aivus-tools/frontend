@@ -14,7 +14,7 @@ export const userApi = createApi({
 		changeGroup: builder.mutation<ChangeGroup, ChangeGroup>({
 			query: ({ userId, newGroup }) => ({
 				url: `/auth/change-group/${userId}`,
-				method: 'POST',
+				method: 'PATCH',
 				body: { newGroup },
 			}),
 		}),
