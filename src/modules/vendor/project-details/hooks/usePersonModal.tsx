@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Button, Col, Flex, Form, Input, Modal, Row, Select, Typography } from 'antd';
-import styled from 'styled-components';
+import { styled } from 'styled-components';
 import { Person } from '@/types/brief';
 
 const Text = styled(Typography.Text)`
@@ -12,7 +12,11 @@ const Text = styled(Typography.Text)`
 	vertical-align: bottom;
 `;
 
-export const usePersonModal = (onSubmit?: (person: Person) => void) => {
+interface OnSubmit {
+	(person: Person): void;
+}
+
+export const usePersonModal = (onSubmit?: OnSubmit) => {
 	const [isModalOpen, setIsModalOpen] = useState(false);
 
 	const showModal = () => {

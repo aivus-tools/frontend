@@ -5,7 +5,7 @@ import Sider from 'antd/es/layout/Sider';
 import { Logo } from './Logo';
 import { useLayoutTheme } from '@/hooks/useLayoutTheme';
 import { Profile } from '@/components/Profile/Profile';
-import styled from 'styled-components';
+import { styled } from 'styled-components';
 import { useSelectedLayoutSegments } from 'next/navigation';
 import { ProjectNavbar } from './project-navbar';
 import { VendorNavbar } from './vendor-navbar';
@@ -49,7 +49,15 @@ const VendorLayout = ({ children }: PropsWithChildren) => {
 					{isRoot ? <VendorNavbar /> : <ProjectNavbar />}
 					<Profile />
 				</HeaderLayout>
-				<ContentLayout style={{ overflowY: 'auto', maxHeight: 'calc(100vh - 70px)' }}>{children}</ContentLayout>
+				<ContentLayout
+					style={{
+						overflowY: 'auto',
+						maxHeight: 'calc(100vh - 70px)',
+						backgroundColor: isRoot ? undefined : 'var(--bg-gray-page)',
+					}}
+				>
+					{children}
+				</ContentLayout>
 			</Layout>
 		</Layout>
 	);

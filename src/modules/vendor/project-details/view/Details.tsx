@@ -8,7 +8,7 @@ import { useBrief } from '@/hooks/useBrief';
 import { GuidanceProvider } from '@/context/Guidance';
 import Spinner from '@/components/Spinner';
 import HouseIcon from '@/icons/house.svg';
-import styled from 'styled-components';
+import { styled } from 'styled-components';
 import i18n from 'i18n-iso-countries';
 import CrossIcon from '@/icons/cross.svg';
 import { timeUnitsMap } from '@/lib/utils';

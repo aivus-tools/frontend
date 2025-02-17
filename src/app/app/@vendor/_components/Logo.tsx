@@ -2,7 +2,7 @@
 import Link from 'next/link';
 import HomeIcon from '@/icons/home-icon.svg';
 import LogoIcon from '@/icons/aivus-logo.svg';
-import styled from 'styled-components';
+import { styled } from 'styled-components';
 import { Theme } from '@/types';
 import { THEME } from '@/lib/constants';
 

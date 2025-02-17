@@ -1,4 +1,4 @@
-import { User as NextUser } from 'next-auth';
+import type { User as NextUser } from 'next-auth';
 import { Roles } from './types/user';
 
 declare module 'next-auth' {

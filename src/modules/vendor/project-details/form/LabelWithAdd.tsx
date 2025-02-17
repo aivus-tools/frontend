@@ -1,6 +1,6 @@
 import React from 'react';
 import { Typography } from 'antd';
-import styled from 'styled-components';
+import { styled } from 'styled-components';
 import AddIcon from '@/icons/add-icon.svg';
 
 const LabelContainer = styled.div`

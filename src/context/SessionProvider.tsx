@@ -1,7 +1,7 @@
 'use client';
 
 import { logout } from '@/app/actions/logout';
-import { Session } from 'next-auth';
+import type { Session } from 'next-auth';
 import { SessionProvider as NextSessionProvider, useSession } from 'next-auth/react';
 import { PropsWithChildren, useEffect } from 'react';
 

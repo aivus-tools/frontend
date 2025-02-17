@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Image, Upload } from 'antd';
 import type { GetProp, UploadFile, UploadProps } from 'antd';
-import styled from 'styled-components';
+import { styled } from 'styled-components';
 
 type FileType = Parameters<GetProp<UploadProps, 'beforeUpload'>>[0];
 
