@@ -13,10 +13,17 @@ export default auth((req) => {
 		logger.info('redirecting to /auth');
 		return NextResponse.redirect(new URL('/auth', req.url));
 	}
-	const { id, role } = req.auth?.user ?? {};
+	const { id, role, accessToken } = req.auth?.user ?? {};
 	const { pathname } = req.nextUrl;
 
 	if (pathname.startsWith('/service/')) {
+		if (!accessToken && !pathname.startsWith('/service/auth/')) {
+			logger.info('redirecting to /auth');
+			return NextResponse.redirect(new URL('/auth', req.url));
+		}
+
+		const requestHeaders = new Headers(req.headers);
+		requestHeaders.set('Authorization', `Bearer ${accessToken}`);
 		const newPathname = changePathname(pathname);
 
 		if (MOCK_ENDPOINTS.some((path) => newPathname.startsWith(path)) && process.env.MOCK_API) {
@@ -24,7 +31,11 @@ export default auth((req) => {
 			return NextResponse.rewrite(new URL(newPathname, req.url));
 		}
 		logger.info('proxying request', { apiUrl: process.env.API_URL, newPathname, pathname });
-		return NextResponse.rewrite(new URL(newPathname, process.env.API_URL));
+		return NextResponse.rewrite(new URL(newPathname, process.env.API_URL), {
+			request: {
+				headers: requestHeaders,
+			},
+		});
 	}
 
 	if (pathname.startsWith('/auth') && id) {

@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
 import logger from '@/lib/logger';
-import { invalidateUserCache } from '@/services/revalidate';
+import { invalidateUserCache } from '@/services/server/revalidate';
 
 export async function POST() {
 	try {

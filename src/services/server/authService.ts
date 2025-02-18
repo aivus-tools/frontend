@@ -1,12 +1,17 @@
 import logger from '@/lib/logger';
 import { routes } from '@/lib/service-routes';
-import { Groups, User } from '@/types/user';
+import { Groups } from '@/types/user';
 
 /**
  * Аутентификация пользователя.
  * @returns Данные пользователя
  */
-export async function login(credentials: Partial<Record<'email' | 'password', unknown>>): Promise<User> {
+export async function login(credentials: Partial<Record<'email' | 'password', unknown>>): Promise<{
+	accessToken: string;
+	id: number;
+	name: string;
+	email: string;
+}> {
 	try {
 		const response = await fetch(routes.LOGIN, {
 			method: 'POST',

@@ -1,6 +1,6 @@
 import { configureStore } from '@reduxjs/toolkit';
 import { rootReducer } from '@/store/rootReducer';
-import { briefApi } from '@/hooks/useMutateBrief';
+import { briefApi } from '@/services/client/briefApi';
 
 export const makeStore = () => {
 	return configureStore({

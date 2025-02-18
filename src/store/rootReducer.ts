@@ -1,6 +1,6 @@
 import { combineReducers } from '@reduxjs/toolkit';
 import { projectSlice } from './slices/project';
-import { briefApi } from '@/hooks/useMutateBrief';
+import { briefApi } from '@/services/client/briefApi';
 
 export const rootReducer = combineReducers({
 	[projectSlice.reducerPath]: projectSlice.reducer,

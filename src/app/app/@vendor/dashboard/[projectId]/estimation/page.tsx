@@ -1,3 +1,5 @@
+import { Estimation } from '@/modules/vendor/estimation';
+
 export default function Page() {
-	return <div></div>;
+	return <Estimation />;
 }

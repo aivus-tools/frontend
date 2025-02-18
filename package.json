@@ -29,7 +29,6 @@
     "react-tiny-popover": "^8.0.4",
     "react-world-flags": "^1.6.0",
     "styled-components": "^6.1.13",
-    "swr": "^2.3.0",
     "uuid": "^11.0.5",
     "zod": "^3.23.8"
   },
