@@ -12,7 +12,7 @@ const Button = styled.button`
 	align-items: center;
 	border-radius: 6px;
 	border: 1px dashed #99a1b7;
-	background-color: #f4fbff;
+	background-color: var(--bg-blue-subtotal);
 	padding: 10px;
 `;
 

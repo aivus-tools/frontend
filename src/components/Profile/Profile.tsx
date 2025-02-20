@@ -5,7 +5,7 @@ import styles from './Profile.module.css';
 import cn from 'classnames';
 import MovieIcon from './movie-icon.svg';
 import NotificationIcon from './notification-icon.svg';
-import ArrowIcon from './arrow-icon.svg';
+import ArrowIcon from '@/icons/arrow-icon.svg';
 import { Popover } from 'react-tiny-popover';
 import { useState } from 'react';
 import { logout } from '@/app/actions/logout';
