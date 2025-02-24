@@ -1,0 +1,38 @@
+import React, { createContext, useContext, ReactNode, useState } from 'react';
+
+interface HoverContextType {
+	hoveredRow: number | null;
+	getRowProps: (id: number) => {
+		onMouseEnter: () => void;
+		onMouseLeave: () => void;
+		hovered: boolean;
+	};
+}
+
+const HoverContext = createContext<HoverContextType | undefined>(undefined);
+
+interface FocusProviderProps {
+	children: ReactNode;
+}
+
+export const HoverProvider: React.FC<FocusProviderProps> = ({ children }) => {
+	const [hoveredRow, setHoveredRow] = useState<number | null>(null);
+
+	const getRowProps = (id: number) => ({
+		onMouseEnter: () => setHoveredRow(id),
+		onMouseLeave: () => setHoveredRow(null),
+		hovered: hoveredRow === id,
+	});
+
+	return <HoverContext.Provider value={{ getRowProps, hoveredRow }}>{children}</HoverContext.Provider>;
+};
+
+export const useRowHover = () => {
+	const context = useContext(HoverContext);
+
+	if (context === undefined) {
+		throw new Error('useRowHover must be used within a HoverProvider');
+	}
+
+	return context;
+};

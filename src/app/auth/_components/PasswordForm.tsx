@@ -41,10 +41,10 @@ export const PasswordForm = ({ email, prevStepAction }: { email: string; prevSte
 				</Form.Item>
 			</div>
 			<div className={styles.buttonRowGroup}>
-				<Button onClick={prevStepAction} htmlType='reset' block>
+				<Button onClick={prevStepAction} htmlType='reset' block disabled={loading}>
 					Back
 				</Button>
-				<Button type='primary' htmlType='submit' block>
+				<Button type='primary' htmlType='submit' block loading={loading} disabled={loading}>
 					Sign in
 				</Button>
 			</div>
