@@ -1,36 +1,44 @@
+import { createHmacSHA256 } from '@/lib/hmac';
 import logger from '@/lib/logger';
 import { routes } from '@/lib/service-routes';
-import { User } from '@/types/user';
-// import { cache } from 'react';
+import { Groups, User } from '@/types/user';
 
-/**
- * Получение списка пользователей.
- * @returns Массив пользователей
- */
-export async function fetchUsers(): Promise<User[]> {
-	try {
-		const response = await fetch(routes.GET_USERS);
-		if (!response.ok) {
-			throw new Error(`Failed to fetch users: ${response.statusText}`);
-		}
-		return await response.json();
-	} catch (error) {
-		logger.error('Error fetching users:', error);
-		throw error;
-	}
+const X_API_KEY = process.env.API_KEY;
+
+interface UserSession {
+	email: string;
+	userId: string;
+	userGroup: Groups;
 }
 
 /**
  * Получение пользователя по e-mail.
  * @returns Данные пользователя
  */
-export const fetchUserByEmail = async (email: string): Promise<User> => {
+export const updateUserSession = async ({ email, userId, userGroup }: UserSession): Promise<User> => {
 	if (!email || typeof email !== 'string') {
 		throw new Error('Invalid email provided');
 	}
+	if (!X_API_KEY) {
+		throw new Error('API_KEY not set');
+	}
+
+	const timestamp = Math.floor(Date.now() / 1000).toString();
+	const requestHeaders = new Headers();
+	const method = 'GET';
+	const path = routes.getUserByEmail(email);
+	const stringToSign = `${method}:${path}:${timestamp}:${userId}:${userGroup}`;
+	const signature = await createHmacSHA256(stringToSign);
+
+	requestHeaders.set('x-api-key', X_API_KEY);
+	requestHeaders.set('x-timestamp', timestamp);
+	requestHeaders.set('x-signature', signature);
 
 	try {
-		const response = await fetch(routes.getUserByEmail(email));
+		const response = await fetch(path, {
+			method,
+			headers: requestHeaders,
+		});
 
 		if (!response.ok) {
 			throw new Error(`Failed to fetch user by email: ${response.statusText}`);

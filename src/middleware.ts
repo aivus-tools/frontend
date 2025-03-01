@@ -2,21 +2,9 @@ import { auth } from '@/auth';
 import { NextResponse } from 'next/server';
 import { GROUPS } from './lib/constants';
 import logger from './lib/logger';
+import { createHmacSHA256 } from './lib/hmac';
 
 const changePathname = (pathname: string) => pathname.replace(/^\/service\//, '/api/v1/');
-async function createHmacSHA256(key: string, message: string) {
-	const enc = new TextEncoder();
-	const keyData = enc.encode(key);
-	const msgData = enc.encode(message);
-
-	const cryptoKey = await crypto.subtle.importKey('raw', keyData, { name: 'HMAC', hash: 'SHA-256' }, false, ['sign']);
-	const signature = await crypto.subtle.sign('HMAC', cryptoKey, msgData);
-	// Преобразуем в hex-строку
-	return Array.from(new Uint8Array(signature))
-		.map((b) => b.toString(16).padStart(2, '0'))
-		.join('');
-}
-
 const MOCK_ENDPOINTS = ['/api/v1/briefs'];
 const validGroups = new Set<string | undefined>([GROUPS.client, GROUPS.vendor]);
 const X_API_KEY = process.env.API_KEY;
@@ -54,7 +42,7 @@ export default auth(async (req) => {
 
 		const method = req.method;
 		const stringToSign = `${method}:${newPathname}:${timestamp}:${id}:${group}`;
-		const computedSignature = await createHmacSHA256(HMAC_SECRET, stringToSign);
+		const computedSignature = await createHmacSHA256(stringToSign);
 		requestHeaders.set('x-signature', computedSignature);
 
 		if (MOCK_ENDPOINTS.some((path) => newPathname.startsWith(path)) && process.env.MOCK_API) {

@@ -13,7 +13,7 @@ export const userApi = createApi({
 	endpoints: (builder) => ({
 		changeGroup: builder.mutation<ChangeGroup, ChangeGroup>({
 			query: ({ userId, newGroup }) => ({
-				url: `/auth/change-group/${userId}`,
+				url: `/users/${userId}/change-group`,
 				method: 'PATCH',
 				body: { newGroup },
 			}),
@@ -30,10 +30,12 @@ export const useChangeGroup = () => {
 	return {
 		change: async (newGroup: Omit<Groups, 'UNCONFIRMED'>) => {
 			if (session.data?.user?.id) {
-				return await changeGroup({
+				await changeGroup({
 					userId: session.data.user.id,
 					newGroup,
 				}).unwrap();
+				await session.update();
+				window.location.href = `/app/dashboard`;
 			}
 		},
 		...options,

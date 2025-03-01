@@ -3,8 +3,9 @@ import Google from 'next-auth/providers/google';
 import Credentials from 'next-auth/providers/credentials';
 import { checkEmail, login, register } from './services/server/authService';
 import logger from './lib/logger';
-import { AUTH_TYPES } from './lib/constants';
+import { AUTH_TYPES, GROUPS } from './lib/constants';
 import { Groups } from './types/user';
+import { updateUserSession } from './services/server/userService';
 
 export const { handlers, signIn, signOut, auth } = NextAuth({
 	debug: Boolean(process.env.DEBUG),
@@ -23,6 +24,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
 						id: `${user.id}`,
 						name: user.name,
 						email: user.email,
+						group: user.group,
 						image: null,
 					};
 				} catch (error) {
@@ -71,7 +73,12 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
 			return token;
 		},
 		async session({ session, token }) {
-			session.user.group = token.group as Groups;
+			const aivusUser = await updateUserSession({
+				email: session.user.email,
+				userId: token.id as string,
+				userGroup: (token.group ?? GROUPS.unconfirmed) as Groups,
+			});
+			session.user.group = aivusUser.group;
 			session.user.id = token.id as string;
 			logger.info('update session', session);
 			return session;
