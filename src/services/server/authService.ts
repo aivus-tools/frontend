@@ -1,16 +1,17 @@
 import logger from '@/lib/logger';
 import { routes } from '@/lib/service-routes';
-import { Groups } from '@/types/user';
+import { AuthType, Groups } from '@/types/user';
 
+type Credentials = Partial<Record<'email' | 'password', unknown>> & { authType: AuthType };
 /**
  * Аутентификация пользователя.
  * @returns Данные пользователя
  */
-export async function login(credentials: Partial<Record<'email' | 'password', unknown>>): Promise<{
-	accessToken: string;
+export async function login(credentials: Credentials): Promise<{
 	id: number;
 	name: string;
 	email: string;
+	group: Groups;
 }> {
 	try {
 		const response = await fetch(routes.LOGIN, {
@@ -43,8 +44,8 @@ export async function register({
 }: {
 	name: string;
 	email: string;
+	authType: AuthType;
 	password?: string;
-	authType: 'CREDENTIALS' | 'GOOGLE';
 }): Promise<boolean> {
 	try {
 		logger.info('Registering user:', { name, email, authType, password });

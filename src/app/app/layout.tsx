@@ -12,10 +12,10 @@ export default async function Layout({
 	unknown: React.ReactNode;
 }) {
 	const session = await auth();
-	const { role } = session?.user ?? {};
+	const { group } = session?.user ?? {};
 
 	const getComponent = () => {
-		switch (role) {
+		switch (group) {
 			case GROUPS.vendor:
 				return vendor;
 			case GROUPS.client:

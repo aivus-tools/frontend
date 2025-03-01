@@ -1,20 +1,34 @@
+'use client';
+
+import { useState } from 'react';
 import styles from './styles.module.css';
-import { signIn } from '@/auth';
-import { CALLBACK_URL } from '@/lib/service-routes';
-import { Button } from 'antd';
+import { Button, message } from 'antd';
+import { signInWithGoogle } from '@/app/actions/google';
 
 /**
  * check configuration https://authjs.dev/getting-started/providers/google#configuration
  */
-export async function Google() {
+
+export function Google() {
+	const [loading, setLoading] = useState(false);
+	const [messageApi, contextHolder] = message.useMessage();
+
+	const handleSubmit = async () => {
+		setLoading(true);
+		try {
+			signInWithGoogle();
+		} catch (error) {
+			messageApi.error('Login failed');
+			console.error('Login failed:', error);
+		} finally {
+			setLoading(false);
+		}
+	};
+
 	return (
-		<form
-			action={async () => {
-				'use server';
-				await signIn('google', { callbackUrl: CALLBACK_URL });
-			}}
-		>
-			<Button size='large' block htmlType='submit'>
+		<form action={handleSubmit}>
+			{contextHolder}
+			<Button size='large' block htmlType='submit' loading={loading}>
 				<div className={styles.icon}>
 					<svg width='20' height='20' viewBox='0 0 19 19' fill='none' xmlns='http://www.w3.org/2000/svg'>
 						<path

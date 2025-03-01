@@ -2,8 +2,9 @@ import NextAuth from 'next-auth';
 import Google from 'next-auth/providers/google';
 import Credentials from 'next-auth/providers/credentials';
 import { checkEmail, login, register } from './services/server/authService';
-import { fetchUserByEmail } from './services/server/userService';
 import logger from './lib/logger';
+import { AUTH_TYPES } from './lib/constants';
+import { Groups } from './types/user';
 
 export const { handlers, signIn, signOut, auth } = NextAuth({
 	debug: Boolean(process.env.DEBUG),
@@ -16,14 +17,13 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
 			},
 			authorize: async (credentials) => {
 				try {
-					const user = await login(credentials);
+					const user = await login({ ...credentials, authType: AUTH_TYPES.credentials });
 
 					return {
 						id: `${user.id}`,
 						name: user.name,
 						email: user.email,
 						image: null,
-						accessToken: user.accessToken,
 					};
 				} catch (error) {
 					logger.error('authorize error', error);
@@ -33,44 +33,51 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
 		}),
 	],
 	callbacks: {
-		async signIn({ account, user }) {
+		async signIn(all) {
+			const { account, user } = all;
 			if (account?.provider === 'google') {
 				try {
 					const { name, email } = user;
-					const exist = await checkEmail({ email: user.email as string });
+					const exist = await checkEmail({ email: email as string });
+					if (exist) {
+						const aivusUser = await login({ email: email, password: '', authType: AUTH_TYPES.google });
+						user.group = aivusUser.group;
+						user.id = `${aivusUser.id}`;
+
+						return Promise.resolve(true);
+					}
 					if (!exist) {
 						if (name && email) {
 							const ok = await register({ name, email, authType: 'GOOGLE' });
 							return Promise.resolve(ok);
 						} else {
 							logger.error('No name and email', user);
-							return Promise.resolve(false);
+							return Promise.resolve('/auth');
 						}
 					}
 					return Promise.resolve(true);
 				} catch (error) {
 					logger.error('signIn error', error);
-					return Promise.resolve(false);
+					return Promise.resolve('/auth');
 				}
 			}
 			return Promise.resolve(true);
 		},
+		async jwt({ token, user }) {
+			if (user) {
+				token.group = user.group;
+				token.id = user.id;
+			}
+			return token;
+		},
 		async session({ session, token }) {
-			session.user.accessToken = token.accessToken as string;
-			const aivusUser = await fetchUserByEmail(session.user.email);
-			session.user.role = aivusUser.group;
-			session.user.id = `${aivusUser.id}`;
+			session.user.group = token.group as Groups;
+			session.user.id = token.id as string;
 			logger.info('update session', session);
 			return session;
 		},
 		authorized: async ({ auth }) => {
 			return !!auth;
-		},
-		async jwt({ token, user }) {
-			if (user) {
-				token.accessToken = user.accessToken;
-			}
-			return token;
 		},
 	},
 	logger: {
