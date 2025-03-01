@@ -14,7 +14,6 @@ const LabelSubTotal = styled.div`
 `;
 const SubTotalSum = styled.div`
 	padding: 12px 0;
-	background-color: var(--white);
 	font-weight: 700;
 	font-size: 14px;
 	line-height: 17.07px;
@@ -22,6 +21,7 @@ const SubTotalSum = styled.div`
 	text-align: right;
 	color: var(--blue);
 	background-color: var(--bg-blue-subtotal);
+	justify-content: flex-end;
 `;
 
 const EmptyBlockSubTotalSum = styled.div`

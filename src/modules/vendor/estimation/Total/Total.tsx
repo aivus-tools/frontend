@@ -19,7 +19,9 @@ const TotalSum = styled.div`
 	font-weight: 600;
 	font-size: 16px;
 	line-height: 19.5px;
-	text-align: right;
+	display: flex;
+	align-items: center;
+	justify-content: flex-end;
 	color: var(--blue);
 	padding: 16px 0;
 	background-color: var(--bg-blue-important);

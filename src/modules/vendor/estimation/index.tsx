@@ -7,6 +7,7 @@ import { KeysProvider } from './context/expanded';
 import { Wrapper, Table } from './styled';
 import { useCategories } from '@/hooks/useCategories';
 import Spinner from '@/components/Spinner';
+import { Summary } from './Summary';
 
 export function Estimation() {
 	const { loading, data: categories } = useCategories();
@@ -24,6 +25,7 @@ export function Estimation() {
 						{categories
 							?.filter(({ parentCategoryId }) => !parentCategoryId)
 							.map((category) => <Category key={category.id} category={category} />)}
+						<Summary />
 					</Table>
 				</Wrapper>
 			</HoverProvider>

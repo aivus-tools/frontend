@@ -339,7 +339,7 @@ export const OFFERS: OfferData[] = [
 		surcharge: '10%',
 		clientPrice: 1100,
 		clientCost: 11000,
-		marketRange: '1000-2000',
+		marketRange: '2000',
 	},
 	{
 		id: 2,
@@ -353,7 +353,7 @@ export const OFFERS: OfferData[] = [
 		surcharge: '10%',
 		clientPrice: 1100,
 		clientCost: 11000,
-		marketRange: '1000-2000',
+		marketRange: '2000',
 	},
 	{
 		id: 3,
@@ -367,7 +367,7 @@ export const OFFERS: OfferData[] = [
 		surcharge: '10%',
 		clientPrice: 1100,
 		clientCost: 11000,
-		marketRange: '1000-2000',
+		marketRange: '2000',
 	},
 	{
 		id: 4,
@@ -381,7 +381,7 @@ export const OFFERS: OfferData[] = [
 		surcharge: '10%',
 		clientPrice: 1100,
 		clientCost: 11000,
-		marketRange: '1000-2000',
+		marketRange: '2000',
 	},
 	{
 		id: 5,
@@ -395,7 +395,7 @@ export const OFFERS: OfferData[] = [
 		surcharge: '10%',
 		clientPrice: 1100,
 		clientCost: 11000,
-		marketRange: '1000-2000',
+		marketRange: '2000',
 	},
 	{
 		id: 6,
@@ -409,7 +409,7 @@ export const OFFERS: OfferData[] = [
 		surcharge: '10%',
 		clientPrice: 1100,
 		clientCost: 11000,
-		marketRange: '1000-2000',
+		marketRange: '2000',
 	},
 	{
 		id: 7,
@@ -423,7 +423,7 @@ export const OFFERS: OfferData[] = [
 		surcharge: '10%',
 		clientPrice: 1100,
 		clientCost: 11000,
-		marketRange: '1000-2000',
+		marketRange: '2000',
 	},
 	{
 		id: 8,
@@ -437,7 +437,7 @@ export const OFFERS: OfferData[] = [
 		surcharge: '10%',
 		clientPrice: 1100,
 		clientCost: 11000,
-		marketRange: '1000-2000',
+		marketRange: '2000',
 	},
 	{
 		id: 9,
@@ -451,7 +451,7 @@ export const OFFERS: OfferData[] = [
 		surcharge: '10%',
 		clientPrice: 1100,
 		clientCost: 11000,
-		marketRange: '1000-2000',
+		marketRange: '2000',
 	},
 	{
 		id: 10,
@@ -465,7 +465,7 @@ export const OFFERS: OfferData[] = [
 		surcharge: '10%',
 		clientPrice: 1100,
 		clientCost: 11000,
-		marketRange: '1000-2000',
+		marketRange: '2000',
 	},
 	{
 		id: 11,
@@ -479,7 +479,7 @@ export const OFFERS: OfferData[] = [
 		surcharge: '10%',
 		clientPrice: 1100,
 		clientCost: 11000,
-		marketRange: '1000-2000',
+		marketRange: '2000',
 	},
 	{
 		id: 12,
@@ -493,7 +493,7 @@ export const OFFERS: OfferData[] = [
 		surcharge: '10%',
 		clientPrice: 1100,
 		clientCost: 11000,
-		marketRange: '1000-2000',
+		marketRange: '2000',
 	},
 	{
 		id: 13,
@@ -507,7 +507,7 @@ export const OFFERS: OfferData[] = [
 		surcharge: '10%',
 		clientPrice: 1100,
 		clientCost: 11000,
-		marketRange: '1000-2000',
+		marketRange: '2000',
 	},
 	{
 		id: 14,
@@ -521,7 +521,7 @@ export const OFFERS: OfferData[] = [
 		surcharge: '10%',
 		clientPrice: 1100,
 		clientCost: 11000,
-		marketRange: '1000-2000',
+		marketRange: '2000',
 	},
 	{
 		id: 15,
@@ -535,7 +535,7 @@ export const OFFERS: OfferData[] = [
 		surcharge: '10%',
 		clientPrice: 1100,
 		clientCost: 11000,
-		marketRange: '1000-2000',
+		marketRange: '2000',
 	},
 	{
 		id: 16,
@@ -549,7 +549,7 @@ export const OFFERS: OfferData[] = [
 		surcharge: '10%',
 		clientPrice: 1100,
 		clientCost: 11000,
-		marketRange: '1000-2000',
+		marketRange: '2000',
 	},
 	{
 		id: 17,
@@ -563,7 +563,7 @@ export const OFFERS: OfferData[] = [
 		surcharge: '10%',
 		clientPrice: 1100,
 		clientCost: 11000,
-		marketRange: '1000-2000',
+		marketRange: '2000',
 	},
 	{
 		id: 18,
@@ -577,7 +577,7 @@ export const OFFERS: OfferData[] = [
 		surcharge: '10%',
 		clientPrice: 1100,
 		clientCost: 11000,
-		marketRange: '1000-2000',
+		marketRange: '2000',
 	},
 	{
 		id: 19,
@@ -591,7 +591,7 @@ export const OFFERS: OfferData[] = [
 		surcharge: '10%',
 		clientPrice: 1100,
 		clientCost: 11000,
-		marketRange: '1000-2000',
+		marketRange: '2000',
 	},
 	{
 		id: 20,
@@ -605,7 +605,7 @@ export const OFFERS: OfferData[] = [
 		surcharge: '10%',
 		clientPrice: 1100,
 		clientCost: 11000,
-		marketRange: '1000-2000',
+		marketRange: '2000',
 	},
 	{
 		id: 21,
@@ -619,7 +619,7 @@ export const OFFERS: OfferData[] = [
 		surcharge: '10%',
 		clientPrice: 1100,
 		clientCost: 11000,
-		marketRange: '1000-2000',
+		marketRange: '2000',
 	},
 	{
 		id: 22,
@@ -633,6 +633,6 @@ export const OFFERS: OfferData[] = [
 		surcharge: '10%',
 		clientPrice: 1100,
 		clientCost: 11000,
-		marketRange: '1000-2000',
+		marketRange: '2000',
 	},
 ];

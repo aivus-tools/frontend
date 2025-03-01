@@ -36,6 +36,7 @@ export const SectionSubTitleSumHeader = styled.div`
 	background-color: var(--white);
 	display: flex;
 	align-items: center;
+	justify-content: flex-end;
 `;
 
 export const SectionTitlePercentHeader = styled.div`
