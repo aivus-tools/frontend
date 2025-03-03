@@ -3,8 +3,6 @@ import logger from '@/lib/logger';
 import { routes } from '@/lib/service-routes';
 import { Groups, User } from '@/types/user';
 
-const X_API_KEY = process.env.API_KEY;
-
 interface UserSession {
 	email: string;
 	userId: string;
@@ -19,9 +17,6 @@ export const updateUserSession = async ({ email, userId, userGroup }: UserSessio
 	if (!email || typeof email !== 'string') {
 		throw new Error('Invalid email provided');
 	}
-	if (!X_API_KEY) {
-		throw new Error('API_KEY not set');
-	}
 
 	const timestamp = Math.floor(Date.now() / 1000).toString();
 	const requestHeaders = new Headers();
@@ -30,7 +25,6 @@ export const updateUserSession = async ({ email, userId, userGroup }: UserSessio
 	const stringToSign = `${method}:${path}:${timestamp}:${userId}:${userGroup}`;
 	const signature = await createHmacSHA256(stringToSign);
 
-	requestHeaders.set('x-api-key', X_API_KEY);
 	requestHeaders.set('x-timestamp', timestamp);
 	requestHeaders.set('x-signature', signature);
 

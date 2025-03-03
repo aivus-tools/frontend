@@ -7,14 +7,9 @@ import { createHmacSHA256 } from './lib/hmac';
 const changePathname = (pathname: string) => pathname.replace(/^\/service\//, '/api/v1/');
 const MOCK_ENDPOINTS = ['/api/v1/briefs'];
 const validGroups = new Set<string | undefined>([GROUPS.client, GROUPS.vendor]);
-const X_API_KEY = process.env.API_KEY;
 const HMAC_SECRET = process.env.HMAC_SECRET;
 
 export default auth(async (req) => {
-	if (!X_API_KEY) {
-		logger.error('API_KEY not set');
-		return NextResponse.error();
-	}
 	if (!HMAC_SECRET) {
 		logger.error('HMAC_SECRET not set');
 		return NextResponse.error();
@@ -37,7 +32,6 @@ export default auth(async (req) => {
 		const newPathname = changePathname(pathname);
 		const requestHeaders = new Headers(req.headers);
 		const timestamp = Math.floor(Date.now() / 1000).toString();
-		requestHeaders.set('x-api-key', X_API_KEY);
 		requestHeaders.set('x-timestamp', timestamp);
 
 		const method = req.method;
