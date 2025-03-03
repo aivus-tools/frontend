@@ -22,7 +22,7 @@ export const updateUserSession = async ({ email, userId, userGroup }: UserSessio
 	const requestHeaders = new Headers();
 	const method = 'GET';
 	const path = routes.getUserByEmail(email);
-	const stringToSign = `${method}:${path}:${timestamp}:${userId}:${userGroup}`;
+	const stringToSign = `${method}:/users/user:${timestamp}:${userId}:${userGroup}`;
 	const signature = await createHmacSHA256(stringToSign);
 
 	requestHeaders.set('x-timestamp', timestamp);

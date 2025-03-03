@@ -23,13 +23,9 @@ export default auth(async (req) => {
 	const { pathname } = req.nextUrl;
 
 	if (pathname.startsWith('/service/')) {
-		// TODO: Add a check for the X-API-KEY header and remove access token check
-		// if (!accessToken && !pathname.startsWith('/service/auth/')) {
-		// 	logger.info('redirecting to /auth');
-		// 	return NextResponse.redirect(new URL('/auth', req.url));
-		// }
-
 		const newPathname = changePathname(pathname);
+		console.log('newPathname', newPathname);
+		console.log('req.nextUrl', req.nextUrl);
 		const requestHeaders = new Headers(req.headers);
 		const timestamp = Math.floor(Date.now() / 1000).toString();
 		requestHeaders.set('x-timestamp', timestamp);
