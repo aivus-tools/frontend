@@ -13,5 +13,6 @@ export async function createHmacSHA256(message: string) {
 		.join('');
 
 	console.log('string', string);
+	console.log('message', message);
 	return string;
 }
