@@ -2,6 +2,7 @@ import { createHmacSHA256 } from '@/lib/hmac';
 import logger from '@/lib/logger';
 import { routes } from '@/lib/service-routes';
 import { Groups, User } from '@/types/user';
+import { URL } from 'url';
 
 interface UserSession {
 	email: string;
@@ -22,7 +23,7 @@ export const updateUserSession = async ({ email, userId, userGroup }: UserSessio
 	const requestHeaders = new Headers();
 	const method = 'GET';
 	const path = routes.getUserByEmail(email);
-	const stringToSign = `${method}:/users/user:${timestamp}:${userId}:${userGroup}`;
+	const stringToSign = `${method}:${new URL(path).pathname}:${timestamp}:${userId}:${userGroup}`;
 	const signature = await createHmacSHA256(stringToSign);
 
 	requestHeaders.set('x-timestamp', timestamp);
