@@ -20,6 +20,7 @@ export default async function Layout({
 				return vendor;
 			case GROUPS.client:
 				return client;
+			case GROUPS.confirmed:
 			case GROUPS.unconfirmed:
 				return unknown;
 			default: {

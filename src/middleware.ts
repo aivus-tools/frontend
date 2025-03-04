@@ -26,14 +26,16 @@ export default auth(async (req) => {
 		const newPathname = changePathname(pathname);
 		console.log('newPathname', newPathname);
 		console.log('req.nextUrl', req.nextUrl);
-		const requestHeaders = new Headers(req.headers);
-		const timestamp = Math.floor(Date.now() / 1000).toString();
-		requestHeaders.set('x-timestamp', timestamp);
+		const headers = new Headers(req.headers);
+		if (!newPathname.startsWith('/api/v1/auth/')) {
+			const timestamp = Math.floor(Date.now() / 1000).toString();
+			headers.set('x-timestamp', timestamp);
 
-		const method = req.method;
-		const stringToSign = `${method}:${newPathname}:${timestamp}:${id}:${group}`;
-		const computedSignature = await createHmacSHA256(stringToSign);
-		requestHeaders.set('x-signature', computedSignature);
+			const method = req.method;
+			const stringToSign = `${method}:${newPathname}:${timestamp}:${id}:${group}`;
+			const computedSignature = await createHmacSHA256(stringToSign);
+			headers.set('x-signature', computedSignature);
+		}
 
 		if (MOCK_ENDPOINTS.some((path) => newPathname.startsWith(path)) && process.env.MOCK_API) {
 			logger.info('mocking request', { pathname, newPathname });
@@ -42,7 +44,7 @@ export default auth(async (req) => {
 		logger.info('proxying request', { apiUrl: process.env.API_URL, newPathname, pathname });
 		return NextResponse.rewrite(new URL(newPathname, process.env.API_URL), {
 			request: {
-				headers: requestHeaders,
+				headers,
 			},
 		});
 	}
@@ -52,13 +54,13 @@ export default auth(async (req) => {
 			logger.info('redirecting to /app/dashboard');
 			return NextResponse.redirect(new URL('/app/dashboard', req.url));
 		}
-		if (group === GROUPS.unconfirmed) {
-			logger.info('redirecting to /app/unconfirmed');
-			return NextResponse.redirect(new URL('/app/unconfirmed', req.url));
+		if (group === GROUPS.unconfirmed || group === GROUPS.confirmed) {
+			logger.info('redirecting to /app/confirm');
+			return NextResponse.redirect(new URL('/app/confirm', req.url));
 		}
 	}
 
-	if (pathname.startsWith('/app/unconfirmed') && validGroups.has(group)) {
+	if (pathname.startsWith('/app/confirm') && validGroups.has(group)) {
 		logger.info('redirecting to /app/dashboard');
 		return NextResponse.redirect(new URL('/app/dashboard', req.url));
 	}

@@ -18,17 +18,23 @@ export const userApi = createApi({
 				body: { newGroup },
 			}),
 		}),
+		confirmEmail: builder.query<void, string>({
+			query: (token) => ({
+				url: `/auth/confirm-email?token=${token}`,
+				method: 'PATCH',
+			}),
+		}),
 	}),
 });
 
-export const { useChangeGroupMutation } = userApi;
+export const { useChangeGroupMutation, useConfirmEmailQuery } = userApi;
 
 export const useChangeGroup = () => {
 	const session = useSession();
 	const [changeGroup, options] = useChangeGroupMutation();
 
 	return {
-		change: async (newGroup: Omit<Groups, 'UNCONFIRMED'>) => {
+		change: async (newGroup: Omit<Groups, 'UNCONFIRMED' | 'CONFIRMED'>) => {
 			if (session.data?.user?.id) {
 				await changeGroup({
 					userId: session.data.user.id,

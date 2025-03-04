@@ -1,47 +1,31 @@
-import { createHmacSHA256 } from '@/lib/hmac';
 import logger from '@/lib/logger';
-import { routes } from '@/lib/service-routes';
-import { Groups, User } from '@/types/user';
-import { URL } from 'url';
+import { User } from '@/types/user';
 
 interface UserSession {
-	email: string;
 	userId: string;
-	userGroup: Groups;
 }
 
 /**
- * Получение пользователя по e-mail.
- * @returns Данные пользователя
+ * Получение пользователя.
+ * @returns Promise<User>
  */
-export const updateUserSession = async ({ email, userId, userGroup }: UserSession): Promise<User> => {
-	if (!email || typeof email !== 'string') {
-		throw new Error('Invalid email provided');
-	}
-
-	const timestamp = Math.floor(Date.now() / 1000).toString();
+export const updateUserSession = async ({ userId }: UserSession): Promise<User> => {
 	const requestHeaders = new Headers();
-	const method = 'GET';
-	const path = routes.getUserByEmail(email);
-	const stringToSign = `${method}:${new URL(path).pathname}:${timestamp}:${userId}:${userGroup}`;
-	const signature = await createHmacSHA256(stringToSign);
-
-	requestHeaders.set('x-timestamp', timestamp);
-	requestHeaders.set('x-signature', signature);
+	requestHeaders.set('x-user-id', userId);
 
 	try {
-		const response = await fetch(path, {
-			method,
+		const response = await fetch('/api/v1/users/me', {
+			method: 'GET',
 			headers: requestHeaders,
 		});
 
 		if (!response.ok) {
-			throw new Error(`Failed to fetch user by email: ${response.statusText}`);
+			throw new Error(`Failed to fetch user: ${response.statusText}`);
 		}
 
 		return await response.json();
 	} catch (error) {
-		logger.error('Error fetching user by email:', error);
+		logger.error('Error fetching user:', error);
 		throw error;
 	}
 };

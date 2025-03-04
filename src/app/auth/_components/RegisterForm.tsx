@@ -5,6 +5,8 @@ import { signIn } from 'next-auth/react';
 import styles from '../styles.module.css';
 import { useState } from 'react';
 import { CALLBACK_URL } from '@/lib/service-routes';
+import { AUTH_TYPES } from '@/lib/constants';
+import { AuthType } from '@/types/user';
 
 export interface ResponseData {
 	statusCode: number;
@@ -24,12 +26,12 @@ const register = async ({
 	name,
 	email,
 	authType,
-	password,
+	password = '',
 }: {
 	name: string;
 	email: string;
+	authType: AuthType;
 	password?: string;
-	authType: 'CREDENTIALS' | 'GOOGLE';
 }) =>
 	await fetch('service/auth/register', {
 		method: 'POST',
@@ -71,7 +73,7 @@ export const RegisterForm = ({ email, prevStepAction }: { email: string; prevSte
 				name,
 				email,
 				password,
-				authType: 'CREDENTIALS',
+				authType: AUTH_TYPES.credentials,
 			});
 			if (!response.ok) {
 				const data: ResponseData | null = await response.json();

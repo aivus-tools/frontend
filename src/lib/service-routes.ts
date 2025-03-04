@@ -8,5 +8,4 @@ export const routes = {
 	LOGIN: `${BASE_URL}/auth/login`,
 	CHECK_EMAIL: `${BASE_URL}/auth/check-email`,
 	changeRole: (id: number | string) => `${BASE_URL}/auth/change-group/${id}`,
-	getUserByEmail: (email: string) => `${BASE_URL}/users/user?email=${encodeURIComponent(email)}`,
 };

@@ -13,6 +13,7 @@ export const GROUPS = {
 	client: 'CLIENT',
 	vendor: 'VENDOR',
 	unconfirmed: 'UNCONFIRMED',
+	confirmed: 'CONFIRMED',
 } as const;
 
 export const THEME = {
