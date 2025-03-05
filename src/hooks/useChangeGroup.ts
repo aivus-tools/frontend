@@ -18,16 +18,16 @@ export const userApi = createApi({
 				body: { newGroup },
 			}),
 		}),
-		confirmEmail: builder.query<void, string>({
+		confirmEmail: builder.mutation<void, string>({
 			query: (token) => ({
 				url: `/auth/confirm-email?token=${token}`,
-				method: 'PATCH',
+				method: 'GET',
 			}),
 		}),
 	}),
 });
 
-export const { useChangeGroupMutation, useConfirmEmailQuery } = userApi;
+export const { useChangeGroupMutation, useConfirmEmailMutation } = userApi;
 
 export const useChangeGroup = () => {
 	const session = useSession();

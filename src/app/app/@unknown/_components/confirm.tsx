@@ -1,38 +1,70 @@
 'use client';
-import { message, Typography } from 'antd';
+import { Button, Flex, message, Typography } from 'antd';
 
-import { useConfirmEmailQuery } from '@/hooks/useChangeGroup';
+import { useConfirmEmailMutation } from '@/hooks/useChangeGroup';
 import { useSearchParams } from 'next/navigation';
-import { Form } from './form';
 import Spinner from '@/components/Spinner';
 import { useEffect } from 'react';
 import { useSession } from 'next-auth/react';
 import { GROUPS } from '@/lib/constants';
+import { logout } from '@/app/actions/logout';
+
+type Error = {
+	data: {
+		message: string;
+	};
+};
+
+const errorHasMessage = (error: unknown): error is Error => (error as Error)?.data?.message !== undefined;
 
 export const Confirm = () => {
 	const searchParams = useSearchParams();
 	const token = searchParams.get('token');
 	const session = useSession();
 	const group = session.data?.user?.group;
+	const [messageApi, contextHolder] = message.useMessage();
 
-	const { isSuccess, isLoading, error } = useConfirmEmailQuery(token!, {
-		skip: !token || group !== GROUPS.unconfirmed,
-	});
+	const [confirmEmail, { isLoading }] = useConfirmEmailMutation();
 
 	useEffect(() => {
-		if (error) {
-			message.error('An unexpected error occurred');
+		try {
+			if (token) {
+				confirmEmail(token)
+					.unwrap()
+					.then(() => {
+						messageApi.success('E-mail confirmed');
+						session.update();
+						window.location.href = '/app/dashboard';
+					});
+			}
+		} catch (error) {
+			messageApi.error('An unexpected error occurred');
+
+			if (errorHasMessage(error)) {
+				messageApi.error(error.data.message);
+			}
 			console.error('Failed to confirm email:', error);
 		}
-	}, [error]);
+	}, [confirmEmail, messageApi, session, token]);
 
-	if (isSuccess) {
-		return <Form />;
-	}
+	const render = () => {
+		if (isLoading || group !== GROUPS.unconfirmed) {
+			return <Spinner />;
+		}
+		return (
+			<Flex align='center' justify='center' vertical gap={12} style={{ height: '100vh', width: '100%' }}>
+				<Typography.Title level={3}>Please confirm your e-mail</Typography.Title>
+				<Button type='primary' onClick={logout}>
+					Logout
+				</Button>
+			</Flex>
+		);
+	};
 
-	if (isLoading) {
-		return <Spinner />;
-	}
-
-	return <Typography.Title level={3}>Please confirm your e-mail</Typography.Title>;
+	return (
+		<>
+			{contextHolder}
+			{render()}
+		</>
+	);
 };

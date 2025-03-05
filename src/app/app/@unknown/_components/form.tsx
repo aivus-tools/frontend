@@ -7,10 +7,13 @@ import { Groups } from '@/types/user';
 
 import styles from './form.module.css';
 import { useChangeGroup } from '@/hooks/useChangeGroup';
+import { useSession } from 'next-auth/react';
+import Spinner from '@/components/Spinner';
 
 const { Title } = Typography;
 
 export function Form() {
+	const session = useSession();
 	const [messageApi, contextHolder] = message.useMessage();
 	const [loading, setLoading] = useState(false);
 	const { change } = useChangeGroup();
@@ -28,6 +31,10 @@ export function Form() {
 			setLoading(false);
 		}
 	};
+
+	if (session.data?.user?.group !== GROUPS.confirmed) {
+		return <Spinner />;
+	}
 
 	return (
 		<main className={styles.main}>

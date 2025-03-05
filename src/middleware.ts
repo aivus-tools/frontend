@@ -20,16 +20,19 @@ export default auth(async (req) => {
 		return NextResponse.redirect(new URL('/auth', req.url));
 	}
 	const { id, group } = req.auth?.user ?? {};
-	const { pathname } = req.nextUrl;
+	const { pathname, search } = req.nextUrl;
 
 	if (pathname.startsWith('/service/')) {
-		const newPathname = changePathname(pathname);
-		console.log('newPathname', newPathname);
-		console.log('req.nextUrl', req.nextUrl);
+		let newPathname = changePathname(pathname);
+		if (search) {
+			newPathname += search;
+		}
 		const headers = new Headers(req.headers);
 		if (!newPathname.startsWith('/api/v1/auth/')) {
 			const timestamp = Math.floor(Date.now() / 1000).toString();
 			headers.set('x-timestamp', timestamp);
+			headers.set('x-user-id', id ?? '');
+			headers.set('x-user-group', group ?? '');
 
 			const method = req.method;
 			const stringToSign = `${method}:${newPathname}:${timestamp}:${id}:${group}`;

@@ -7,5 +7,6 @@ export const routes = {
 	REGISTER: `${BASE_URL}/auth/register`,
 	LOGIN: `${BASE_URL}/auth/login`,
 	CHECK_EMAIL: `${BASE_URL}/auth/check-email`,
+	USER_INFO: `${BASE_URL}/users/me`,
 	changeRole: (id: number | string) => `${BASE_URL}/auth/change-group/${id}`,
 };

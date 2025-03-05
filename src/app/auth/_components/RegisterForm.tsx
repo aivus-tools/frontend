@@ -127,10 +127,10 @@ export const RegisterForm = ({ email, prevStepAction }: { email: string; prevSte
 				</Form.Item>
 			</div>
 			<div className={styles.buttonRowGroup}>
-				<Button htmlType='reset' block onClick={prevStepAction}>
+				<Button htmlType='reset' block onClick={prevStepAction} disabled={loading}>
 					Back
 				</Button>
-				<Button type='primary' htmlType='submit' block>
+				<Button type='primary' htmlType='submit' block loading={loading}>
 					Sign up
 				</Button>
 			</div>

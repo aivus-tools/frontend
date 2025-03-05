@@ -42,7 +42,14 @@ export const EmailForm = ({ nextAction }: { nextAction: (step: Steps, email: str
 		<Form form={form} layout='vertical' style={{ marginTop: 20 }} onFinish={handleFinish}>
 			{contextHolder}
 			<div className={styles.inputWrapper}>
-				<Form.Item name='email' noStyle rules={[{ required: true, message: 'Email is required' }]}>
+				<Form.Item
+					name='email'
+					noStyle
+					rules={[
+						{ required: true, message: 'Email is required' },
+						{ type: 'email', message: 'Invalid email' },
+					]}
+				>
 					<Input placeholder='Your email address' id='email' name='email' size='large' />
 				</Form.Item>
 			</div>
