@@ -55,7 +55,7 @@ export const Confirm = () => {
 			<Flex align='center' justify='center' vertical gap={12} style={{ height: '100vh', width: '100%' }}>
 				<Typography.Title level={3}>Please confirm your e-mail</Typography.Title>
 				<Button type='primary' onClick={logout}>
-					Logout
+					Back
 				</Button>
 			</Flex>
 		);

@@ -24,8 +24,7 @@ export async function login(credentials: Credentials): Promise<{
 		if (!response.ok) {
 			throw new Error(`Failed to fetch ${routes.LOGIN}: ${response.statusText}`);
 		}
-		const data = await response.json();
-		return data;
+		return await response.json();
 	} catch (error) {
 		logger.error('Error login:', error);
 		throw error;
@@ -46,7 +45,11 @@ export async function register({
 	email: string;
 	authType: AuthType;
 	password?: string;
-}): Promise<boolean> {
+}): Promise<{
+	message: string;
+	group?: Groups;
+	id: number;
+}> {
 	try {
 		logger.info('Registering user:', { name, email, authType, password });
 		const response = await fetch(routes.REGISTER, {
@@ -66,7 +69,7 @@ export async function register({
 		if (!response.ok) {
 			throw new Error(`Failed to fetch ${routes.LOGIN}: ${response.statusText}`);
 		}
-		return true;
+		return await response.json();
 	} catch (error) {
 		logger.error('Error register:', error);
 		throw error;

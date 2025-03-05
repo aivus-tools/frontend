@@ -6,7 +6,7 @@ import { createHmacSHA256 } from './lib/hmac';
 
 const changePathname = (pathname: string) => pathname.replace(/^\/service\//, '/api/v1/');
 const MOCK_ENDPOINTS = ['/api/v1/briefs'];
-const validGroups = new Set<string | undefined>([GROUPS.client, GROUPS.vendor]);
+const userGroups = new Set<string | undefined>([GROUPS.client, GROUPS.vendor]);
 const HMAC_SECRET = process.env.HMAC_SECRET;
 
 export default auth(async (req) => {
@@ -15,11 +15,16 @@ export default auth(async (req) => {
 		return NextResponse.error();
 	}
 
+	const { id, group } = req.auth?.user ?? {};
+
 	if (req.nextUrl.pathname === '/') {
+		if (id && group) {
+			logger.info('redirecting to /app/dashboard');
+			return NextResponse.redirect(new URL('/app/dashboard', req.url));
+		}
 		logger.info('redirecting to /auth');
 		return NextResponse.redirect(new URL('/auth', req.url));
 	}
-	const { id, group } = req.auth?.user ?? {};
 	const { pathname, search } = req.nextUrl;
 
 	if (pathname.startsWith('/service/')) {
@@ -52,20 +57,19 @@ export default auth(async (req) => {
 		});
 	}
 
-	if (pathname.startsWith('/auth') && id) {
-		if (validGroups.has(group)) {
+	if (pathname.startsWith('/auth') && id && group) {
+		if (userGroups.has(group)) {
 			logger.info('redirecting to /app/dashboard');
 			return NextResponse.redirect(new URL('/app/dashboard', req.url));
-		}
-		if (group === GROUPS.unconfirmed || group === GROUPS.confirmed) {
+		} else {
 			logger.info('redirecting to /app/confirm');
 			return NextResponse.redirect(new URL('/app/confirm', req.url));
 		}
 	}
 
-	if (pathname.startsWith('/app/confirm') && validGroups.has(group)) {
-		logger.info('redirecting to /app/dashboard');
-		return NextResponse.redirect(new URL('/app/dashboard', req.url));
+	if (pathname.startsWith('/app') && (!id || !group)) {
+		logger.info('redirecting to /auth');
+		return NextResponse.redirect(new URL('/auth', req.url));
 	}
 });
 

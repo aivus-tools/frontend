@@ -3,7 +3,7 @@ import Google from 'next-auth/providers/google';
 import Credentials from 'next-auth/providers/credentials';
 import { checkEmail, login, register } from './services/server/authService';
 import logger from './lib/logger';
-import { AUTH_TYPES } from './lib/constants';
+import { AUTH_TYPES, GROUPS } from './lib/constants';
 import { updateUserSession } from './services/server/userService';
 
 export const { handlers, signIn, signOut, auth } = NextAuth({
@@ -49,8 +49,10 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
 					}
 					if (!exist) {
 						if (name && email) {
-							const ok = await register({ name, email, authType: AUTH_TYPES.google, password: '' });
-							return Promise.resolve(ok);
+							const aivusUser = await register({ name, email, authType: AUTH_TYPES.google, password: '' });
+							user.group = aivusUser.group ?? GROUPS.unconfirmed;
+							user.id = `${aivusUser.id}`;
+							return Promise.resolve(true);
 						} else {
 							logger.error('No name and email', user);
 							return Promise.resolve('/auth');

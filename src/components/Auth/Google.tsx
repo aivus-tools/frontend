@@ -16,7 +16,7 @@ export function Google() {
 	const handleSubmit = async () => {
 		setLoading(true);
 		try {
-			signInWithGoogle();
+			await signInWithGoogle();
 		} catch (error) {
 			messageApi.error('Login failed');
 			console.error('Login failed:', error);
