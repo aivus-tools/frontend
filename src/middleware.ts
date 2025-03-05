@@ -19,12 +19,18 @@ export default auth(async (req) => {
 
 	if (req.nextUrl.pathname === '/') {
 		if (id && group) {
-			logger.info('redirecting to /app/dashboard');
-			return NextResponse.redirect(new URL('/app/dashboard', req.url));
+			if (userGroups.has(group)) {
+				logger.info('redirecting to /app/dashboard');
+				return NextResponse.redirect(new URL('/app/dashboard', req.url));
+			} else {
+				logger.info('redirecting to /app/confirm');
+				return NextResponse.redirect(new URL('/app/confirm', req.url));
+			}
 		}
 		logger.info('redirecting to /auth');
 		return NextResponse.redirect(new URL('/auth', req.url));
 	}
+
 	const { pathname, search } = req.nextUrl;
 
 	if (pathname.startsWith('/service/')) {
