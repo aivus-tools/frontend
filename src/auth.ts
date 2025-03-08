@@ -39,15 +39,19 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
 			if (account?.provider === 'google') {
 				try {
 					const { name, email } = user;
-					const exist = await checkEmail({ email: email as string });
-					if (exist) {
+					const result = await checkEmail({ email: email as string });
+					if (result.exists) {
+						if (result.authType === AUTH_TYPES.credentials) {
+							return Promise.resolve('/auth?type=' + AUTH_TYPES.credentials);
+						}
+
 						const aivusUser = await login({ email: email, password: '', authType: AUTH_TYPES.google });
 						user.group = aivusUser.group;
 						user.id = `${aivusUser.id}`;
 
 						return Promise.resolve(true);
 					}
-					if (!exist) {
+					if (!result.exists) {
 						if (name && email) {
 							const aivusUser = await register({ name, email, authType: AUTH_TYPES.google, password: '' });
 							user.group = aivusUser.group ?? GROUPS.unconfirmed;

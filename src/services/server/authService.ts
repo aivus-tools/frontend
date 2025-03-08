@@ -80,7 +80,10 @@ export async function register({
  * Проверяет существует ли пользователь с таким email.
  * @returns boolean
  */
-export async function checkEmail({ email }: { email: string }): Promise<boolean> {
+export async function checkEmail({ email }: { email: string }): Promise<{
+	exists: boolean;
+	authType: AuthType;
+}> {
 	try {
 		const response = await fetch(routes.CHECK_EMAIL, {
 			method: 'POST',
@@ -92,8 +95,7 @@ export async function checkEmail({ email }: { email: string }): Promise<boolean>
 		if (!response.ok) {
 			throw new Error(`Failed to fetch ${routes.CHECK_EMAIL}: ${response.statusText}`);
 		}
-		const data: { exist: boolean } = await response.json();
-		return data.exist;
+		return await response.json();
 	} catch (error) {
 		logger.error('Error fetching:', error);
 		throw error;
