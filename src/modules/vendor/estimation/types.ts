@@ -1,6 +1,6 @@
 import { ReactNode } from 'react';
 
-export type OfferData = {
+export interface OfferData {
 	id: number;
 	entryId: number;
 	categoryId: number;
@@ -13,7 +13,7 @@ export type OfferData = {
 	clientPrice: number;
 	clientCost: number;
 	marketRange: string;
-};
+}
 
 export type Headers = {
 	label: string | ReactNode;
@@ -22,21 +22,28 @@ export type Headers = {
 	itemStyle?: React.CSSProperties;
 };
 
-export type Category = {
+export interface Category {
 	id: number;
 	name: string;
 	parentCategoryId?: number;
-};
+}
 
-export type Entry = {
+export interface OfferCategory extends Category {
+	subCategories?: OfferCategory[];
+	offers?: OfferData[];
+}
+
+export interface Entry {
 	id: number;
 	name: string;
 	categoryId: number;
 	variants?: EntryVariant[];
-};
+}
 
 export type EntryVariant = {
 	id: number;
 	label: string;
 	children?: EntryVariant[];
 };
+
+export type OfferDetails = OfferCategory[];

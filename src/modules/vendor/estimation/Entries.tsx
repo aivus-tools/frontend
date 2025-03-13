@@ -5,11 +5,12 @@ import { CLIENTS_HEADERS, HEADERS } from './constants';
 import { useRowHover } from './context/hover';
 import SettingsIcon from '@/icons/settings-icon.svg';
 import DeleteIcon from '@/icons/delete.svg';
-import { DropdownButton, EstimationItem } from './styled';
+import { EstimationItem } from './styled';
 import { RowLine } from './RowLine';
-import { Dropdown, Flex, MenuProps } from 'antd';
+import { Flex, MenuProps } from 'antd';
+import { EntrieInput } from './EntrieInput';
 
-export function Entries({ data = [], items = [] }: { data?: OfferData[]; items?: MenuProps['items'] }) {
+export function Entries({ data = [] }: { data?: OfferData[]; items?: MenuProps['items'] }) {
 	const { getRowProps, hoveredRow } = useRowHover();
 
 	return (
@@ -39,9 +40,7 @@ export function Entries({ data = [], items = [] }: { data?: OfferData[]; items?:
 						if (key === 'item') {
 							return (
 								<EstimationItem key={`item-${key}`} style={itemStyle} {...getRowProps(it.id)}>
-									<Dropdown menu={{ items }} trigger={['click']}>
-										<DropdownButton>{it.item}</DropdownButton>
-									</Dropdown>
+									<EntrieInput value={it.item} />
 								</EstimationItem>
 							);
 						}
