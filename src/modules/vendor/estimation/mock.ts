@@ -1,4 +1,4 @@
-import { Category, Entry, OfferData } from './types';
+import { Category, Entry, OfferData, OfferDetails } from './types';
 
 export const CATEGORIES: Category[] = [
 	{
@@ -634,5 +634,42 @@ export const OFFERS: OfferData[] = [
 		clientPrice: 1100,
 		clientCost: 11000,
 		marketRange: '2000',
+	},
+];
+
+export const OFFER_DETAILS: OfferDetails = [
+	{
+		id: 1,
+		name: 'Creative DEVELOPMENT',
+		offers: OFFERS.filter((o) => o.categoryId === 1),
+		subCategories: [
+			{
+				id: 2,
+				name: 'PRE-PRODUCTION',
+				offers: OFFERS.filter((o) => o.categoryId === 2),
+			},
+		],
+	},
+	{
+		id: 3,
+		name: 'PRODUCTION',
+		offers: OFFERS.filter((o) => o.categoryId === 3),
+		subCategories: [
+			{
+				id: 4,
+				name: 'Equipment',
+				offers: OFFERS.filter((o) => o.categoryId === 4),
+			},
+			{
+				id: 5,
+				name: 'Vehicles',
+				offers: OFFERS.filter((o) => o.categoryId === 5),
+			},
+			{
+				id: 6,
+				name: 'Team',
+				offers: OFFERS.filter((o) => o.categoryId === 6),
+			},
+		],
 	},
 ];

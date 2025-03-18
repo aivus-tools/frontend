@@ -7,11 +7,12 @@ import SettingsIcon from '@/icons/settings-icon.svg';
 import DeleteIcon from '@/icons/delete.svg';
 import { EstimationItem } from './styled';
 import { RowLine } from './RowLine';
-import { Flex, MenuProps } from 'antd';
+import { Flex } from 'antd';
 import { EntrieInput } from './EntrieInput';
 
-export function Entries({ data = [] }: { data?: OfferData[]; items?: MenuProps['items'] }) {
-	const { getRowProps, hoveredRow } = useRowHover();
+export function Entries({ data = [] }: { data?: OfferData[] }) {
+	const { getRowProps, hoveredRow, focusedRow } = useRowHover();
+	const checkActive = (id: number) => hoveredRow === id || focusedRow === id;
 
 	return (
 		<>
@@ -25,7 +26,7 @@ export function Entries({ data = [] }: { data?: OfferData[]; items?: MenuProps['
 						if (key === 'settings') {
 							return (
 								<EstimationItem key={`settings-${key}`} {...getRowProps(it.id)}>
-									{hoveredRow === it.id && (
+									{checkActive(it.id) && (
 										<Flex align='center' justify='center' style={{ height: '100%' }}>
 											<SettingsIcon
 												style={{ cursor: 'grab', color: 'var(--gray)' }}
@@ -40,7 +41,7 @@ export function Entries({ data = [] }: { data?: OfferData[]; items?: MenuProps['
 						if (key === 'item') {
 							return (
 								<EstimationItem key={`item-${key}`} style={itemStyle} {...getRowProps(it.id)}>
-									<EntrieInput value={it.item} />
+									<EntrieInput value={it} />
 								</EstimationItem>
 							);
 						}
@@ -48,7 +49,7 @@ export function Entries({ data = [] }: { data?: OfferData[]; items?: MenuProps['
 						if (key === 'actions') {
 							return (
 								<EstimationItem key={`actions-${key}`} {...getRowProps(it.id)}>
-									{hoveredRow === it.id && (
+									{checkActive(it.id) && (
 										<Flex align='center' justify='center' style={{ height: '100%' }}>
 											<DeleteIcon style={{ cursor: 'pointer' }} onClick={() => console.log('remove', it.id)} />
 										</Flex>
