@@ -1,11 +1,11 @@
 import { useCategories } from '@/hooks/useCategories';
 import { useEntries } from '@/hooks/useEntries';
-import { useMemo } from 'react';
+import React, { useMemo, ReactNode } from 'react';
 import { Label } from '../LibraryDropdown/Label';
 
 export type MenuItem = {
 	key: string;
-	label: string | JSX.Element;
+	label: string | ReactNode;
 	value: string;
 	active?: boolean;
 	path?: string;
@@ -18,29 +18,20 @@ export const useSearchLibrary = () => {
 
 	return useMemo(
 		() =>
-			categories?.reduce((acc: MenuItem[], category) => {
-				acc?.push({
-					key: `${category.id}`,
-					label: <Label itemKey={`${category.id}`}>{category.name}</Label>,
-					value: category.name,
-					name: category.name,
+			entries?.reduce((acc: MenuItem[], entry) => {
+				const category = categories?.find((cat) => cat.id === entry.categoryId);
+				if (!category) return acc;
+
+				acc.push({
+					key: `${category.id}-${entry.id}`,
+					label: <Label itemKey={`${category.id}-${entry.id}`}>{`${entry.name}`}</Label>,
+					value: `${entry.name}`,
+					name: entry.name,
 				});
-
-				const children = entries
-					?.filter((entry) => entry.categoryId === category.id)
-					.map((entry) => ({
-						key: `${category.id}-${entry.id}`,
-						label: <Label itemKey={`${category.id}-${entry.id}`}>{`${category.name} | ${entry.name}`}</Label>,
-						value: `${category.name} | ${entry.name}`,
-						name: entry.name,
-					}));
-
-				if (children) {
-					acc?.push(...children);
-				}
 
 				return acc;
 			}, []),
+
 		[categories, entries]
 	);
 };

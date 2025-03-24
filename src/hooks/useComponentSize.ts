@@ -7,7 +7,7 @@ import { useEffect, useRef, useState } from 'react';
  */
 export const useComponentSize = (
 	initialSize = { width: 0, height: 0 }
-): { observedRef: React.RefObject<HTMLDivElement>; width: number; height: number } => {
+): { observedRef: React.RefObject<HTMLDivElement | null>; width: number; height: number } => {
 	const observedRef = useRef<HTMLDivElement>(null);
 	const [size, setSize] = useState(initialSize);
 

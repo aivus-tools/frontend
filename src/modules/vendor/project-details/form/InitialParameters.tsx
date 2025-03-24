@@ -11,7 +11,7 @@ import { AntdListWrapper, IconButton } from '../common/styled';
 const { TextArea } = Input;
 
 export const InitialParameters: React.FC = () => {
-	const addPersonEmptyRow = useRef<() => void>();
+	const addPersonEmptyRow = useRef<() => void>(() => {});
 	const { handleFocus } = useGuidance();
 	const form = Form.useFormInstance<Details>();
 	const addPerson = (user: Person) => {

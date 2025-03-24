@@ -23,18 +23,16 @@ export function Estimation() {
 	return (
 		<KeysProvider>
 			<HoverProvider>
-				<AddButton />
-				{hasData && (
-					<Wrapper>
-						<Table>
-							<Header />
-							{categories.map((category) => (
-								<Category key={category.id} category={category} />
-							))}
-							<Summary />
-						</Table>
-					</Wrapper>
-				)}
+				<Wrapper>
+					<Table>
+						<Header />
+						{categories.map((category) => (
+							<Category key={category.id} category={category} />
+						))}
+						{hasData && <Summary />}
+					</Table>
+				</Wrapper>
+				{!hasData && <AddButton />}
 			</HoverProvider>
 		</KeysProvider>
 	);

@@ -28,7 +28,9 @@ export function Category({ category }: { category: TypeCategory }) {
 			<Title category={category} itemKey={key} />
 			{isOpen && (
 				<>
-					{subCategories?.map((subCategory) => <SubCategory key={subCategory.id} subCategory={subCategory} />)}
+					{subCategories?.map((subCategory) => (
+						<SubCategory key={`${key}${subCategory.id}`} subCategory={subCategory} />
+					))}
 					<Entries data={offers} />
 					<SubTotal value='$ 4,740.0' />
 					<Total text={category.name} value='$ 4,740.0' />

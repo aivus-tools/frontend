@@ -35,10 +35,10 @@ export const LibraryDropdown = ({ value, componentAction, onSelect }: Props) => 
 	}, [library, searchValue]);
 
 	// eslint-disable-next-line react-hooks/exhaustive-deps
-	const debouncedIsTyping = useCallback(debounce(setIsTyping, 300), []);
+	const debouncedIsTyping = useCallback(debounce(setIsTyping, 150), []);
 
 	const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-		debouncedIsTyping(Boolean(e.currentTarget.value));
+		debouncedIsTyping(true);
 		setSearchValue(e.currentTarget.value);
 	};
 

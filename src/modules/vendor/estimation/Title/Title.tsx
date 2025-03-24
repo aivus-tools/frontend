@@ -18,7 +18,7 @@ export const Title = ({ category, itemKey }: { category: Category; itemKey: stri
 
 	return (
 		<>
-			<SectionTitle style={{ gridColumn: isOpen ? 'span 7' : 'span 5' }} isOpen={isOpen}>
+			<SectionTitle style={{ gridColumn: isOpen ? 'span 7' : 'span 5' }} $isOpen={isOpen}>
 				<Flex align='center' onClick={handleClick} style={{ cursor: 'pointer' }}>
 					<ArrowButton isOpen={isOpen} />
 					<SectionTitleText>{category.name}</SectionTitleText>

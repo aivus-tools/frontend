@@ -5,7 +5,7 @@ const Nav = styled.nav`
 	gap: 8px;
 `;
 
-const Tab = styled.button<{ isActive: boolean }>`
+const Tab = styled.button<{ $isActive: boolean }>`
 	line-height: normal;
 	padding: 8px 12px;
 	border: none;
@@ -18,8 +18,8 @@ const Tab = styled.button<{ isActive: boolean }>`
 	border-radius: 6px;
 	white-space: nowrap;
 
-	${({ isActive }) =>
-		isActive &&
+	${({ $isActive }) =>
+		$isActive &&
 		`
 		color: var(--blue);
     background-color: var(--beige);
@@ -36,7 +36,7 @@ export const Tabs = ({ activeKey, items, onChange }: Props) => {
 	return (
 		<Nav>
 			{items.map((item) => (
-				<Tab key={item.key} isActive={activeKey === item.key} onClick={onChange(item.key)}>
+				<Tab key={item.key} $isActive={activeKey === item.key} onClick={onChange(item.key)}>
 					{item.label}
 				</Tab>
 			))}
