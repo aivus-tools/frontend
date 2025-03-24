@@ -1,22 +1,31 @@
 'use client';
 
-import type { Category, OfferCategory } from './types';
+import type { Category as TypeCategory } from './types';
 import { Entries } from './Entries';
 import { useExpandedKeys } from './context/expanded';
 import { SubTotal } from './Total/SubTotal';
 import { Total } from './Total/Total';
 import { Title } from './Title/Title';
 import { SubCategory } from './SubCategory';
+import { useAppSelector } from '@/lib/hooks';
+import { selectSubcategoryById, selectOffersByCategoryId } from '@/store/slices/offer';
+import { useCallback } from 'react';
+import { RootState } from '@/lib/store';
 
-export function Category({ category }: { category: OfferCategory }) {
+export function Category({ category }: { category: TypeCategory }) {
 	const { keys } = useExpandedKeys();
-	const isOpen = keys?.includes(category.id);
-
-	const { subCategories, offers } = category;
+	const key = `${category.id}`;
+	const isOpen = keys?.includes(key);
+	const subCategories = useAppSelector(
+		useCallback((state: RootState) => selectSubcategoryById(state, category.id), [category.id])
+	);
+	const offers = useAppSelector(
+		useCallback((state: RootState) => selectOffersByCategoryId(state, category.id), [category.id])
+	);
 
 	return (
 		<>
-			<Title category={category} />
+			<Title category={category} itemKey={key} />
 			{isOpen && (
 				<>
 					{subCategories?.map((subCategory) => <SubCategory key={subCategory.id} subCategory={subCategory} />)}

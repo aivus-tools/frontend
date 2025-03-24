@@ -1,8 +1,9 @@
 import React, { createContext, useContext, ReactNode, useState } from 'react';
 
 interface KeysContextType {
-	keys: (string | number)[] | undefined;
-	setKey: (key: string | number) => void;
+	keys: string[] | undefined;
+	switchKey: (key: string) => void;
+	addKey: (key: string) => void;
 }
 
 const HoverContext = createContext<KeysContextType | undefined>(undefined);
@@ -12,9 +13,9 @@ interface FocusProviderProps {
 }
 
 export const KeysProvider: React.FC<FocusProviderProps> = ({ children }) => {
-	const [keys, setKeys] = useState<(string | number)[]>();
+	const [keys, setKeys] = useState<string[]>();
 
-	const setKey = (key: string | number) => {
+	const switchKey = (key: string) => {
 		setKeys((prevKeys) => {
 			if (prevKeys?.includes(key)) {
 				return prevKeys.filter((prevKey) => prevKey !== key);
@@ -24,7 +25,16 @@ export const KeysProvider: React.FC<FocusProviderProps> = ({ children }) => {
 		});
 	};
 
-	return <HoverContext.Provider value={{ keys, setKey }}>{children}</HoverContext.Provider>;
+	const addKey = (key: string) =>
+		setKeys((prevKey) => {
+			if (prevKey?.includes(key)) {
+				return prevKey;
+			}
+
+			return [...(prevKey || []), key];
+		});
+
+	return <HoverContext.Provider value={{ keys, switchKey, addKey }}>{children}</HoverContext.Provider>;
 };
 
 export const useExpandedKeys = () => {

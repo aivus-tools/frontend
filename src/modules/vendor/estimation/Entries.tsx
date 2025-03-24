@@ -9,8 +9,14 @@ import { EstimationItem } from './styled';
 import { RowLine } from './RowLine';
 import { Flex } from 'antd';
 import { EntrieInput } from './EntrieInput';
+import { useAppDispatch } from '@/lib/hooks';
+import { removeOfferRow } from '@/store/slices/offer';
 
 export function Entries({ data = [] }: { data?: OfferData[] }) {
+	const dispatch = useAppDispatch();
+	const handleRemove = (id: number) => {
+		dispatch(removeOfferRow(id));
+	};
 	const { getRowProps, hoveredRow, focusedRow } = useRowHover();
 	const checkActive = (id: number) => hoveredRow === id || focusedRow === id;
 
@@ -39,9 +45,11 @@ export function Entries({ data = [] }: { data?: OfferData[] }) {
 						}
 
 						if (key === 'item') {
+							const rowProps = getRowProps(it.id);
 							return (
-								<EstimationItem key={`item-${key}`} style={itemStyle} {...getRowProps(it.id)}>
+								<EstimationItem key={`item-${key}`} style={itemStyle} {...rowProps}>
 									<EntrieInput value={it} />
+									{/* {rowProps.focused ? <EntrieInput value={it} /> : it[key]} */}
 								</EstimationItem>
 							);
 						}
@@ -51,7 +59,7 @@ export function Entries({ data = [] }: { data?: OfferData[] }) {
 								<EstimationItem key={`actions-${key}`} {...getRowProps(it.id)}>
 									{checkActive(it.id) && (
 										<Flex align='center' justify='center' style={{ height: '100%' }}>
-											<DeleteIcon style={{ cursor: 'pointer' }} onClick={() => console.log('remove', it.id)} />
+											<DeleteIcon style={{ cursor: 'pointer' }} onClick={() => handleRemove(it.id)} />
 										</Flex>
 									)}
 								</EstimationItem>

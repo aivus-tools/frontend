@@ -28,11 +28,6 @@ export interface Category {
 	parentCategoryId?: number;
 }
 
-export interface OfferCategory extends Category {
-	subCategories?: OfferCategory[];
-	offers?: OfferData[];
-}
-
 export interface Entry {
 	id: number;
 	name: string;
@@ -46,4 +41,8 @@ export type EntryVariant = {
 	children?: EntryVariant[];
 };
 
-export type OfferDetails = OfferCategory[];
+export interface OfferDetails {
+	offers: OfferData[];
+	categories: Category[];
+	subCategories: Category[];
+}

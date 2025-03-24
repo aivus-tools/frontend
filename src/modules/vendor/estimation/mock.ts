@@ -1,4 +1,4 @@
-import { Category, Entry, OfferData, OfferDetails } from './types';
+import { Category, Entry, OfferData } from './types';
 
 export const CATEGORIES: Category[] = [
 	{
@@ -227,101 +227,6 @@ export const ENTRIES: Entry[] = [
 	{
 		id: 36,
 		name: 'Director Assistant',
-		categoryId: 6,
-	},
-	{
-		id: 37,
-		name: 'On-Set Editor',
-		categoryId: 6,
-	},
-	{
-		id: 38,
-		name: 'DP / Cinematographer',
-		categoryId: 6,
-	},
-	{
-		id: 39,
-		name: 'Focus puller',
-		categoryId: 6,
-	},
-	{
-		id: 40,
-		name: 'Camera Assistant (1st AC)',
-		categoryId: 6,
-	},
-	{
-		id: 41,
-		name: 'Extra Camera Operator',
-		categoryId: 6,
-	},
-	{
-		id: 42,
-		name: 'Camera Tech',
-		categoryId: 6,
-	},
-	{
-		id: 43,
-		name: 'Aerial Cinematographer',
-		categoryId: 6,
-	},
-	{
-		id: 44,
-		name: 'Gaffer',
-		categoryId: 6,
-	},
-	{
-		id: 45,
-		name: 'Grip',
-		categoryId: 6,
-	},
-	{
-		id: 46,
-		name: 'Field/Audio Recorder',
-		categoryId: 6,
-	},
-	{
-		id: 47,
-		name: 'Photographer',
-		categoryId: 6,
-	},
-	{
-		id: 48,
-		name: 'Producer',
-		categoryId: 6,
-	},
-	{
-		id: 49,
-		name: 'Production Assistant',
-		categoryId: 6,
-	},
-	{
-		id: 50,
-		name: 'Production Designer',
-		categoryId: 6,
-	},
-	{
-		id: 51,
-		name: 'Production Assistant(s)',
-		categoryId: 6,
-	},
-	{
-		id: 52,
-		name: 'Set Decorator',
-		categoryId: 6,
-	},
-	{
-		id: 53,
-		name: 'Assistant Set Decorator(s)',
-		categoryId: 6,
-	},
-	{
-		id: 54,
-		name: 'Property Master',
-		categoryId: 6,
-	},
-	{
-		id: 55,
-		name: 'Assistant Property Master',
 		categoryId: 6,
 	},
 ];
@@ -634,42 +539,5 @@ export const OFFERS: OfferData[] = [
 		clientPrice: 1100,
 		clientCost: 11000,
 		marketRange: '2000',
-	},
-];
-
-export const OFFER_DETAILS: OfferDetails = [
-	{
-		id: 1,
-		name: 'Creative DEVELOPMENT',
-		offers: OFFERS.filter((o) => o.categoryId === 1),
-		subCategories: [
-			{
-				id: 2,
-				name: 'PRE-PRODUCTION',
-				offers: OFFERS.filter((o) => o.categoryId === 2),
-			},
-		],
-	},
-	{
-		id: 3,
-		name: 'PRODUCTION',
-		offers: OFFERS.filter((o) => o.categoryId === 3),
-		subCategories: [
-			{
-				id: 4,
-				name: 'Equipment',
-				offers: OFFERS.filter((o) => o.categoryId === 4),
-			},
-			{
-				id: 5,
-				name: 'Vehicles',
-				offers: OFFERS.filter((o) => o.categoryId === 5),
-			},
-			{
-				id: 6,
-				name: 'Team',
-				offers: OFFERS.filter((o) => o.categoryId === 6),
-			},
-		],
 	},
 ];
