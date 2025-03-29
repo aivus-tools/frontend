@@ -8,6 +8,8 @@ import { useSearchLibrary } from '../hooks/useSearchLibrary';
 import debounce from 'lodash.debounce';
 import { SearchProvider } from './SearchContext';
 import { ValueSetter } from './ValueSetter';
+import { MenuClickEventHandler } from 'rc-menu/lib/interface';
+import { menuItemToOfferData } from '../helpers/menuItemToOfferData';
 
 interface ComponentParams {
 	handleChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
@@ -37,30 +39,54 @@ export const LibraryDropdown = ({ value, componentAction, onSelect }: Props) => 
 	// eslint-disable-next-line react-hooks/exhaustive-deps
 	const debouncedIsTyping = useCallback(debounce(setIsTyping, 150), []);
 
-	const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-		debouncedIsTyping(true);
-		setSearchValue(e.currentTarget.value);
-	};
+	const handleChange = useCallback(
+		(e: React.ChangeEvent<HTMLInputElement>) => {
+			debouncedIsTyping(true);
+			setSearchValue(e.currentTarget.value);
+		},
+		[debouncedIsTyping]
+	);
 
-	const handleBlur = () => {
+	const handleBlur = useCallback(() => {
 		focusRow(null);
-		setIsTyping(false);
-	};
+		setTimeout(() => {
+			setIsTyping(false);
+		}, 0);
+	}, [focusRow]);
 
-	const handleFocus = () => {
+	const handleFocus = useCallback(() => {
 		focusRow(value?.id ?? null);
-	};
+	}, [focusRow, value]);
 
-	const handleSelect = (item: OfferData) => {
-		onSelect?.(item);
-		setIsTyping(false);
-		setSearchValue('');
-	};
+	const handleSelect = useCallback(
+		(item: OfferData) => {
+			onSelect?.(item);
+			setIsTyping(false);
+			setSearchValue('');
+		},
+		[onSelect]
+	);
+
+	const handleClick: MenuClickEventHandler = useCallback(
+		({ key }) => {
+			const selectedItem = items.find((item) => item.key === key);
+			if (selectedItem) {
+				handleSelect(menuItemToOfferData(selectedItem));
+			}
+		},
+		[items, handleSelect]
+	);
 
 	return (
 		<SearchProvider activeKey={items[0]?.key}>
 			<ValueSetter isTyping={isTyping} onSelect={handleSelect} items={items}>
-				<Dropdown open={isTyping} menu={{ items }}>
+				<Dropdown
+					menu={{ items, onClick: handleClick }}
+					onOpenChange={(open) => {
+						setIsTyping(open);
+					}}
+					trigger={['click']}
+				>
 					<div>
 						{componentAction({
 							handleChange,

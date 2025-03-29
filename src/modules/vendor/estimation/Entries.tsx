@@ -31,7 +31,7 @@ export function Entries({ data = [] }: { data?: OfferData[] }) {
 
 						if (key === 'settings') {
 							return (
-								<EstimationItem key={`settings-${key}`} {...getRowProps(it.id)}>
+								<EstimationItem key={`settings-${key}`} {...getRowProps(it.id)} style={{ justifyContent: 'center' }}>
 									{checkActive(it.id) && (
 										<Flex align='center' justify='center' style={{ height: '100%' }}>
 											<SettingsIcon
@@ -56,7 +56,7 @@ export function Entries({ data = [] }: { data?: OfferData[] }) {
 
 						if (key === 'actions') {
 							return (
-								<EstimationItem key={`actions-${key}`} {...getRowProps(it.id)}>
+								<EstimationItem key={`actions-${key}`} {...getRowProps(it.id)} style={{ justifyContent: 'center' }}>
 									{checkActive(it.id) && (
 										<Flex align='center' justify='center' style={{ height: '100%' }}>
 											<DeleteIcon style={{ cursor: 'pointer' }} onClick={() => handleRemove(it.id)} />

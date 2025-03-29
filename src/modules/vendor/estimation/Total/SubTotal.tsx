@@ -1,8 +1,10 @@
 'use client';
 
-import { Flex } from 'antd';
+import { Flex, Input } from 'antd';
 import { styled } from 'styled-components';
 import AddIcon from '@/icons/add-icon.svg';
+import { LibraryDropdown } from '../LibraryDropdown/LibraryDropdown';
+import { useSelectOffer } from '../hooks/useSelectOffer';
 
 const LabelSubTotal = styled.div`
 	font-weight: 600;
@@ -42,26 +44,40 @@ const Label = styled(Flex)`
 
 interface Props {
 	value: string;
-	onAdd?: () => void;
 }
 
-export const SubTotal = ({ value, onAdd }: Props) => (
-	<>
-		<Flex
-			onClick={onAdd}
-			align='center'
-			justify='center'
-			style={{ backgroundColor: 'var(--bg-blue-subtotal)', borderRadius: '0 0 0 6px', cursor: 'pointer' }}
-		>
-			<AddIcon />
-		</Flex>
-		<Label onClick={onAdd} align='center'>
-			add item
-		</Label>
-		<LabelSubTotal style={{ gridColumn: 'span 3' }}>Subtotal of Locations:</LabelSubTotal>
-		<SubTotalSum>{value}</SubTotalSum>
-		<EmptyBlockSubTotalSum style={{ borderRadius: ' 0 0 6px 0' }} />
-		<div />
-		<EmptyBlockSubTotalSum style={{ gridColumn: 'span 5' }} />
-	</>
-);
+export const SubTotal = ({ value }: Props) => {
+	const handleSelect = useSelectOffer();
+
+	return (
+		<>
+			<Flex
+				align='center'
+				justify='center'
+				style={{ backgroundColor: 'var(--bg-blue-subtotal)', borderRadius: '0 0 0 6px' }}
+			>
+				<AddIcon />
+			</Flex>
+			<Label align='center'>
+				<LibraryDropdown
+					onSelect={handleSelect}
+					componentAction={({ handleChange, handleBlur, handleFocus, value }) => (
+						<Input
+							placeholder='add item'
+							variant='borderless'
+							value={value}
+							onChange={handleChange}
+							onBlur={handleBlur}
+							onFocus={handleFocus}
+						/>
+					)}
+				/>
+			</Label>
+			<LabelSubTotal style={{ gridColumn: 'span 3' }}>Subtotal of Locations:</LabelSubTotal>
+			<SubTotalSum>{value}</SubTotalSum>
+			<EmptyBlockSubTotalSum style={{ borderRadius: ' 0 0 6px 0' }} />
+			<div />
+			<EmptyBlockSubTotalSum style={{ gridColumn: 'span 5' }} />
+		</>
+	);
+};

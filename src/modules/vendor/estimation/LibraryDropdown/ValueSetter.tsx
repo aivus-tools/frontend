@@ -2,8 +2,7 @@ import { PropsWithChildren, useCallback, useEffect } from 'react';
 import { useSearchActiveKey } from './SearchContext';
 import { MenuItem } from '../hooks/useSearchLibrary';
 import { OfferData } from '../types';
-
-const generateNumeralId = () => Math.floor(Math.random() * 1000000);
+import { menuItemToOfferData } from '../helpers/menuItemToOfferData';
 
 interface Props {
 	onSelect: (item: OfferData) => void;
@@ -11,29 +10,14 @@ interface Props {
 	items: MenuItem[];
 }
 
-export const ValueSetter = ({ isTyping, items, children, onSelect }: PropsWithChildren<Props>) => {
+export const ValueSetter = ({ items, children, onSelect }: PropsWithChildren<Props>) => {
 	const { activeKey, changeActiveKey } = useSearchActiveKey();
 
 	const handleSelect = useCallback(() => {
 		const item = items.find((it) => it.key === activeKey);
 
 		if (item) {
-			const [categoryId, entryId] = item.key.split('-');
-			const newData: OfferData = {
-				id: generateNumeralId(),
-				entryId: +entryId,
-				categoryId: +categoryId,
-				item: item.name,
-				price: 0,
-				units: '',
-				quantity: 0,
-				cost: 0,
-				surcharge: '',
-				clientPrice: 0,
-				clientCost: 0,
-				marketRange: '',
-			};
-			onSelect(newData);
+			onSelect(menuItemToOfferData(item));
 		}
 	}, [activeKey, items, onSelect]);
 
@@ -59,13 +43,11 @@ export const ValueSetter = ({ isTyping, items, children, onSelect }: PropsWithCh
 	);
 
 	useEffect(() => {
-		if (isTyping) {
-			window.addEventListener('keydown', handleEnter);
-			return () => {
-				window.removeEventListener('keydown', handleEnter);
-			};
-		}
-	}, [isTyping, handleEnter]);
+		window.addEventListener('keydown', handleEnter);
+		return () => {
+			window.removeEventListener('keydown', handleEnter);
+		};
+	}, [handleEnter]);
 
 	return <>{children}</>;
 };
