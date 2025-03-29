@@ -80,16 +80,18 @@ export const Brief: React.FC = () => {
 							}}
 						>
 							<Form.Item name='visibleForVendors' noStyle>
-								{visibleForVendors ? <Eye /> : <EyeCrossed />}
-								<Typography.Text
-									style={{
-										marginLeft: '10px',
-										color: 'var(--main)',
-										userSelect: 'none',
-									}}
-								>
-									Visible for vendors
-								</Typography.Text>
+								<Flex align='center'>
+									{visibleForVendors ? <Eye /> : <EyeCrossed />}
+									<Typography.Text
+										style={{
+											marginLeft: '10px',
+											color: 'var(--main)',
+											userSelect: 'none',
+										}}
+									>
+										Visible for vendors
+									</Typography.Text>
+								</Flex>
 							</Form.Item>
 						</LabelWithSide>
 					}

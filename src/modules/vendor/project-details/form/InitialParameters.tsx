@@ -33,7 +33,6 @@ export const InitialParameters: React.FC = () => {
 	return (
 		<>
 			{modal}
-			<Form.Item name='options' hidden />
 			<Flex gap={30} style={{ width: '100%' }}>
 				<Form.Item name='previewImage' valuePropName='image' style={{ width: 'auto' }}>
 					<Uploader />
