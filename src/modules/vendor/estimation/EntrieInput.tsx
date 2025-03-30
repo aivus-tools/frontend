@@ -18,11 +18,15 @@ const Input = styled(LibInput)`
 	}
 `;
 
+const DropdownWrapper = styled.div`
+	width: 100%;
+`;
 interface Props {
 	value: OfferData;
+	variant?: 'borderless' | 'outlined';
 }
 
-export const EntrieInput = ({ value }: Props) => {
+export const EntrieInput = ({ value, variant }: Props) => {
 	const dispatch = useAppDispatch();
 	const allCategories = useAppSelector(selectAllCategories);
 	const { addKey } = useExpandedKeys();
@@ -41,19 +45,21 @@ export const EntrieInput = ({ value }: Props) => {
 		}
 	};
 	return (
-		<LibraryDropdown
-			value={value}
-			onSelect={handleSelect}
-			componentAction={({ handleChange, handleBlur, handleFocus, value }) => (
-				<Input
-					placeholder={value}
-					variant='borderless'
-					value={value}
-					onChange={handleChange}
-					onBlur={handleBlur}
-					onFocus={handleFocus}
-				/>
-			)}
-		/>
+		<DropdownWrapper>
+			<LibraryDropdown
+				value={value}
+				onSelect={handleSelect}
+				componentAction={({ handleChange, handleBlur, handleFocus, value }) => (
+					<Input
+						placeholder={value}
+						variant={variant}
+						value={value}
+						onChange={handleChange}
+						onBlur={handleBlur}
+						onFocus={handleFocus}
+					/>
+				)}
+			/>
+		</DropdownWrapper>
 	);
 };

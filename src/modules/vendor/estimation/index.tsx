@@ -10,6 +10,7 @@ import { Summary } from './Summary';
 import { useAppSelector } from '@/lib/hooks';
 import { selectRootCategories } from '@/store/slices/offer';
 import { AddButton } from './AddButton';
+import { DrawerOfferProvider } from './context/drawer';
 
 export function Estimation() {
 	const categories = useAppSelector(selectRootCategories);
@@ -21,19 +22,21 @@ export function Estimation() {
 	// }
 
 	return (
-		<KeysProvider>
-			<HoverProvider>
-				<Wrapper>
-					<Table>
-						<Header />
-						{categories.map((category) => (
-							<Category key={category.id} category={category} />
-						))}
-						{hasData && <Summary />}
-					</Table>
-				</Wrapper>
-				{!hasData && <AddButton />}
-			</HoverProvider>
-		</KeysProvider>
+		<DrawerOfferProvider>
+			<KeysProvider>
+				<HoverProvider>
+					<Wrapper>
+						<Table>
+							<Header />
+							{categories.map((category) => (
+								<Category key={category.id} category={category} />
+							))}
+							{hasData && <Summary />}
+						</Table>
+					</Wrapper>
+					{!hasData && <AddButton />}
+				</HoverProvider>
+			</KeysProvider>
+		</DrawerOfferProvider>
 	);
 }

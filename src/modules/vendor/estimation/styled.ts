@@ -38,10 +38,12 @@ export const EstimationItem = styled.div<{ $hovered?: boolean }>`
 	font-weight: 500;
 	font-size: 13px;
 	line-height: 15.85px;
+	padding: 4px 2px;
 
 	position: relative;
 	display: flex;
 	align-items: center;
+	justify-content: flex-end;
 `;
 
 export const DropdownButton = styled.div`

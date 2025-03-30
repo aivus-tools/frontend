@@ -10,7 +10,7 @@ interface Props {
 	items: MenuItem[];
 }
 
-export const ValueSetter = ({ items, children, onSelect }: PropsWithChildren<Props>) => {
+export const ValueSetter = ({ isTyping, items, children, onSelect }: PropsWithChildren<Props>) => {
 	const { activeKey, changeActiveKey } = useSearchActiveKey();
 
 	const handleSelect = useCallback(() => {
@@ -43,11 +43,13 @@ export const ValueSetter = ({ items, children, onSelect }: PropsWithChildren<Pro
 	);
 
 	useEffect(() => {
-		window.addEventListener('keydown', handleEnter);
-		return () => {
-			window.removeEventListener('keydown', handleEnter);
-		};
-	}, [handleEnter]);
+		if (isTyping) {
+			window.addEventListener('keydown', handleEnter);
+			return () => {
+				window.removeEventListener('keydown', handleEnter);
+			};
+		}
+	}, [handleEnter, isTyping]);
 
 	return <>{children}</>;
 };

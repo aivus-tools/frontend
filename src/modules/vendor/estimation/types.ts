@@ -1,3 +1,4 @@
+import { InputNumberProps } from 'antd';
 import { ReactNode } from 'react';
 
 export interface OfferData {
@@ -5,21 +6,24 @@ export interface OfferData {
 	entryId: number;
 	categoryId: number;
 	item: string;
-	price: number;
+	price: number | null;
 	units: string;
-	quantity: number;
-	cost: number;
-	surcharge: string;
-	clientPrice: number;
-	clientCost: number;
+	quantity: number | null;
+	cost: number | null;
+	surcharge: string | null;
+	clientPrice: number | null;
+	clientCost: number | null;
 	marketRange: string;
 }
 
+export type HeaderKey = keyof OfferData | 'link' | 'settings' | 'actions';
+
 export type Headers = {
 	label: string | ReactNode;
-	key: keyof OfferData | 'link' | 'settings' | 'actions';
+	key: HeaderKey;
 	style?: React.CSSProperties;
 	itemStyle?: React.CSSProperties;
+	itemProps?: InputNumberProps<number>;
 };
 
 export interface Category {

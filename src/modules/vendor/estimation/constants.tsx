@@ -1,5 +1,6 @@
 import SettingsIcon from '@/icons/settings-icon.svg';
 import type { Headers } from './types';
+import { percentFormat, percentParser, priceFormat, priceParser } from './helpers/format';
 
 export const HEADERS: Headers[] = [
 	{
@@ -21,6 +22,10 @@ export const HEADERS: Headers[] = [
 	{
 		label: 'Price, $',
 		key: 'price',
+		itemProps: {
+			formatter: priceFormat,
+			parser: priceParser,
+		},
 	},
 	{
 		label: 'Units',
@@ -33,6 +38,10 @@ export const HEADERS: Headers[] = [
 	{
 		label: 'Cost, $',
 		key: 'cost',
+		itemProps: {
+			formatter: priceFormat,
+			parser: priceParser,
+		},
 	},
 	{
 		label: '',
@@ -51,14 +60,26 @@ export const CLIENTS_HEADERS: Headers[] = [
 		itemStyle: {
 			color: 'var(--gray-light)',
 		},
+		itemProps: {
+			formatter: percentFormat,
+			parser: percentParser,
+		},
 	},
 	{
 		label: "Client's price",
 		key: 'clientPrice',
+		itemProps: {
+			formatter: priceFormat,
+			parser: priceParser,
+		},
 	},
 	{
 		label: "Client's cost",
 		key: 'clientCost',
+		itemProps: {
+			formatter: priceFormat,
+			parser: priceParser,
+		},
 	},
 	{
 		label: 'Market Range',

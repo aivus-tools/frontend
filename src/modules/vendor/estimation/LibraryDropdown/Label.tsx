@@ -1,7 +1,7 @@
 import { PropsWithChildren, useCallback, useEffect, useRef } from 'react';
 import { useSearchActiveKey } from './SearchContext';
 import { styled } from 'styled-components';
-// import { useHandleSelect } from '../context/select';
+import { useHandleSelect } from '../context/select';
 
 const Wrapper = styled.div`
 	display: flex;
@@ -26,10 +26,8 @@ interface Props {
 
 export const Label = ({ children, itemKey }: PropsWithChildren<Props>) => {
 	const { activeKey, changeActiveKey } = useSearchActiveKey();
-	// const handleSelect = useHandleSelect();
-	const handleSelect = useCallback(() => {
-		console.log('handleSelect');
-	}, []);
+	const handleSelect = useHandleSelect();
+
 	const isActive = activeKey === itemKey;
 	const ref = useRef<HTMLDivElement>(null);
 

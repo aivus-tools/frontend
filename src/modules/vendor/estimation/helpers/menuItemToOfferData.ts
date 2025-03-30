@@ -9,13 +9,13 @@ export const menuItemToOfferData = (item: MenuItem): OfferData => {
 		entryId: +item.key.split('-')[1],
 		categoryId: +item.key.split('-')[0],
 		item: item.name,
-		price: 0,
+		price: null,
 		units: '',
-		quantity: 0,
-		cost: 0,
+		quantity: null,
+		cost: null,
 		surcharge: '',
-		clientPrice: 0,
-		clientCost: 0,
+		clientPrice: null,
+		clientCost: null,
 		marketRange: '',
 	};
 };

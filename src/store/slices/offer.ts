@@ -88,10 +88,17 @@ export const offerSlice = createSlice({
 					state.offerDetails.subCategories.find((subcategory) => subcategory.parentCategoryId === category.id)
 			);
 		},
+		changeOfferRow: (state, action: PayloadAction<Partial<OfferData>>) => {
+			const { id, ...rest } = action.payload;
+			const index = state.offerDetails.offers.findIndex((offer) => offer.id === id);
+			if (index !== -1) {
+				state.offerDetails.offers[index] = { ...state.offerDetails.offers[index], ...rest };
+			}
+		},
 	},
 });
 
-export const { addOfferRow, removeOfferRow } = offerSlice.actions;
+export const { addOfferRow, removeOfferRow, changeOfferRow } = offerSlice.actions;
 export const selectOfferDetails = (state: { offer: offerState }) => state.offer.offerDetails;
 export const selectDictionary = (state: { offer: offerState }) => state.offer.dictionary;
 export const selectRootCategories = createSelector([selectOfferDetails], (offerDetails) => {
