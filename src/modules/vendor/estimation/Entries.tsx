@@ -74,7 +74,7 @@ export function Entries({ data = [] }: { data?: OfferData[] }) {
 										style={{ width: '100%' }}
 										placeholder='Select unit'
 										variant={checkActive(it.id) ? 'outlined' : 'borderless'}
-										value={it.units as string}
+										value={it.units as unknown as number}
 										onChange={handleChange(it.id, 'units')}
 										options={[
 											{ value: 'seconds', label: 'Seconds' },
