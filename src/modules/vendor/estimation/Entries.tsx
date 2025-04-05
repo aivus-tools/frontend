@@ -1,26 +1,94 @@
 'use client';
 
-import type { HeaderKey, OfferData } from './types';
+import { HeaderKey, OfferData, UnitType } from './types';
 import { CLIENTS_HEADERS, HEADERS } from './constants';
 import { useRowHover } from './context/hover';
 import SettingsIcon from '@/icons/settings-icon.svg';
+import AddIcon from '@/icons/add-icon.svg';
+import RemoveIcon from '@/icons/minus.svg';
 import DeleteIcon from '@/icons/delete.svg';
-import { EstimationItem } from './styled';
+import { EstimationItem, IconButton, SelectWrapper } from './styled';
 import { RowLine } from './RowLine';
 import { Flex, InputNumber, Select } from 'antd';
 import { EntrieInput } from './EntrieInput';
 import { useAppDispatch } from '@/lib/hooks';
 import { changeOfferRow, removeOfferRow } from '@/store/slices/offer';
 import { useDrawerOffer } from './context/drawer';
+import { Fragment } from 'react';
+import { ValueOf } from 'next/dist/shared/lib/constants';
+
+const timeUnitFirst = (a: OfferData['units'][number], b: OfferData['units'][number]) => {
+	return a?.type === UnitType.TIME && b?.type === UnitType.QUANTITY ? -1 : 1;
+};
+
+const unitOptionsByType = (unitType: UnitType) => {
+	return unitType === 'time'
+		? [
+				{ value: 'seconds', label: 'Seconds' },
+				{ value: 'minutes', label: 'Minutes' },
+				{ value: 'hours', label: 'Hours' },
+				{ value: 'days', label: 'Days' },
+			]
+		: [
+				{ value: 'pieces', label: 'Pieces' },
+				{ value: 'boxes', label: 'Boxes' },
+				{ value: 'pallets', label: 'Pallets' },
+				{ value: 'containers', label: 'Containers' },
+			];
+};
 
 export function Entries({ data = [] }: { data?: OfferData[] }) {
 	const dispatch = useAppDispatch();
 	const handleRemove = (id: number) => {
 		dispatch(removeOfferRow(id));
 	};
-	const handleChange = (id: number, key: keyof OfferData) => (data: number | null) => {
-		dispatch(changeOfferRow({ id, [key]: data ?? 0 }));
+	const handleChange = (id: number, key: keyof OfferData) => (data: ValueOf<OfferData>) => {
+		dispatch(changeOfferRow({ id, [key]: data }));
 	};
+	const handleChangeUnit = (id: number, unitType: UnitType) => (newUnit: string) => {
+		const offer = data.find((it) => it.id === id);
+		if (!offer) {
+			return;
+		}
+		const newUnits = offer.units?.filter((unit) => unit?.type !== unitType) ?? [];
+		const label = unitOptionsByType(unitType).find((unit) => unit.value === (newUnit as unknown as string))?.label;
+		newUnits.push({
+			id: newUnit as unknown as string,
+			label: label ?? '',
+			type: unitType,
+			value: 0,
+		});
+		console.log('newUnits', newUnits);
+		console.log('offer.units', offer.units);
+		handleChange(id, 'units')(newUnits);
+	};
+
+	const handleRemoveUnit = (id: number, unitType: UnitType) => {
+		const offer = data.find((it) => it.id === id);
+		if (!offer) {
+			return;
+		}
+		const newUnits = offer.units?.filter((unit) => unit?.type !== unitType) ?? [];
+		handleChange(id, 'units')(newUnits);
+	};
+
+	const handleChangeUnitValue = (id: number, unitId: string) => (value: number | null) => {
+		const offer = data.find((it) => it.id === id);
+		if (!offer || !value) {
+			return;
+		}
+		const newUnits = offer.units?.map((unit) => {
+			if (unit?.id === unitId) {
+				return {
+					...unit,
+					value,
+				};
+			}
+			return unit;
+		});
+		handleChange(id, 'units')(newUnits);
+	};
+
 	const { getRowProps, hoveredRow, focusedRow } = useRowHover();
 	const checkActive = (id: number) => hoveredRow === id || focusedRow === id;
 	const { onOpen } = useDrawerOffer();
@@ -28,16 +96,19 @@ export function Entries({ data = [] }: { data?: OfferData[] }) {
 	return (
 		<>
 			{data.map((it) => (
-				<>
+				<Fragment key={it.id}>
 					{HEADERS.map(({ key, itemStyle, itemProps }) => {
+						const isActive = checkActive(it.id);
+						const rowProps = getRowProps(it.id);
+
 						if (key === 'link') {
 							return null;
 						}
 
 						if (key === 'settings') {
 							return (
-								<EstimationItem key={`settings-${key}`} {...getRowProps(it.id)} style={{ justifyContent: 'center' }}>
-									{checkActive(it.id) && (
+								<EstimationItem key={`settings-${key}`} {...rowProps} style={{ justifyContent: 'center' }}>
+									{isActive && (
 										<Flex align='center' justify='center' style={{ height: '100%' }}>
 											<SettingsIcon style={{ cursor: 'pointer', color: 'var(--gray)' }} onClick={() => onOpen(it)} />
 										</Flex>
@@ -50,15 +121,15 @@ export function Entries({ data = [] }: { data?: OfferData[] }) {
 							const rowProps = getRowProps(it.id);
 							return (
 								<EstimationItem key={`item-${key}`} style={itemStyle} {...rowProps}>
-									<EntrieInput value={it} variant={checkActive(it.id) ? 'outlined' : 'borderless'} />
+									<EntrieInput value={it} variant={isActive ? 'outlined' : 'borderless'} />
 								</EstimationItem>
 							);
 						}
 
 						if (key === 'actions') {
 							return (
-								<EstimationItem key={`actions-${key}`} {...getRowProps(it.id)} style={{ justifyContent: 'center' }}>
-									{checkActive(it.id) && (
+								<EstimationItem key={`actions-${key}`} {...rowProps} style={{ justifyContent: 'center' }}>
+									{isActive && (
 										<Flex align='center' justify='center' style={{ height: '100%' }}>
 											<DeleteIcon style={{ cursor: 'pointer' }} onClick={() => handleRemove(it.id)} />
 										</Flex>
@@ -69,28 +140,69 @@ export function Entries({ data = [] }: { data?: OfferData[] }) {
 
 						if (key === 'units') {
 							return (
-								<EstimationItem key={`actions-${key}`} {...getRowProps(it.id)} style={{ justifyContent: 'center' }}>
-									<Select
-										style={{ width: '100%' }}
-										placeholder='Select unit'
-										variant={checkActive(it.id) ? 'outlined' : 'borderless'}
-										value={it.units as unknown as number}
-										onChange={handleChange(it.id, 'units')}
-										options={[
-											{ value: 'seconds', label: 'Seconds' },
-											{ value: 'minutes', label: 'Minutes' },
-											{ value: 'hours', label: 'Hours' },
-											{ value: 'days', label: 'Days' },
-										]}
-									/>
+								<EstimationItem key={`actions-${key}`} {...rowProps} style={{ justifyContent: 'center' }}>
+									<SelectWrapper vertical $hovered={isActive}>
+										{it.units &&
+											it.units.toSorted(timeUnitFirst).map(
+												(unit) =>
+													unit && (
+														<Flex gap={5} key={unit.id} align='center'>
+															{unit.type === UnitType.TIME && it.units.length === 1 && (
+																<IconButton onClick={() => handleChangeUnit(it.id, UnitType.QUANTITY)('pieces')}>
+																	<AddIcon />
+																</IconButton>
+															)}
+															{unit.type === UnitType.QUANTITY && (
+																<IconButton onClick={() => handleRemoveUnit(it.id, UnitType.QUANTITY)}>
+																	<RemoveIcon />
+																</IconButton>
+															)}
+															<Select
+																style={{ flex: 1 }}
+																placeholder='Select unit'
+																variant={isActive ? 'outlined' : 'borderless'}
+																value={unit.id}
+																onChange={handleChangeUnit(it.id, unit.type)}
+																options={unitOptionsByType(unit.type)}
+															/>
+														</Flex>
+													)
+											)}
+									</SelectWrapper>
+								</EstimationItem>
+							);
+						}
+
+						if (key === 'quantity') {
+							return (
+								<EstimationItem key={`${it.id}-${key}`} style={itemStyle} {...rowProps}>
+									<Flex key={it.id} align='center' vertical style={{ maxWidth: '100%', gap: '5px' }}>
+										{it.units &&
+											it.units
+												.toSorted(timeUnitFirst)
+												.map(
+													(unit) =>
+														unit && (
+															<InputNumber
+																style={{ flex: 1, maxWidth: '100%' }}
+																key={unit.id}
+																variant={isActive ? 'outlined' : 'borderless'}
+																onChange={handleChangeUnitValue(it.id, unit.id)}
+																value={unit.value}
+																controls={false}
+															/>
+														)
+												)}
+									</Flex>
 								</EstimationItem>
 							);
 						}
 
 						return (
-							<EstimationItem key={`${it.id}-${key}`} style={itemStyle} {...getRowProps(it.id)}>
+							<EstimationItem key={`${it.id}-${key}`} style={itemStyle} {...rowProps}>
 								<InputNumber
-									variant={checkActive(it.id) ? 'outlined' : 'borderless'}
+									style={{ flex: 1 }}
+									variant={isActive ? 'outlined' : 'borderless'}
 									onChange={handleChange(it.id, key)}
 									value={it[key] as number}
 									controls={false}
@@ -101,21 +213,23 @@ export function Entries({ data = [] }: { data?: OfferData[] }) {
 					})}
 					<div />
 					{CLIENTS_HEADERS.map(({ key, itemStyle, itemProps }) => {
+						const isActive = checkActive(it.id);
+						const rowProps = getRowProps(it.id);
 						if (!isClientKey(key)) {
 							return null;
 						}
 						if (key === 'link') {
-							return <EstimationItem key={key} {...getRowProps(it.id)} />;
+							return <EstimationItem key={key} {...rowProps} />;
 						}
 
 						if (key === 'marketRange') {
-							return <EstimationItem key={key} {...getRowProps(it.id)} />;
+							return <EstimationItem key={key} {...rowProps} />;
 						}
 
 						return (
-							<EstimationItem key={`${key}-${it.id}`} style={itemStyle} {...getRowProps(it.id)}>
+							<EstimationItem key={`${key}-${it.id}`} style={itemStyle} {...rowProps}>
 								<InputNumber
-									variant={checkActive(it.id) ? 'outlined' : 'borderless'}
+									variant={isActive ? 'outlined' : 'borderless'}
 									onChange={handleChange(it.id, key)}
 									value={it[key] as number}
 									controls={false}
@@ -125,7 +239,7 @@ export function Entries({ data = [] }: { data?: OfferData[] }) {
 						);
 					})}
 					<RowLine />
-				</>
+				</Fragment>
 			))}
 		</>
 	);

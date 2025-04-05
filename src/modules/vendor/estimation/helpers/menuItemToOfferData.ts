@@ -1,5 +1,5 @@
 import { MenuItem } from '../hooks/useSearchLibrary';
-import { OfferData } from '../types';
+import { OfferData, UnitType } from '../types';
 
 const generateNumeralId = () => Math.floor(Math.random() * 1000000);
 
@@ -10,8 +10,7 @@ export const menuItemToOfferData = (item: MenuItem): OfferData => {
 		categoryId: +item.key.split('-')[0],
 		item: item.name,
 		price: null,
-		units: '',
-		quantity: null,
+		units: [{ id: 'seconds', label: 'seconds', type: UnitType.TIME, value: 0 }],
 		cost: null,
 		surcharge: '',
 		clientPrice: null,

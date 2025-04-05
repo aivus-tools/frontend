@@ -1,5 +1,6 @@
 'use client';
 
+import { Flex } from 'antd';
 import { styled } from 'styled-components';
 
 export const Wrapper = styled.div`
@@ -47,5 +48,22 @@ export const EstimationItem = styled.div<{ $hovered?: boolean }>`
 `;
 
 export const DropdownButton = styled.div`
+	cursor: pointer;
+`;
+
+export const SelectWrapper = styled(Flex)<{ $hovered?: boolean }>`
+	gap: 5px;
+	width: 100%;
+
+	span.ant-select-arrow {
+		${({ $hovered }) => ($hovered ? '' : 'color: transparent;')};
+	}
+`;
+
+export const IconButton = styled.div`
+	display: flex;
+	align-items: center;
+	justify-content: center;
+
 	cursor: pointer;
 `;
