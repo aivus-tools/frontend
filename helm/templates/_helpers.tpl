@@ -43,5 +43,6 @@ meta.helm.sh/release-namespace: {{ .Release.Namespace }}
 nginx.ingress.kubernetes.io/auth-type: basic
 nginx.ingress.kubernetes.io/auth-secret: {{ .Values.ingress.annotations.authSecret }}
 nginx.ingress.kubernetes.io/auth-realm: {{ .Values.ingress.annotations.authRealm | quote }}
+nginx.ingress.kubernetes.io/auth-bypass-for-path-regex: "^/external(/|$)(.*)"
 {{- end -}}
 {{- end -}}
