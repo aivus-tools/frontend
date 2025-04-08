@@ -1,10 +1,10 @@
 import { styled } from 'styled-components';
 
-export const SectionTitle = styled.div<{ isOpen?: boolean }>`
+export const SectionTitle = styled.div<{ $isOpen?: boolean }>`
 	display: flex;
 	align-items: center;
 	background-color: var(--white);
-	border-radius: ${({ isOpen }) => (isOpen ? '6px 0 0 0' : '6px 0 0 6px')};
+	border-radius: ${({ $isOpen }) => ($isOpen ? '6px 0 0 0' : '6px 0 0 6px')};
 	padding: 18px 2px;
 `;
 

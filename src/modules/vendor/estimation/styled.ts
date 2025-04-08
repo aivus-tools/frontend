@@ -1,5 +1,6 @@
 'use client';
 
+import { Flex } from 'antd';
 import { styled } from 'styled-components';
 
 export const Wrapper = styled.div`
@@ -30,18 +31,39 @@ export const Line = styled.div`
 	border-bottom: 0.5px dashed var(--gray);
 `;
 
-export const EstimationItem = styled.div<{ hovered?: boolean }>`
+export const EstimationItem = styled.div<{ $hovered?: boolean }>`
 	padding: 8px 0;
 	text-align: center;
-	background-color: ${({ hovered }) => (hovered ? 'var(--bg-blue-subsection)' : 'var(--white)')};
+	background-color: ${({ $hovered }) => ($hovered ? 'var(--bg-blue-subsection)' : 'var(--white)')};
 
 	font-weight: 500;
 	font-size: 13px;
 	line-height: 15.85px;
+	padding: 4px 2px;
 
 	position: relative;
+	display: flex;
+	align-items: center;
+	justify-content: flex-end;
 `;
 
 export const DropdownButton = styled.div`
+	cursor: pointer;
+`;
+
+export const SelectWrapper = styled(Flex)<{ $hovered?: boolean }>`
+	gap: 5px;
+	width: 100%;
+
+	span.ant-select-arrow {
+		${({ $hovered }) => ($hovered ? '' : 'color: transparent;')};
+	}
+`;
+
+export const IconButton = styled.div`
+	display: flex;
+	align-items: center;
+	justify-content: center;
+
 	cursor: pointer;
 `;

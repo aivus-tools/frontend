@@ -6,10 +6,10 @@ import { ArrowButton } from './ArrowButton';
 import { Flex } from 'antd';
 import { SectionSubTitle, SectionSubTitleText, SectionSubTitleSumHeader } from './styled';
 
-export const SubTitle = ({ text, id }: { text: string; id: number }) => {
-	const { keys, setKey } = useExpandedKeys();
-	const isOpen = !!keys?.includes(id);
-	const handleClick = () => setKey(id);
+export const SubTitle = ({ text, itemKey }: { text: string; itemKey: string }) => {
+	const { keys, switchKey } = useExpandedKeys();
+	const isOpen = !!keys?.includes(itemKey);
+	const handleClick = () => switchKey(itemKey);
 
 	return (
 		<>

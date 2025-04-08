@@ -11,7 +11,7 @@ import { AntdListWrapper, IconButton } from '../common/styled';
 const { TextArea } = Input;
 
 export const InitialParameters: React.FC = () => {
-	const addPersonEmptyRow = useRef<() => void>();
+	const addPersonEmptyRow = useRef<() => void>(() => {});
 	const { handleFocus } = useGuidance();
 	const form = Form.useFormInstance<Details>();
 	const addPerson = (user: Person) => {
@@ -33,7 +33,6 @@ export const InitialParameters: React.FC = () => {
 	return (
 		<>
 			{modal}
-			<Form.Item name='options' hidden />
 			<Flex gap={30} style={{ width: '100%' }}>
 				<Form.Item name='previewImage' valuePropName='image' style={{ width: 'auto' }}>
 					<Uploader />

@@ -3,7 +3,7 @@
 import { styled } from 'styled-components';
 import ArrowIcon from '@/icons/arrow-icon.svg';
 
-const ArrowButtonWrapper = styled.div<{ isOpen: boolean }>`
+const ArrowButtonWrapper = styled.div<{ $isOpen: boolean }>`
 	margin: 0px 8px;
 
 	display: flex;
@@ -13,11 +13,11 @@ const ArrowButtonWrapper = styled.div<{ isOpen: boolean }>`
 	height: 20px;
 	border-radius: 50%;
 	cursor: pointer;
-	transform: rotate(${({ isOpen }) => (isOpen ? '0deg' : '270deg')});
+	transform: rotate(${({ $isOpen }) => ($isOpen ? '0deg' : '270deg')});
 `;
 
 export const ArrowButton = ({ isOpen, onClick }: { isOpen: boolean; onClick?: () => void }) => (
-	<ArrowButtonWrapper isOpen={isOpen} onClick={onClick}>
+	<ArrowButtonWrapper $isOpen={isOpen} onClick={onClick}>
 		<ArrowIcon />
 	</ArrowButtonWrapper>
 );

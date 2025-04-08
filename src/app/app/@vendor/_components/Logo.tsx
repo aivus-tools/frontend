@@ -6,12 +6,12 @@ import { styled } from 'styled-components';
 import { Theme } from '@/types';
 import { THEME } from '@/lib/constants';
 
-const IconWrapper = styled.div<{ themeType: Theme }>`
+const IconWrapper = styled.div<{ $themeType: Theme }>`
 	display: flex;
 	align-items: center;
 	justify-content: start;
 	height: 70px;
-	color: ${({ themeType }) => (themeType === THEME.light ? 'var(--main-dark)' : '#fff')};
+	color: ${({ $themeType }) => ($themeType === THEME.light ? 'var(--main-dark)' : '#fff')};
 `;
 
 const IconGroup = styled.div`
@@ -24,7 +24,7 @@ const IconGroup = styled.div`
 export const Logo = ({ theme }: { theme: Theme }) => {
 	return (
 		<Link href='/app/dashboard' prefetch={false}>
-			<IconWrapper themeType={theme}>
+			<IconWrapper $themeType={theme}>
 				<IconGroup>
 					<HomeIcon />
 					<LogoIcon />

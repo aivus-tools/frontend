@@ -5,30 +5,38 @@ import { HoverProvider } from './context/hover';
 import { Category } from './Category';
 import { KeysProvider } from './context/expanded';
 import { Wrapper, Table } from './styled';
-import { useCategories } from '@/hooks/useCategories';
-import Spinner from '@/components/Spinner';
+// import Spinner from '@/components/Spinner';
 import { Summary } from './Summary';
+import { useAppSelector } from '@/lib/hooks';
+import { selectRootCategories } from '@/store/slices/offer';
+import { AddButton } from './AddButton';
+import { DrawerOfferProvider } from './context/drawer';
 
 export function Estimation() {
-	const { loading, data: categories } = useCategories();
+	const categories = useAppSelector(selectRootCategories);
 
-	if (loading) {
-		return <Spinner />;
-	}
+	const hasData = categories.length > 0;
+
+	// if (loading) {
+	// return <Spinner />;
+	// }
 
 	return (
-		<KeysProvider>
-			<HoverProvider>
-				<Wrapper>
-					<Table>
-						<Header />
-						{categories
-							?.filter(({ parentCategoryId }) => !parentCategoryId)
-							.map((category) => <Category key={category.id} category={category} />)}
-						<Summary />
-					</Table>
-				</Wrapper>
-			</HoverProvider>
-		</KeysProvider>
+		<DrawerOfferProvider>
+			<KeysProvider>
+				<HoverProvider>
+					<Wrapper>
+						<Table>
+							<Header />
+							{categories.map((category) => (
+								<Category key={category.id} category={category} />
+							))}
+							{hasData && <Summary />}
+						</Table>
+					</Wrapper>
+					{!hasData && <AddButton />}
+				</HoverProvider>
+			</KeysProvider>
+		</DrawerOfferProvider>
 	);
 }

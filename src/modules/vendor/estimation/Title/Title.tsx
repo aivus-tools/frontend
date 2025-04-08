@@ -9,16 +9,16 @@ import { LinkButton } from './LinkButtons';
 import { ArrowButton } from './ArrowButton';
 import { SectionTitle, SectionTitlePercentHeader, SectionTitleSumHeader, SectionTitleText } from './styled';
 
-export const Title = ({ category }: { category: Category }) => {
-	const { keys, setKey } = useExpandedKeys();
-	const isOpen = !!keys?.includes(category.id);
+export const Title = ({ category, itemKey }: { category: Category; itemKey: string }) => {
+	const { keys, switchKey } = useExpandedKeys();
+	const isOpen = !!keys?.includes(itemKey);
 	const [isLink, setIsLink] = useState(false);
 	const handleLink = () => setIsLink((prev) => !prev);
-	const handleClick = () => setKey(category.id);
+	const handleClick = () => switchKey(itemKey);
 
 	return (
 		<>
-			<SectionTitle style={{ gridColumn: isOpen ? 'span 7' : 'span 5' }} isOpen={isOpen}>
+			<SectionTitle style={{ gridColumn: isOpen ? 'span 7' : 'span 5' }} $isOpen={isOpen}>
 				<Flex align='center' onClick={handleClick} style={{ cursor: 'pointer' }}>
 					<ArrowButton isOpen={isOpen} />
 					<SectionTitleText>{category.name}</SectionTitleText>
