@@ -10,6 +10,10 @@ const userGroups = new Set<string | undefined>([GROUPS.client, GROUPS.vendor]);
 const HMAC_SECRET = process.env.HMAC_SECRET;
 
 export default auth(async (req) => {
+	if (req.nextUrl.pathname.startsWith('/external')) {
+		return NextResponse.next();
+	}
+
 	if (!HMAC_SECRET) {
 		logger.error('HMAC_SECRET not set');
 		return NextResponse.error();

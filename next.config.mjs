@@ -46,6 +46,19 @@ const nextConfig = {
     return config;
   },
   output: 'standalone',
+  async headers() {
+    return [
+      {
+        source: '/(.*)', // для всех путей
+        headers: [
+          {
+            key: 'Content-Security-Policy',
+            value: "frame-ancestors 'self' https://www.vilkaservice.com https://app.aivus.co", // замени example.com на нужный домен
+          },
+        ],
+      },
+    ];
+  },
 };
 
 export default nextConfig;
