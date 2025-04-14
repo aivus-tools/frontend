@@ -9,12 +9,12 @@ export const menuItemToOfferData = (item: MenuItem): OfferData => {
 		entryId: +item.key.split('-')[1],
 		categoryId: +item.key.split('-')[0],
 		item: item.name,
-		price: null,
-		units: [{ id: 'seconds', label: 'seconds', type: UnitType.TIME, value: 0 }],
-		cost: null,
-		surcharge: '',
-		clientPrice: null,
-		clientCost: null,
+		price: 0,
+		units: [{ id: 'seconds', label: 'seconds', type: UnitType.TIME, value: 1 }],
+		cost: 0,
+		surcharge: 0,
+		clientPrice: 0,
+		clientCost: 0,
 		marketRange: '',
 	};
 };

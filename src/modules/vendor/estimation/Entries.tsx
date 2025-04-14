@@ -7,18 +7,31 @@ import SettingsIcon from '@/icons/settings-icon.svg';
 import AddIcon from '@/icons/add-icon.svg';
 import RemoveIcon from '@/icons/minus.svg';
 import DeleteIcon from '@/icons/delete.svg';
-import { EstimationItem, IconButton, SelectWrapper } from './styled';
+import { EstimationItem, IconButton, InputNumberRight, SelectWrapper } from './styled';
 import { RowLine } from './RowLine';
-import { Flex, InputNumber, Select } from 'antd';
+import { Flex, Select } from 'antd';
 import { EntrieInput } from './EntrieInput';
 import { useAppDispatch } from '@/lib/hooks';
 import { changeOfferRow, removeOfferRow } from '@/store/slices/offer';
 import { useDrawerOffer } from './context/drawer';
 import { Fragment } from 'react';
 import { ValueOf } from 'next/dist/shared/lib/constants';
+import { formatCurrency } from '@/lib/utils';
 
 const timeUnitFirst = (a: OfferData['units'][number], b: OfferData['units'][number]) => {
 	return a?.type === UnitType.TIME && b?.type === UnitType.QUANTITY ? -1 : 1;
+};
+
+const HideElement = ({
+	children,
+	isVisible,
+	width,
+}: {
+	children?: React.ReactNode;
+	isVisible: boolean;
+	width: number;
+}) => {
+	return isVisible ? children : <div style={{ width }} />;
 };
 
 const unitOptionsByType = (unitType: UnitType) => {
@@ -42,7 +55,7 @@ export function Entries({ data = [] }: { data?: OfferData[] }) {
 	const handleRemove = (id: number) => {
 		dispatch(removeOfferRow(id));
 	};
-	const handleChange = (id: number, key: keyof OfferData) => (data: ValueOf<OfferData>) => {
+	const handleChange = (id: number, key: keyof OfferData) => (data: ValueOf<OfferData> | null) => {
 		dispatch(changeOfferRow({ id, [key]: data }));
 	};
 	const handleChangeUnit = (id: number, unitType: UnitType) => (newUnit: string) => {
@@ -56,10 +69,8 @@ export function Entries({ data = [] }: { data?: OfferData[] }) {
 			id: newUnit as unknown as string,
 			label: label ?? '',
 			type: unitType,
-			value: 0,
+			value: 1,
 		});
-		console.log('newUnits', newUnits);
-		console.log('offer.units', offer.units);
 		handleChange(id, 'units')(newUnits);
 	};
 
@@ -148,14 +159,18 @@ export function Entries({ data = [] }: { data?: OfferData[] }) {
 													unit && (
 														<Flex gap={5} key={unit.id} align='center'>
 															{unit.type === UnitType.TIME && it.units.length === 1 && (
-																<IconButton onClick={() => handleChangeUnit(it.id, UnitType.QUANTITY)('pieces')}>
-																	<AddIcon />
-																</IconButton>
+																<HideElement width={12} isVisible={isActive}>
+																	<IconButton onClick={() => handleChangeUnit(it.id, UnitType.QUANTITY)('pieces')}>
+																		<AddIcon />
+																	</IconButton>
+																</HideElement>
 															)}
 															{unit.type === UnitType.QUANTITY && (
-																<IconButton onClick={() => handleRemoveUnit(it.id, UnitType.QUANTITY)}>
-																	<RemoveIcon />
-																</IconButton>
+																<HideElement width={12} isVisible={isActive}>
+																	<IconButton onClick={() => handleRemoveUnit(it.id, UnitType.QUANTITY)}>
+																		<RemoveIcon />
+																	</IconButton>
+																</HideElement>
 															)}
 															<Select
 																style={{ flex: 1 }}
@@ -183,13 +198,14 @@ export function Entries({ data = [] }: { data?: OfferData[] }) {
 												.map(
 													(unit) =>
 														unit && (
-															<InputNumber
+															<InputNumberRight
 																style={{ flex: 1, maxWidth: '100%' }}
 																key={unit.id}
 																variant={isActive ? 'outlined' : 'borderless'}
 																onChange={handleChangeUnitValue(it.id, unit.id)}
 																value={unit.value}
 																controls={false}
+																min={1}
 															/>
 														)
 												)}
@@ -198,9 +214,17 @@ export function Entries({ data = [] }: { data?: OfferData[] }) {
 							);
 						}
 
+						if (key === 'cost') {
+							return (
+								<EstimationItem key={`${it.id}-${key}`} style={itemStyle} {...rowProps}>
+									{formatCurrency(it[key])}
+								</EstimationItem>
+							);
+						}
+
 						return (
 							<EstimationItem key={`${it.id}-${key}`} style={itemStyle} {...rowProps}>
-								<InputNumber
+								<InputNumberRight
 									style={{ flex: 1 }}
 									variant={isActive ? 'outlined' : 'borderless'}
 									onChange={handleChange(it.id, key)}
@@ -223,18 +247,25 @@ export function Entries({ data = [] }: { data?: OfferData[] }) {
 						}
 
 						if (key === 'marketRange') {
-							return <EstimationItem key={key} {...rowProps} />;
+							return <EstimationItem key={key} {...rowProps} style={{ backgroundColor: 'transparent' }} />;
+						}
+						if (key === 'surcharge') {
+							return (
+								<EstimationItem key={`${key}-${it.id}`} style={itemStyle} {...rowProps}>
+									<InputNumberRight
+										variant={isActive ? 'outlined' : 'borderless'}
+										onChange={handleChange(it.id, key)}
+										value={it[key] as number}
+										controls={false}
+										{...itemProps}
+									/>
+								</EstimationItem>
+							);
 						}
 
 						return (
 							<EstimationItem key={`${key}-${it.id}`} style={itemStyle} {...rowProps}>
-								<InputNumber
-									variant={isActive ? 'outlined' : 'borderless'}
-									onChange={handleChange(it.id, key)}
-									value={it[key] as number}
-									controls={false}
-									{...itemProps}
-								/>
+								{formatCurrency(it[key])}
 							</EstimationItem>
 						);
 					})}

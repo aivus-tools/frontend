@@ -25,12 +25,12 @@ export interface OfferData {
 	entryId: number;
 	categoryId: number;
 	item: string;
-	price: number | null;
+	price: number;
 	units: Partial<(TimeUnit | QuantityUnit)[]>;
-	cost: number | null;
-	surcharge: string | null;
-	clientPrice: number | null;
-	clientCost: number | null;
+	cost: number;
+	surcharge: number;
+	clientPrice: number;
+	clientCost: number;
 	marketRange: string;
 }
 

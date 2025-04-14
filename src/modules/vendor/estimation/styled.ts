@@ -1,6 +1,6 @@
 'use client';
 
-import { Flex } from 'antd';
+import { Flex, InputNumber } from 'antd';
 import { styled } from 'styled-components';
 
 export const Wrapper = styled.div`
@@ -11,7 +11,7 @@ export const Wrapper = styled.div`
 `;
 export const Table = styled.div`
 	display: grid;
-	grid-template-columns: 38px 1fr 90px 160px 50px 90px 40px 50px 30px 90px 80px 75px 80px;
+	grid-template-columns: 38px 1fr 90px 160px 50px 90px 40px 50px 30px 65px 80px 75px 0px;
 	grid-template-rows: auto auto;
 	grid-auto-flow: row;
 
@@ -67,3 +67,10 @@ export const IconButton = styled.div`
 
 	cursor: pointer;
 `;
+
+export const InputNumberRight = styled(InputNumber)`
+	.ant-input-number-input-wrap input.ant-input-number-input {
+		text-align: right;
+		padding: 4px;
+	}
+` as typeof InputNumber;

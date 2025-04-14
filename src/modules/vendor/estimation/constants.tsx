@@ -80,9 +80,12 @@ export const CLIENTS_HEADERS: Headers[] = [
 			formatter: priceFormat,
 			parser: priceParser,
 		},
+		itemStyle: {
+			paddingRight: '4px',
+		},
 	},
 	{
-		label: 'Market Range',
+		label: '',
 		key: 'marketRange',
 	},
 ];

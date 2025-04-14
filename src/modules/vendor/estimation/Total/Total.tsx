@@ -2,6 +2,15 @@
 
 import { styled } from 'styled-components';
 
+const Wrapper = styled.div`
+	display: flex;
+	justify-content: flex-end;
+	align-items: center;
+	background-color: var(--bg-blue-important);
+	padding-right: 40px;
+	gap: 8px;
+`;
+
 const Label = styled.div`
 	font-weight: 600;
 	font-size: 14px;
@@ -9,9 +18,7 @@ const Label = styled.div`
 	letter-spacing: 0%;
 	text-align: right;
 	font-style: uppercase;
-	background-color: var(--white);
 	padding: 16px 0;
-	background-color: var(--bg-blue-important);
 	border-radius: 0 0 0 6px;
 	text-transform: uppercase;
 `;
@@ -24,7 +31,7 @@ const TotalSum = styled.div`
 	justify-content: flex-end;
 	color: var(--blue);
 	padding: 16px 0;
-	background-color: var(--bg-blue-important);
+	min-width: 90px;
 `;
 
 const EmptyBlockTotalSum = styled.div`
@@ -34,9 +41,10 @@ const EmptyBlockTotalSum = styled.div`
 
 export const Total = ({ text, value }: { text: string; value: string }) => (
 	<>
-		<Label style={{ gridColumn: 'span 5' }}>{text} TOTAL:</Label>
-		<TotalSum>{value}</TotalSum>
-		<EmptyBlockTotalSum style={{ borderRadius: ' 0 0 6px 0' }} />
+		<Wrapper style={{ gridColumn: 'span 7' }}>
+			<Label>{text} TOTAL:</Label>
+			<TotalSum>{value}</TotalSum>
+		</Wrapper>
 		<div />
 		<EmptyBlockTotalSum style={{ gridColumn: 'span 5' }} />
 	</>

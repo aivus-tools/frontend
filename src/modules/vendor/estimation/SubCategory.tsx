@@ -4,10 +4,11 @@ import type { Category } from './types';
 import { Entries } from './Entries';
 import { useExpandedKeys } from './context/expanded';
 import { SubTitle } from './Title/SubTitle';
-import { selectOffersByCategoryId } from '@/store/slices/offer';
+import { selectOffersByCategoryId, selectTotalSumByCategoryId } from '@/store/slices/offer';
 import { RootState } from '@/lib/store';
 import { useCallback } from 'react';
 import { useAppSelector } from '@/lib/hooks';
+import { SubTotal } from './Total/SubTotal';
 
 export function SubCategory({ subCategory }: { subCategory: Category }) {
 	const { keys } = useExpandedKeys();
@@ -16,10 +17,20 @@ export function SubCategory({ subCategory }: { subCategory: Category }) {
 	const offers = useAppSelector(
 		useCallback((state: RootState) => selectOffersByCategoryId(state, subCategory.id), [subCategory.id])
 	);
+
+	const total = useAppSelector(
+		useCallback((state: RootState) => selectTotalSumByCategoryId(state, subCategory.id), [subCategory.id])
+	);
+
 	return (
 		<>
 			<SubTitle text={subCategory.name} itemKey={key} />
-			{isOpen && <Entries data={offers} />}
+			{isOpen && (
+				<>
+					<Entries data={offers} />
+					<SubTotal value={`$ ${total}`} />
+				</>
+			)}
 		</>
 	);
 }
