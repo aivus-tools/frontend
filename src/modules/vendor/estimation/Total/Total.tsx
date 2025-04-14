@@ -1,10 +1,14 @@
 'use client';
 
+import { Flex, Input } from 'antd';
 import { styled } from 'styled-components';
+import AddIcon from '@/icons/add-icon.svg';
+import { useSelectOffer } from '../hooks/useSelectOffer';
+import { LibraryDropdown } from '../LibraryDropdown/LibraryDropdown';
 
 const Wrapper = styled.div`
 	display: flex;
-	justify-content: flex-end;
+	justify-content: space-between;
 	align-items: center;
 	background-color: var(--bg-blue-important);
 	padding-right: 40px;
@@ -39,13 +43,41 @@ const EmptyBlockTotalSum = styled.div`
 	border-radius: 0 0 6px 6px;
 `;
 
-export const Total = ({ text, value }: { text: string; value: string }) => (
-	<>
-		<Wrapper style={{ gridColumn: 'span 7' }}>
-			<Label>{text} TOTAL:</Label>
-			<TotalSum>{value}</TotalSum>
-		</Wrapper>
-		<div />
-		<EmptyBlockTotalSum style={{ gridColumn: 'span 5' }} />
-	</>
-);
+export const Total = ({ text, value }: { text: string; value: string }) => {
+	const handleSelect = useSelectOffer();
+
+	return (
+		<>
+			<Flex
+				align='center'
+				justify='center'
+				style={{ backgroundColor: 'var(--bg-blue-important)', borderRadius: '0 0 0 6px' }}
+			>
+				<AddIcon />
+			</Flex>
+			<Wrapper style={{ gridColumn: 'span 6' }}>
+				<Flex>
+					<LibraryDropdown
+						onSelect={handleSelect}
+						componentAction={({ handleChange, handleBlur, handleFocus, value }) => (
+							<Input
+								placeholder='add item'
+								variant='borderless'
+								value={value}
+								onChange={handleChange}
+								onBlur={handleBlur}
+								onFocus={handleFocus}
+							/>
+						)}
+					/>
+				</Flex>
+				<Flex>
+					<Label>{text} TOTAL:</Label>
+					<TotalSum>{value}</TotalSum>
+				</Flex>
+			</Wrapper>
+			<div />
+			<EmptyBlockTotalSum style={{ gridColumn: 'span 5' }} />
+		</>
+	);
+};

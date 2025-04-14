@@ -121,18 +121,17 @@ export const offerSlice = createSlice({
 				const newOffer = { ...state.offerDetails.offers[index], ...newOfferData };
 				const unitMultiplier = newOffer.units?.reduce((acc, unit) => acc * (unit?.value ?? 1), 1) ?? 1;
 				const { price = 0 } = newOffer;
-				const { linked = false, surcharge = 0 } = state.offerDetails.categorySurcharge[newOffer.categoryId] ?? {};
+				const category = state.dictionary.category.find((cat) => cat.id === newOffer.categoryId);
+				const rootCategoryId = category?.parentCategoryId ?? category?.id;
+				const { linked = false, surcharge = 0 } = state.offerDetails.categorySurcharge[rootCategoryId ?? 0] ?? {};
 
 				newOffer.cost = price * unitMultiplier;
 				newOffer.clientPrice = price + applyPercentage(newOffer.cost, linked ? surcharge : newOffer.surcharge);
 				newOffer.clientCost = newOffer.clientPrice * unitMultiplier;
 
 				if (newOfferData.surcharge !== undefined) {
-					const categoryId = state.offerDetails.categories.find(
-						(cat) => cat.id === newOffer.categoryId || cat.parentCategoryId === newOffer.categoryId
-					)?.id;
-					if (categoryId !== undefined) {
-						state.offerDetails.categorySurcharge[categoryId].linked = false;
+					if (rootCategoryId !== undefined) {
+						state.offerDetails.categorySurcharge[rootCategoryId].linked = false;
 					}
 				}
 
@@ -156,7 +155,7 @@ export const offerSlice = createSlice({
 
 			state.offerDetails.categorySurcharge[categoryId] = newCategorySurcharge;
 			if (newCategorySurcharge.linked) {
-				const currentCategories = state.offerDetails.categories
+				const currentCategories = state.dictionary.category
 					.filter((category) => category.id === categoryId || category.parentCategoryId === categoryId)
 					.map((category) => category.id);
 				state.offerDetails.offers.forEach((offer) => {

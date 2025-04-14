@@ -7,7 +7,7 @@ export const Wrapper = styled.div`
 	display: flex;
 	flex-direction: column;
 
-	padding: 10px 30px;
+	padding: 10px 30px 30px 30px;
 `;
 export const Table = styled.div`
 	display: grid;
