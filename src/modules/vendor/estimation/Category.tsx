@@ -22,20 +22,20 @@ export function Category({ category }: { category: TypeCategory }) {
 		useCallback((state: RootState) => selectOffersByCategoryId(state, category.id), [category.id])
 	);
 
-	const total = useAppSelector(
+	const { total, clientTotal } = useAppSelector(
 		useCallback((state: RootState) => selectTotalSumByCategoryId(state, category.id), [category.id])
 	);
 
 	return (
 		<>
-			<Title category={category} itemKey={key} />
+			<Title category={category} itemKey={key} value={`$ ${total}`} clientValue={`$ ${clientTotal}`} />
 			{isOpen && (
 				<>
 					{subCategories?.map((subCategory) => (
 						<SubCategory key={`${key}${subCategory.id}`} subCategory={subCategory} />
 					))}
 					<Entries data={offers} />
-					<Total text={category.name} value={`$ ${total}`} />
+					<Total text={category.name} value={`$ ${total}`} clientValue={`$ ${clientTotal}`} />
 				</>
 			)}
 			<div style={{ gridColumn: 'span 13', padding: '15px' }} />

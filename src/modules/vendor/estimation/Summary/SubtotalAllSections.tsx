@@ -24,7 +24,6 @@ const TotalSum = styled.div`
 	font-size: 16px;
 	line-height: 19.5px;
 	color: var(--green-darker);
-	background-color: var(--bg-green);
 	display: flex;
 	align-items: center;
 	justify-content: flex-end;
@@ -52,7 +51,10 @@ export const SubtotalAllSections = () => {
 				<TotalSum>{`$ ${total}`}</TotalSum>
 			</Label>
 			<div />
-			<Flex justify='flex-end' style={{ gridColumn: 'span 5', paddingRight: '16px' }}>
+			<Flex
+				justify='flex-end'
+				style={{ gridColumn: 'span 5', paddingRight: '16px', backgroundColor: 'var(--bg-green)' }}
+			>
 				<TotalSum>{`$ ${totalClient}`}</TotalSum>
 			</Flex>
 		</>

@@ -1,6 +1,7 @@
 'use client';
 
 import { Flex, InputNumber } from 'antd';
+import { cloneElement, ComponentProps, useMemo, useState } from 'react';
 import { styled } from 'styled-components';
 
 export const Wrapper = styled.div`
@@ -11,7 +12,7 @@ export const Wrapper = styled.div`
 `;
 export const Table = styled.div`
 	display: grid;
-	grid-template-columns: 38px 1fr 90px 160px 50px 90px 40px 50px 30px 65px 80px 75px 0px;
+	grid-template-columns: 38px 1fr 90px 160px 50px 90px 40px 50px 30px 65px 80px 75px 20px;
 	grid-template-rows: auto auto;
 	grid-auto-flow: row;
 
@@ -68,9 +69,25 @@ export const IconButton = styled.div`
 	cursor: pointer;
 `;
 
-export const InputNumberRight = styled(InputNumber)`
+export const InputNumberStyled = styled(InputNumber)`
 	.ant-input-number-input-wrap input.ant-input-number-input {
 		text-align: right;
 		padding: 4px;
 	}
-` as typeof InputNumber;
+`;
+
+export const InputNumberRight = ((props: ComponentProps<typeof InputNumber> = {}) => {
+	const [focused, setFocused] = useState(false);
+	const [hovered, setHovered] = useState(false);
+	const handlers = useMemo(() => {
+		return {
+			variant: focused || hovered ? ('outlined' as const) : ('borderless' as const),
+			onMouseEnter: () => setHovered(true),
+			onMouseLeave: () => setHovered(false),
+			onFocus: () => setFocused(true),
+			onBlur: () => setFocused(false),
+		};
+	}, [focused, hovered]);
+
+	return cloneElement(<InputNumberStyled />, { ...handlers, ...props });
+}) as typeof InputNumber;

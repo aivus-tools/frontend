@@ -8,6 +8,7 @@ import { percentFormat, percentParser } from '../helpers/format';
 import { InputNumberRight } from '../styled';
 import { useAppDispatch, useAppSelector } from '@/lib/hooks';
 import { changeUnforeseenExpenses, selectUnforeseenExpenses } from '@/store/slices/offer';
+import SettingsIcon from '@/icons/settings-icon.svg';
 
 const Label = styled.div`
 	display: flex;
@@ -23,7 +24,6 @@ const Label = styled.div`
 const TotalSum = styled.div`
 	font-weight: 600;
 	font-size: 13px;
-	min-width: 90px;
 	background-color: var(--white);
 	display: flex;
 	align-items: center;
@@ -32,6 +32,11 @@ const TotalSum = styled.div`
 
 const EmptyBlockTotalSum = styled.div`
 	background-color: var(--white);
+`;
+
+const MarkupLabel = styled.div`
+	font-weight: 500;
+	font-size: 13px;
 `;
 
 export const UnforeseenExpenses = () => {
@@ -64,14 +69,13 @@ export const UnforeseenExpenses = () => {
 				</Flex>
 				<Flex align='center'>
 					<InputNumberRight
-						variant='borderless'
 						onChange={handleChange}
 						controls={false}
 						value={percent}
 						formatter={percentFormat}
 						parser={percentParser}
 					/>
-					<TotalSum>{`$ ${total}`}</TotalSum>
+					<TotalSum style={{ minWidth: '90px' }}>{`$ ${total}`}</TotalSum>
 				</Flex>
 			</Label>
 			<div />
@@ -80,9 +84,14 @@ export const UnforeseenExpenses = () => {
 				align='center'
 				style={{ gridColumn: 'span 5', paddingRight: '16px', backgroundColor: 'var(--white)' }}
 			>
-				<Flex>
+				<Flex justify='space-between' align='center' gap={4}>
+					<Flex align='center' justify='center' style={{ height: '100%' }}>
+						<Flex align='center' justify='center' style={{ height: '100%', padding: '14px' }}>
+							<SettingsIcon />
+						</Flex>
+						<MarkupLabel>Markup</MarkupLabel>
+					</Flex>
 					<InputNumberRight
-						variant='borderless'
 						onChange={handleChangeClient}
 						controls={false}
 						value={clientPercent}

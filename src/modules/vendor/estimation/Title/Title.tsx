@@ -8,13 +8,20 @@ import { RowLine } from '../RowLine';
 import { LinkButton } from './LinkButtons';
 import { ArrowButton } from './ArrowButton';
 import { SectionTitle, SectionTitleSumHeader, SectionTitleText } from './styled';
-import { changeCategorySurcharge, selectCategorySurcharge, selectTotalSumByCategoryId } from '@/store/slices/offer';
+import { changeCategorySurcharge, selectCategorySurcharge } from '@/store/slices/offer';
 import { useAppDispatch, useAppSelector } from '@/lib/hooks';
 import { RootState } from '@/lib/store';
 import { InputNumberRight } from '../styled';
 import { percentFormat, percentParser } from '../helpers/format';
 
-export const Title = ({ category, itemKey }: { category: Category; itemKey: string }) => {
+interface Props {
+	category: Category;
+	itemKey: string;
+	value: string;
+	clientValue: string;
+}
+
+export const Title = ({ category, itemKey, value, clientValue }: Props) => {
 	const dispatch = useAppDispatch();
 	const { keys, switchKey } = useExpandedKeys();
 	const isOpen = !!keys?.includes(itemKey);
@@ -32,10 +39,6 @@ export const Title = ({ category, itemKey }: { category: Category; itemKey: stri
 	};
 	const handleClick = () => switchKey(itemKey);
 
-	const total = useAppSelector(
-		useCallback((state: RootState) => selectTotalSumByCategoryId(state, category.id), [category.id])
-	);
-
 	return (
 		<>
 			<SectionTitle style={{ gridColumn: isOpen ? 'span 7' : 'span 5' }} $isOpen={isOpen}>
@@ -46,7 +49,7 @@ export const Title = ({ category, itemKey }: { category: Category; itemKey: stri
 			</SectionTitle>
 			{!isOpen && (
 				<>
-					<SectionTitleSumHeader>{total}</SectionTitleSumHeader>
+					<SectionTitleSumHeader>{value}</SectionTitleSumHeader>
 					<div style={{ backgroundColor: 'var(--white)', borderRadius: '0 6px 6px 0' }} />
 				</>
 			)}
@@ -61,7 +64,6 @@ export const Title = ({ category, itemKey }: { category: Category; itemKey: stri
 				</Flex>
 				<Flex align='center' justify='center' style={{ backgroundColor: 'var(--white)', padding: '2px' }}>
 					<InputNumberRight
-						variant='borderless'
 						onChange={handleSurcharge}
 						controls={false}
 						value={surcharge}
@@ -70,7 +72,16 @@ export const Title = ({ category, itemKey }: { category: Category; itemKey: stri
 					/>
 				</Flex>
 			</>
-			<SectionTitle style={{ gridColumn: 'span 3', borderRadius: isOpen ? '0 6px 0 0' : '0 6px 6px 0' }} />
+			{isOpen ? (
+				<SectionTitle style={{ gridColumn: 'span 3', borderRadius: isOpen ? '0 6px 0 0' : '0 6px 6px 0' }} />
+			) : (
+				<>
+					<SectionTitleSumHeader style={{ gridColumn: 'span 2', justifyContent: 'flex-end' }}>
+						{clientValue}
+					</SectionTitleSumHeader>
+					<div style={{ backgroundColor: 'var(--white)', borderRadius: '0 6px 6px 0' }} />
+				</>
+			)}
 			{isOpen && <RowLine />}
 		</>
 	);

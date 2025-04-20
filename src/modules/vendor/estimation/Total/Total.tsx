@@ -43,7 +43,13 @@ const EmptyBlockTotalSum = styled.div`
 	border-radius: 0 0 6px 6px;
 `;
 
-export const Total = ({ text, value }: { text: string; value: string }) => {
+interface Props {
+	text: string;
+	value: string;
+	clientValue: string;
+}
+
+export const Total = ({ text, value, clientValue }: Props) => {
 	const handleSelect = useSelectOffer();
 
 	return (
@@ -77,7 +83,10 @@ export const Total = ({ text, value }: { text: string; value: string }) => {
 				</Flex>
 			</Wrapper>
 			<div />
-			<EmptyBlockTotalSum style={{ gridColumn: 'span 5' }} />
+			<Flex style={{ gridColumn: 'span 4', backgroundColor: 'var(--bg-blue-important)' }} justify='flex-end'>
+				<TotalSum>{clientValue}</TotalSum>
+			</Flex>
+			<EmptyBlockTotalSum style={{ gridColumn: 'span 1' }} />
 		</>
 	);
 };

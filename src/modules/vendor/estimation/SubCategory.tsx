@@ -18,17 +18,17 @@ export function SubCategory({ subCategory }: { subCategory: Category }) {
 		useCallback((state: RootState) => selectOffersByCategoryId(state, subCategory.id), [subCategory.id])
 	);
 
-	const total = useAppSelector(
+	const { total, clientTotal } = useAppSelector(
 		useCallback((state: RootState) => selectTotalSumByCategoryId(state, subCategory.id), [subCategory.id])
 	);
 
 	return (
 		<>
-			<SubTitle text={subCategory.name} itemKey={key} />
+			<SubTitle text={subCategory.name} itemKey={key} value={`$ ${total}`} clientValue={`$ ${clientTotal}`} />
 			{isOpen && (
 				<>
 					<Entries data={offers} />
-					<SubTotal value={`$ ${total}`} />
+					<SubTotal value={`$ ${total}`} clientValue={`$ ${clientTotal}`} />
 				</>
 			)}
 		</>

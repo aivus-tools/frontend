@@ -247,7 +247,7 @@ export function Entries({ data = [] }: { data?: OfferData[] }) {
 						}
 
 						if (key === 'marketRange') {
-							return <EstimationItem key={key} {...rowProps} style={{ backgroundColor: 'transparent' }} />;
+							return <EstimationItem key={key} {...rowProps} />;
 						}
 						if (key === 'surcharge') {
 							return (

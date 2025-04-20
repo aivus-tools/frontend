@@ -6,7 +6,14 @@ import { ArrowButton } from './ArrowButton';
 import { Flex } from 'antd';
 import { SectionSubTitle, SectionSubTitleText, SectionSubTitleSumHeader } from './styled';
 
-export const SubTitle = ({ text, itemKey }: { text: string; itemKey: string }) => {
+interface Props {
+	text: string;
+	itemKey: string;
+	value: string;
+	clientValue: string;
+}
+
+export const SubTitle = ({ text, itemKey, value, clientValue }: Props) => {
 	const { keys, switchKey } = useExpandedKeys();
 	const isOpen = !!keys?.includes(itemKey);
 	const handleClick = () => switchKey(itemKey);
@@ -22,12 +29,19 @@ export const SubTitle = ({ text, itemKey }: { text: string; itemKey: string }) =
 			</SectionSubTitle>
 			{!isOpen && (
 				<>
-					<SectionSubTitleSumHeader>$ 4,740.0</SectionSubTitleSumHeader>
+					<SectionSubTitleSumHeader>{value}</SectionSubTitleSumHeader>
 					<div style={{ backgroundColor: 'var(--white)', borderRadius: '0 6px 6px 0' }} />
 				</>
 			)}
 			<div />
-			<SectionSubTitle style={{ gridColumn: 'span 5' }} />
+			{!isOpen ? (
+				<>
+					<SectionSubTitleSumHeader style={{ gridColumn: 'span 4' }}>{clientValue}</SectionSubTitleSumHeader>
+					<div style={{ backgroundColor: 'var(--white)' }} />
+				</>
+			) : (
+				<SectionSubTitle style={{ gridColumn: 'span 5' }} />
+			)}
 			<RowLine />
 		</>
 	);

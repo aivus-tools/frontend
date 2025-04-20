@@ -44,9 +44,10 @@ const Label = styled(Flex)`
 
 interface Props {
 	value: string;
+	clientValue: string;
 }
 
-export const SubTotal = ({ value }: Props) => {
+export const SubTotal = ({ value, clientValue }: Props) => {
 	const handleSelect = useSelectOffer();
 
 	return (
@@ -77,7 +78,10 @@ export const SubTotal = ({ value }: Props) => {
 			<SubTotalSum>{value}</SubTotalSum>
 			<EmptyBlockSubTotalSum style={{ borderRadius: ' 0 0 6px 0' }} />
 			<div />
-			<EmptyBlockSubTotalSum style={{ gridColumn: 'span 5' }} />
+			<Flex style={{ gridColumn: 'span 4' }}>
+				<SubTotalSum>{clientValue}</SubTotalSum>
+			</Flex>
+			<EmptyBlockSubTotalSum style={{ gridColumn: 'span 1' }} />
 		</>
 	);
 };

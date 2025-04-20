@@ -256,19 +256,35 @@ export const selectGrandTotal = createSelector(
 export const selectTotalSumByCategoryId = createSelector(
 	[selectOfferDetails, (_, categoryId) => categoryId],
 	(offerDetails, categoryId) => {
-		const offersSum = offerDetails.offers
+		const { sum, clientSum } = offerDetails.offers
 			.filter((offer) => offer.categoryId === categoryId)
-			.reduce((acc, offer) => acc + offer.cost, 0);
+			.reduce(
+				(acc, offer) => {
+					acc.sum += offer.cost;
+					acc.clientSum += offer.clientCost;
+					return acc;
+				},
+				{ sum: 0, clientSum: 0 }
+			);
 
-		const subCategoriesSum = offerDetails.subCategories
+		const filteredSubCategories = offerDetails.subCategories
 			.filter((category) => category.parentCategoryId === categoryId)
-			.map(({ id }) => id)
-			.reduce((acc, subCategoryId) => {
-				const offers = offerDetails.offers.filter((offer) => offer.categoryId === subCategoryId);
-				return acc + offers.reduce((subAcc, offer) => subAcc + offer.cost, 0);
-			}, 0);
+			.map(({ id }) => id);
 
-		return formatCurrency(offersSum + subCategoriesSum);
+		const subCategoriesSum = filteredSubCategories.reduce((acc, subCategoryId) => {
+			const offers = offerDetails.offers.filter((offer) => offer.categoryId === subCategoryId);
+			return acc + offers.reduce((subAcc, offer) => subAcc + offer.cost, 0);
+		}, 0);
+
+		const subCategoriesClientSum = filteredSubCategories.reduce((acc, subCategoryId) => {
+			const offers = offerDetails.offers.filter((offer) => offer.categoryId === subCategoryId);
+			return acc + offers.reduce((subAcc, offer) => subAcc + offer.clientCost, 0);
+		}, 0);
+
+		return {
+			total: formatCurrency(sum + subCategoriesSum),
+			clientTotal: formatCurrency(clientSum + subCategoriesClientSum),
+		};
 	}
 );
 

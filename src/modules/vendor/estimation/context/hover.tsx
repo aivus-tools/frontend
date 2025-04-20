@@ -26,6 +26,8 @@ export const HoverProvider: React.FC<FocusProviderProps> = ({ children }) => {
 		(id: number) => ({
 			onMouseEnter: () => setHoveredRow(id),
 			onMouseLeave: () => setHoveredRow(null),
+			onFocus: () => setFocusedRow(id),
+			onBlur: () => setFocusedRow(null),
 			hovered: hoveredRow === id || focusedRow === id,
 			focused: focusedRow === id,
 		}),
