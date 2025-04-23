@@ -1,4 +1,5 @@
 import type { Metadata } from 'next';
+import Script from 'next/script';
 import { AntdRegistry } from '@ant-design/nextjs-registry';
 import { ConfigProvider } from 'antd';
 import StyledComponentsRegistry from './lib/registry';
@@ -44,6 +45,17 @@ export default async function RootLayout({
 					</AntdRegistry>
 				</StyledComponentsRegistry>
 			</body>
+			<Script id='resize-iframe' strategy='afterInteractive'>
+				{`
+					function resizeIframe() {
+						const height = document.body.scrollHeight;
+						parent.postMessage({ type: 'resize', height: height }, '*');
+					}
+
+					window.addEventListener('load', resizeIframe);
+					window.addEventListener('resize', resizeIframe);
+				`}
+			</Script>
 		</html>
 	);
 }
