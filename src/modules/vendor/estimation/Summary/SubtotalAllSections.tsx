@@ -4,7 +4,7 @@ import { styled } from 'styled-components';
 import SettingsIcon from '@/icons/settings-icon.svg';
 import { Flex } from 'antd';
 import { useAppSelector } from '@/lib/hooks';
-import { selectTotalSum, selectClientTotalSum } from '@/store/slices/offer';
+import { selectTotalSum, selectClientTotalSum } from '@/store/slices/offer/selectors';
 
 const Label = styled.div`
 	display: flex;

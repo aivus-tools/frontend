@@ -12,7 +12,7 @@ import { RowLine } from './RowLine';
 import { Flex, Select } from 'antd';
 import { EntrieInput } from './EntrieInput';
 import { useAppDispatch } from '@/lib/hooks';
-import { changeOfferRow, removeOfferRow } from '@/store/slices/offer';
+import { changeOfferRow, removeOfferRow } from '@/store/slices/offer/slice';
 import { useDrawerOffer } from './context/drawer';
 import { Fragment } from 'react';
 import { ValueOf } from 'next/dist/shared/lib/constants';
@@ -34,22 +34,6 @@ const HideElement = ({
 	return isVisible ? children : <div style={{ width }} />;
 };
 
-const unitOptionsByType = (unitType: UnitType) => {
-	return unitType === 'time'
-		? [
-				{ value: 'seconds', label: 'Seconds' },
-				{ value: 'minutes', label: 'Minutes' },
-				{ value: 'hours', label: 'Hours' },
-				{ value: 'days', label: 'Days' },
-			]
-		: [
-				{ value: 'pieces', label: 'Pieces' },
-				{ value: 'boxes', label: 'Boxes' },
-				{ value: 'pallets', label: 'Pallets' },
-				{ value: 'containers', label: 'Containers' },
-			];
-};
-
 export function Entries({ data = [] }: { data?: OfferData[] }) {
 	const dispatch = useAppDispatch();
 	const handleRemove = (id: number) => {
@@ -58,19 +42,17 @@ export function Entries({ data = [] }: { data?: OfferData[] }) {
 	const handleChange = (id: number, key: keyof OfferData) => (data: ValueOf<OfferData> | null) => {
 		dispatch(changeOfferRow({ id, [key]: data }));
 	};
-	const handleChangeUnit = (id: number, unitType: UnitType) => (newUnit: string) => {
+	const handleChangeUnit = (id: number, unitType: UnitType) => (newUnitValue: number) => {
 		const offer = data.find((it) => it.id === id);
 		if (!offer) {
 			return;
 		}
 		const newUnits = offer.units?.filter((unit) => unit?.type !== unitType) ?? [];
-		const label = unitOptionsByType(unitType).find((unit) => unit.value === (newUnit as unknown as string))?.label;
-		newUnits.push({
-			id: newUnit as unknown as string,
-			label: label ?? '',
-			type: unitType,
-			value: 1,
-		});
+		const newUnit = offer.options[unitType].find((unit) => unit.value === newUnitValue);
+		if (!newUnit) {
+			return;
+		}
+		newUnits.push(newUnit);
 		handleChange(id, 'units')(newUnits);
 	};
 
@@ -83,16 +65,16 @@ export function Entries({ data = [] }: { data?: OfferData[] }) {
 		handleChange(id, 'units')(newUnits);
 	};
 
-	const handleChangeUnitValue = (id: number, unitId: string) => (value: number | null) => {
+	const handleChangeUnitValue = (id: number, unitValue: number) => (count: number | null) => {
 		const offer = data.find((it) => it.id === id);
-		if (!offer || !value) {
+		if (!offer || !count) {
 			return;
 		}
 		const newUnits = offer.units?.map((unit) => {
-			if (unit?.id === unitId) {
+			if (unit?.value === unitValue) {
 				return {
 					...unit,
-					value,
+					count,
 				};
 			}
 			return unit;
@@ -157,14 +139,23 @@ export function Entries({ data = [] }: { data?: OfferData[] }) {
 											it.units.toSorted(timeUnitFirst).map(
 												(unit) =>
 													unit && (
-														<Flex gap={5} key={unit.id} align='center'>
-															{unit.type === UnitType.TIME && it.units.length === 1 && (
-																<HideElement width={12} isVisible={isActive}>
-																	<IconButton onClick={() => handleChangeUnit(it.id, UnitType.QUANTITY)('pieces')}>
-																		<AddIcon />
-																	</IconButton>
-																</HideElement>
-															)}
+														<Flex gap={5} key={unit.value} align='center'>
+															{unit.type === UnitType.TIME &&
+																it.units.length === 1 &&
+																it.options[UnitType.QUANTITY].length > 0 && (
+																	<HideElement width={12} isVisible={isActive}>
+																		<IconButton
+																			onClick={() =>
+																				handleChangeUnit(
+																					it.id,
+																					UnitType.QUANTITY
+																				)(it.options[UnitType.QUANTITY][0].value)
+																			}
+																		>
+																			<AddIcon />
+																		</IconButton>
+																	</HideElement>
+																)}
 															{unit.type === UnitType.QUANTITY && (
 																<HideElement width={12} isVisible={isActive}>
 																	<IconButton onClick={() => handleRemoveUnit(it.id, UnitType.QUANTITY)}>
@@ -176,9 +167,11 @@ export function Entries({ data = [] }: { data?: OfferData[] }) {
 																style={{ flex: 1 }}
 																placeholder='Select unit'
 																variant={isActive ? 'outlined' : 'borderless'}
-																value={unit.id}
+																value={unit.value}
 																onChange={handleChangeUnit(it.id, unit.type)}
-																options={unitOptionsByType(unit.type)}
+																// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+																// @ts-ignore
+																options={it.options[unit.type]}
 															/>
 														</Flex>
 													)
@@ -200,10 +193,10 @@ export function Entries({ data = [] }: { data?: OfferData[] }) {
 														unit && (
 															<InputNumberRight
 																style={{ flex: 1, maxWidth: '100%' }}
-																key={unit.id}
+																key={unit.value}
 																variant={isActive ? 'outlined' : 'borderless'}
-																onChange={handleChangeUnitValue(it.id, unit.id)}
-																value={unit.value}
+																onChange={handleChangeUnitValue(it.id, unit.value)}
+																value={unit.count}
 																controls={false}
 																min={1}
 															/>

@@ -7,17 +7,17 @@ export enum UnitType {
 }
 
 export interface TimeUnit {
-	id: string;
-	label: string;
 	type: UnitType.TIME;
+	label: string;
 	value: number;
+	count: number;
 }
 
 export interface QuantityUnit {
-	id: string;
-	label: string;
 	type: UnitType.QUANTITY;
+	label: string;
 	value: number;
+	count: number;
 }
 
 export interface OfferData {
@@ -32,6 +32,10 @@ export interface OfferData {
 	clientPrice: number;
 	clientCost: number;
 	marketRange: string;
+	options: {
+		[UnitType.TIME]: TimeUnit[];
+		[UnitType.QUANTITY]: QuantityUnit[];
+	};
 }
 
 export type HeaderKey = keyof OfferData | 'link' | 'settings' | 'actions' | 'quantity';
@@ -62,9 +66,3 @@ export type EntryVariant = {
 	label: string;
 	children?: EntryVariant[];
 };
-
-export interface OfferDetails {
-	offers: OfferData[];
-	categories: Category[];
-	subCategories: Category[];
-}

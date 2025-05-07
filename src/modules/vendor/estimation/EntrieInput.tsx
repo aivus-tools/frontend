@@ -5,7 +5,8 @@ import { styled } from 'styled-components';
 import { OfferData } from './types';
 import { LibraryDropdown } from './LibraryDropdown/LibraryDropdown';
 import { useAppDispatch, useAppSelector } from '@/lib/hooks';
-import { removeOfferRow, addOfferRow, selectAllCategories } from '@/store/slices/offer';
+import { selectAllCategories } from '@/store/slices/offer/selectors';
+import { addOfferRow, removeOfferRow } from '@/store/slices/offer/slice';
 import { useExpandedKeys } from './context/expanded';
 
 const Input = styled(LibInput)`

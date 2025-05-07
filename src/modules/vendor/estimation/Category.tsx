@@ -7,7 +7,11 @@ import { Total } from './Total/Total';
 import { Title } from './Title/Title';
 import { SubCategory } from './SubCategory';
 import { useAppSelector } from '@/lib/hooks';
-import { selectSubcategoryById, selectOffersByCategoryId, selectTotalSumByCategoryId } from '@/store/slices/offer';
+import {
+	selectSubcategoryById,
+	selectOffersByCategoryId,
+	selectTotalSumByCategoryId,
+} from '@/store/slices/offer/selectors';
 import { useCallback } from 'react';
 import { RootState } from '@/lib/store';
 

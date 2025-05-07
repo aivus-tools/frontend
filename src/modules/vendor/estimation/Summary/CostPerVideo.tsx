@@ -5,7 +5,8 @@ import { Flex } from 'antd';
 import EyeCrossed from '@/icons/eye-crossed.svg';
 import Eye from '@/icons/eye.svg';
 import { useAppDispatch, useAppSelector } from '@/lib/hooks';
-import { changeShowCostPerVideo, selectGrandTotal, selectShowCostPerVideo } from '@/store/slices/offer';
+import { selectGrandTotal, selectShowCostPerVideo } from '@/store/slices/offer/selectors';
+import { changeShowCostPerVideo } from '@/store/slices/offer/slice';
 import { useBrief } from '@/hooks/useBrief';
 
 const Label = styled.div`

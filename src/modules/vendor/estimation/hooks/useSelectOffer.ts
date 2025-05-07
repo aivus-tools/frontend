@@ -1,5 +1,6 @@
 import { useAppDispatch, useAppSelector } from '@/lib/hooks';
-import { addOfferRow, selectAllCategories } from '@/store/slices/offer';
+import { selectAllCategories } from '@/store/slices/offer/selectors';
+import { addOfferRow } from '@/store/slices/offer/slice';
 import { useCallback } from 'react';
 import { useExpandedKeys } from '../context/expanded';
 import { OfferData } from '../types';

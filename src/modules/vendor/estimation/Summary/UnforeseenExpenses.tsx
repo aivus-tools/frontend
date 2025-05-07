@@ -7,7 +7,8 @@ import Eye from '@/icons/eye.svg';
 import { percentFormat, percentParser } from '../helpers/format';
 import { InputNumberRight } from '../styled';
 import { useAppDispatch, useAppSelector } from '@/lib/hooks';
-import { changeUnforeseenExpenses, selectUnforeseenExpenses } from '@/store/slices/offer';
+import { changeUnforeseenExpenses } from '@/store/slices/offer/slice';
+import { selectUnforeseenExpenses } from '@/store/slices/offer/selectors';
 import SettingsIcon from '@/icons/settings-icon.svg';
 
 const Label = styled.div`
