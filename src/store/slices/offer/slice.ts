@@ -5,6 +5,8 @@ import { createSlice } from '@reduxjs/toolkit';
 import type { PayloadAction } from '@reduxjs/toolkit';
 import clone from 'lodash.clone';
 import { OfferDetails, OfferState, UnforeseenExpenses } from './types';
+import { CATEGORIES } from '@/modules/vendor/estimation/mock/categories';
+import { ENTRIES } from '@/modules/vendor/estimation/mock/entries';
 
 const initialState: OfferState = {
 	offerDetails: {
@@ -169,6 +171,10 @@ export const offerSlice = createSlice({
 		},
 		setExternal: (state, action: PayloadAction<boolean>) => {
 			state.external = action.payload;
+			if (action.payload) {
+				state.dictionary.category = CATEGORIES;
+				state.dictionary.entry = ENTRIES;
+			}
 		},
 	},
 });
