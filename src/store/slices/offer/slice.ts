@@ -24,6 +24,7 @@ const initialState: OfferState = {
 		category: [],
 		entry: [],
 	},
+	external: false,
 };
 
 export const offerSlice = createSlice({
@@ -166,6 +167,9 @@ export const offerSlice = createSlice({
 		addDictionaryEntry: (state, action: PayloadAction<Entry[]>) => {
 			state.dictionary.entry = action.payload;
 		},
+		setExternal: (state, action: PayloadAction<boolean>) => {
+			state.external = action.payload;
+		},
 	},
 });
 
@@ -180,4 +184,5 @@ export const {
 	changeCategorySurcharge,
 	changeUnforeseenExpenses,
 	changeShowCostPerVideo,
+	setExternal,
 } = offerSlice.actions;

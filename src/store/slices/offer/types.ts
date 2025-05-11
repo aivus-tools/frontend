@@ -29,4 +29,5 @@ export interface OfferState {
 		category: Category[];
 		entry: Entry[];
 	};
+	external: boolean;
 }

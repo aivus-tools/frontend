@@ -6,6 +6,7 @@ import { OfferState } from './types';
 export const selectOfferDetails = (state: { offer: OfferState }) => state.offer.offerDetails;
 export const selectDictionary = (state: { offer: OfferState }) => state.offer.dictionary;
 export const selectOfferMetaData = (state: { offer: OfferState }) => state.offer.metaData;
+export const selectIsExternal = (state: { offer: OfferState }) => state.offer.external;
 export const selectShowCostPerVideo = createSelector(
 	[selectOfferDetails],
 	(offerDetails) => offerDetails.showCostPerVideo

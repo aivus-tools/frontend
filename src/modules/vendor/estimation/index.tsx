@@ -11,21 +11,16 @@ import { useAppSelector } from '@/lib/hooks';
 import { selectRootCategories } from '@/store/slices/offer/selectors';
 import { AddButton } from './AddButton';
 import { DrawerOfferProvider } from './context/drawer';
-import { categoriesApi } from '@/services/client/categoriesApi';
-import { offersApi } from '@/services/client/offersApi';
+import { useLoadData } from './hooks/useLoadData';
+import { useSetExternal } from './hooks/useSetExternal';
 
-export function Estimation() {
+export function Estimation({ external }: { external?: boolean }) {
+	useSetExternal(external);
 	const categories = useAppSelector(selectRootCategories);
-	const categoriesQuery = categoriesApi.useGetCategoriesQuery();
-	const entriesQuery = categoriesApi.useGetEntriesQuery();
-	const projectId = useAppSelector((state) => state.project.projectId);
-	offersApi.useGetOffersByBriefIdQuery(projectId!, {
-		skip: !projectId,
-	});
-
+	const isLoading = useLoadData(external);
 	const hasData = categories.length > 0;
 
-	if (categoriesQuery.isLoading || entriesQuery.isLoading) {
+	if (isLoading) {
 		return <Spinner />;
 	}
 
