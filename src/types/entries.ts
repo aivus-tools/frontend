@@ -1,17 +1,17 @@
 export interface Entry {
 	id: number;
-	uuid: string;
+	uuid?: string;
 	name: string;
-	description: string;
+	description?: string;
 	categoryId: number;
-	isApproved: boolean;
-	createdAt: string;
-	updatedAt: string;
+	isApproved?: boolean;
+	createdAt?: string;
+	updatedAt?: string;
 	units: {
 		quantity: UnitOption[];
 		temporal: UnitOption[];
 	};
-	categoryPath: [
+	categoryPath?: [
 		{
 			id: number;
 			name: string;
@@ -24,6 +24,6 @@ export interface Entry {
 export type UnitOption = {
 	id: number;
 	name: string;
-	symbol: string;
-	isDefault: boolean;
+	symbol?: string;
+	isDefault?: boolean;
 };
