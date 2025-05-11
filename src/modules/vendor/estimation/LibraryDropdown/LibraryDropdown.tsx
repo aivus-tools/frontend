@@ -4,12 +4,14 @@ import { Dropdown } from 'antd';
 import { useCallback, useMemo, useState } from 'react';
 import { OfferData } from '../types';
 import { useRowHover } from '../context/hover';
-import { useSearchLibrary } from '../hooks/useSearchLibrary';
+import { MenuItem, useSearchLibrary } from '../hooks/useSearchLibrary';
 import debounce from 'lodash.debounce';
 import { SearchProvider } from './SearchContext';
 import { ValueSetter } from './ValueSetter';
 import { MenuClickEventHandler } from 'rc-menu/lib/interface';
 import { menuItemToOfferData } from '../helpers/menuItemToOfferData';
+
+import styles from './LibraryDropdown.module.css';
 
 interface ComponentParams {
 	handleChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
@@ -22,9 +24,10 @@ interface Props {
 	value?: OfferData;
 	componentAction: (props: ComponentParams) => React.ReactNode;
 	onSelect?: (value: OfferData) => void;
+	filterOptions?: (options: MenuItem[], searchValue: string) => MenuItem[];
 }
 
-export const LibraryDropdown = ({ value, componentAction, onSelect }: Props) => {
+export const LibraryDropdown = ({ value, componentAction, onSelect, filterOptions }: Props) => {
 	const { focusRow } = useRowHover();
 	const [isTyping, setIsTyping] = useState(false);
 	const [searchValue, setSearchValue] = useState('');
@@ -33,8 +36,11 @@ export const LibraryDropdown = ({ value, componentAction, onSelect }: Props) => 
 	const items = useMemo(() => {
 		if (!library) return [];
 		const result = library.filter((it) => it.value.toLowerCase().includes(searchValue.toLowerCase()));
-		return result.slice(0, 10);
-	}, [library, searchValue]);
+		if (filterOptions) {
+			return filterOptions(result, searchValue);
+		}
+		return result;
+	}, [library, searchValue, filterOptions]);
 
 	// eslint-disable-next-line react-hooks/exhaustive-deps
 	const debouncedIsTyping = useCallback(debounce(setIsTyping, 150), []);
@@ -86,6 +92,7 @@ export const LibraryDropdown = ({ value, componentAction, onSelect }: Props) => 
 						setIsTyping(open);
 					}}
 					trigger={['click']}
+					overlayClassName={styles.overlay}
 				>
 					<div>
 						{componentAction({

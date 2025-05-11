@@ -28,7 +28,7 @@ export function SubCategory({ subCategory }: { subCategory: Category }) {
 			{isOpen && (
 				<>
 					<Entries data={offers} />
-					<SubTotal value={`$ ${total}`} clientValue={`$ ${clientTotal}`} />
+					<SubTotal value={`$ ${total}`} clientValue={`$ ${clientTotal}`} subCategoryId={subCategory.id} />
 				</>
 			)}
 		</>

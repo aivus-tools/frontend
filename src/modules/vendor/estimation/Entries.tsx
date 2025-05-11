@@ -156,7 +156,7 @@ export function Entries({ data = [] }: { data?: OfferData[] }) {
 																		</IconButton>
 																	</HideElement>
 																)}
-															{unit.type === UnitType.QUANTITY && (
+															{unit.type === UnitType.QUANTITY && it.units.length === 2 && (
 																<HideElement width={12} isVisible={isActive}>
 																	<IconButton onClick={() => handleRemoveUnit(it.id, UnitType.QUANTITY)}>
 																		<RemoveIcon />

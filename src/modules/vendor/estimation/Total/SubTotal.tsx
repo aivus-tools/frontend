@@ -5,6 +5,8 @@ import { styled } from 'styled-components';
 import AddIcon from '@/icons/add-icon.svg';
 import { LibraryDropdown } from '../LibraryDropdown/LibraryDropdown';
 import { useSelectOffer } from '../hooks/useSelectOffer';
+import { useMemo } from 'react';
+import { filterOptionsById } from '../helpers/filters';
 
 const LabelSubTotal = styled.div`
 	font-weight: 600;
@@ -16,6 +18,7 @@ const LabelSubTotal = styled.div`
 	background-color: var(--bg-blue-subtotal);
 `;
 const SubTotalSum = styled.div`
+	width: 100%;
 	padding: 12px 0;
 	font-weight: 700;
 	font-size: 14px;
@@ -45,10 +48,12 @@ const Label = styled(Flex)`
 interface Props {
 	value: string;
 	clientValue: string;
+	subCategoryId?: number;
 }
 
-export const SubTotal = ({ value, clientValue }: Props) => {
+export const SubTotal = ({ value, clientValue, subCategoryId }: Props) => {
 	const handleSelect = useSelectOffer();
+	const handleFilter = useMemo(() => filterOptionsById(subCategoryId), [subCategoryId]);
 
 	return (
 		<>
@@ -62,6 +67,7 @@ export const SubTotal = ({ value, clientValue }: Props) => {
 			<Label align='center'>
 				<LibraryDropdown
 					onSelect={handleSelect}
+					filterOptions={handleFilter}
 					componentAction={({ handleChange, handleBlur, handleFocus, value }) => (
 						<Input
 							placeholder='add item'

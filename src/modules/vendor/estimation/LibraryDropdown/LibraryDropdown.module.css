@@ -1,0 +1,5 @@
+/* stylelint-disable selector-class-pattern */
+/* stylelint-disable selector-no-qualifying-type */
+.overlay :global(.ant-dropdown-menu.ant-dropdown-menu-root.ant-dropdown-menu-vertical) {
+  max-height: 50vh;
+}

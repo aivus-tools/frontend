@@ -5,6 +5,11 @@ import { styled } from 'styled-components';
 import AddIcon from '@/icons/add-icon.svg';
 import { useSelectOffer } from '../hooks/useSelectOffer';
 import { LibraryDropdown } from '../LibraryDropdown/LibraryDropdown';
+import { filterOptionsBySetOfId } from '../helpers/filters';
+import { useCallback, useMemo } from 'react';
+import { useAppSelector } from '@/lib/hooks';
+import { selectSubcategoryById } from '@/store/slices/offer/selectors';
+import { RootState } from '@/lib/store';
 
 const Wrapper = styled.div`
 	display: flex;
@@ -47,10 +52,27 @@ interface Props {
 	text: string;
 	value: string;
 	clientValue: string;
+	categoryId?: number;
 }
 
-export const Total = ({ text, value, clientValue }: Props) => {
+export const Total = ({ text, value, clientValue, categoryId }: Props) => {
 	const handleSelect = useSelectOffer();
+	const subCategories = useAppSelector(
+		useCallback((state: RootState) => selectSubcategoryById(state, categoryId), [categoryId])
+	);
+	const categorySet = useMemo(() => {
+		const set = new Set<number>();
+		if (categoryId) {
+			set.add(categoryId);
+		}
+		subCategories?.forEach((subCategory) => {
+			if (subCategory.id) {
+				set.add(subCategory.id);
+			}
+		});
+		return set;
+	}, [categoryId, subCategories]);
+	const handleFilter = useMemo(() => filterOptionsBySetOfId(categorySet), [categorySet]);
 
 	return (
 		<>
@@ -65,6 +87,7 @@ export const Total = ({ text, value, clientValue }: Props) => {
 				<Flex>
 					<LibraryDropdown
 						onSelect={handleSelect}
+						filterOptions={handleFilter}
 						componentAction={({ handleChange, handleBlur, handleFocus, value }) => (
 							<Input
 								placeholder='add item'

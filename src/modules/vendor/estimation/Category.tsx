@@ -39,7 +39,7 @@ export function Category({ category }: { category: TypeCategory }) {
 						<SubCategory key={`${key}${subCategory.id}`} subCategory={subCategory} />
 					))}
 					<Entries data={offers} />
-					<Total text={category.name} value={`$ ${total}`} clientValue={`$ ${clientTotal}`} />
+					<Total text={category.name} value={`$ ${total}`} clientValue={`$ ${clientTotal}`} categoryId={category.id} />
 				</>
 			)}
 			<div style={{ gridColumn: 'span 13', padding: '15px' }} />
