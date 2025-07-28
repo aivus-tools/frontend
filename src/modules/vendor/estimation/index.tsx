@@ -15,32 +15,32 @@ import { useLoadData } from './hooks/useLoadData';
 import { useSetExternal } from './hooks/useSetExternal';
 
 export function Estimation({ external }: { external?: boolean }) {
-	useSetExternal(external);
-	const isExternal = useAppSelector(selectIsExternal);
-	const categories = useAppSelector(selectRootCategories);
-	const isLoading = useLoadData(external);
-	const hasData = categories.length > 0;
+  useSetExternal(external);
+  const isExternal = useAppSelector(selectIsExternal);
+  const categories = useAppSelector(selectRootCategories);
+  const isLoading = useLoadData(external);
+  const hasData = categories.length > 0;
 
-	if (isLoading || (external === true && !isExternal)) {
-		return <Spinner />;
-	}
+  if (isLoading || (external === true && !isExternal)) {
+    return <Spinner />;
+  }
 
-	return (
-		<DrawerOfferProvider>
-			<KeysProvider>
-				<HoverProvider>
-					<Wrapper>
-						<Table>
-							<Header />
-							{categories.map((category) => (
-								<Category key={category.id} category={category} />
-							))}
-							{hasData && <Summary />}
-						</Table>
-					</Wrapper>
-					{!hasData && <AddButton />}
-				</HoverProvider>
-			</KeysProvider>
-		</DrawerOfferProvider>
-	);
+  return (
+    <DrawerOfferProvider>
+      <KeysProvider>
+        <HoverProvider>
+          <Wrapper>
+            <Table>
+              <Header />
+              {categories.map((category) => (
+                <Category key={category.id} category={category} />
+              ))}
+              {hasData && <Summary />}
+            </Table>
+          </Wrapper>
+          {!hasData && <AddButton />}
+        </HoverProvider>
+      </KeysProvider>
+    </DrawerOfferProvider>
+  );
 }

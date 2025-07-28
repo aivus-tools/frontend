@@ -9,59 +9,59 @@ import { Category } from '@/types/categories';
 import { ENTRIES } from '../mock/entries';
 
 export interface MenuItem extends Entry {
-	key: string;
-	label: string | ReactNode;
-	value: string;
-	active?: boolean;
-	path?: string;
-	name: string;
+  key: string;
+  label: string | ReactNode;
+  value: string;
+  active?: boolean;
+  path?: string;
+  name: string;
 }
 
 export const useSearchLibrary = () => {
-	const skip = useAppSelector(selectIsExternal);
-	const categoriesQuery = categoriesApi.useGetCategoriesQuery(undefined, {
-		skip,
-	});
-	const entriesQuery = categoriesApi.useGetEntriesQuery(undefined, {
-		skip,
-	});
+  const skip = useAppSelector(selectIsExternal);
+  const categoriesQuery = categoriesApi.useGetCategoriesQuery(undefined, {
+    skip,
+  });
+  const entriesQuery = categoriesApi.useGetEntriesQuery(undefined, {
+    skip,
+  });
 
-	const { categories, entries } = useMemo(() => {
-		let categories: Category[] = [];
-		let entries: Entry[] = [];
+  const { categories, entries } = useMemo(() => {
+    let categories: Category[] = [];
+    let entries: Entry[] = [];
 
-		if (skip) {
-			categories = CATEGORIES;
-			entries = ENTRIES;
-		} else {
-			if (categoriesQuery.isSuccess) {
-				categories = categoriesQuery.data;
-			}
-			if (entriesQuery.isSuccess) {
-				entries = entriesQuery.data?.entries || [];
-			}
-		}
+    if (skip) {
+      categories = CATEGORIES;
+      entries = ENTRIES;
+    } else {
+      if (categoriesQuery.isSuccess) {
+        categories = categoriesQuery.data;
+      }
+      if (entriesQuery.isSuccess) {
+        entries = entriesQuery.data?.entries || [];
+      }
+    }
 
-		return { categories, entries };
-	}, [categoriesQuery.data, categoriesQuery.isSuccess, entriesQuery.data?.entries, entriesQuery.isSuccess, skip]);
+    return { categories, entries };
+  }, [categoriesQuery.data, categoriesQuery.isSuccess, entriesQuery.data?.entries, entriesQuery.isSuccess, skip]);
 
-	return useMemo(
-		() =>
-			entries?.reduce((acc: MenuItem[], entry) => {
-				const category = categories?.find((cat) => cat.id === entry.categoryId);
-				if (!category) return acc;
+  return useMemo(
+    () =>
+      entries?.reduce((acc: MenuItem[], entry) => {
+        const category = categories?.find((cat) => cat.id === entry.categoryId);
+        if (!category) return acc;
 
-				acc.push({
-					...entry,
-					key: `${category.id}-${entry.id}`,
-					label: <Label itemKey={`${category.id}-${entry.id}`}>{`${entry.name}`}</Label>,
-					value: `${entry.name}`,
-					name: entry.name,
-				});
+        acc.push({
+          ...entry,
+          key: `${category.id}-${entry.id}`,
+          label: <Label itemKey={`${category.id}-${entry.id}`}>{`${entry.name}`}</Label>,
+          value: `${entry.name}`,
+          name: entry.name,
+        });
 
-				return acc;
-			}, []),
+        return acc;
+      }, []),
 
-		[categories, entries]
-	);
+    [categories, entries]
+  );
 };

@@ -33,7 +33,6 @@
   margin-right: 6px;
 }
 
-
 .average {
   color: var(--white);
 }
@@ -68,7 +67,6 @@
   fill: var(--white);
 }
 
-
 .below {
   color: var(--white);
 }
@@ -90,7 +88,6 @@
   fill: var(--white);
 }
 
-
 .above {
   color: var(--white);
 }
@@ -104,18 +101,13 @@
   color: var(--red);
 }
 
-
-
 .above.inversion {
   background-color: var(--red);
 }
 
-
-
 .above.inversion .icon {
   fill: var(--white);
 }
-
 
 .na {
   color: var(--white);
@@ -133,4 +125,3 @@
 .na.inversion {
   background-color: var(--gray);
 }
-

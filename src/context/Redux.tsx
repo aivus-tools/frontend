@@ -4,10 +4,10 @@ import { Provider } from 'react-redux';
 import { makeStore, AppStore } from '../lib/store';
 
 export function ReduxStore({ children }: { children: React.ReactNode }) {
-	const storeRef = useRef<AppStore>(undefined);
-	if (!storeRef.current) {
-		storeRef.current = makeStore();
-	}
+  const storeRef = useRef<AppStore>(undefined);
+  if (!storeRef.current) {
+    storeRef.current = makeStore();
+  }
 
-	return <Provider store={storeRef.current}>{children}</Provider>;
+  return <Provider store={storeRef.current}>{children}</Provider>;
 }

@@ -10,57 +10,57 @@ import { addOfferRow, removeOfferRow } from '@/store/slices/offer/slice';
 import { useExpandedKeys } from './context/expanded';
 
 const Input = styled(LibInput)`
-	&.ant-input-borderless {
-		border: 1px solid transparent;
-	}
+  &.ant-input-borderless {
+    border: 1px solid transparent;
+  }
 
-	&.ant-input-borderless:focus {
-		border: 1px solid var(--blue);
-	}
+  &.ant-input-borderless:focus {
+    border: 1px solid var(--blue);
+  }
 `;
 
 const DropdownWrapper = styled.div`
-	width: 100%;
+  width: 100%;
 `;
 interface Props {
-	value: OfferData;
-	variant?: 'borderless' | 'outlined';
+  value: OfferData;
+  variant?: 'borderless' | 'outlined';
 }
 
 export const EntrieInput = ({ value, variant }: Props) => {
-	const dispatch = useAppDispatch();
-	const allCategories = useAppSelector(selectAllCategories);
-	const { addKey } = useExpandedKeys();
+  const dispatch = useAppDispatch();
+  const allCategories = useAppSelector(selectAllCategories);
+  const { addKey } = useExpandedKeys();
 
-	const handleSelect = (offer: OfferData) => {
-		dispatch(removeOfferRow(value.id));
-		dispatch(addOfferRow(offer));
-		const category = allCategories.find((cat) => cat.id === offer.categoryId);
-		if (!category) return;
-		const parentCategory = allCategories.find((cat) => cat.id === category.parentCategoryId);
-		if (parentCategory) {
-			addKey(`${parentCategory.id}-${category.id}`);
-			addKey(`${parentCategory.id}`);
-		} else {
-			addKey(`${category.id}`);
-		}
-	};
-	return (
-		<DropdownWrapper>
-			<LibraryDropdown
-				value={value}
-				onSelect={handleSelect}
-				componentAction={({ handleChange, handleBlur, handleFocus, value }) => (
-					<Input
-						placeholder={value}
-						variant={variant}
-						value={value}
-						onChange={handleChange}
-						onBlur={handleBlur}
-						onFocus={handleFocus}
-					/>
-				)}
-			/>
-		</DropdownWrapper>
-	);
+  const handleSelect = (offer: OfferData) => {
+    dispatch(removeOfferRow(value.id));
+    dispatch(addOfferRow(offer));
+    const category = allCategories.find((cat) => cat.id === offer.categoryId);
+    if (!category) return;
+    const parentCategory = allCategories.find((cat) => cat.id === category.parentCategoryId);
+    if (parentCategory) {
+      addKey(`${parentCategory.id}-${category.id}`);
+      addKey(`${parentCategory.id}`);
+    } else {
+      addKey(`${category.id}`);
+    }
+  };
+  return (
+    <DropdownWrapper>
+      <LibraryDropdown
+        value={value}
+        onSelect={handleSelect}
+        componentAction={({ handleChange, handleBlur, handleFocus, value }) => (
+          <Input
+            placeholder={value}
+            variant={variant}
+            value={value}
+            onChange={handleChange}
+            onBlur={handleBlur}
+            onFocus={handleFocus}
+          />
+        )}
+      />
+    </DropdownWrapper>
+  );
 };

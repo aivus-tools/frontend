@@ -3,14 +3,14 @@ import { AuthForm } from './AuthForm';
 import { AuthTypeProvider } from './context/auth-type';
 
 export const metadata: Metadata = {
-	title: 'Aivus Web Login',
-	description: 'Aivus Web',
+  title: 'Aivus Web Login',
+  description: 'Aivus Web',
 };
 
 export default async function Auth() {
-	return (
-		<AuthTypeProvider>
-			<AuthForm />
-		</AuthTypeProvider>
-	);
+  return (
+    <AuthTypeProvider>
+      <AuthForm />
+    </AuthTypeProvider>
+  );
 }

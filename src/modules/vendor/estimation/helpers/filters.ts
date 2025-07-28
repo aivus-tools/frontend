@@ -4,19 +4,19 @@ import { LibraryDropdown } from '../LibraryDropdown/LibraryDropdown';
 type HandleFilter = Exclude<ComponentProps<typeof LibraryDropdown>['filterOptions'], undefined>;
 
 export const filterOptionsById =
-	(id?: number): HandleFilter =>
-	(options, searchValue) => {
-		if (!searchValue && id) {
-			return options.filter((option) => option.categoryId === id);
-		}
-		return options;
-	};
+  (id?: number): HandleFilter =>
+  (options, searchValue) => {
+    if (!searchValue && id) {
+      return options.filter((option) => option.categoryId === id);
+    }
+    return options;
+  };
 
 export const filterOptionsBySetOfId =
-	(setIds?: Set<number>): HandleFilter =>
-	(options, searchValue) => {
-		if (!searchValue && setIds) {
-			return options.filter((option) => setIds.has(option.categoryId));
-		}
-		return options;
-	};
+  (setIds?: Set<number>): HandleFilter =>
+  (options, searchValue) => {
+    if (!searchValue && setIds) {
+      return options.filter((option) => setIds.has(option.categoryId));
+    }
+    return options;
+  };
