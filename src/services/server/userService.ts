@@ -1,5 +1,5 @@
 import logger from '@/lib/logger';
-import { ApiRoute } from '@/lib/apiRoute';
+import { ApiRoute } from '@/constants/apiRoute';
 import { User } from '@/types/user.interface.';
 
 interface UserSession {

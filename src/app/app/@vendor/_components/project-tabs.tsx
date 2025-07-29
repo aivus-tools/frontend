@@ -1,7 +1,7 @@
 'use client';
 import { useRouter, useSelectedLayoutSegments } from 'next/navigation';
 import { Tabs } from './tabs';
-import { VENDOR_PROJECT_TABS } from '@/lib/constants';
+import { VENDOR_PROJECT_TABS } from '@/constants/constants';
 
 export const ProjectTabs = () => {
   const router = useRouter();

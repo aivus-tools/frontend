@@ -4,7 +4,7 @@ import cn from 'classnames';
 import { PrStatus } from '../PrStatus/PrStatus';
 import { Percent } from '../Percent/Percent';
 import { Project } from '@/types/project.interface.';
-import { PROJECT_STATUS } from '@/lib/constants';
+import { PROJECT_STATUS } from '@/constants/constants';
 
 interface Props {
   item: Project;

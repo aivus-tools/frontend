@@ -3,7 +3,7 @@ import { Button } from 'antd';
 import { useRouter } from 'next/navigation';
 import { useEffect } from 'react';
 import { VendorTabs } from './vendor-tabs';
-import { NEW_BRIEF_SLUG } from '@/lib/constants';
+import { NEW_BRIEF_SLUG } from '@/constants/constants';
 
 export const VendorNavbar = () => {
   const router = useRouter();

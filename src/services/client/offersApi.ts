@@ -1,6 +1,6 @@
 import { Offer, NewOffer } from '@/types/offer.interface';
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
-import { ApiRoute } from '@/lib/apiRoute';
+import { ApiRoute } from '@/constants/apiRoute';
 
 export const offersApi = createApi({
   reducerPath: 'offersApi',

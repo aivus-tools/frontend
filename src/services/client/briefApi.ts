@@ -1,6 +1,6 @@
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
 import { Brief } from '@/types/brief.interface';
-import { ApiRoute } from '@/lib/apiRoute';
+import { ApiRoute } from '@/constants/apiRoute';
 
 export const briefApi = createApi({
   reducerPath: 'briefApi',

@@ -5,7 +5,7 @@ import styles from './styles.module.css';
 import { Button, message, Tooltip } from 'antd';
 import { signInWithGoogle } from '@/auth/actions/google';
 import { useAuthType } from '@/context/auth-type';
-import { AUTH_TYPES } from '@/lib/constants';
+import { AUTH_TYPES } from '@/constants/constants';
 
 /**
  * check configuration https://authjs.dev/getting-started/providers/google#configuration

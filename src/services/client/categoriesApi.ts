@@ -1,7 +1,7 @@
 import { Category } from '@/types/categories.interface';
 import { Entry } from '@/types/entries.interface';
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
-import { ApiRoute } from '@/lib/apiRoute';
+import { ApiRoute } from '@/constants/apiRoute';
 
 export const categoriesApi = createApi({
   reducerPath: 'categoriesApi',

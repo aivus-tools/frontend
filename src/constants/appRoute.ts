@@ -1,6 +1,6 @@
 export const AppRoute = {
   APP: '/app',
-  AUTH_CONTEXT: '/auth/context',
+  AUTH: '/auth',
   CONFIRM: '/app/confirm',
   DASHBOARD: '/app/dashboard',
   DASHBOARD_PROJECT: '/app/dashboard/[projectId]',

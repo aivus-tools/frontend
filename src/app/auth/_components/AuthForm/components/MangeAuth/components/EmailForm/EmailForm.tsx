@@ -4,7 +4,7 @@ import { Button, Form, Input, message, Tooltip } from 'antd';
 import { useState } from 'react';
 import { Steps } from '@/types/auth.interface';
 import { AuthType } from '@/types/user.interface.';
-import { AUTH_TYPES } from '@/lib/constants';
+import { AUTH_TYPES } from '@/constants/constants';
 import { useAuthType } from '@/context/auth-type';
 
 // TODO заменить на checkEmail из src/services/server/authService.ts

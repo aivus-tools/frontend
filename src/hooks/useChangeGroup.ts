@@ -1,6 +1,7 @@
 import { useSession } from 'next-auth/react';
 import { Groups } from '@/types/user.interface.';
 import { useChangeGroupMutation } from '@/services/client/userApi';
+import { AppRoute } from '@/constants/appRoute';
 
 export const useChangeGroup = () => {
   const session = useSession();
@@ -14,7 +15,7 @@ export const useChangeGroup = () => {
           newGroup,
         }).unwrap();
         await session.update();
-        window.location.href = `/app/dashboard`;
+        window.location.href = AppRoute.DASHBOARD;
       }
     },
     ...options,
