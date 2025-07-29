@@ -1,4 +1,4 @@
-import { signIn } from '@/auth';
+import { signIn } from '@/auth/auth';
 import styles from './styles.module.css';
 import { Button } from 'antd';
 

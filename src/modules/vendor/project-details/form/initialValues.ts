@@ -1,4 +1,4 @@
-import { Details } from '@/types/brief';
+import { Details } from '@/types/brief.interface';
 
 export const initialValues: Details = {
   brandName: '',

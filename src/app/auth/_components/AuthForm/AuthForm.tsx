@@ -1,7 +1,7 @@
 import styles from './styles.module.css';
 import LogoIcon from '@/icons/aivus-logo.svg';
 import { Google } from '@/components/Auth/Google';
-import { ManageAuth } from './_components/ManageAuth';
+import { ManageAuth } from './components/MangeAuth/ManageAuth';
 
 export function AuthForm() {
   return (

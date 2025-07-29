@@ -1,5 +1,5 @@
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
-import { Brief } from '@/types/brief';
+import { Brief } from '@/types/brief.interface';
 
 export const briefApi = createApi({
   reducerPath: 'briefApi',

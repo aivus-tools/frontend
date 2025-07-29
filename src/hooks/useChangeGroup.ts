@@ -1,6 +1,6 @@
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
 import { useSession } from 'next-auth/react';
-import { Groups } from '@/types/user';
+import { Groups } from '@/types/user.interface.';
 
 type ChangeGroup = {
   userId: string;

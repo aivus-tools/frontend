@@ -1,9 +1,9 @@
 'use client';
 import { Button, Form, Input, message } from 'antd';
 import { signIn } from 'next-auth/react';
-import styles from '../styles.module.css';
+import styles from './styles.module.css';
 import { useState } from 'react';
-import { CALLBACK_URL } from '@/lib/service-routes';
+import { CALLBACK_URL } from '@/lib/apiRoute';
 
 export const PasswordForm = ({ email, prevStepAction }: { email: string; prevStepAction: () => void }) => {
   const [messageApi, contextHolder] = message.useMessage();

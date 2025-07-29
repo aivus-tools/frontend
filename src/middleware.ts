@@ -1,4 +1,4 @@
-import { auth } from '@/auth';
+import { auth } from '@/auth/auth';
 import { NextResponse } from 'next/server';
 import { GROUPS } from './lib/constants';
 import logger from './lib/logger';

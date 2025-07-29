@@ -8,7 +8,7 @@ import NotificationIcon from './notification-icon.svg';
 import ArrowIcon from '@/icons/arrow-icon.svg';
 import { Popover } from 'react-tiny-popover';
 import { useState } from 'react';
-import { logout } from '@/app/actions/logout';
+import { logout } from '@/auth/actions/logout';
 import { Avatar } from 'antd';
 import { useSession } from 'next-auth/react';
 import { ProfileImage } from './ProfileImage';

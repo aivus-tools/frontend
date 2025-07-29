@@ -1,11 +1,11 @@
 'use client';
-import styles from '../styles.module.css';
+import styles from './styles.module.css';
 import { Button, Form, Input, message, Tooltip } from 'antd';
 import { useState } from 'react';
-import { Steps } from './types';
-import { AuthType } from '@/types/user';
+import { Steps } from '@/types/auth.interface';
+import { AuthType } from '@/types/user.interface.';
 import { AUTH_TYPES } from '@/lib/constants';
-import { useAuthType } from '../context/auth-type';
+import { useAuthType } from '@/context/auth-type';
 
 const checkEmail = async ({
   email,

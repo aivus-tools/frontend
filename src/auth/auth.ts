@@ -1,10 +1,10 @@
 import NextAuth from 'next-auth';
 import Google from 'next-auth/providers/google';
 import Credentials from 'next-auth/providers/credentials';
-import { checkEmail, login, register } from './services/server/authService';
-import logger from './lib/logger';
-import { AUTH_TYPES, GROUPS } from './lib/constants';
-import { updateUserSession } from './services/server/userService';
+import { checkEmail, login, register } from '@/services/server/authService';
+import logger from '@/lib/logger';
+import { AUTH_TYPES, GROUPS } from '@/lib/constants';
+import { updateUserSession } from '@/services/server/userService';
 
 export const { handlers, signIn, signOut, auth } = NextAuth({
   debug: Boolean(process.env.DEBUG),

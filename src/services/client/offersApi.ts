@@ -1,4 +1,4 @@
-import { Offer, NewOffer } from '@/types/offer';
+import { Offer, NewOffer } from '@/types/offer.interface';
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
 
 export const offersApi = createApi({

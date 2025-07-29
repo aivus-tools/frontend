@@ -1,7 +1,7 @@
 'use client';
 import cn from 'classnames';
 import { dashboardTHeads } from '@/handbook/handbook';
-import { THead } from '@/interfaces/app.interface';
+import { THead } from '@/types/app.interface';
 import { useRouter } from 'next/navigation';
 
 import styles from './project-list.module.css';
@@ -9,9 +9,9 @@ import { useEffect, useMemo } from 'react';
 import { THeadItem } from '@/components/THeadItem/THeadItem';
 import { ProjectItem } from '@/components/ProjectItem/ProjectItem';
 import { useBriefs } from '@/hooks/useBriefs';
-import { Brief } from '@/types/brief';
+import { Brief } from '@/types/brief.interface';
 import { format } from 'date-fns';
-import { Project } from '@/types/project';
+import { Project } from '@/types/project.interface.';
 import { formatPrice } from '@/helpers/helper';
 import Spinner from '@/components/Spinner';
 

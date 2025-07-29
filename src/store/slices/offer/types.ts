@@ -1,5 +1,5 @@
 import { Category, Entry, OfferData } from '@/modules/vendor/estimation/types';
-import { Offer } from '@/types/offer';
+import { Offer } from '@/types/offer.interface';
 
 export interface UnforeseenExpenses {
   percent: number;

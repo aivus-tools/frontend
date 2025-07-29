@@ -1,6 +1,6 @@
 import logger from '@/lib/logger';
-import { routes } from '@/lib/service-routes';
-import { AuthType, Groups } from '@/types/user';
+import { ApiRoute } from '@/lib/apiRoute';
+import { AuthType, Groups } from '@/types/user.interface.';
 
 type Credentials = Partial<Record<'email' | 'password', unknown>> & { authType: AuthType };
 /**
@@ -14,7 +14,7 @@ export async function login(credentials: Credentials): Promise<{
   group: Groups;
 }> {
   try {
-    const response = await fetch(routes.LOGIN, {
+    const response = await fetch(ApiRoute.LOGIN, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -22,7 +22,7 @@ export async function login(credentials: Credentials): Promise<{
       body: JSON.stringify(credentials),
     });
     if (!response.ok) {
-      throw new Error(`Failed to fetch ${routes.LOGIN}: ${response.statusText}`);
+      throw new Error(`Failed to fetch ${ApiRoute.LOGIN}: ${response.statusText}`);
     }
     return await response.json();
   } catch (error) {
@@ -52,7 +52,7 @@ export async function register({
 }> {
   try {
     logger.info('Registering user:', { name, email, authType, password });
-    const response = await fetch(routes.REGISTER, {
+    const response = await fetch(ApiRoute.REGISTER, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -67,7 +67,7 @@ export async function register({
     logger.info('Register response:', response);
 
     if (!response.ok) {
-      throw new Error(`Failed to fetch ${routes.LOGIN}: ${response.statusText}`);
+      throw new Error(`Failed to fetch ${ApiRoute.LOGIN}: ${response.statusText}`);
     }
     return await response.json();
   } catch (error) {
@@ -85,7 +85,7 @@ export async function checkEmail({ email }: { email: string }): Promise<{
   authType: AuthType;
 }> {
   try {
-    const response = await fetch(routes.CHECK_EMAIL, {
+    const response = await fetch(ApiRoute.CHECK_EMAIL, {
       method: 'POST',
       body: JSON.stringify({ email }),
       headers: {
@@ -93,7 +93,7 @@ export async function checkEmail({ email }: { email: string }): Promise<{
       },
     });
     if (!response.ok) {
-      throw new Error(`Failed to fetch ${routes.CHECK_EMAIL}: ${response.statusText}`);
+      throw new Error(`Failed to fetch ${ApiRoute.CHECK_EMAIL}: ${response.statusText}`);
     }
     return await response.json();
   } catch (error) {
@@ -108,7 +108,7 @@ export async function checkEmail({ email }: { email: string }): Promise<{
  */
 export async function changeRole(id: string, newGroup: Groups): Promise<boolean> {
   try {
-    const res = await fetch(routes.changeRole(id), {
+    const res = await fetch(ApiRoute.changeRole(id), {
       method: 'PATCH',
       headers: {
         'Content-Type': 'application/json',
@@ -117,7 +117,7 @@ export async function changeRole(id: string, newGroup: Groups): Promise<boolean>
     });
     if (!res.ok) {
       const message = await res.json();
-      throw new Error(`Failed to fetch ${routes.changeRole(id)}: ${res.statusText} ${message}`);
+      throw new Error(`Failed to fetch ${ApiRoute.changeRole(id)}: ${res.statusText} ${message}`);
     }
     return true;
   } catch (error) {

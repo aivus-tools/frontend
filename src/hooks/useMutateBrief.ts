@@ -1,5 +1,5 @@
 import { useSession } from 'next-auth/react';
-import { Brief, Details } from '@/types/brief';
+import { Brief, Details } from '@/types/brief.interface';
 import { ROLES } from '@/lib/constants';
 import { briefApi } from '@/services/client/briefApi';
 

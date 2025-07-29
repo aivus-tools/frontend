@@ -7,7 +7,7 @@ import Spinner from '@/components/Spinner';
 import { useEffect } from 'react';
 import { useSession } from 'next-auth/react';
 import { GROUPS } from '@/lib/constants';
-import { logout } from '@/app/actions/logout';
+import { logout } from '@/auth/actions/logout';
 
 type Error = {
   data: {

@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Button, Col, Flex, Form, Input, Modal, Row, Select, Typography } from 'antd';
 import { styled } from 'styled-components';
-import { Person } from '@/types/brief';
+import { Person } from '@/types/brief.interface';
 
 const Text = styled(Typography.Text)`
   font-size: 10px !important;

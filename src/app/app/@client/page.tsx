@@ -1,4 +1,4 @@
-import { logout } from '@/app/actions/logout';
+import { logout } from '@/auth/actions/logout';
 import { Button } from 'antd';
 
 export default async function Page() {

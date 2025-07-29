@@ -3,7 +3,7 @@ import { Form, Input, Select, Flex, Row, Col, Typography } from 'antd';
 import { Uploader } from './Uploader';
 import { LabelWithAdd } from './LabelWithAdd';
 import { usePersonModal } from '../hooks/usePersonModal';
-import { Details, Person } from '@/types/brief';
+import { Details, Person } from '@/types/brief.interface';
 import { useGuidance } from '@/context/Guidance';
 import RemoveIcon from '@/icons/minus.svg';
 import { AntdListWrapper, IconButton } from '../common/styled';

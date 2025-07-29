@@ -2,11 +2,11 @@
 import { Button, Form, Input, message } from 'antd';
 import { signIn } from 'next-auth/react';
 
-import styles from '../styles.module.css';
+import styles from './styles.module.css';
 import { useState } from 'react';
-import { CALLBACK_URL } from '@/lib/service-routes';
+import { CALLBACK_URL } from '@/lib/apiRoute';
 import { AUTH_TYPES } from '@/lib/constants';
-import { AuthType } from '@/types/user';
+import { AuthType } from '@/types/user.interface.';
 
 export interface ResponseData {
   statusCode: number;

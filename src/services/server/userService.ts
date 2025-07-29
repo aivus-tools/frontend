@@ -1,6 +1,6 @@
 import logger from '@/lib/logger';
-import { routes } from '@/lib/service-routes';
-import { User } from '@/types/user';
+import { ApiRoute } from '@/lib/apiRoute';
+import { User } from '@/types/user.interface.';
 
 interface UserSession {
   userId: string;
@@ -15,7 +15,7 @@ export const updateUserSession = async ({ userId }: UserSession): Promise<User> 
   requestHeaders.set('x-user-id', userId);
 
   try {
-    const response = await fetch(routes.USER_INFO, {
+    const response = await fetch(ApiRoute.USER_INFO, {
       method: 'GET',
       headers: requestHeaders,
     });

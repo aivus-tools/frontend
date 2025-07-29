@@ -1,4 +1,4 @@
-import { GROUPS, AUTH_TYPES, ROLES } from '../lib/constants';
+import { GROUPS, AUTH_TYPES, ROLES } from '@/lib/constants';
 
 export type Groups = (typeof GROUPS)[keyof typeof GROUPS];
 export type Roles = (typeof ROLES)[keyof typeof ROLES];

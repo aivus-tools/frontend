@@ -1,4 +1,4 @@
-import { THead } from '@/interfaces/app.interface';
+import { THead } from '@/types/app.interface';
 
 export const contentTHeads: THead[] = [
   {
