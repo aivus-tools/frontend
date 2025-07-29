@@ -108,7 +108,7 @@ export async function checkEmail({ email }: { email: string }): Promise<{
  */
 export async function changeRole(id: string, newGroup: Groups): Promise<boolean> {
   try {
-    const res = await fetch(ApiRoute.changeRole(id), {
+    const res = await fetch(ApiRoute.CHANGE_ROLE(id), {
       method: 'PATCH',
       headers: {
         'Content-Type': 'application/json',
@@ -117,7 +117,7 @@ export async function changeRole(id: string, newGroup: Groups): Promise<boolean>
     });
     if (!res.ok) {
       const message = await res.json();
-      throw new Error(`Failed to fetch ${ApiRoute.changeRole(id)}: ${res.statusText} ${message}`);
+      throw new Error(`Failed to fetch ${ApiRoute.CHANGE_ROLE(id)}: ${res.statusText} ${message}`);
     }
     return true;
   } catch (error) {

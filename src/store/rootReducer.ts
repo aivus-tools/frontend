@@ -4,7 +4,7 @@ import { offerSlice } from './slices/offer/slice';
 import { briefApi } from '@/services/client/briefApi';
 import { categoriesApi } from '@/services/client/categoriesApi';
 import { offersApi } from '@/services/client/offersApi';
-import { userApi } from '@/hooks/useChangeGroup';
+import { userApi } from '@/services/client/userApi';
 import { vendorSlice } from './slices/vendor';
 
 export const rootReducer = combineReducers({

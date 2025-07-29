@@ -1,4 +1,4 @@
-import { useAppDispatch, useAppSelector } from '@/lib/hooks';
+import { useAppDispatch, useAppSelector } from '@/store/hooks';
 import { selectIsExternal } from '@/store/slices/offer/selectors';
 import { setExternal } from '@/store/slices/offer/slice';
 import { useEffect } from 'react';

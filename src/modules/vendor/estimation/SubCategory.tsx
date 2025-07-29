@@ -5,9 +5,9 @@ import { Entries } from './Entries';
 import { useExpandedKeys } from './context/expanded';
 import { SubTitle } from './Title/SubTitle';
 import { selectOffersByCategoryId, selectTotalSumByCategoryId } from '@/store/slices/offer/selectors';
-import { RootState } from '@/lib/store';
+import { RootState } from '@/store/store';
 import { useCallback } from 'react';
-import { useAppSelector } from '@/lib/hooks';
+import { useAppSelector } from '@/store/hooks';
 import { SubTotal } from './Total/SubTotal';
 
 export function SubCategory({ subCategory }: { subCategory: Category }) {

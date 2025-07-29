@@ -4,7 +4,7 @@ import { styled } from 'styled-components';
 import { Flex } from 'antd';
 import EyeCrossed from '@/icons/eye-crossed.svg';
 import Eye from '@/icons/eye.svg';
-import { useAppDispatch, useAppSelector } from '@/lib/hooks';
+import { useAppDispatch, useAppSelector } from '@/store/hooks';
 import { selectGrandTotal, selectShowCostPerVideo } from '@/store/slices/offer/selectors';
 import { changeShowCostPerVideo } from '@/store/slices/offer/slice';
 import { useBrief } from '@/hooks/useBrief';

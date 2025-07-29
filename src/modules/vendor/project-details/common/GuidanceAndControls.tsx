@@ -6,7 +6,7 @@ import { useComponentSize } from '@/hooks/useComponentSize';
 import { Section, Header, Content } from '../common/styled';
 import { useGuidance } from '@/context/Guidance';
 import { styled } from 'styled-components';
-import { useAppDispatch, useAppSelector } from '@/lib/hooks';
+import { useAppDispatch, useAppSelector } from '@/store/hooks';
 import { selectMode, setMode } from '@/store/slices/project';
 
 const BorderDashedLine = styled.div`

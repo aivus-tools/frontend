@@ -22,6 +22,7 @@ export interface ErrorDetails {
   statusCode: number;
 }
 
+//TODO заменить на register из src/services/server
 const register = async ({
   name,
   email,

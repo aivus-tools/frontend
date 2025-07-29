@@ -11,7 +11,7 @@ import { EstimationItem, IconButton, InputNumberRight, SelectWrapper } from './s
 import { RowLine } from './RowLine';
 import { Flex, Select } from 'antd';
 import { EntrieInput } from './EntrieInput';
-import { useAppDispatch } from '@/lib/hooks';
+import { useAppDispatch } from '@/store/hooks';
 import { changeOfferRow, removeOfferRow } from '@/store/slices/offer/slice';
 import { useDrawerOffer } from './context/drawer';
 import { Fragment } from 'react';

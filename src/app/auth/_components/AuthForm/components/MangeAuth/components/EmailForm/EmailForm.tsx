@@ -7,6 +7,7 @@ import { AuthType } from '@/types/user.interface.';
 import { AUTH_TYPES } from '@/lib/constants';
 import { useAuthType } from '@/context/auth-type';
 
+// TODO заменить на checkEmail из src/services/server/authService.ts
 const checkEmail = async ({
   email,
 }: {

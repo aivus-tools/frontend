@@ -13,7 +13,7 @@ import { useMutateBrief } from '@/hooks/useMutateBrief';
 import { Details as DetailsType } from '@/types/brief.interface';
 import { useBrief } from '@/hooks/useBrief';
 import { GuidanceProvider } from '@/context/Guidance';
-import { useAppDispatch } from '@/lib/hooks';
+import { useAppDispatch } from '@/store/hooks';
 import { setMode } from '@/store/slices/project';
 import { initialValues } from './initialValues';
 

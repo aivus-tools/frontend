@@ -2,7 +2,7 @@ import React, { useMemo, ReactNode } from 'react';
 import { Label } from '../LibraryDropdown/Label';
 import { categoriesApi } from '@/services/client/categoriesApi';
 import { Entry } from '@/types/entries.interface';
-import { useAppSelector } from '@/lib/hooks';
+import { useAppSelector } from '@/store/hooks';
 import { selectIsExternal } from '@/store/slices/offer/selectors';
 import { CATEGORIES } from '../mock/categories';
 import { Category } from '@/types/categories.interface';

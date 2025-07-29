@@ -1,13 +1,13 @@
 'use client';
 import { Button, Flex, message, Typography } from 'antd';
 
-import { useConfirmEmailMutation } from '@/hooks/useChangeGroup';
 import { useSearchParams } from 'next/navigation';
 import Spinner from '@/components/Spinner';
 import { useEffect } from 'react';
 import { useSession } from 'next-auth/react';
 import { GROUPS } from '@/lib/constants';
 import { logout } from '@/auth/actions/logout';
+import { useConfirmEmailMutation } from '@/services/client/userApi';
 
 type Error = {
   data: {

@@ -1,33 +1,6 @@
-import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
 import { useSession } from 'next-auth/react';
 import { Groups } from '@/types/user.interface.';
-
-type ChangeGroup = {
-  userId: string;
-  newGroup: Omit<Groups, 'UNCONFIRMED'>;
-};
-
-export const userApi = createApi({
-  reducerPath: 'userApi',
-  baseQuery: fetchBaseQuery({ baseUrl: '/service' }),
-  endpoints: (builder) => ({
-    changeGroup: builder.mutation<ChangeGroup, ChangeGroup>({
-      query: ({ userId, newGroup }) => ({
-        url: `/users/${userId}/change-group`,
-        method: 'PATCH',
-        body: { newGroup },
-      }),
-    }),
-    confirmEmail: builder.mutation<void, string>({
-      query: (token) => ({
-        url: `/auth/confirm-email?token=${token}`,
-        method: 'GET',
-      }),
-    }),
-  }),
-});
-
-export const { useChangeGroupMutation, useConfirmEmailMutation } = userApi;
+import { useChangeGroupMutation } from '@/services/client/userApi';
 
 export const useChangeGroup = () => {
   const session = useSession();

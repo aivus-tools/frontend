@@ -10,8 +10,8 @@ import { ArrowButton } from './ArrowButton';
 import { SectionTitle, SectionTitleSumHeader, SectionTitleText } from './styled';
 import { selectCategorySurcharge } from '@/store/slices/offer/selectors';
 import { changeCategorySurcharge } from '@/store/slices/offer/slice';
-import { useAppDispatch, useAppSelector } from '@/lib/hooks';
-import { RootState } from '@/lib/store';
+import { useAppDispatch, useAppSelector } from '@/store/hooks';
+import { RootState } from '@/store/store';
 import { InputNumberRight } from '../styled';
 import { percentFormat, percentParser } from '../helpers/format';
 

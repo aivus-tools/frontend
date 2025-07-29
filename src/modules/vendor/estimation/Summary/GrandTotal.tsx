@@ -3,7 +3,7 @@
 import { styled } from 'styled-components';
 import SettingsIcon from '@/icons/settings-icon.svg';
 import { Flex } from 'antd';
-import { useAppSelector } from '@/lib/hooks';
+import { useAppSelector } from '@/store/hooks';
 import { selectGrandTotal } from '@/store/slices/offer/selectors';
 
 const Label = styled.div`
