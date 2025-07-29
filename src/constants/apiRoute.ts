@@ -2,6 +2,7 @@ const BASE_URL = `${process.env.API_URL}/api/v1`;
 
 export const CALLBACK_URL = process.env.CALLBACK_URL ?? '';
 
+// TODO приставку BASE_URL из некоторых роутов нужно будет из этого файла убрать
 export const ApiRoute = {
   BRIEF: (id: string | number) => `/service/briefs/${id}`,
   BRIEF_LIST: `/service/briefs`,
