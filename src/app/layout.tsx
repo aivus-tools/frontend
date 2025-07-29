@@ -11,6 +11,8 @@ import { VersionLogger } from '@/components/VersionLogger';
 import fs from 'fs';
 import path from 'path';
 import theme from '@/lib/themeConfig';
+import React from 'react';
+import { locale } from '@/lib/i18n';
 
 const montserrat = Montserrat({
   subsets: ['latin'],
@@ -34,7 +36,7 @@ export default async function RootLayout({
   const creationDate = stats.birthtime.toISOString();
 
   return (
-    <html lang='en'>
+    <html lang={locale}>
       <body className={montserrat.className}>
         <VersionLogger creationDate={creationDate} />
         <StyledComponentsRegistry>
