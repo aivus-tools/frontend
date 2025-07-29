@@ -49,14 +49,14 @@ export default async function RootLayout({
       </body>
       <Script id='resize-iframe' strategy='afterInteractive'>
         {`
-					function resizeIframe() {
-						const height = document.body.scrollHeight;
-						parent.postMessage({ type: 'resize', height: height }, '*');
-					}
+          function resizeIframe() {
+            const height = document.body.scrollHeight;
+            parent.postMessage({ type: 'resize', height: height }, '*');
+          }
 
-					window.addEventListener('load', resizeIframe);
-					window.addEventListener('resize', resizeIframe);
-				`}
+          window.addEventListener('load', resizeIframe);
+          window.addEventListener('resize', resizeIframe);
+        `}
       </Script>
     </html>
   );
