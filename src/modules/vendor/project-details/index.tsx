@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { useAppSelector } from '@/lib/hooks';
+import { useAppSelector } from '@/store/hooks';
 import { selectMode } from '@/store/slices/project';
 import dynamic from 'next/dynamic';
 import ViewProjectDetails from './view/Details';

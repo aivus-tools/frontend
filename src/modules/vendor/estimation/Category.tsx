@@ -6,14 +6,14 @@ import { useExpandedKeys } from './context/expanded';
 import { Total } from './Total/Total';
 import { Title } from './Title/Title';
 import { SubCategory } from './SubCategory';
-import { useAppSelector } from '@/lib/hooks';
+import { useAppSelector } from '@/store/hooks';
 import {
   selectSubcategoryById,
   selectOffersByCategoryId,
   selectTotalSumByCategoryId,
 } from '@/store/slices/offer/selectors';
 import { useCallback } from 'react';
-import { RootState } from '@/lib/store';
+import { RootState } from '@/store/store';
 
 export function Category({ category }: { category: TypeCategory }) {
   const { keys } = useExpandedKeys();

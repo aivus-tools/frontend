@@ -1,6 +1,6 @@
-import { auth, signOut } from '@/auth';
+import { auth, signOut } from '@/auth/auth';
 import { ReduxStore } from '@/context/Redux';
-import { GROUPS } from '@/lib/constants';
+import { GROUPS } from '@/constants/constants';
 
 export default async function Layout({
   vendor,

@@ -1,42 +1,43 @@
-import { Category } from '@/types/categories';
-import { Entry } from '@/types/entries';
+import { Category } from '@/types/categories.interface';
+import { Entry } from '@/types/entries.interface';
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
+import { ApiRoute } from '@/constants/apiRoute';
 
 export const categoriesApi = createApi({
   reducerPath: 'categoriesApi',
-  baseQuery: fetchBaseQuery({ baseUrl: '/service' }),
+  baseQuery: fetchBaseQuery(),
   endpoints: (builder) => ({
     createCategory: builder.mutation<void, { name: string; parentCategoryId: number }>({
       query: (body) => ({
-        url: '/categories',
+        url: ApiRoute.CATEGORY_LIST,
         method: 'POST',
         body,
       }),
     }),
     getCategories: builder.query<Category[], void>({
-      query: () => '/categories',
+      query: () => ApiRoute.CATEGORY_LIST,
     }),
     getCategory: builder.query<Category, string>({
-      query: (id) => `/categories/${id}`,
+      query: (id) => ApiRoute.CATEGORY(id),
     }),
     updateCategory: builder.mutation<Category, Pick<Category, 'name' | 'parentCategoryId' | 'id'>>({
       query: (body) => ({
-        url: `/categories/${body.id}`,
+        url: ApiRoute.CATEGORY(body.id),
         method: 'PATCH',
         body,
       }),
     }),
     deleteCategory: builder.mutation<void, string>({
       query: (id) => ({
-        url: `/categories/${id}`,
+        url: ApiRoute.CATEGORY(id),
         method: 'DELETE',
       }),
     }),
     getEntries: builder.query<{ entries: Entry[] }, void>({
-      query: () => `/entries`,
+      query: () => ApiRoute.ENTRY_LIST,
     }),
     getEntry: builder.query<Entry, string>({
-      query: (id) => `/entries/${id}`,
+      query: (id) => ApiRoute.ENTRY(id),
     }),
   }),
 });

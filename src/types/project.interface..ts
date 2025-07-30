@@ -1,4 +1,4 @@
-import { PROJECT_STATUS } from '@/lib/constants';
+import { PROJECT_STATUS } from '@/constants/constants';
 
 export type ProjectStatus = (typeof PROJECT_STATUS)[keyof typeof PROJECT_STATUS];
 

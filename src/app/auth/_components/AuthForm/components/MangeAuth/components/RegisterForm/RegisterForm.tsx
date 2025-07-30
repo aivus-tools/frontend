@@ -2,11 +2,12 @@
 import { Button, Form, Input, message } from 'antd';
 import { signIn } from 'next-auth/react';
 
-import styles from '../styles.module.css';
+import styles from './styles.module.css';
 import { useState } from 'react';
-import { CALLBACK_URL } from '@/lib/service-routes';
-import { AUTH_TYPES } from '@/lib/constants';
-import { AuthType } from '@/types/user';
+import { CALLBACK_URL } from '@/constants/apiRoute';
+import { AUTH_TYPES } from '@/constants/constants';
+import { AuthType } from '@/types/user.interface.';
+import { AppRoute } from '@/constants/appRoute';
 
 export interface ResponseData {
   statusCode: number;
@@ -22,6 +23,7 @@ export interface ErrorDetails {
   statusCode: number;
 }
 
+//TODO заменить на register из src/services/server
 const register = async ({
   name,
   email,
@@ -93,7 +95,7 @@ export const RegisterForm = ({ email, prevStepAction }: { email: string; prevSte
         form.resetFields();
         form.setFields([{ name: 'password', errors: [''] }]);
       } else {
-        window.location.href = CALLBACK_URL ?? '/';
+        window.location.href = CALLBACK_URL ?? AppRoute.HOME;
       }
     } catch (error) {
       messageApi.error('An unexpected error occurred');

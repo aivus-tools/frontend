@@ -1,4 +1,4 @@
-import { useAppDispatch, useAppSelector } from '@/lib/hooks';
+import { useAppDispatch, useAppSelector } from '@/store/hooks';
 import { selectAllCategories } from '@/store/slices/offer/selectors';
 import { addOfferRow } from '@/store/slices/offer/slice';
 import { useCallback } from 'react';

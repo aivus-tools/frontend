@@ -1,8 +1,9 @@
-import { auth } from '@/auth';
+import { auth } from '@/auth/auth';
 import { NextResponse } from 'next/server';
-import { GROUPS } from './lib/constants';
+import { GROUPS } from '@/constants/constants';
 import logger from './lib/logger';
 import { createHmacSHA256 } from './lib/hmac';
+import { AppRoute } from '@/constants/appRoute';
 
 const changePathname = (pathname: string) => pathname.replace(/^\/service\//, '/api/v1/');
 const MOCK_ENDPOINTS = ['/api/v1/briefs'];
@@ -21,18 +22,18 @@ export default auth(async (req) => {
 
   const { id, group } = req.auth?.user ?? {};
 
-  if (req.nextUrl.pathname === '/') {
+  if (req.nextUrl.pathname === AppRoute.HOME) {
     if (id && group) {
       if (userGroups.has(group)) {
         logger.info('redirecting to /app/dashboard');
-        return NextResponse.redirect(new URL('/app/dashboard', req.url));
+        return NextResponse.redirect(new URL(AppRoute.DASHBOARD, req.url));
       } else {
         logger.info('redirecting to /app/confirm');
-        return NextResponse.redirect(new URL('/app/confirm', req.url));
+        return NextResponse.redirect(new URL(AppRoute.CONFIRM, req.url));
       }
     }
     logger.info('redirecting to /auth');
-    return NextResponse.redirect(new URL('/auth', req.url));
+    return NextResponse.redirect(new URL(AppRoute.AUTH, req.url));
   }
 
   const { pathname, search } = req.nextUrl;
@@ -70,16 +71,16 @@ export default auth(async (req) => {
   if (pathname.startsWith('/auth') && id && group) {
     if (userGroups.has(group)) {
       logger.info('redirecting to /app/dashboard');
-      return NextResponse.redirect(new URL('/app/dashboard', req.url));
+      return NextResponse.redirect(new URL(AppRoute.DASHBOARD, req.url));
     } else {
       logger.info('redirecting to /app/confirm');
-      return NextResponse.redirect(new URL('/app/confirm', req.url));
+      return NextResponse.redirect(new URL(AppRoute.CONFIRM, req.url));
     }
   }
 
   if (pathname.startsWith('/app') && (!id || !group)) {
     logger.info('redirecting to /auth');
-    return NextResponse.redirect(new URL('/auth', req.url));
+    return NextResponse.redirect(new URL(AppRoute.AUTH, req.url));
   }
 });
 

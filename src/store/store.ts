@@ -4,8 +4,8 @@ import { rootReducer } from '@/store/rootReducer';
 import { briefApi } from '@/services/client/briefApi';
 import { categoriesApi } from '@/services/client/categoriesApi';
 import { offersApi } from '@/services/client/offersApi';
-import { userApi } from '@/hooks/useChangeGroup';
-import { listenerMiddleware } from './listenerMiddleware';
+import { userApi } from '@/services/client/userApi';
+import { listenerMiddleware } from '@/lib/listenerMiddleware';
 
 export const makeStore = () => {
   return configureStore({

@@ -1,4 +1,4 @@
-import { NEW_BRIEF_SLUG } from '@/lib/constants';
+import { NEW_BRIEF_SLUG } from '@/constants/constants';
 import { createSlice } from '@reduxjs/toolkit';
 import type { PayloadAction } from '@reduxjs/toolkit';
 

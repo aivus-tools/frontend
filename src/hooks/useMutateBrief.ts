@@ -1,6 +1,6 @@
 import { useSession } from 'next-auth/react';
-import { Brief, Details } from '@/types/brief';
-import { ROLES } from '@/lib/constants';
+import { Brief, Details } from '@/types/brief.interface';
+import { ROLES } from '@/constants/constants';
 import { briefApi } from '@/services/client/briefApi';
 
 export const { useCreateBriefMutation, useUpdateBriefMutation } = briefApi;

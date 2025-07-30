@@ -1,10 +1,11 @@
 import NextAuth from 'next-auth';
 import Google from 'next-auth/providers/google';
 import Credentials from 'next-auth/providers/credentials';
-import { checkEmail, login, register } from './services/server/authService';
-import logger from './lib/logger';
-import { AUTH_TYPES, GROUPS } from './lib/constants';
-import { updateUserSession } from './services/server/userService';
+import { checkEmail, login, register } from '@/services/server/authService';
+import logger from '@/lib/logger';
+import { AUTH_TYPES, GROUPS } from '@/constants/constants';
+import { updateUserSession } from '@/services/server/userService';
+import { AppRoute } from '@/constants/appRoute';
 
 export const { handlers, signIn, signOut, auth } = NextAuth({
   debug: Boolean(process.env.DEBUG),
@@ -59,13 +60,13 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
               return Promise.resolve(true);
             } else {
               logger.error('No name and email', user);
-              return Promise.resolve('/auth');
+              return Promise.resolve(AppRoute.AUTH);
             }
           }
           return Promise.resolve(true);
         } catch (error) {
           logger.error('signIn error', error);
-          return Promise.resolve('/auth');
+          return Promise.resolve(AppRoute.AUTH);
         }
       }
       return Promise.resolve(true);

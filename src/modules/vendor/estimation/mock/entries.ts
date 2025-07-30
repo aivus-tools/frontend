@@ -1,4 +1,4 @@
-import { Entry } from '@/types/entries';
+import { Entry } from '@/types/entries.interface';
 
 export const ENTRIES: Entry[] = [
   {

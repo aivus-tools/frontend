@@ -1,6 +1,6 @@
 'use client';
 import { useEffect } from 'react';
-import { useAppDispatch, useAppSelector } from '@/lib/hooks';
+import { useAppDispatch, useAppSelector } from '@/store/hooks';
 import { useSession } from 'next-auth/react';
 import { selectVendorId, setVendorId } from '@/store/slices/vendor';
 

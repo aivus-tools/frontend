@@ -1,9 +1,9 @@
 'use client';
 import { useState } from 'react';
-import { EmailForm } from './EmailForm';
-import { PasswordForm } from './PasswordForm';
-import { RegisterForm } from './RegisterForm';
-import { Steps } from './types';
+import { EmailForm } from './components/EmailForm/EmailForm';
+import { PasswordForm } from './components/PasswordForm/PasswordForm';
+import { RegisterForm } from './components/RegisterForm/RegisterForm';
+import { Steps } from '@/types/auth.interface';
 
 export function ManageAuth() {
   const [step, setStep] = useState<Steps | null>(null);

@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server';
 import { promises as fs } from 'fs';
 import path from 'path';
-import { Brief } from '@/types/brief';
+import { Brief } from '@/types/brief.interface';
 import logger from '@/lib/logger';
 
 const filePath = path.join(process.cwd(), 'db.json');

@@ -8,7 +8,7 @@ import { useGuidance } from '@/context/Guidance';
 
 import i18n from 'i18n-iso-countries';
 import Flag from 'react-world-flags';
-import { Details } from '@/types/brief';
+import { Details } from '@/types/brief.interface';
 
 export const Specifications: React.FC = () => {
   const { handleFocus } = useGuidance();

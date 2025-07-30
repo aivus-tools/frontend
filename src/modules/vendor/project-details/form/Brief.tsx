@@ -8,7 +8,7 @@ import { LabelWithSide } from './LabelWithButton';
 
 import EyeCrossed from '@/icons/eye-crossed.svg';
 import Eye from '@/icons/eye.svg';
-import { Details } from '@/types/brief';
+import { Details } from '@/types/brief.interface';
 import { useGuidance } from '@/context/Guidance';
 
 const { TextArea } = Input;

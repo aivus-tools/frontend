@@ -1,8 +1,8 @@
 'use client';
 import styles from './PrStatus.module.css';
 import cn from 'classnames';
-import { ProjectStatus } from '@/types/project';
-import { PROJECT_STATUS } from '@/lib/constants';
+import { ProjectStatus } from '@/types/project.interface.';
+import { PROJECT_STATUS } from '@/constants/constants';
 
 interface Props {
   status: ProjectStatus;

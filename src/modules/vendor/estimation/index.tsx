@@ -7,7 +7,7 @@ import { KeysProvider } from './context/expanded';
 import { Wrapper, Table } from './styled';
 import Spinner from '@/components/Spinner';
 import { Summary } from './Summary/Summary';
-import { useAppSelector } from '@/lib/hooks';
+import { useAppSelector } from '@/store/hooks';
 import { selectIsExternal, selectRootCategories } from '@/store/slices/offer/selectors';
 import { AddButton } from './AddButton';
 import { DrawerOfferProvider } from './context/drawer';
@@ -21,7 +21,7 @@ export function Estimation({ external }: { external?: boolean }) {
   const isLoading = useLoadData(external);
   const hasData = categories.length > 0;
 
-  if (isLoading || (external === true && !isExternal)) {
+  if (isLoading || (external && !isExternal)) {
     return <Spinner />;
   }
 

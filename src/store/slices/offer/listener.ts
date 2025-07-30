@@ -1,4 +1,4 @@
-import { AppStartListening } from '@/lib/store';
+import { AppStartListening } from '@/store/store';
 import { categoriesApi } from '@/services/client/categoriesApi';
 import { offersApi } from '@/services/client/offersApi';
 import {

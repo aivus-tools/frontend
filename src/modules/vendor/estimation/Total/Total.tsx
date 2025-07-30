@@ -7,9 +7,9 @@ import { useSelectOffer } from '../hooks/useSelectOffer';
 import { LibraryDropdown } from '../LibraryDropdown/LibraryDropdown';
 import { filterOptionsBySetOfId } from '../helpers/filters';
 import { useCallback, useMemo } from 'react';
-import { useAppSelector } from '@/lib/hooks';
+import { useAppSelector } from '@/store/hooks';
 import { selectSubcategoryById } from '@/store/slices/offer/selectors';
-import { RootState } from '@/lib/store';
+import { RootState } from '@/store/store';
 
 const Wrapper = styled.div`
   display: flex;
@@ -24,9 +24,8 @@ const Label = styled.div`
   font-weight: 600;
   font-size: 14px;
   line-height: 17.07px;
-  letter-spacing: 0%;
+  letter-spacing: 0;
   text-align: right;
-  font-style: uppercase;
   padding: 16px 0;
   border-radius: 0 0 0 6px;
   text-transform: uppercase;

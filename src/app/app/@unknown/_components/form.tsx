@@ -2,8 +2,8 @@
 import { Button, message, Typography } from 'antd';
 import { useState } from 'react';
 
-import { GROUPS } from '@/lib/constants';
-import { Groups } from '@/types/user';
+import { GROUPS } from '@/constants/constants';
+import { Groups } from '@/types/user.interface.';
 
 import styles from './form.module.css';
 import { useChangeGroup } from '@/hooks/useChangeGroup';

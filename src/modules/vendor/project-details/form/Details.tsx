@@ -10,10 +10,10 @@ import { GuidanceAndControls } from '../common/GuidanceAndControls';
 import { Wrapper, Section, Header, Column, Content } from '../common/styled';
 import { Form, message } from 'antd';
 import { useMutateBrief } from '@/hooks/useMutateBrief';
-import { Details as DetailsType } from '@/types/brief';
+import { Details as DetailsType } from '@/types/brief.interface';
 import { useBrief } from '@/hooks/useBrief';
 import { GuidanceProvider } from '@/context/Guidance';
-import { useAppDispatch } from '@/lib/hooks';
+import { useAppDispatch } from '@/store/hooks';
 import { setMode } from '@/store/slices/project';
 import { initialValues } from './initialValues';
 

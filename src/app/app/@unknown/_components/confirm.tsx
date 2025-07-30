@@ -1,13 +1,14 @@
 'use client';
 import { Button, Flex, message, Typography } from 'antd';
 
-import { useConfirmEmailMutation } from '@/hooks/useChangeGroup';
 import { useSearchParams } from 'next/navigation';
 import Spinner from '@/components/Spinner';
 import { useEffect } from 'react';
 import { useSession } from 'next-auth/react';
-import { GROUPS } from '@/lib/constants';
-import { logout } from '@/app/actions/logout';
+import { GROUPS } from '@/constants/constants';
+import { logout } from '@/auth/actions/logout';
+import { useConfirmEmailMutation } from '@/services/client/userApi';
+import { AppRoute } from '@/constants/appRoute';
 
 type Error = {
   data: {
@@ -34,7 +35,7 @@ export const Confirm = () => {
           .then(() => {
             messageApi.success('E-mail confirmed');
             session.update();
-            window.location.href = '/app/dashboard';
+            window.location.href = AppRoute.DASHBOARD;
           });
       }
     } catch (error) {

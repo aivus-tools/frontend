@@ -1,4 +1,4 @@
-import { useAppSelector } from '@/lib/hooks';
+import { useAppSelector } from '@/store/hooks';
 import { briefApi } from '@/services/client/briefApi';
 import { selectIsNewBrief, selectProjectId } from '@/store/slices/project';
 

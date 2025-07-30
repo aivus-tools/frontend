@@ -1,9 +1,10 @@
 'use client';
 import { Button, Form, Input, message } from 'antd';
 import { signIn } from 'next-auth/react';
-import styles from '../styles.module.css';
+import styles from './styles.module.css';
 import { useState } from 'react';
-import { CALLBACK_URL } from '@/lib/service-routes';
+import { CALLBACK_URL } from '@/constants/apiRoute';
+import { AppRoute } from '@/constants/appRoute';
 
 export const PasswordForm = ({ email, prevStepAction }: { email: string; prevStepAction: () => void }) => {
   const [messageApi, contextHolder] = message.useMessage();
@@ -22,7 +23,7 @@ export const PasswordForm = ({ email, prevStepAction }: { email: string; prevSte
         form.resetFields();
         form.setFields([{ name: 'password', errors: [''] }]);
       } else {
-        window.location.href = CALLBACK_URL ?? '/';
+        window.location.href = CALLBACK_URL ?? AppRoute.HOME;
       }
     } catch (error) {
       messageApi.error('An unexpected error occurred');

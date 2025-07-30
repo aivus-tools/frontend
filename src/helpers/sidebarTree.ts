@@ -1,4 +1,4 @@
-import { SidebarItem, TSection } from '@/interfaces/app.interface';
+import { SidebarItem, TSection } from '@/types/app.interface';
 
 export function createSidebarTree(sections: TSection[]): SidebarItem[] {
   return sections.map((section) => {

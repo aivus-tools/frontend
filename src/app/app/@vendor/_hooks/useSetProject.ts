@@ -2,7 +2,7 @@
 import { useSelectedLayoutSegments } from 'next/navigation';
 import { useEffect } from 'react';
 import { selectProjectId, setProjectId } from '@/store/slices/project';
-import { useAppDispatch, useAppSelector } from '@/lib/hooks';
+import { useAppDispatch, useAppSelector } from '@/store/hooks';
 
 export const useSetProject = () => {
   const [, projectId] = useSelectedLayoutSegments();
