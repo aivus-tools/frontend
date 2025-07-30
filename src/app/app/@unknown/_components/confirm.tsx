@@ -9,6 +9,7 @@ import { GROUPS } from '@/constants/constants';
 import { logout } from '@/auth/actions/logout';
 import { useConfirmEmailMutation } from '@/services/client/userApi';
 import { AppRoute } from '@/constants/appRoute';
+import { t } from '@/lib/i18n';
 
 type Error = {
   data: {
@@ -33,13 +34,13 @@ export const Confirm = () => {
         confirmEmail(token)
           .unwrap()
           .then(() => {
-            messageApi.success('E-mail confirmed');
+            messageApi.success(t('EMAIL_CONFIRMED'));
             session.update();
             window.location.href = AppRoute.DASHBOARD;
           });
       }
     } catch (error) {
-      messageApi.error('An unexpected error occurred');
+      messageApi.error(t('UNEXPECTED_ERROR'));
 
       if (errorHasMessage(error)) {
         messageApi.error(error.data.message);
@@ -56,7 +57,7 @@ export const Confirm = () => {
       <Flex align='center' justify='center' vertical gap={12} style={{ height: '100vh', width: '100%' }}>
         <Typography.Title level={3}>Please confirm your e-mail</Typography.Title>
         <Button type='primary' onClick={logout}>
-          Back
+          {t('BACK')}
         </Button>
       </Flex>
     );

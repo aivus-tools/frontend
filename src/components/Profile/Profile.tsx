@@ -3,6 +3,7 @@ import { ProfileProps } from './Profile.props';
 import { UserOutlined } from '@ant-design/icons';
 import styles from './Profile.module.css';
 import cn from 'classnames';
+import { t } from '@/lib/i18n';
 import MovieIcon from './movie-icon.svg';
 import NotificationIcon from './notification-icon.svg';
 import ArrowIcon from '@/icons/arrow-icon.svg';
@@ -35,7 +36,7 @@ export const Profile = ({ className, ...props }: ProfileProps) => {
         content={() => (
           <div className={cn(styles.popover)}>
             <div className={cn(styles.logout)} onClick={logoutHandle}>
-              Logout
+              {t('LOGOUT')}
             </div>
           </div>
         )}

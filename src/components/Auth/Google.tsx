@@ -3,8 +3,9 @@
 import { useState } from 'react';
 import styles from './styles.module.css';
 import { Button, message, Tooltip } from 'antd';
+import { t } from '@/lib/i18n';
 import { signInWithGoogle } from '@/auth/actions/google';
-import { useAuthType } from '@/context/auth-type';
+import { useAuthType } from '@/context/AuthTypeProvider';
 import { AUTH_TYPES } from '@/constants/constants';
 
 /**
@@ -21,15 +22,15 @@ export function Google() {
     try {
       await signInWithGoogle();
     } catch (error) {
-      messageApi.error('Login failed');
-      console.error('Login failed:', error);
+      messageApi.error(t('LOGIN_FAILED'));
+      console.error(t('LOGIN_FAILED_ERROR'), error);
     } finally {
       setLoading(false);
     }
   };
 
   const disabled = authType === AUTH_TYPES.credentials;
-  const title = disabled ? 'You have already registered with email. Please sign in with email' : undefined;
+  const title = disabled ? t('ALREADY_REGISTERED_WITH_EMAIL') : undefined;
 
   return (
     <form action={handleSubmit}>
@@ -56,7 +57,7 @@ export function Google() {
               ></path>
             </svg>
           </div>
-          Sign in with Google
+          {t('SIGN_IN_WITH_GOOGLE')}
         </Button>
       </Tooltip>
     </form>

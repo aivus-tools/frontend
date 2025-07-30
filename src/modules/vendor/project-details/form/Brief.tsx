@@ -9,7 +9,8 @@ import { LabelWithSide } from './LabelWithButton';
 import EyeCrossed from '@/icons/eye-crossed.svg';
 import Eye from '@/icons/eye.svg';
 import { Details } from '@/types/brief.interface';
-import { useGuidance } from '@/context/Guidance';
+import { useGuidance } from '@/context/GuidanceProvider';
+import { t } from '@/lib/i18n';
 
 const { TextArea } = Input;
 
@@ -20,36 +21,32 @@ export const Brief: React.FC = () => {
 
   return (
     <>
-      <Form.Item
-        name='projectDescription'
-        label='Project Description'
-        extra='Give more details about your project (Objectives, Audience, Tone and Style, Key Messages, Preferred Deadline)'
-      >
+      <Form.Item name='projectDescription' label={t('PROJECT_DESCRIPTION')} extra={t('PROJECT_DESCRIPTION_EXTRA')}>
         <TextArea
           autoSize={{ minRows: 6, maxRows: 6 }}
           onFocus={handleFocus('projectDescription')}
-          placeholder={`Objectives,\nAudience,\nTone and Style,\nKey Messages,\nPreferred Deadline\n`}
+          placeholder={t('PROJECT_DESCRIPTION_PLACEHOLDER')}
         />
       </Form.Item>
       <AntdListWrapper>
         <Form.List name='referenceVideos'>
           {(fields, { add, remove }) => (
             <Form.Item
-              label={<LabelWithAdd text='Reference video' onClick={() => add()} />}
-              extra='Add links to relevant videos.'
-              rules={[{ required: true, message: 'At least one reference video is required' }]}
+              label={<LabelWithAdd text={t('REFERENCE_VIDEO')} onClick={() => add()} />}
+              extra={t('ADD_LINKS_TO_RELEVANT_VIDEOS')}
+              rules={[{ required: true, message: t('AT_LEAST_ONE_REFERENCE_VIDEO_REQUIRED') }]}
             >
               {fields.map((field) => (
                 <Flex gap={20} key={field.key}>
                   <Form.Item
                     noStyle
                     name={[field.name, 'url']}
-                    rules={[{ type: 'url', warningOnly: true, message: 'Invalid URL' }]}
+                    rules={[{ type: 'url', warningOnly: true, message: t('INVALID_URL') }]}
                   >
-                    <Input placeholder='url only' onFocus={handleFocus('referenceVideos')} />
+                    <Input placeholder={t('URL_ONLY')} onFocus={handleFocus('referenceVideos')} />
                   </Form.Item>
                   <Form.Item noStyle name={[field.name, 'comment']}>
-                    <Input placeholder='Comment' onFocus={handleFocus('referenceVideos')} />
+                    <Input placeholder={t('COMMENT')} onFocus={handleFocus('referenceVideos')} />
                   </Form.Item>
                   <Form.Item noStyle>
                     <IconButton
@@ -73,7 +70,7 @@ export const Brief: React.FC = () => {
           labelCol={{ span: 24, flex: '1 1 100%' }}
           label={
             <LabelWithSide
-              text='Client’s Budget (US$)'
+              text={t('CLIENT_BUDGET')}
               onClick={(e) => {
                 e.preventDefault();
                 form.setFieldsValue({ visibleForVendors: !visibleForVendors });
@@ -89,25 +86,25 @@ export const Brief: React.FC = () => {
                       userSelect: 'none',
                     }}
                   >
-                    Visible for vendors
+                    {t('VISIBLE_FOR_VENDORS')}
                   </Typography.Text>
                 </Flex>
               </Form.Item>
             </LabelWithSide>
           }
-          extra='We will do our best to recommend creatives in your budget range'
-          rules={[{ required: true, message: 'Please input your budget!' }]}
+          extra={t('RECOMMEND_CREATIVES_IN_BUDGET')}
+          rules={[{ required: true, message: t('PLEASE_INPUT_BUDGET') }]}
         >
           <InputNumber
             onFocus={handleFocus('budget')}
             formatter={(value) => `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')}
-            placeholder='Number only'
+            placeholder={t('NUMBER_ONLY')}
             suffix='$'
             controls={false}
             style={{ width: '100%' }}
           />
         </Form.Item>
-        <Form.Item name='extraMaterials' label='Extra materials'>
+        <Form.Item name='extraMaterials' label={t('EXTRA_MATERIALS')}>
           <ExtraMaterials />
         </Form.Item>
       </Flex>

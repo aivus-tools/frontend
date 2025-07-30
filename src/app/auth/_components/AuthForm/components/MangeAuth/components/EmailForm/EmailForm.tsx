@@ -1,11 +1,12 @@
 'use client';
 import styles from './styles.module.css';
 import { Button, Form, Input, message, Tooltip } from 'antd';
+import { t } from '@/lib/i18n';
 import { useState } from 'react';
 import { Steps } from '@/types/auth.interface';
 import { AuthType } from '@/types/user.interface.';
 import { AUTH_TYPES } from '@/constants/constants';
-import { useAuthType } from '@/context/auth-type';
+import { useAuthType } from '@/context/AuthTypeProvider';
 
 // TODO заменить на checkEmail из src/services/server/authService.ts
 const checkEmail = async ({
@@ -45,14 +46,14 @@ export const EmailForm = ({ nextAction }: { nextAction: (step: Steps, email: str
           nextAction('signin', email);
         } else if (res.authType === AUTH_TYPES.google) {
           setAuthType(res.authType);
-          messageApi.info('Please sign in with Google');
+          messageApi.info(t('PLEASE_SIGN_IN_WITH_GOOGLE'));
         }
       } else {
         nextAction('register', email);
       }
     } catch (error) {
       setLoading(false);
-      messageApi.error('An unexpected error occurred');
+      messageApi.error(t('UNEXPECTED_ERROR'));
       console.error('Error checking email:', error);
     } finally {
       setLoading(false);
@@ -60,7 +61,7 @@ export const EmailForm = ({ nextAction }: { nextAction: (step: Steps, email: str
   };
 
   const disabled = authType === AUTH_TYPES.google;
-  const title = disabled ? 'You have already registered with Google. Please sign in with Google' : undefined;
+  const title = disabled ? t('ALREADY_REGISTERED_WITH_GOOGLE') : undefined;
 
   return (
     <Form form={form} layout='vertical' style={{ marginTop: 20 }} onFinish={handleFinish} disabled={disabled}>
@@ -70,16 +71,16 @@ export const EmailForm = ({ nextAction }: { nextAction: (step: Steps, email: str
           name='email'
           noStyle
           rules={[
-            { required: true, message: 'Email is required' },
-            { type: 'email', message: 'Invalid email' },
+            { required: true, message: t('EMAIL_REQUIRED') },
+            { type: 'email', message: t('INVALID_EMAIL') },
           ]}
         >
-          <Input placeholder='Your email address' id='email' name='email' size='large' />
+          <Input placeholder={t('YOUR_EMAIL_ADDRESS')} id='email' name='email' size='large' />
         </Form.Item>
       </div>
       <Tooltip title={title} placement='bottom'>
         <Button block type='primary' size='large' loading={loading} disabled={loading || disabled} htmlType='submit'>
-          Next
+          {t('NEXT')}
         </Button>
       </Tooltip>
     </Form>

@@ -4,6 +4,7 @@ import { styled } from 'styled-components';
 import SettingsIcon from '@/icons/settings-icon.svg';
 import { Flex } from 'antd';
 import { useAppSelector } from '@/store/hooks';
+import { t } from '@/lib/i18n';
 import { selectGrandTotal } from '@/store/slices/offer/selectors';
 
 const Label = styled.div`
@@ -43,7 +44,7 @@ export const GrandTotal = () => {
       </EmptyBlockTotalSum>
       <Label style={{ gridColumn: 'span 6' }}>
         <Flex align='center' justify='end'>
-          Grand total
+          {t('GRAND_TOTAL')}
         </Flex>
         <TotalSum>{`$ ${total}`}</TotalSum>
       </Label>

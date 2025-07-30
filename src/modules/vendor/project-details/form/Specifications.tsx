@@ -4,7 +4,8 @@ import { AntdListWrapper, IconButton } from '../common/styled';
 import { LabelWithAdd } from './LabelWithAdd';
 import RemoveIcon from '@/icons/minus.svg';
 import CrossIcon from '@/icons/cross.svg';
-import { useGuidance } from '@/context/Guidance';
+import { useGuidance } from '@/context/GuidanceProvider';
+import { t } from '@/lib/i18n';
 
 import i18n from 'i18n-iso-countries';
 import Flag from 'react-world-flags';
@@ -15,7 +16,7 @@ export const Specifications: React.FC = () => {
   const countries = i18n.getNames('en', { select: 'official' });
   const countryOptions = [
     {
-      label: 'Worldwide',
+      label: t('WORLDWIDE'),
       value: 'worldwide',
     },
     ...Object.keys(countries).map((country) => ({
@@ -42,41 +43,45 @@ export const Specifications: React.FC = () => {
     <>
       <Form.Item
         name='distributionAndAdPlacements'
-        label='Distribution and Ad placements'
-        extra='Select at least one placement for your ad'
-        rules={[{ required: true, message: 'At least one placement is required' }]}
+        label={t('DISTRIBUTION_AND_AD_PLACEMENTS')}
+        extra={t('SELECT_AT_LEAST_ONE_PLACEMENT')}
+        rules={[{ required: true, message: t('AT_LEAST_ONE_PLACEMENT_REQUIRED') }]}
       >
-        <Input placeholder='Ad placements' onFocus={handleFocus('distributionAndAdPlacements')} />
+        <Input placeholder={t('AD_PLACEMENTS')} onFocus={handleFocus('distributionAndAdPlacements')} />
       </Form.Item>
       <Flex gap={16} style={{ width: '100%' }}>
         <Form.Item
           name='territory'
-          label='Territory'
-          extra='Select all country/regions you need or “Worldwide”'
+          label={t('TERRITORY')}
+          extra={t('SELECT_ALL_COUNTRIES_OR_WORLDWIDE')}
           rules={[{ required: true }]}
         >
           <Select
             mode='multiple'
             allowClear
             showSearch
-            placeholder='Client'
+            placeholder={t('CLIENT')}
             onFocus={handleFocus('territory')}
             options={countryOptions}
           />
         </Form.Item>
-        <Form.Item label='Term' extra='Set the period or Perpetuity' style={{ flex: '1 0 340px' }}>
+        <Form.Item label={t('TERM')} extra={t('SET_PERIOD_OR_PERPETUITY')} style={{ flex: '1 0 340px' }}>
           <Flex gap={4}>
             <Form.Item name={['term', 'length']} noStyle>
-              <Input placeholder='Length' onFocus={handleFocus('term_length')} disabled={unitTerm === 'perpetuity'} />
+              <Input
+                placeholder={t('LENGTH')}
+                onFocus={handleFocus('term_length')}
+                disabled={unitTerm === 'perpetuity'}
+              />
             </Form.Item>
             <Form.Item name={['term', 'unit']} noStyle>
               <Select
                 onFocus={handleFocus('term_unit')}
-                placeholder='Choose'
+                placeholder={t('CHOOSE')}
                 options={[
-                  { label: 'Months', value: 'months' },
-                  { label: 'Years', value: 'years' },
-                  { label: 'Perpetuity', value: 'perpetuity' },
+                  { label: t('MONTHS'), value: 'months' },
+                  { label: t('YEARS'), value: 'years' },
+                  { label: t('PERPETUITY'), value: 'perpetuity' },
                 ]}
               />
             </Form.Item>
@@ -84,14 +89,14 @@ export const Specifications: React.FC = () => {
         </Form.Item>
       </Flex>
       <Form.Item
-        label='Main video Duration'
-        extra='Number and length of original videos.'
-        rules={[{ required: true, message: 'Main video duration is required' }]}
+        label={t('MAIN_VIDEO_DURATION')}
+        extra={t('NUMBER_AND_LENGTH_OF_ORIGINAL_VIDEOS')}
+        rules={[{ required: true, message: t('MAIN_VIDEO_DURATION_REQUIRED') }]}
       >
         <Flex gap={16}>
           <Flex gap={4} align='center'>
             <Form.Item name={['mainVideoDuration', 'number']} noStyle>
-              <Input placeholder='Number' onFocus={handleFocus('mainVideoDuration')} />
+              <Input placeholder={t('NUMBER')} onFocus={handleFocus('mainVideoDuration')} />
             </Form.Item>
             <Flex flex={'0 0 10px'} align='center'>
               <svg xmlns='http://www.w3.org/2000/svg' width='10px' height='10px' viewBox='0 0 10 10' fill='none'>
@@ -106,23 +111,23 @@ export const Specifications: React.FC = () => {
               </svg>
             </Flex>
             <Form.Item name={['mainVideoDuration', 'length']} noStyle>
-              <Input placeholder='Length' onFocus={handleFocus('mainVideoDuration')} />
+              <Input placeholder={t('LENGTH')} onFocus={handleFocus('mainVideoDuration')} />
             </Form.Item>
             <Form.Item name={['mainVideoDuration', 'timeUnit']} noStyle>
               <Select
                 onFocus={handleFocus('mainVideoDuration')}
-                placeholder='Choose'
+                placeholder={t('CHOOSE')}
                 options={[
-                  { label: 'Seconds', value: 'seconds' },
-                  { label: 'Minutes', value: 'minutes' },
-                  { label: 'Hours', value: 'hours' },
+                  { label: t('SECONDS'), value: 'seconds' },
+                  { label: t('MINUTES'), value: 'minutes' },
+                  { label: t('HOURS'), value: 'hours' },
                 ]}
               />
             </Form.Item>
           </Flex>
           <Flex gap={4} align='center' style={{ flex: '1 0 340px' }}>
             <Form.Item name={['mainVideoDuration', 'comment']} noStyle>
-              <Input placeholder='Comment' onFocus={handleFocus('mainVideoDuration')} />
+              <Input placeholder={t('COMMENT')} onFocus={handleFocus('mainVideoDuration')} />
             </Form.Item>
           </Flex>
         </Flex>
@@ -131,35 +136,35 @@ export const Specifications: React.FC = () => {
         <Form.List name='cuts'>
           {(fields, { add, remove }) => (
             <Form.Item
-              label={<LabelWithAdd text='Cuts' onClick={() => add()} />}
-              extra='Additional versions of the main video, if applicable.'
+              label={<LabelWithAdd text={t('CUTS')} onClick={() => add()} />}
+              extra={t('ADDITIONAL_VERSIONS_OF_MAIN_VIDEO')}
             >
               {fields.map((field) => (
                 <Flex key={field.key} gap={16}>
                   <Flex gap={4} align='center'>
                     <Form.Item noStyle name={[field.name, 'number']}>
-                      <Input placeholder='Number' onFocus={handleFocus('cuts')} />
+                      <Input placeholder={t('NUMBER')} onFocus={handleFocus('cuts')} />
                     </Form.Item>
                     <Flex flex={'0 0 10px'} align='center'>
                       <CrossIcon />
                     </Flex>
                     <Form.Item noStyle name={[field.name, 'length']}>
-                      <Input placeholder='Length' onFocus={handleFocus('cuts')} />
+                      <Input placeholder={t('LENGTH')} onFocus={handleFocus('cuts')} />
                     </Form.Item>
                     <Form.Item noStyle name={[field.name, 'timeUnit']}>
                       <Select
-                        placeholder='Choose'
+                        placeholder={t('CHOOSE')}
                         options={[
-                          { label: 'Seconds', value: 'seconds' },
-                          { label: 'Minutes', value: 'minutes' },
-                          { label: 'Hours', value: 'hours' },
+                          { label: t('SECONDS'), value: 'seconds' },
+                          { label: t('MINUTES'), value: 'minutes' },
+                          { label: t('HOURS'), value: 'hours' },
                         ]}
                       />
                     </Form.Item>
                   </Flex>
                   <Flex gap={4} align='center' style={{ flex: '1 0 340px' }}>
                     <Form.Item noStyle name={[field.name, 'comment']}>
-                      <Input placeholder='Comment' onFocus={handleFocus('cuts')} />
+                      <Input placeholder={t('COMMENT')} onFocus={handleFocus('cuts')} />
                     </Form.Item>
                     <IconButton
                       onClick={() => {
@@ -176,14 +181,14 @@ export const Specifications: React.FC = () => {
         </Form.List>
       </AntdListWrapper>
       <Form.Item
-        label='Shooting days'
-        extra='Number of days and length of the shooting day, including 1 hour of lunch if the day is more than 6 hours long.'
-        rules={[{ required: true, message: 'Shooting days are required' }]}
+        label={t('SHOOTING_DAYS')}
+        extra={t('SHOOTING_DAYS_DESCRIPTION')}
+        rules={[{ required: true, message: t('SHOOTING_DAYS_REQUIRED') }]}
       >
         <Flex gap={16}>
           <Flex gap={4} align='center'>
             <Form.Item name={['shootingDays', 'number']} noStyle>
-              <Input placeholder='Number' onFocus={handleFocus('shootingDays')} />
+              <Input placeholder={t('NUMBER')} onFocus={handleFocus('shootingDays')} />
             </Form.Item>
             <Flex flex={'0 0 10px'} align='center'>
               <svg xmlns='http://www.w3.org/2000/svg' width='10px' height='10px' viewBox='0 0 10 10' fill='none'>
@@ -198,12 +203,12 @@ export const Specifications: React.FC = () => {
               </svg>
             </Flex>
             <Form.Item name={['shootingDays', 'length']} noStyle>
-              <Input placeholder='Length' onFocus={handleFocus('shootingDays')} />
+              <Input placeholder={t('LENGTH')} onFocus={handleFocus('shootingDays')} />
             </Form.Item>
           </Flex>
           <Flex gap={4} align='center' style={{ flex: '1 0 340px' }}>
             <Form.Item name={['shootingDays', 'comment']} noStyle>
-              <Input onFocus={handleFocus('shootingDays')} placeholder='Comment' />
+              <Input onFocus={handleFocus('shootingDays')} placeholder={t('COMMENT')} />
             </Form.Item>
           </Flex>
         </Flex>

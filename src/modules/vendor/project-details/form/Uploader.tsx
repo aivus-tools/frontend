@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Image, Upload } from 'antd';
 import type { GetProp, UploadFile, UploadProps } from 'antd';
 import { styled } from 'styled-components';
+import { t } from '@/lib/i18n';
 
 type FileType = Parameters<GetProp<UploadProps, 'beforeUpload'>>[0];
 
@@ -76,7 +77,7 @@ export const Uploader: React.FC = () => {
             <path d='M30.833 14.167a1.26 1.26 0 0 1-1.25-1.25V3.75c0-.683.567-1.25 1.25-1.25.684 0 1.25.567 1.25 1.25v9.167a1.26 1.26 0 0 1-1.25 1.25ZM4.45 32.833c-.4 0-.8-.2-1.033-.55a1.255 1.255 0 0 1 .333-1.733l8.217-5.517c1.8-1.2 4.283-1.067 5.916.317l.55.483c.834.717 2.25.717 3.067 0l6.933-5.95c1.784-1.517 4.55-1.517 6.334 0l2.716 2.333a1.26 1.26 0 0 1 .134 1.767 1.26 1.26 0 0 1-1.767.133l-2.717-2.333c-.833-.717-2.25-.717-3.066 0l-6.934 5.95c-1.766 1.517-4.55 1.517-6.333 0l-.55-.483c-.767-.65-2.033-.717-2.883-.134l-8.2 5.517a1.46 1.46 0 0 1-.717.2Z' />
           </g>
         </svg>
-        <Title>Thumbnail</Title>
+        <Title>{t('THUMBNAIL')}</Title>
       </Button>
     </Upload>
   );

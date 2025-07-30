@@ -8,6 +8,7 @@ import { useAppDispatch, useAppSelector } from '@/store/hooks';
 import { selectGrandTotal, selectShowCostPerVideo } from '@/store/slices/offer/selectors';
 import { changeShowCostPerVideo } from '@/store/slices/offer/slice';
 import { useBrief } from '@/hooks/useBrief';
+import { t } from '@/lib/i18n';
 
 const Label = styled.div`
   display: flex;
@@ -59,7 +60,7 @@ export const CostPerVideo = () => {
       </EmptyBlockTotalSum>
       <Label style={{ gridColumn: 'span 6' }}>
         <Flex align='center' justify='end'>
-          {`Cost Per Video (${countOfVideos} main videos)`}
+          {t('COST_PER_VIDEO', String(countOfVideos))}
         </Flex>
         <Flex align='center'>
           <TotalSum>{`$ ${totalValue / countOfVideos}`}</TotalSum>

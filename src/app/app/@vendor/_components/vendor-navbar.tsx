@@ -4,6 +4,7 @@ import { useRouter } from 'next/navigation';
 import { useEffect } from 'react';
 import { VendorTabs } from './vendor-tabs';
 import { NEW_BRIEF_SLUG } from '@/constants/constants';
+import { t } from '@/lib/i18n';
 
 export const VendorNavbar = () => {
   const router = useRouter();
@@ -21,7 +22,7 @@ export const VendorNavbar = () => {
       <VendorTabs />
       <div style={{ display: 'flex', gap: '16px', alignItems: 'center' }}>
         <Button type='primary' onClick={handleNewEstimation}>
-          New Estimation
+          {t('NEW_ESTIMATION')}
         </Button>
       </div>
     </div>

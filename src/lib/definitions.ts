@@ -1,11 +1,15 @@
 import { z } from 'zod';
+import { t } from '@/lib/i18n';
 
 export const SignupFormSchema = z.object({
-  email: z.string().email({ message: 'Please enter a valid email.' }).trim(),
+  email: z
+    .string()
+    .email({ message: t('PLEASE_ENTER_VALID_EMAIL') })
+    .trim(),
 });
 
 export const PasswordSchema = z.object({
-  password: z.string().min(6, { message: 'Password must be at least 6 characters long.' }),
+  password: z.string().min(6, { message: t('PASSWORD_MIN_LENGTH') }),
 });
 
 export type FormState =

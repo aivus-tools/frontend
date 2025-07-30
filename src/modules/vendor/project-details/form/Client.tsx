@@ -3,7 +3,8 @@ import { Form, Input, Flex, Col, Row } from 'antd';
 import { LabelWithAdd } from './LabelWithAdd';
 import RemoveIcon from '@/icons/minus.svg';
 import { IconButton } from '../common/styled';
-import { useGuidance } from '@/context/Guidance';
+import { useGuidance } from '@/context/GuidanceProvider';
+import { t } from '@/lib/i18n';
 
 export const Client: React.FC = () => {
   const { handleFocus } = useGuidance();
@@ -12,27 +13,27 @@ export const Client: React.FC = () => {
       <Flex gap={20} flex={1} style={{ width: '100%' }}>
         <Form.Item
           name='clientName'
-          label='Client'
-          extra='A name of the client is required and recommended to be unique.'
+          label={t('CLIENT')}
+          extra={t('CLIENT_NAME_REQUIRED')}
           style={{
             flex: '1 1 60%',
           }}
         >
-          <Input placeholder='Client' onFocus={handleFocus('clientName')} />
+          <Input placeholder={t('CLIENT')} onFocus={handleFocus('clientName')} />
         </Form.Item>
         <Form.Item
           name='irsEin'
-          label='IRS EIN'
-          extra='Taxpayer Id'
+          label={t('IRS_EIN')}
+          extra={t('TAXPAYER_ID')}
           style={{
             flex: '1 1 40%',
           }}
         >
-          <Input placeholder='IRS EIN' onFocus={handleFocus('irsEin')} />
+          <Input placeholder={t('IRS_EIN')} onFocus={handleFocus('irsEin')} />
         </Form.Item>
       </Flex>
-      <Form.Item name='brandName' label='Brand name' extra='Specify the specific brand within your company, if needed.'>
-        <Input placeholder='Brand name' onFocus={handleFocus('brandName')} />
+      <Form.Item name='brandName' label={t('BRAND_NAME')} extra={t('SPECIFY_BRAND_WITHIN_COMPANY')}>
+        <Input placeholder={t('BRAND_NAME')} onFocus={handleFocus('brandName')} />
       </Form.Item>
       <Form.List name='managers'>
         {(fields, { add, remove }) => (
@@ -40,13 +41,13 @@ export const Client: React.FC = () => {
             {fields.map((field, index) => {
               const isFirst = index === 0;
               const isLast = index === fields.length - 1;
-              const managerLabel = isFirst ? <LabelWithAdd text='Client’s managers' onClick={() => add()} /> : null;
+              const managerLabel = isFirst ? <LabelWithAdd text={t('CLIENTS_MANAGERS')} onClick={() => add()} /> : null;
               const positionProps = isFirst
                 ? {
-                    label: 'Manager position',
+                    label: t('MANAGER_POSITION'),
                   }
                 : {};
-              const extra = isLast ? 'Indicate the project managers responsible.' : null;
+              const extra = isLast ? t('INDICATE_PROJECT_MANAGERS') : null;
 
               return (
                 <Row key={field.key}>

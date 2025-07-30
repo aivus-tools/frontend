@@ -1,6 +1,7 @@
 'use client';
 import { Button, Form, Input, message } from 'antd';
 import { signIn } from 'next-auth/react';
+import { t } from '@/lib/i18n';
 import styles from './styles.module.css';
 import { useState } from 'react';
 import { CALLBACK_URL } from '@/constants/apiRoute';
@@ -19,15 +20,15 @@ export const PasswordForm = ({ email, prevStepAction }: { email: string; prevSte
     try {
       const result = await signIn('credentials', { email, password, redirect: false });
       if (result?.error) {
-        messageApi.error('Invalid credentials');
+        messageApi.error(t('INVALID_CREDENTIALS'));
         form.resetFields();
         form.setFields([{ name: 'password', errors: [''] }]);
       } else {
         window.location.href = CALLBACK_URL ?? AppRoute.HOME;
       }
     } catch (error) {
-      messageApi.error('An unexpected error occurred');
-      console.error('Error checking email:', error);
+      messageApi.error(t('UNEXPECTED_ERROR'));
+      console.error(t('ERROR_CHECKING_EMAIL'), error);
     } finally {
       setLoading(false);
     }
@@ -38,15 +39,21 @@ export const PasswordForm = ({ email, prevStepAction }: { email: string; prevSte
       {contextHolder}
       <div className={styles.inputWrapper}>
         <Form.Item name='password'>
-          <Input size='large' placeholder='Enter your password' type='password' id='password' name='password' />
+          <Input
+            size='large'
+            placeholder={t('ENTER_PASSWORD_PLACEHOLDER')}
+            type='password'
+            id='password'
+            name='password'
+          />
         </Form.Item>
       </div>
       <div className={styles.buttonRowGroup}>
         <Button onClick={prevStepAction} htmlType='reset' block disabled={loading}>
-          Back
+          {t('BACK')}
         </Button>
         <Button type='primary' htmlType='submit' block loading={loading} disabled={loading}>
-          Sign in
+          {t('SIGN_IN')}
         </Button>
       </div>
     </Form>

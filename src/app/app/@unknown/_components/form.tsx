@@ -9,6 +9,7 @@ import styles from './form.module.css';
 import { useChangeGroup } from '@/hooks/useChangeGroup';
 import { useSession } from 'next-auth/react';
 import Spinner from '@/components/Spinner';
+import { t } from '@/lib/i18n';
 
 const { Title } = Typography;
 
@@ -25,7 +26,7 @@ export function Form() {
     try {
       await change(group);
     } catch (error) {
-      messageApi.error('An unexpected error occurred');
+      messageApi.error(t('UNEXPECTED_ERROR'));
       console.error('Failed to change role:', error);
     } finally {
       setLoading(false);
@@ -40,17 +41,17 @@ export function Form() {
     <main className={styles.main}>
       {contextHolder}
       <div className={styles.container}>
-        <Title level={2}>Please, choose your role:</Title>
+        <Title level={2}>{t('PLEASE_CHOOSE_YOUR_ROLE')}</Title>
         <Button
           type='primary'
           onClick={trigger(GROUPS.client)}
           loading={loading && group === GROUPS.client}
           disabled={loading}
         >
-          I&apos;m a client
+          {t('IM_A_CLIENT')}
         </Button>
         <Button onClick={trigger(GROUPS.vendor)} loading={loading && group === GROUPS.vendor} disabled={loading}>
-          I&apos;m a vendor
+          {t('IM_A_VENDOR')}
         </Button>
       </div>
     </main>

@@ -1,6 +1,7 @@
 import React, { createContext, useContext, useState, PropsWithChildren, useMemo } from 'react';
 import { OfferData } from '../types';
 import { Drawer } from 'antd';
+import { t } from '@/lib/i18n';
 
 interface DrawerOffersContextType {
   offer: OfferData | null;
@@ -23,7 +24,7 @@ export const DrawerOfferProvider = ({ children }: PropsWithChildren) => {
   return (
     <DrawerOfferContext.Provider value={value}>
       <Drawer title={offer?.item} onClose={onClose} open={Boolean(offer)}>
-        <p>Settings</p>
+        <p>{t('SETTINGS')}</p>
       </Drawer>
       {children}
     </DrawerOfferContext.Provider>

@@ -1,3 +1,5 @@
+import { t } from '@/lib/i18n';
+
 export const AUTH_TYPES = {
   google: 'GOOGLE',
   credentials: 'CREDENTIALS',
@@ -24,51 +26,51 @@ export const THEME = {
 export const VENDOR_TABS = [
   {
     key: 'dashboard',
-    label: 'Dashboard',
+    label: t('DASHBOARD'),
   },
   {
     key: 'templates',
-    label: 'Templates',
+    label: t('TEMPLATES'),
   },
   {
     key: 'rates',
-    label: 'Rates',
+    label: t('RATES'),
   },
 ];
 
 export const VENDOR_PROJECT_TABS = [
   {
     key: 'details',
-    label: 'Prj details',
+    label: t('PROJECT_DETAILS'),
   },
   {
     key: 'estimation',
-    label: 'Estimation',
+    label: t('ESTIMATION'),
   },
   {
     key: 'offer',
-    label: 'Client’s offer',
+    label: t('CLIENTS_OFFER'),
   },
   {
     key: 'timing',
-    label: 'Timing',
+    label: t('TIMING'),
   },
   {
     key: 'presentation',
-    label: 'Presentation',
+    label: t('PRESENTATION'),
   },
   {
     key: 'analysis',
-    label: 'Analysis',
+    label: t('ANALYSIS'),
   },
 ];
 
 export const NEW_BRIEF_SLUG = 'new-brief';
 
 export const PROJECT_STATUS = {
-  DRAFT: 'DRAFT',
-  RFP: 'RFP',
-  REVIEWING: 'Reviewing',
-  ONGOING: 'Ongoing',
-  COMPLETED: 'Completed',
+  DRAFT: t('STATUS_DRAFT'),
+  RFP: t('STATUS_RFP'),
+  REVIEWING: t('STATUS_REVIEWING'),
+  ONGOING: t('STATUS_ONGOING'),
+  COMPLETED: t('STATUS_COMPLETED'),
 } as const;

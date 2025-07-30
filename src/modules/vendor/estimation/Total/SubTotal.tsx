@@ -6,6 +6,7 @@ import AddIcon from '@/icons/add-icon.svg';
 import { LibraryDropdown } from '../LibraryDropdown/LibraryDropdown';
 import { useSelectOffer } from '../hooks/useSelectOffer';
 import { useMemo } from 'react';
+import { t } from '@/lib/i18n';
 import { filterOptionsById } from '../helpers/filters';
 
 const LabelSubTotal = styled.div`
@@ -69,7 +70,7 @@ export const SubTotal = ({ value, clientValue, subCategoryId }: Props) => {
           filterOptions={handleFilter}
           componentAction={({ handleChange, handleBlur, handleFocus, value }) => (
             <Input
-              placeholder='add item'
+              placeholder={t('ADD_ITEM')}
               variant='borderless'
               value={value}
               onChange={handleChange}
@@ -79,7 +80,7 @@ export const SubTotal = ({ value, clientValue, subCategoryId }: Props) => {
           )}
         />
       </Label>
-      <LabelSubTotal style={{ gridColumn: 'span 3' }}>Subtotal of Locations:</LabelSubTotal>
+      <LabelSubTotal style={{ gridColumn: 'span 3' }}>{t('SUBTOTAL_OF_LOCATIONS')}</LabelSubTotal>
       <SubTotalSum>{value}</SubTotalSum>
       <EmptyBlockSubTotalSum style={{ borderRadius: ' 0 0 6px 0' }} />
       <div />
