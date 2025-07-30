@@ -5,7 +5,7 @@ import { LabelWithAdd } from './LabelWithAdd';
 import RemoveIcon from '@/icons/minus.svg';
 import CrossIcon from '@/icons/cross.svg';
 import { useGuidance } from '@/context/GuidanceProvider';
-import { t } from '@/lib/i18n';
+import { locale, t } from '@/lib/i18n';
 
 import i18n from 'i18n-iso-countries';
 import Flag from 'react-world-flags';
@@ -13,7 +13,7 @@ import { Details } from '@/types/brief.interface';
 
 export const Specifications: React.FC = () => {
   const { handleFocus } = useGuidance();
-  const countries = i18n.getNames('en', { select: 'official' });
+  const countries = i18n.getNames(locale, { select: 'official' });
   const countryOptions = [
     {
       label: t('WORLDWIDE'),

@@ -17,6 +17,7 @@ import { useAppDispatch } from '@/store/hooks';
 import { setMode } from '@/store/slices/project';
 import { initialValues } from './initialValues';
 import { t } from '@/lib/i18n';
+import { AppRoute } from '@/constants/appRoute';
 
 export default function Details() {
   const dispatch = useAppDispatch();
@@ -48,7 +49,7 @@ export default function Details() {
         messageApi.success(t('DETAILS_SAVED_SUCCESSFULLY'));
         if (briefId) {
           dispatch(setMode('view'));
-          router.push(`/app/dashboard/${briefId}/details`);
+          router.push(AppRoute.DASHBOARD_PROJECT_DETAILS(briefId));
         } else {
           messageApi.error(t('ERROR_SAVING_DETAILS'));
         }
