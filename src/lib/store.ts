@@ -8,17 +8,17 @@ import { userApi } from '@/hooks/useChangeGroup';
 import { listenerMiddleware } from './listenerMiddleware';
 
 export const makeStore = () => {
-	return configureStore({
-		reducer: rootReducer,
-		middleware: (getDefaultMiddleware) =>
-			getDefaultMiddleware().concat(
-				briefApi.middleware,
-				userApi.middleware,
-				categoriesApi.middleware,
-				offersApi.middleware,
-				listenerMiddleware.middleware
-			),
-	});
+  return configureStore({
+    reducer: rootReducer,
+    middleware: (getDefaultMiddleware) =>
+      getDefaultMiddleware().concat(
+        briefApi.middleware,
+        userApi.middleware,
+        categoriesApi.middleware,
+        offersApi.middleware,
+        listenerMiddleware.middleware
+      ),
+  });
 };
 
 export type AppStore = ReturnType<typeof makeStore>;

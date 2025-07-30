@@ -10,61 +10,61 @@ import { GROUPS } from '@/lib/constants';
 import { logout } from '@/app/actions/logout';
 
 type Error = {
-	data: {
-		message: string;
-	};
+  data: {
+    message: string;
+  };
 };
 
 const errorHasMessage = (error: unknown): error is Error => (error as Error)?.data?.message !== undefined;
 
 export const Confirm = () => {
-	const searchParams = useSearchParams();
-	const token = searchParams.get('token');
-	const session = useSession();
-	const group = session.data?.user?.group;
-	const [messageApi, contextHolder] = message.useMessage();
+  const searchParams = useSearchParams();
+  const token = searchParams.get('token');
+  const session = useSession();
+  const group = session.data?.user?.group;
+  const [messageApi, contextHolder] = message.useMessage();
 
-	const [confirmEmail, { isLoading }] = useConfirmEmailMutation();
+  const [confirmEmail, { isLoading }] = useConfirmEmailMutation();
 
-	useEffect(() => {
-		try {
-			if (token) {
-				confirmEmail(token)
-					.unwrap()
-					.then(() => {
-						messageApi.success('E-mail confirmed');
-						session.update();
-						window.location.href = '/app/dashboard';
-					});
-			}
-		} catch (error) {
-			messageApi.error('An unexpected error occurred');
+  useEffect(() => {
+    try {
+      if (token) {
+        confirmEmail(token)
+          .unwrap()
+          .then(() => {
+            messageApi.success('E-mail confirmed');
+            session.update();
+            window.location.href = '/app/dashboard';
+          });
+      }
+    } catch (error) {
+      messageApi.error('An unexpected error occurred');
 
-			if (errorHasMessage(error)) {
-				messageApi.error(error.data.message);
-			}
-			console.error('Failed to confirm email:', error);
-		}
-	}, [confirmEmail, messageApi, session, token]);
+      if (errorHasMessage(error)) {
+        messageApi.error(error.data.message);
+      }
+      console.error('Failed to confirm email:', error);
+    }
+  }, [confirmEmail, messageApi, session, token]);
 
-	const render = () => {
-		if (isLoading || group !== GROUPS.unconfirmed) {
-			return <Spinner />;
-		}
-		return (
-			<Flex align='center' justify='center' vertical gap={12} style={{ height: '100vh', width: '100%' }}>
-				<Typography.Title level={3}>Please confirm your e-mail</Typography.Title>
-				<Button type='primary' onClick={logout}>
-					Back
-				</Button>
-			</Flex>
-		);
-	};
+  const render = () => {
+    if (isLoading || group !== GROUPS.unconfirmed) {
+      return <Spinner />;
+    }
+    return (
+      <Flex align='center' justify='center' vertical gap={12} style={{ height: '100vh', width: '100%' }}>
+        <Typography.Title level={3}>Please confirm your e-mail</Typography.Title>
+        <Button type='primary' onClick={logout}>
+          Back
+        </Button>
+      </Flex>
+    );
+  };
 
-	return (
-		<>
-			{contextHolder}
-			{render()}
-		</>
-	);
+  return (
+    <>
+      {contextHolder}
+      {render()}
+    </>
+  );
 };

@@ -6,12 +6,12 @@ import { CostPerVideo } from './CostPerVideo';
 import { SubtotalAllSections } from './SubtotalAllSections';
 
 export const Summary = () => {
-	return (
-		<>
-			<SubtotalAllSections />
-			<UnforeseenExpenses />
-			<GrandTotal />
-			<CostPerVideo />
-		</>
-	);
+  return (
+    <>
+      <SubtotalAllSections />
+      <UnforeseenExpenses />
+      <GrandTotal />
+      <CostPerVideo />
+    </>
+  );
 };

@@ -10,7 +10,6 @@
   color: var(--gray-dark);
 }
 
-
 .primary {
   color: var(--main);
 }
@@ -74,4 +73,3 @@
 .xl {
   font-size: 15px;
 }
-

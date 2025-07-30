@@ -6,24 +6,24 @@ import { VendorTabs } from './vendor-tabs';
 import { NEW_BRIEF_SLUG } from '@/lib/constants';
 
 export const VendorNavbar = () => {
-	const router = useRouter();
+  const router = useRouter();
 
-	useEffect(() => {
-		router.prefetch(`/app/dashboard/${NEW_BRIEF_SLUG}/details`);
-	}, [router]);
+  useEffect(() => {
+    router.prefetch(`/app/dashboard/${NEW_BRIEF_SLUG}/details`);
+  }, [router]);
 
-	const handleNewEstimation = () => {
-		router.push(`/app/dashboard/${NEW_BRIEF_SLUG}/details`);
-	};
+  const handleNewEstimation = () => {
+    router.push(`/app/dashboard/${NEW_BRIEF_SLUG}/details`);
+  };
 
-	return (
-		<div style={{ flex: 1, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-			<VendorTabs />
-			<div style={{ display: 'flex', gap: '16px', alignItems: 'center' }}>
-				<Button type='primary' onClick={handleNewEstimation}>
-					New Estimation
-				</Button>
-			</div>
-		</div>
-	);
+  return (
+    <div style={{ flex: 1, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+      <VendorTabs />
+      <div style={{ display: 'flex', gap: '16px', alignItems: 'center' }}>
+        <Button type='primary' onClick={handleNewEstimation}>
+          New Estimation
+        </Button>
+      </div>
+    </div>
+  );
 };

@@ -3,30 +3,30 @@ import { createSlice } from '@reduxjs/toolkit';
 import type { PayloadAction } from '@reduxjs/toolkit';
 
 export interface ProjectState {
-	projectId: string | null;
-	mode: 'edit' | 'view';
+  projectId: string | null;
+  mode: 'edit' | 'view';
 }
 
 const initialState: ProjectState = {
-	projectId: null,
-	mode: 'view',
+  projectId: null,
+  mode: 'view',
 };
 
 export const projectSlice = createSlice({
-	name: 'project',
-	initialState,
-	reducers: {
-		setProjectId: (state, action: PayloadAction<string>) => {
-			if (action.payload === NEW_BRIEF_SLUG) {
-				state.mode = 'edit';
-			}
+  name: 'project',
+  initialState,
+  reducers: {
+    setProjectId: (state, action: PayloadAction<string>) => {
+      if (action.payload === NEW_BRIEF_SLUG) {
+        state.mode = 'edit';
+      }
 
-			state.projectId = action.payload;
-		},
-		setMode: (state, action: PayloadAction<ProjectState['mode']>) => {
-			state.mode = action.payload;
-		},
-	},
+      state.projectId = action.payload;
+    },
+    setMode: (state, action: PayloadAction<ProjectState['mode']>) => {
+      state.mode = action.payload;
+    },
+  },
 });
 
 export const { setProjectId, setMode } = projectSlice.actions;

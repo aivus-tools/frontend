@@ -6,27 +6,27 @@ import { useEffect, useRef, useState } from 'react';
  * @returns An object containing a ref to attach to the element, and its width and height.
  */
 export const useComponentSize = (
-	initialSize = { width: 0, height: 0 }
+  initialSize = { width: 0, height: 0 }
 ): { observedRef: React.RefObject<HTMLDivElement | null>; width: number; height: number } => {
-	const observedRef = useRef<HTMLDivElement>(null);
-	const [size, setSize] = useState(initialSize);
+  const observedRef = useRef<HTMLDivElement>(null);
+  const [size, setSize] = useState(initialSize);
 
-	useEffect(() => {
-		if (!observedRef.current) return;
+  useEffect(() => {
+    if (!observedRef.current) return;
 
-		const resizeObserver = new ResizeObserver((entries) => {
-			for (const entry of entries) {
-				const cr = entry.contentRect;
-				setSize({ width: cr.width, height: cr.height });
-			}
-		});
+    const resizeObserver = new ResizeObserver((entries) => {
+      for (const entry of entries) {
+        const cr = entry.contentRect;
+        setSize({ width: cr.width, height: cr.height });
+      }
+    });
 
-		resizeObserver.observe(observedRef.current);
+    resizeObserver.observe(observedRef.current);
 
-		return () => {
-			resizeObserver.disconnect();
-		};
-	}, []);
+    return () => {
+      resizeObserver.disconnect();
+    };
+  }, []);
 
-	return { observedRef, ...size };
+  return { observedRef, ...size };
 };

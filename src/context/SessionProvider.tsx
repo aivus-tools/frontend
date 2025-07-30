@@ -7,21 +7,21 @@ import { PropsWithChildren, useEffect } from 'react';
 import { usePathname } from 'next/navigation';
 
 const SessionGuard = ({ children }: PropsWithChildren) => {
-	const session = useSession();
-	const pathname = usePathname();
-	useEffect(() => {
-		if (session.status === 'unauthenticated' && !pathname.startsWith('/external')) {
-			logout();
-		}
-	}, [pathname, session.status]);
+  const session = useSession();
+  const pathname = usePathname();
+  useEffect(() => {
+    if (session.status === 'unauthenticated' && !pathname.startsWith('/external')) {
+      logout();
+    }
+  }, [pathname, session.status]);
 
-	return session ? children : null;
+  return session ? children : null;
 };
 
 export default function SessionProvider({ children, session }: PropsWithChildren<{ session: Session | null }>) {
-	return (
-		<NextSessionProvider session={session}>
-			<SessionGuard>{children}</SessionGuard>
-		</NextSessionProvider>
-	);
+  return (
+    <NextSessionProvider session={session}>
+      <SessionGuard>{children}</SessionGuard>
+    </NextSessionProvider>
+  );
 }

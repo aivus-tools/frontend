@@ -3,13 +3,13 @@ import { categoriesApi } from '@/services/client/categoriesApi';
 import { offersApi } from '@/services/client/offersApi';
 
 export const useLoadData = (external?: boolean) => {
-	const projectId = useAppSelector((state) => state.project.projectId);
+  const projectId = useAppSelector((state) => state.project.projectId);
 
-	const categoriesQuery = categoriesApi.useGetCategoriesQuery(undefined, { skip: external });
-	const entriesQuery = categoriesApi.useGetEntriesQuery(undefined, { skip: external });
-	offersApi.useGetOffersByBriefIdQuery(projectId!, {
-		skip: !projectId || !!external,
-	});
+  const categoriesQuery = categoriesApi.useGetCategoriesQuery(undefined, { skip: external });
+  const entriesQuery = categoriesApi.useGetEntriesQuery(undefined, { skip: external });
+  offersApi.useGetOffersByBriefIdQuery(projectId!, {
+    skip: !projectId || !!external,
+  });
 
-	return categoriesQuery.isLoading || entriesQuery.isLoading;
+  return categoriesQuery.isLoading || entriesQuery.isLoading;
 };

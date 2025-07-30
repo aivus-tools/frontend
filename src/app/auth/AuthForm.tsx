@@ -4,24 +4,24 @@ import { Google } from '@/components/Auth/Google';
 import { ManageAuth } from './_components/ManageAuth';
 
 export function AuthForm() {
-	return (
-		<main className={styles.main}>
-			<div className={styles.container}>
-				<h1 className={styles.heading}>
-					<LogoIcon />
-				</h1>
-				<ManageAuth />
-				<p className={styles.text}>An account will be created upon verification if you do not have one.</p>
-				<div className={styles.divider}>OR</div>
-				<div className={styles.buttonGroup}>
-					<Google />
-				</div>
-				<div className={styles.text}>
-					<span>
-						By signing up, you are agreeing to our <a href='#'>Terms of Service</a> and <a href='#'>Privacy Policy</a>.
-					</span>
-				</div>
-			</div>
-		</main>
-	);
+  return (
+    <main className={styles.main}>
+      <div className={styles.container}>
+        <h1 className={styles.heading}>
+          <LogoIcon />
+        </h1>
+        <ManageAuth />
+        <p className={styles.text}>An account will be created upon verification if you do not have one.</p>
+        <div className={styles.divider}>OR</div>
+        <div className={styles.buttonGroup}>
+          <Google />
+        </div>
+        <div className={styles.text}>
+          <span>
+            By signing up, you are agreeing to our <a href='#'>Terms of Service</a> and <a href='#'>Privacy Policy</a>.
+          </span>
+        </div>
+      </div>
+    </main>
+  );
 }

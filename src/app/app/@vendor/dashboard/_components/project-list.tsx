@@ -16,81 +16,81 @@ import { formatPrice } from '@/helpers/helper';
 import Spinner from '@/components/Spinner';
 
 const mapBriefsToProjects = (briefs: Brief[]): Project[] => {
-	if (!briefs || !Array.isArray(briefs)) {
-		return [];
-	}
+  if (!briefs || !Array.isArray(briefs)) {
+    return [];
+  }
 
-	return briefs.map((brief: Brief) => {
-		const { details } = brief;
+  return briefs.map((brief: Brief) => {
+    const { details } = brief;
 
-		const { options } = details;
-		const assignee = details.collaborators
-			.map((email) => {
-				const collaborator = options?.collaborators?.find((person) => person.email === email);
-				if (!collaborator) {
-					return null;
-				}
-				return `${collaborator.firstName} ${collaborator.surname}`;
-			})
-			.filter(Boolean)
-			.join(', ');
+    const { options } = details;
+    const assignee = details.collaborators
+      .map((email) => {
+        const collaborator = options?.collaborators?.find((person) => person.email === email);
+        if (!collaborator) {
+          return null;
+        }
+        return `${collaborator.firstName} ${collaborator.surname}`;
+      })
+      .filter(Boolean)
+      .join(', ');
 
-		return {
-			id: brief.id,
-			title: details.projectName,
-			assignee,
-			clientName: details.clientName,
-			clientContact: '?????????',
-			status: brief.status,
-			cost: formatPrice(details.budget ?? 0),
-			expenses: formatPrice(0),
-			profit: formatPrice(0),
-			deadline: '?????????',
-			createdAt: format(new Date(brief.createdAt), 'MM/dd/yyyy'),
-		};
-	});
+    return {
+      id: brief.id,
+      title: details.projectName,
+      assignee,
+      clientName: details.clientName,
+      clientContact: '?????????',
+      status: brief.status,
+      cost: formatPrice(details.budget ?? 0),
+      expenses: formatPrice(0),
+      profit: formatPrice(0),
+      deadline: '?????????',
+      createdAt: format(new Date(brief.createdAt), 'MM/dd/yyyy'),
+    };
+  });
 };
 
 export const ProjectList = () => {
-	const router = useRouter();
+  const router = useRouter();
 
-	const { data: briefs = [], isLoading } = useBriefs();
+  const { data: briefs = [], isLoading } = useBriefs();
 
-	const data = useMemo(() => mapBriefsToProjects(briefs), [briefs]);
+  const data = useMemo(() => mapBriefsToProjects(briefs), [briefs]);
 
-	useEffect(() => {
-		data.forEach((item: Project) => {
-			router.prefetch(`/app/dashboard/${item.id}/details`);
-		});
-	}, [router, data]);
+  useEffect(() => {
+    data.forEach((item: Project) => {
+      router.prefetch(`/app/dashboard/${item.id}/details`);
+    });
+  }, [router, data]);
 
-	if (isLoading) {
-		return <Spinner />;
-	}
+  if (isLoading) {
+    return <Spinner />;
+  }
 
-	return (
-		<main className={cn(styles.dashboard)}>
-			<div className={cn(styles.grid, styles.header)}>
-				{dashboardTHeads.map((item: THead, index: number) => (
-					<THeadItem
-						key={`thead_${index}`}
-						className={cn({
-							[styles.alignRight]: item.className && item.className === 'alignRight',
-						})}
-						text={item.text}
-					/>
-				))}
-			</div>
-			<div className={cn(styles.content)}>
-				{data.map((item: Project) => (
-					<ProjectItem
-						className={cn(styles.projectItem)}
-						key={`project_${item.id}`}
-						item={item}
-						onClick={() => router.push(`/app/dashboard/${item.id}/details`)}
-					/>
-				))}
-			</div>
-		</main>
-	);
+  return (
+    <main className={cn(styles.dashboard)}>
+      <div className={cn(styles.grid, styles.header)}>
+        {dashboardTHeads.map((item: THead, index: number) => (
+          <THeadItem
+            key={`thead_${index}`}
+            className={cn({
+              [styles.alignRight]: item.className && item.className === 'alignRight',
+            })}
+            text={item.text}
+          />
+        ))}
+      </div>
+      <div className={cn(styles.content)}>
+        {data.map((item: Project) => (
+          <ProjectItem
+            className={cn(styles.projectItem)}
+            key={`project_${item.id}`}
+            item={item}
+            onClick={() => router.push(`/app/dashboard/${item.id}/details`)}
+          />
+        ))}
+      </div>
+    </main>
+  );
 };
