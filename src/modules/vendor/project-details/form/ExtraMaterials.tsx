@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Image, Upload } from 'antd';
 import type { GetProp, UploadFile, UploadProps } from 'antd';
 import { styled } from 'styled-components';
+import { t } from '@/lib/i18n';
 
 type FileType = Parameters<GetProp<UploadProps, 'beforeUpload'>>[0];
 
@@ -94,10 +95,8 @@ export const ExtraMaterials: React.FC = () => {
           />
         </svg>
         <Container>
-          <Title>Click or drag files to this area</Title>
-          <Description>
-            Add up to 5 additional files (up to 5Mb). Briefs, References, etc. PDF, docx, xlsx, pptx, jpg, png
-          </Description>
+          <Title>{t('CLICK_OR_DRAG_FILES_TO_THIS_AREA')}</Title>
+          <Description>{t('ADD_UP_TO_5_ADDITIONAL_FILES')}</Description>
         </Container>
       </Button>
     </Upload>
