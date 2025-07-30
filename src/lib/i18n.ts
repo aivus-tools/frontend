@@ -1,6 +1,6 @@
 import { catalog, LocaleKey } from '@/locales';
 
-export const locale: LocaleKey = (process.env.NEXT_PUBLIC_LOCALE as LocaleKey) || 'ru';
+export const locale: LocaleKey = (process.env.NEXT_PUBLIC_LOCALE as LocaleKey) || 'en';
 
 const messages = catalog[locale];
 
