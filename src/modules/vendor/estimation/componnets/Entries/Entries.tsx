@@ -17,8 +17,7 @@ import React, { Fragment } from 'react';
 import { ValueOf } from 'next/dist/shared/lib/constants';
 import { formatCurrency } from '@/lib/utils';
 import { t } from '@/lib/i18n';
-import { openSidebar, setSidebarContent } from '@/store/slices/sidebar';
-import { SidebarBody } from '@/modules/vendor/estimation/componnets/Entries/components/SidebarBody/SidebarBody';
+import { openSidebar, setSidebarData } from '@/store/slices/sidebar';
 
 const timeUnitFirst = (a: OfferData['units'][number], b: OfferData['units'][number]) => {
   return a?.type === UnitType.TIME && b?.type === UnitType.QUANTITY ? -1 : 1;
@@ -89,7 +88,7 @@ export function Entries({ data = [] }: { data?: OfferData[] }) {
 
   const showSidebar = (offer: OfferData): void => {
     dispatch(openSidebar());
-    dispatch(setSidebarContent(<SidebarBody offer={offer} />));
+    dispatch(setSidebarData(offer));
   };
 
   return (

@@ -3,22 +3,28 @@
 import React from 'react';
 import { Drawer } from 'antd';
 import { useAppDispatch, useAppSelector } from '@/store/hooks';
-import { closeSidebar, selectIsSidebarOpen, selectSidebarContent, selectSidebarTitle } from '@/store/slices/sidebar';
+import { closeSidebar, selectIsSidebarOpen, selectSidebarData, selectSidebarType } from '@/store/slices/sidebar';
+import { SidebarBody } from './components/SidebarBody/SidebarBody';
 
 export const Sidebar = () => {
   const dispatch = useAppDispatch();
 
   const isOpen = useAppSelector(selectIsSidebarOpen);
-  const title = useAppSelector(selectSidebarTitle);
-  const content = useAppSelector(selectSidebarContent);
+  const type = useAppSelector(selectSidebarType);
+  const data = useAppSelector(selectSidebarData);
 
   const handleClose = () => {
     dispatch(closeSidebar());
   };
 
-  return (
-    <Drawer title={title} onClose={handleClose} open={isOpen}>
-      {content}
-    </Drawer>
-  );
+  switch (type) {
+    case 'offer':
+      return (
+        <Drawer onClose={handleClose} open={isOpen}>
+          <SidebarBody offer={data} />
+        </Drawer>
+      );
+    default:
+      return null;
+  }
 };

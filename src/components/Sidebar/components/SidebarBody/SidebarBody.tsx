@@ -8,10 +8,14 @@ import styles from './SidebarBody.module.css';
 import { Collapse } from 'antd';
 
 interface Props {
-  offer: OfferData;
+  offer: OfferData | null;
 }
 
 export const SidebarBody: React.FC<Props> = ({ offer }) => {
+  if (!offer) {
+    return null;
+  }
+
   const renderCollapse = (label: string, children: React.ReactNode) => {
     return (
       <div className={styles.section}>
