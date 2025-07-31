@@ -90,7 +90,7 @@ export const RU_LOCALES = {
   NUMBER_AND_LENGTH_OF_ORIGINAL_VIDEOS: 'Количество и длительность оригинальных видео.',
   NUMBER_ONLY: 'Только число',
   OR: 'ИЛИ',
-  OPEN_DETAILS: 'Подробнее',
+  SHOW_DETAILS: 'Подробнее',
   PASSWORD_MIN_LENGTH: 'Пароль должен содержать не менее 6 символов.',
   PASSWORDS_DO_NOT_MATCH: 'Пароли не совпадают',
   PERPETUITY: 'Бессрочно',

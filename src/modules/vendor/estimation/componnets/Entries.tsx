@@ -13,11 +13,11 @@ import { Flex, Select, Tooltip } from 'antd';
 import { EntrieInput } from './EntrieInput';
 import { useAppDispatch } from '@/store/hooks';
 import { changeOfferRow, removeOfferRow } from '@/store/slices/offer/slice';
-import { useDrawerOffer } from '../context/drawer';
 import React, { Fragment } from 'react';
 import { ValueOf } from 'next/dist/shared/lib/constants';
 import { formatCurrency } from '@/lib/utils';
 import { t } from '@/lib/i18n';
+import { openSidebar, setSidebarTitle } from '@/store/slices/sidebar';
 
 const timeUnitFirst = (a: OfferData['units'][number], b: OfferData['units'][number]) => {
   return a?.type === UnitType.TIME && b?.type === UnitType.QUANTITY ? -1 : 1;
@@ -85,7 +85,11 @@ export function Entries({ data = [] }: { data?: OfferData[] }) {
 
   const { getRowProps, hoveredRow, focusedRow } = useRowHover();
   const checkActive = (id: number) => hoveredRow === id || focusedRow === id;
-  const { onOpen } = useDrawerOffer();
+
+  const showSidebar = () => {
+    dispatch(openSidebar());
+    dispatch(setSidebarTitle('djksjsdk'));
+  };
 
   return (
     <>
@@ -104,8 +108,8 @@ export function Entries({ data = [] }: { data?: OfferData[] }) {
                 <EstimationItem key={`settings-${key}`} {...rowProps} style={{ justifyContent: 'center' }}>
                   {isActive && (
                     <Flex align='center' justify='center' style={{ height: '100%' }}>
-                      <Tooltip title={t('OPEN_DETAILS')} placement='bottom'>
-                        <SettingsIcon style={{ cursor: 'pointer', color: 'var(--gray)' }} onClick={() => onOpen(it)} />
+                      <Tooltip title={t('SHOW_DETAILS')} placement='bottom'>
+                        <SettingsIcon style={{ cursor: 'pointer', color: 'var(--gray)' }} onClick={showSidebar} />
                       </Tooltip>
                     </Flex>
                   )}

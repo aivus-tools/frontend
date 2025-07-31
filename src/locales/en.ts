@@ -88,7 +88,7 @@ export const EN_LOCALES = {
   NUMBER: 'Number',
   NUMBER_AND_LENGTH_OF_ORIGINAL_VIDEOS: 'Number and length of original videos.',
   NUMBER_ONLY: 'Number only',
-  OPEN_DETAILS: 'Open details',
+  SHOW_DETAILS: 'Show details',
   OR: 'OR',
   PASSWORD_MIN_LENGTH: 'Password must be at least 6 characters long.',
   PASSWORDS_DO_NOT_MATCH: 'Passwords do not match',

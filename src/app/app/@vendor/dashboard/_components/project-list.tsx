@@ -5,7 +5,7 @@ import { THead } from '@/types/app.interface';
 import { useRouter } from 'next/navigation';
 
 import styles from './project-list.module.css';
-import { useEffect, useMemo } from 'react';
+import React, { useEffect, useMemo } from 'react';
 import { THeadItem } from '@/components/THeadItem/THeadItem';
 import { ProjectItem } from '@/components/ProjectItem/ProjectItem';
 import { useBriefs } from '@/hooks/useBriefs';

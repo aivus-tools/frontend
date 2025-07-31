@@ -10,7 +10,6 @@ import { Summary } from './componnets/Summary/Summary';
 import { useAppSelector } from '@/store/hooks';
 import { selectIsExternal, selectRootCategories } from '@/store/slices/offer/selectors';
 import { AddButton } from './componnets/AddButton';
-import { DrawerOfferProvider } from './context/drawer';
 import { useLoadData } from './hooks/useLoadData';
 import { useSetExternal } from './hooks/useSetExternal';
 
@@ -26,21 +25,19 @@ export function Estimation({ external }: { external?: boolean }) {
   }
 
   return (
-    <DrawerOfferProvider>
-      <KeysProvider>
-        <HoverProvider>
-          <Wrapper>
-            <Table>
-              <Header />
-              {categories.map((category) => (
-                <Category key={category.id} category={category} />
-              ))}
-              {hasData && <Summary />}
-            </Table>
-          </Wrapper>
-          {!hasData && <AddButton />}
-        </HoverProvider>
-      </KeysProvider>
-    </DrawerOfferProvider>
+    <KeysProvider>
+      <HoverProvider>
+        <Wrapper>
+          <Table>
+            <Header />
+            {categories.map((category) => (
+              <Category key={category.id} category={category} />
+            ))}
+            {hasData && <Summary />}
+          </Table>
+        </Wrapper>
+        {!hasData && <AddButton />}
+      </HoverProvider>
+    </KeysProvider>
   );
 }
