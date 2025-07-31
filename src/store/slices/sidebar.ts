@@ -5,7 +5,7 @@ import React from 'react';
 export interface SidebarState {
   content: React.ReactNode;
   isOpen: boolean;
-  title: string;
+  title: React.ReactNode;
 }
 
 const initialState: SidebarState = {

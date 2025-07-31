@@ -1,23 +1,24 @@
 'use client';
 
-import { HeaderKey, OfferData, UnitType } from '../types';
-import { CLIENTS_HEADERS, HEADERS } from '../constants';
-import { useRowHover } from '../context/hover';
+import { HeaderKey, OfferData, UnitType } from '../../types';
+import { CLIENTS_HEADERS, HEADERS } from '../../constants';
+import { useRowHover } from '../../context/hover';
 import SettingsIcon from '@/icons/settings-icon.svg';
 import AddIcon from '@/icons/add-icon.svg';
 import RemoveIcon from '@/icons/minus.svg';
 import DeleteIcon from '@/icons/delete.svg';
-import { EstimationItem, IconButton, InputNumberRight, SelectWrapper } from '../styled';
-import { RowLine } from './RowLine';
+import { EstimationItem, IconButton, InputNumberRight, SelectWrapper } from '../../styled';
+import { RowLine } from '../../componnets/RowLine';
 import { Flex, Select, Tooltip } from 'antd';
-import { EntrieInput } from './EntrieInput';
+import { EntrieInput } from '../../componnets/EntrieInput';
 import { useAppDispatch } from '@/store/hooks';
 import { changeOfferRow, removeOfferRow } from '@/store/slices/offer/slice';
 import React, { Fragment } from 'react';
 import { ValueOf } from 'next/dist/shared/lib/constants';
 import { formatCurrency } from '@/lib/utils';
 import { t } from '@/lib/i18n';
-import { openSidebar, setSidebarTitle } from '@/store/slices/sidebar';
+import { openSidebar, setSidebarContent } from '@/store/slices/sidebar';
+import { SidebarBody } from '@/modules/vendor/estimation/componnets/Entries/components/SidebarBody/SidebarBody';
 
 const timeUnitFirst = (a: OfferData['units'][number], b: OfferData['units'][number]) => {
   return a?.type === UnitType.TIME && b?.type === UnitType.QUANTITY ? -1 : 1;
@@ -86,18 +87,18 @@ export function Entries({ data = [] }: { data?: OfferData[] }) {
   const { getRowProps, hoveredRow, focusedRow } = useRowHover();
   const checkActive = (id: number) => hoveredRow === id || focusedRow === id;
 
-  const showSidebar = () => {
+  const showSidebar = (offer: OfferData): void => {
     dispatch(openSidebar());
-    dispatch(setSidebarTitle('djksjsdk'));
+    dispatch(setSidebarContent(<SidebarBody offer={offer} />));
   };
 
   return (
     <>
-      {data.map((it) => (
-        <Fragment key={it.id}>
+      {data.map((offer) => (
+        <Fragment key={offer.id}>
           {HEADERS.map(({ key, itemStyle, itemProps }) => {
-            const isActive = checkActive(it.id);
-            const rowProps = getRowProps(it.id);
+            const isActive = checkActive(offer.id);
+            const rowProps = getRowProps(offer.id);
 
             if (key === 'link') {
               return null;
@@ -109,7 +110,10 @@ export function Entries({ data = [] }: { data?: OfferData[] }) {
                   {isActive && (
                     <Flex align='center' justify='center' style={{ height: '100%' }}>
                       <Tooltip title={t('SHOW_DETAILS')} placement='bottom'>
-                        <SettingsIcon style={{ cursor: 'pointer', color: 'var(--gray)' }} onClick={showSidebar} />
+                        <SettingsIcon
+                          style={{ cursor: 'pointer', color: 'var(--gray)' }}
+                          onClick={() => showSidebar(offer)}
+                        />
                       </Tooltip>
                     </Flex>
                   )}
@@ -118,10 +122,10 @@ export function Entries({ data = [] }: { data?: OfferData[] }) {
             }
 
             if (key === 'item') {
-              const rowProps = getRowProps(it.id);
+              const rowProps = getRowProps(offer.id);
               return (
                 <EstimationItem key={`item-${key}`} style={itemStyle} {...rowProps}>
-                  <EntrieInput value={it} variant={isActive ? 'outlined' : 'borderless'} />
+                  <EntrieInput value={offer} variant={isActive ? 'outlined' : 'borderless'} />
                 </EstimationItem>
               );
             }
@@ -131,7 +135,7 @@ export function Entries({ data = [] }: { data?: OfferData[] }) {
                 <EstimationItem key={`actions-${key}`} {...rowProps} style={{ justifyContent: 'center' }}>
                   {isActive && (
                     <Flex align='center' justify='center' style={{ height: '100%' }}>
-                      <DeleteIcon style={{ cursor: 'pointer' }} onClick={() => handleRemove(it.id)} />
+                      <DeleteIcon style={{ cursor: 'pointer' }} onClick={() => handleRemove(offer.id)} />
                     </Flex>
                   )}
                 </EstimationItem>
@@ -142,30 +146,30 @@ export function Entries({ data = [] }: { data?: OfferData[] }) {
               return (
                 <EstimationItem key={`actions-${key}`} {...rowProps} style={{ justifyContent: 'center' }}>
                   <SelectWrapper vertical $hovered={isActive}>
-                    {it.units &&
-                      it.units.toSorted(timeUnitFirst).map(
+                    {offer.units &&
+                      offer.units.toSorted(timeUnitFirst).map(
                         (unit) =>
                           unit && (
                             <Flex gap={5} key={unit.value} align='center'>
                               {unit.type === UnitType.TIME &&
-                                it.units.length === 1 &&
-                                it.options[UnitType.QUANTITY].length > 0 && (
+                                offer.units.length === 1 &&
+                                offer.options[UnitType.QUANTITY].length > 0 && (
                                   <HideElement width={12} isVisible={isActive}>
                                     <IconButton
                                       onClick={() =>
                                         handleChangeUnit(
-                                          it.id,
+                                          offer.id,
                                           UnitType.QUANTITY
-                                        )(it.options[UnitType.QUANTITY][0].value)
+                                        )(offer.options[UnitType.QUANTITY][0].value)
                                       }
                                     >
                                       <AddIcon />
                                     </IconButton>
                                   </HideElement>
                                 )}
-                              {unit.type === UnitType.QUANTITY && it.units.length === 2 && (
+                              {unit.type === UnitType.QUANTITY && offer.units.length === 2 && (
                                 <HideElement width={12} isVisible={isActive}>
-                                  <IconButton onClick={() => handleRemoveUnit(it.id, UnitType.QUANTITY)}>
+                                  <IconButton onClick={() => handleRemoveUnit(offer.id, UnitType.QUANTITY)}>
                                     <RemoveIcon />
                                   </IconButton>
                                 </HideElement>
@@ -175,10 +179,10 @@ export function Entries({ data = [] }: { data?: OfferData[] }) {
                                 placeholder='Select unit'
                                 variant={isActive ? 'outlined' : 'borderless'}
                                 value={unit.value}
-                                onChange={handleChangeUnit(it.id, unit.type)}
+                                onChange={handleChangeUnit(offer.id, unit.type)}
                                 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
                                 // @ts-ignore
-                                options={it.options[unit.type]}
+                                options={offer.options[unit.type]}
                               />
                             </Flex>
                           )
@@ -190,10 +194,10 @@ export function Entries({ data = [] }: { data?: OfferData[] }) {
 
             if (key === 'quantity') {
               return (
-                <EstimationItem key={`${it.id}-${key}`} style={itemStyle} {...rowProps}>
-                  <Flex key={it.id} align='center' vertical style={{ maxWidth: '100%', gap: '5px' }}>
-                    {it.units &&
-                      it.units
+                <EstimationItem key={`${offer.id}-${key}`} style={itemStyle} {...rowProps}>
+                  <Flex key={offer.id} align='center' vertical style={{ maxWidth: '100%', gap: '5px' }}>
+                    {offer.units &&
+                      offer.units
                         .toSorted(timeUnitFirst)
                         .map(
                           (unit) =>
@@ -202,7 +206,7 @@ export function Entries({ data = [] }: { data?: OfferData[] }) {
                                 style={{ flex: 1, maxWidth: '100%' }}
                                 key={unit.value}
                                 variant={isActive ? 'outlined' : 'borderless'}
-                                onChange={handleChangeUnitValue(it.id, unit.value)}
+                                onChange={handleChangeUnitValue(offer.id, unit.value)}
                                 value={unit.count}
                                 controls={false}
                                 min={1}
@@ -216,19 +220,19 @@ export function Entries({ data = [] }: { data?: OfferData[] }) {
 
             if (key === 'cost') {
               return (
-                <EstimationItem key={`${it.id}-${key}`} style={itemStyle} {...rowProps}>
-                  {formatCurrency(it[key])}
+                <EstimationItem key={`${offer.id}-${key}`} style={itemStyle} {...rowProps}>
+                  {formatCurrency(offer[key])}
                 </EstimationItem>
               );
             }
 
             return (
-              <EstimationItem key={`${it.id}-${key}`} style={itemStyle} {...rowProps}>
+              <EstimationItem key={`${offer.id}-${key}`} style={itemStyle} {...rowProps}>
                 <InputNumberRight
                   style={{ flex: 1 }}
                   variant={isActive ? 'outlined' : 'borderless'}
-                  onChange={handleChange(it.id, key)}
-                  value={it[key] as number}
+                  onChange={handleChange(offer.id, key)}
+                  value={offer[key] as number}
                   controls={false}
                   {...itemProps}
                 />
@@ -237,8 +241,8 @@ export function Entries({ data = [] }: { data?: OfferData[] }) {
           })}
           <div />
           {CLIENTS_HEADERS.map(({ key, itemStyle, itemProps }) => {
-            const isActive = checkActive(it.id);
-            const rowProps = getRowProps(it.id);
+            const isActive = checkActive(offer.id);
+            const rowProps = getRowProps(offer.id);
             if (!isClientKey(key)) {
               return null;
             }
@@ -251,11 +255,11 @@ export function Entries({ data = [] }: { data?: OfferData[] }) {
             }
             if (key === 'surcharge') {
               return (
-                <EstimationItem key={`${key}-${it.id}`} style={itemStyle} {...rowProps}>
+                <EstimationItem key={`${key}-${offer.id}`} style={itemStyle} {...rowProps}>
                   <InputNumberRight
                     variant={isActive ? 'outlined' : 'borderless'}
-                    onChange={handleChange(it.id, key)}
-                    value={it[key] as number}
+                    onChange={handleChange(offer.id, key)}
+                    value={offer[key] as number}
                     controls={false}
                     {...itemProps}
                   />
@@ -264,8 +268,8 @@ export function Entries({ data = [] }: { data?: OfferData[] }) {
             }
 
             return (
-              <EstimationItem key={`${key}-${it.id}`} style={itemStyle} {...rowProps}>
-                {formatCurrency(it[key])}
+              <EstimationItem key={`${key}-${offer.id}`} style={itemStyle} {...rowProps}>
+                {formatCurrency(offer[key])}
               </EstimationItem>
             );
           })}

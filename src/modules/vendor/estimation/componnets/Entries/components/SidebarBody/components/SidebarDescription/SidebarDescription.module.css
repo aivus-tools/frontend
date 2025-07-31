@@ -1,0 +1,9 @@
+.text {
+  align-self: flex-start;
+  padding-bottom: 15px;
+  font-size: 13px;
+  font-style: normal;
+  font-weight: 500;
+  line-height: normal;
+  color: var(--main-dark);
+}
