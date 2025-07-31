@@ -4,10 +4,10 @@ import { Flex, Input } from 'antd';
 import { styled } from 'styled-components';
 import AddIcon from '@/icons/add-icon.svg';
 import { LibraryDropdown } from '../LibraryDropdown/LibraryDropdown';
-import { useSelectOffer } from '../hooks/useSelectOffer';
+import { useSelectOffer } from '../../hooks/useSelectOffer';
 import { useMemo } from 'react';
 import { t } from '@/lib/i18n';
-import { filterOptionsById } from '../helpers/filters';
+import { filterOptionsById } from '../../helpers/filters';
 
 const LabelSubTotal = styled.div`
   font-weight: 600;

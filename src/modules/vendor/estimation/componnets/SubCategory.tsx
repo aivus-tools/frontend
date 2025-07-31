@@ -1,8 +1,8 @@
 'use client';
 
-import type { Category } from './types';
+import type { Category } from '../types';
 import { Entries } from './Entries';
-import { useExpandedKeys } from './context/expanded';
+import { useExpandedKeys } from '../context/expanded';
 import { SubTitle } from './Title/SubTitle';
 import { selectOffersByCategoryId, selectTotalSumByCategoryId } from '@/store/slices/offer/selectors';
 import { RootState } from '@/store/store';

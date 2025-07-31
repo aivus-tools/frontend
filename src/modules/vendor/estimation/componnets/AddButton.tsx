@@ -1,7 +1,7 @@
 import { Input } from 'antd';
 import { styled } from 'styled-components';
 import { LibraryDropdown } from './LibraryDropdown/LibraryDropdown';
-import { useSelectOffer } from './hooks/useSelectOffer';
+import { useSelectOffer } from '../hooks/useSelectOffer';
 import { t } from '@/lib/i18n';
 
 const Wrapper = styled.div`

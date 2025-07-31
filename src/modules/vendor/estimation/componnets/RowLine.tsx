@@ -1,4 +1,4 @@
-import { Line } from './styled';
+import { Line } from '../styled';
 
 export const RowLine = () => (
   <>

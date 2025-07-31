@@ -3,9 +3,9 @@
 import { Flex, Input } from 'antd';
 import { styled } from 'styled-components';
 import AddIcon from '@/icons/add-icon.svg';
-import { useSelectOffer } from '../hooks/useSelectOffer';
+import { useSelectOffer } from '../../hooks/useSelectOffer';
 import { LibraryDropdown } from '../LibraryDropdown/LibraryDropdown';
-import { filterOptionsBySetOfId } from '../helpers/filters';
+import { filterOptionsBySetOfId } from '../../helpers/filters';
 import { useCallback, useMemo } from 'react';
 import { useAppSelector } from '@/store/hooks';
 import { selectSubcategoryById } from '@/store/slices/offer/selectors';

@@ -1,10 +1,10 @@
 'use client';
 
-import { useExpandedKeys } from '../context/expanded';
+import { useExpandedKeys } from '../../context/expanded';
 import { RowLine } from '../RowLine';
-import { ArrowButton } from './ArrowButton';
+import { ArrowButton } from '../Title/ArrowButton';
 import { Flex } from 'antd';
-import { SectionSubTitle, SectionSubTitleText, SectionSubTitleSumHeader } from './styled';
+import { SectionSubTitle, SectionSubTitleText, SectionSubTitleSumHeader } from '../Title/styled';
 
 interface Props {
   text: string;

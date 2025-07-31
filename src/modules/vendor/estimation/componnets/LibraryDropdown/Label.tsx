@@ -1,7 +1,7 @@
 import { PropsWithChildren, useCallback, useEffect, useRef } from 'react';
-import { useSearchActiveKey } from './SearchContext';
+import { useSearchActiveKey } from '../LibraryDropdown/SearchContext';
 import { styled } from 'styled-components';
-import { useHandleSelect } from '../context/select';
+import { useHandleSelect } from '../../context/select';
 
 const Wrapper = styled.div`
   display: flex;

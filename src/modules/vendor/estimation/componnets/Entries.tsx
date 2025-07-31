@@ -1,19 +1,19 @@
 'use client';
 
-import { HeaderKey, OfferData, UnitType } from './types';
-import { CLIENTS_HEADERS, HEADERS } from './constants';
-import { useRowHover } from './context/hover';
+import { HeaderKey, OfferData, UnitType } from '../types';
+import { CLIENTS_HEADERS, HEADERS } from '../constants';
+import { useRowHover } from '../context/hover';
 import SettingsIcon from '@/icons/settings-icon.svg';
 import AddIcon from '@/icons/add-icon.svg';
 import RemoveIcon from '@/icons/minus.svg';
 import DeleteIcon from '@/icons/delete.svg';
-import { EstimationItem, IconButton, InputNumberRight, SelectWrapper } from './styled';
+import { EstimationItem, IconButton, InputNumberRight, SelectWrapper } from '../styled';
 import { RowLine } from './RowLine';
 import { Flex, Select } from 'antd';
 import { EntrieInput } from './EntrieInput';
 import { useAppDispatch } from '@/store/hooks';
 import { changeOfferRow, removeOfferRow } from '@/store/slices/offer/slice';
-import { useDrawerOffer } from './context/drawer';
+import { useDrawerOffer } from '../context/drawer';
 import { Fragment } from 'react';
 import { ValueOf } from 'next/dist/shared/lib/constants';
 import { formatCurrency } from '@/lib/utils';

@@ -1,8 +1,8 @@
 'use client';
 
-import type { Category as TypeCategory } from './types';
+import type { Category as TypeCategory } from '../types';
 import { Entries } from './Entries';
-import { useExpandedKeys } from './context/expanded';
+import { useExpandedKeys } from '../context/expanded';
 import { Total } from './Total/Total';
 import { Title } from './Title/Title';
 import { SubCategory } from './SubCategory';

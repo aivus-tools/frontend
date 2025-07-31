@@ -40,13 +40,13 @@ export interface OfferData {
 
 export type HeaderKey = keyof OfferData | 'link' | 'settings' | 'actions' | 'quantity';
 
-export type Headers = {
+export interface Headers {
   label: string | ReactNode;
   key: HeaderKey;
   style?: React.CSSProperties;
   itemStyle?: React.CSSProperties;
   itemProps?: InputNumberProps<number>;
-};
+}
 
 export interface Category {
   id: number;
@@ -61,8 +61,8 @@ export interface Entry {
   variants?: EntryVariant[];
 }
 
-export type EntryVariant = {
+export interface EntryVariant {
   id: number;
   label: string;
   children?: EntryVariant[];
-};
+}

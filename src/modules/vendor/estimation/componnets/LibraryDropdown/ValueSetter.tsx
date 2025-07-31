@@ -1,8 +1,8 @@
 import { PropsWithChildren, useCallback, useEffect } from 'react';
 import { useSearchActiveKey } from './SearchContext';
-import { MenuItem } from '../hooks/useSearchLibrary';
-import { OfferData } from '../types';
-import { menuItemToOfferData } from '../helpers/menuItemToOfferData';
+import { MenuItem } from '../../hooks/useSearchLibrary';
+import { OfferData } from '../../types';
+import { menuItemToOfferData } from '../../helpers/menuItemToOfferData';
 
 interface Props {
   onSelect: (item: OfferData) => void;

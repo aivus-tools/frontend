@@ -1,6 +1,6 @@
 'use client';
 
-import { CLIENTS_HEADERS, HEADERS } from './constants';
+import { CLIENTS_HEADERS, HEADERS } from '../constants';
 
 export function Header() {
   return (

@@ -1,19 +1,19 @@
 'use client';
 
-import type { Category } from '../types';
-import { useExpandedKeys } from '../context/expanded';
+import type { Category } from '../../types';
+import { useExpandedKeys } from '../../context/expanded';
 import { useCallback } from 'react';
 import { Flex } from 'antd';
 import { RowLine } from '../RowLine';
-import { LinkButton } from './LinkButtons';
-import { ArrowButton } from './ArrowButton';
-import { SectionTitle, SectionTitleSumHeader, SectionTitleText } from './styled';
+import { LinkButton } from '../Title/LinkButtons';
+import { ArrowButton } from '../Title/ArrowButton';
+import { SectionTitle, SectionTitleSumHeader, SectionTitleText } from '../Title/styled';
 import { selectCategorySurcharge } from '@/store/slices/offer/selectors';
 import { changeCategorySurcharge } from '@/store/slices/offer/slice';
 import { useAppDispatch, useAppSelector } from '@/store/hooks';
 import { RootState } from '@/store/store';
-import { InputNumberRight } from '../styled';
-import { percentFormat, percentParser } from '../helpers/format';
+import { InputNumberRight } from '../../styled';
+import { percentFormat, percentParser } from '../../helpers/format';
 
 interface Props {
   category: Category;
