@@ -9,14 +9,15 @@ import RemoveIcon from '@/icons/minus.svg';
 import DeleteIcon from '@/icons/delete.svg';
 import { EstimationItem, IconButton, InputNumberRight, SelectWrapper } from '../styled';
 import { RowLine } from './RowLine';
-import { Flex, Select } from 'antd';
+import { Flex, Select, Tooltip } from 'antd';
 import { EntrieInput } from './EntrieInput';
 import { useAppDispatch } from '@/store/hooks';
 import { changeOfferRow, removeOfferRow } from '@/store/slices/offer/slice';
 import { useDrawerOffer } from '../context/drawer';
-import { Fragment } from 'react';
+import React, { Fragment } from 'react';
 import { ValueOf } from 'next/dist/shared/lib/constants';
 import { formatCurrency } from '@/lib/utils';
+import { t } from '@/lib/i18n';
 
 const timeUnitFirst = (a: OfferData['units'][number], b: OfferData['units'][number]) => {
   return a?.type === UnitType.TIME && b?.type === UnitType.QUANTITY ? -1 : 1;
@@ -103,7 +104,9 @@ export function Entries({ data = [] }: { data?: OfferData[] }) {
                 <EstimationItem key={`settings-${key}`} {...rowProps} style={{ justifyContent: 'center' }}>
                   {isActive && (
                     <Flex align='center' justify='center' style={{ height: '100%' }}>
-                      <SettingsIcon style={{ cursor: 'pointer', color: 'var(--gray)' }} onClick={() => onOpen(it)} />
+                      <Tooltip title={t('OPEN_DETAILS')} placement='bottom'>
+                        <SettingsIcon style={{ cursor: 'pointer', color: 'var(--gray)' }} onClick={() => onOpen(it)} />
+                      </Tooltip>
                     </Flex>
                   )}
                 </EstimationItem>

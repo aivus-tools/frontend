@@ -25,6 +25,7 @@ export const AddButton = () => {
         onSelect={handleSelect}
         componentAction={({ handleChange, handleBlur, handleFocus, value }) => (
           <Input
+            name='product_type'
             placeholder={t('START_TYPING_TO_ADD_ITEM')}
             variant='borderless'
             value={value}

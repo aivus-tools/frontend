@@ -33,7 +33,6 @@ export const Line = styled.div`
 `;
 
 export const EstimationItem = styled.div<{ $hovered?: boolean }>`
-  padding: 8px 0;
   text-align: center;
   background-color: ${({ $hovered }) => ($hovered ? 'var(--bg-blue-subsection)' : 'var(--white)')};
 
