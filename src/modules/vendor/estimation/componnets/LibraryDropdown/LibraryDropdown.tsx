@@ -83,11 +83,17 @@ export const LibraryDropdown = ({ value, componentAction, onSelect, filterOption
     [items, handleSelect]
   );
 
+  const itemsForDropdown = items.map((item) => ({
+    key: item.key,
+    label: item.label,
+    title: item.value,
+  }));
+
   return (
     <SearchProvider activeKey={items[0]?.key}>
       <ValueSetter isTyping={isTyping} onSelect={handleSelect} items={items}>
         <Dropdown
-          menu={{ items, onClick: handleClick }}
+          menu={{ items: itemsForDropdown, onClick: handleClick }}
           onOpenChange={(open) => {
             setIsTyping(open);
           }}
