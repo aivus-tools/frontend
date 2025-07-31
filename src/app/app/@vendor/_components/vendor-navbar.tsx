@@ -4,16 +4,20 @@ import { useRouter } from 'next/navigation';
 import { useEffect } from 'react';
 import { VendorTabs } from './vendor-tabs';
 import { NEW_BRIEF_SLUG } from '@/constants/constants';
+import { t } from '@/lib/i18n';
+import { AppRoute } from '@/constants/appRoute';
 
 export const VendorNavbar = () => {
   const router = useRouter();
 
+  const detailsPath = AppRoute.DASHBOARD_PROJECT_DETAILS(NEW_BRIEF_SLUG);
+
   useEffect(() => {
-    router.prefetch(`/app/dashboard/${NEW_BRIEF_SLUG}/details`);
-  }, [router]);
+    router.prefetch(detailsPath);
+  }, [detailsPath, router]);
 
   const handleNewEstimation = () => {
-    router.push(`/app/dashboard/${NEW_BRIEF_SLUG}/details`);
+    router.push(detailsPath);
   };
 
   return (
@@ -21,7 +25,7 @@ export const VendorNavbar = () => {
       <VendorTabs />
       <div style={{ display: 'flex', gap: '16px', alignItems: 'center' }}>
         <Button type='primary' onClick={handleNewEstimation}>
-          New Estimation
+          {t('NEW_ESTIMATION')}
         </Button>
       </div>
     </div>

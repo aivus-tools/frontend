@@ -4,9 +4,10 @@ import { Uploader } from './Uploader';
 import { LabelWithAdd } from './LabelWithAdd';
 import { usePersonModal } from '../hooks/usePersonModal';
 import { Details, Person } from '@/types/brief.interface';
-import { useGuidance } from '@/context/Guidance';
+import { useGuidance } from '@/context/GuidanceProvider';
 import RemoveIcon from '@/icons/minus.svg';
 import { AntdListWrapper, IconButton } from '../common/styled';
+import { t } from '@/lib/i18n';
 
 const { TextArea } = Input;
 
@@ -40,41 +41,37 @@ export const InitialParameters: React.FC = () => {
         <Flex gap={20} flex={1}>
           <Form.Item
             name='crmId'
-            label='CRM ID | Link'
-            extra='Set your own ID if applicable.'
+            label={t('CRM_ID_LINK')}
+            extra={t('SET_OWN_ID')}
             style={{
               flex: 1,
             }}
           >
-            <Input placeholder='CRM ID | Link' onFocus={handleFocus('crmId')} />
+            <Input placeholder={t('CRM_ID_LINK')} onFocus={handleFocus('crmId')} />
           </Form.Item>
           <Form.Item
             name='estimationTemplate'
-            label='Choose the Estimation Template'
-            extra='Select one of your templates.'
+            label={t('CHOOSE_ESTIMATION_TEMPLATE')}
+            extra={t('SELECT_TEMPLATE')}
             style={{
               flex: 1,
             }}
           >
-            <Select placeholder='Select an option' onFocus={handleFocus('estimationTemplate')} disabled />
+            <Select placeholder={t('SELECT_OPTION')} onFocus={handleFocus('estimationTemplate')} disabled />
           </Form.Item>
         </Flex>
       </Flex>
       <Form.Item
         name='projectName'
-        label='Project Name'
-        extra='A project name is required and recommended to be unique.'
-        rules={[{ required: true, message: 'Please input your project name!' }]}
+        label={t('PROJECT_NAME')}
+        extra={t('PROJECT_NAME_REQUIRED')}
+        rules={[{ required: true, message: t('PLEASE_INPUT_PROJECT_NAME') }]}
       >
-        <Input placeholder='Project name' onFocus={handleFocus('projectName')} />
+        <Input placeholder={t('PROJECT_NAME_PLACEHOLDER')} onFocus={handleFocus('projectName')} />
       </Form.Item>
-      <Form.Item
-        name='description'
-        label='Description'
-        extra='Set a description to the project if needed. Visible by your team only'
-      >
+      <Form.Item name='description' label={t('DESCRIPTION')} extra={t('SET_DESCRIPTION')}>
         <TextArea
-          placeholder='Description'
+          placeholder={t('DESCRIPTION')}
           onFocus={handleFocus('description')}
           autoSize={{ minRows: 2, maxRows: 2 }}
         />
@@ -88,12 +85,12 @@ export const InitialParameters: React.FC = () => {
                   add();
                 };
                 return (
-                  <Form.Item label={<LabelWithAdd text='Collaborators' onClick={() => showModal()} />}>
+                  <Form.Item label={<LabelWithAdd text={t('COLLABORATORS')} onClick={() => showModal()} />}>
                     {fields.map((field, index) => (
                       <Flex gap={20} key={field.key}>
                         <Form.Item noStyle name={field.name}>
                           <Select
-                            placeholder='Select a person'
+                            placeholder={t('SELECT_PERSON')}
                             onFocus={handleFocus('collaborators')}
                             options={internalOptions}
                           />
@@ -119,13 +116,11 @@ export const InitialParameters: React.FC = () => {
         </Col>
         <Col span={12}>
           <Typography.Text>
-            <b>Add internal managers.</b> They can only view the projects they are invited to and have access to client
-            pricing and profit details.
+            <b>{t('ADD_INTERNAL_MANAGERS')}</b> {t('INTERNAL_MANAGERS_DESCRIPTION')}
           </Typography.Text>
           <br />
           <Typography.Text>
-            <b>Or add freelancers and external producers.</b> They NEVER see client pricing or project profit. They can
-            only edit internal costs and expenses to help manage the project.
+            <b>{t('ADD_FREELANCERS')}</b> {t('FREELANCERS_DESCRIPTION')}
           </Typography.Text>
         </Col>
       </Row>

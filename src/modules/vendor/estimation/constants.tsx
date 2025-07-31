@@ -1,6 +1,7 @@
 import SettingsIcon from '@/icons/settings-icon.svg';
 import type { Headers } from './types';
 import { percentFormat, percentParser, priceFormat, priceParser } from './helpers/format';
+import { t } from '@/lib/i18n';
 
 export const HEADERS: Headers[] = [
   {
@@ -8,7 +9,7 @@ export const HEADERS: Headers[] = [
     key: 'settings',
   },
   {
-    label: 'Item',
+    label: t('ITEM'),
     style: {
       textAlign: 'left',
       paddingLeft: '8px',
@@ -20,7 +21,7 @@ export const HEADERS: Headers[] = [
     key: 'item',
   },
   {
-    label: 'Price, $',
+    label: t('PRICE'),
     key: 'price',
     itemProps: {
       formatter: priceFormat,
@@ -28,15 +29,15 @@ export const HEADERS: Headers[] = [
     },
   },
   {
-    label: 'Units',
+    label: t('UNITS'),
     key: 'units',
   },
   {
-    label: 'Quantity',
+    label: t('QUANTITY'),
     key: 'quantity',
   },
   {
-    label: 'Cost, $',
+    label: t('COST'),
     key: 'cost',
     itemProps: {
       formatter: priceFormat,
@@ -55,7 +56,7 @@ export const CLIENTS_HEADERS: Headers[] = [
     key: 'link',
   },
   {
-    label: 'Surcharge',
+    label: t('SURCHARGE'),
     key: 'surcharge',
     itemStyle: {
       color: 'var(--gray-light)',
@@ -66,7 +67,7 @@ export const CLIENTS_HEADERS: Headers[] = [
     },
   },
   {
-    label: "Client's price",
+    label: t('CLIENTS_PRICE'),
     key: 'clientPrice',
     itemProps: {
       formatter: priceFormat,
@@ -74,7 +75,7 @@ export const CLIENTS_HEADERS: Headers[] = [
     },
   },
   {
-    label: "Client's cost",
+    label: t('CLIENTS_COST'),
     key: 'clientCost',
     itemProps: {
       formatter: priceFormat,

@@ -1,4 +1,5 @@
 import { THead } from '@/types/app.interface';
+import { t } from '@/lib/i18n';
 
 export const contentTHeads: THead[] = [
   {
@@ -41,28 +42,28 @@ export const asideTHeads: THead[] = [
 
 export const dashboardTHeads: THead[] = [
   {
-    text: 'Project',
+    text: t('DASHBOARD_PROJECT'),
     showIcon: true,
   },
   {
-    text: 'Client',
+    text: t('DASHBOARD_CLIENT'),
   },
   {
-    text: 'Status',
+    text: t('DASHBOARD_STATUS'),
   },
   {
-    text: 'Cost/Expenses',
+    text: t('DASHBOARD_COST_EXPENSES'),
     className: 'alignRight',
   },
   {
-    text: 'Profit',
+    text: t('DASHBOARD_PROFIT'),
     className: 'alignRight',
   },
   {
-    text: 'Deadline',
+    text: t('DASHBOARD_DEADLINE'),
   },
   {
-    text: 'Created',
+    text: t('DASHBOARD_CREATED'),
   },
 ];
 

@@ -10,6 +10,7 @@ import { useAppDispatch, useAppSelector } from '@/store/hooks';
 import { changeUnforeseenExpenses } from '@/store/slices/offer/slice';
 import { selectUnforeseenExpenses } from '@/store/slices/offer/selectors';
 import SettingsIcon from '@/icons/settings-icon.svg';
+import { t } from '@/lib/i18n';
 
 const Label = styled.div`
   display: flex;
@@ -66,7 +67,7 @@ export const UnforeseenExpenses = () => {
       </EmptyBlockTotalSum>
       <Label style={{ gridColumn: 'span 6' }}>
         <Flex align='center' justify='end'>
-          Unforeseen expenses
+          {t('UNFORESEEN_EXPENSES')}
         </Flex>
         <Flex align='center'>
           <InputNumberRight
@@ -90,7 +91,7 @@ export const UnforeseenExpenses = () => {
             <Flex align='center' justify='center' style={{ height: '100%', padding: '14px' }}>
               <SettingsIcon />
             </Flex>
-            <MarkupLabel>Markup</MarkupLabel>
+            <MarkupLabel>{t('MARKUP')}</MarkupLabel>
           </Flex>
           <InputNumberRight
             onChange={handleChangeClient}

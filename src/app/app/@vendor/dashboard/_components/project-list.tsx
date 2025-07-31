@@ -14,6 +14,7 @@ import { format } from 'date-fns';
 import { Project } from '@/types/project.interface.';
 import { formatPrice } from '@/helpers/helper';
 import Spinner from '@/components/Spinner';
+import { AppRoute } from '@/constants/appRoute';
 
 const mapBriefsToProjects = (briefs: Brief[]): Project[] => {
   if (!briefs || !Array.isArray(briefs)) {
@@ -60,7 +61,7 @@ export const ProjectList = () => {
 
   useEffect(() => {
     data.forEach((item: Project) => {
-      router.prefetch(`/app/dashboard/${item.id}/details`);
+      router.prefetch(AppRoute.DASHBOARD_PROJECT_DETAILS(item.id));
     });
   }, [router, data]);
 
@@ -87,7 +88,7 @@ export const ProjectList = () => {
             className={cn(styles.projectItem)}
             key={`project_${item.id}`}
             item={item}
-            onClick={() => router.push(`/app/dashboard/${item.id}/details`)}
+            onClick={() => router.push(AppRoute.DASHBOARD_PROJECT_DETAILS(item.id))}
           />
         ))}
       </div>

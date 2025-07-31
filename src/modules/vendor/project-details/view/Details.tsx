@@ -5,13 +5,14 @@ import { GuidanceAndControls } from '../common/GuidanceAndControls';
 import { Wrapper, Section, Header, Column, Content } from '../common/styled';
 import { Col, Flex, Row, Typography } from 'antd';
 import { useBrief } from '@/hooks/useBrief';
-import { GuidanceProvider } from '@/context/Guidance';
+import { GuidanceProvider } from '@/context/GuidanceProvider';
 import Spinner from '@/components/Spinner';
 import HouseIcon from '@/icons/house.svg';
 import { styled } from 'styled-components';
 import i18n from 'i18n-iso-countries';
 import CrossIcon from '@/icons/cross.svg';
 import { timeUnitsMap } from '@/lib/utils';
+import { locale, t } from '@/lib/i18n';
 
 interface Props {
   label?: string;
@@ -74,13 +75,13 @@ function formatTimeUnit(number: string, unit: string): string {
 const Item = ({ label, value }: Props) => (
   <Flex gap={4} justify='center' vertical>
     {label && <Label>{label}</Label>}
-    {value ? <Text>{value}</Text> : <TextEmpty>Empty</TextEmpty>}
+    {value ? <Text>{value}</Text> : <TextEmpty>{t('EMPTY')}</TextEmpty>}
   </Flex>
 );
 
 export default function Details() {
   const { data: brief, isLoading } = useBrief();
-  const countries = i18n.getNames('en', { select: 'official' });
+  const countries = i18n.getNames(locale, { select: 'official' });
 
   if (isLoading) {
     return <Spinner />;
@@ -97,33 +98,33 @@ export default function Details() {
       <Wrapper>
         <Column style={{ flex: '1 1 70%' }}>
           <Section>
-            <Header>Initial parameters</Header>
+            <Header>{t('INITIAL_PARAMETERS')}</Header>
             <Content style={{ minWidth: '584px' }}>
               <Row align='middle'>
                 <Col span={12}>
                   <Flex gap={20} align='center'>
                     <HouseIcon />
-                    <Item label='CRM ID | Link' value={details.crmId} />
+                    <Item label={t('CRM_ID_LINK')} value={details.crmId} />
                   </Flex>
                 </Col>
                 <Col span={12}>
-                  <Item label='Template' value={details.estimationTemplate} />
+                  <Item label={t('TEMPLATE')} value={details.estimationTemplate} />
                 </Col>
               </Row>
               <Row align='middle' style={{ marginTop: 20 }}>
                 <Col span={24}>
-                  <Item label='Project Name' value={details.projectName} />
+                  <Item label={t('PROJECT_NAME')} value={details.projectName} />
                 </Col>
               </Row>
               <Row align='middle' style={{ marginTop: 20 }}>
                 <Col span={24}>
-                  <Item label='Description' value={details.description} />
+                  <Item label={t('DESCRIPTION')} value={details.description} />
                 </Col>
               </Row>
               <Row align='middle' style={{ marginTop: 20 }}>
                 <Col span={12}>
                   <Item
-                    label='Collaborators'
+                    label={t('COLLABORATORS')}
                     value={details.collaborators?.map((person) => {
                       const label = (person as unknown as { label: string })?.label;
 
@@ -143,46 +144,46 @@ export default function Details() {
             </Content>
           </Section>
           <Section>
-            <Header>the Client</Header>
+            <Header>{t('THE_CLIENT')}</Header>
             <Content>
               <Row align='middle' style={{ marginTop: 20 }}>
                 <Col span={12}>
-                  <Item label='Client' value={details.clientName} />
+                  <Item label={t('CLIENT')} value={details.clientName} />
                 </Col>
                 <Col span={12}>
-                  <Item label='IRS EIN ' value={details.irsEin} />
+                  <Item label={t('IRS_EIN')} value={details.irsEin} />
                 </Col>
               </Row>
               {details.managers.map((manager, index) => (
                 <Row align='middle' style={{ marginTop: index === 0 ? 20 : 8 }} key={index}>
                   <Col span={12}>
-                    <Item label={index === 0 ? 'Client’s managers' : undefined} value={manager.manager} />
+                    <Item label={index === 0 ? t('CLIENTS_MANAGERS') : undefined} value={manager.manager} />
                   </Col>
                   <Col span={12}>
-                    <Item label={index === 0 ? 'Manager position' : undefined} value={manager.position} />
+                    <Item label={index === 0 ? t('MANAGER_POSITION') : undefined} value={manager.position} />
                   </Col>
                 </Row>
               ))}
               <Row align='middle' style={{ marginTop: 20 }}>
                 <Col span={12}>
-                  <Item label='Brand name' value={details.brandName} />
+                  <Item label={t('BRAND_NAME')} value={details.brandName} />
                 </Col>
               </Row>
             </Content>
           </Section>
           <Section>
-            <Header>the Client’s brief</Header>
+            <Header>{t('THE_CLIENTS_BRIEF')}</Header>
             <Content>
               <Row align='middle' style={{ marginTop: 20 }}>
                 <Col span={24}>
-                  <Item label='Project Description' value={details.projectDescription} />
+                  <Item label={t('PROJECT_DESCRIPTION')} value={details.projectDescription} />
                 </Col>
               </Row>
               {details.referenceVideos.map((video, index) => (
                 <Row align='middle' style={{ marginTop: index === 0 ? 20 : 8 }} key={index}>
                   <Col span={12}>
                     <Item
-                      label={index === 0 ? 'Reference videos' : undefined}
+                      label={index === 0 ? t('REFERENCE_VIDEOS') : undefined}
                       value={
                         <Typography.Link href={video.url} target='_blank' rel='noreferrer'>
                           {formatUrl(video.url)}
@@ -198,17 +199,17 @@ export default function Details() {
             </Content>
           </Section>
           <Section>
-            <Header>Rights and Technical Specifications</Header>
+            <Header>{t('RIGHTS_AND_TECHNICAL_SPECIFICATIONS')}</Header>
             <Content>
               <Row align='middle' style={{ marginTop: 20 }}>
                 <Col span={12}>
-                  <Item label='Distribution and Ad placements' value={details.distributionAndAdPlacements} />
+                  <Item label={t('DISTRIBUTION_AND_AD_PLACEMENTS')} value={details.distributionAndAdPlacements} />
                 </Col>
               </Row>
               <Row align='middle' style={{ marginTop: 20 }} gutter={16}>
                 <Col span={12}>
                   <Item
-                    label='Territory'
+                    label={t('TERRITORY')}
                     value={
                       <>
                         {details.territory.map((country, index) => (
@@ -223,7 +224,7 @@ export default function Details() {
                 </Col>
                 <Col span={12}>
                   <Item
-                    label='Term'
+                    label={t('TERM')}
                     value={
                       details.term.unit === 'perpetuity'
                         ? details.term.unit
@@ -235,11 +236,11 @@ export default function Details() {
               <Row align='middle' style={{ marginTop: 20 }}>
                 <Col span={24}>
                   <Item
-                    label='Main video'
+                    label={t('MAIN_VIDEO')}
                     value={
                       <Row align='middle'>
                         <Col span={8}>
-                          <Text>{`${details.mainVideoDuration.number} video`} </Text>
+                          <Text>{`${details.mainVideoDuration.number} ${t('VIDEO')}`} </Text>
                           <CrossIcon />
                           <Text style={{ marginLeft: '4px' }}>
                             {formatTimeUnit(details.mainVideoDuration.length, details.mainVideoDuration.timeUnit)}
@@ -260,7 +261,7 @@ export default function Details() {
                   style={{ marginTop: index === 0 ? 20 : 4 }}
                 >
                   <Col span={8}>
-                    <Text>{`${cut.number} video`} </Text>
+                    <Text>{`${cut.number} ${t('VIDEO')}`} </Text>
                     <CrossIcon />
                     <Text style={{ marginLeft: '4px' }}>{formatTimeUnit(cut.length, cut.timeUnit)}</Text>
                   </Col>
@@ -272,11 +273,11 @@ export default function Details() {
               <Row align='middle' style={{ marginTop: 20 }}>
                 <Col span={24}>
                   <Item
-                    label='Shooting days'
+                    label={t('SHOOTING_DAYS')}
                     value={
                       <Row align='middle'>
                         <Col span={8}>
-                          <Text>{`${details.shootingDays.number} video`} </Text>
+                          <Text>{`${details.shootingDays.number} ${t('VIDEO')}`} </Text>
                           <CrossIcon />
                           <Text style={{ marginLeft: '4px' }}>
                             {formatTimeUnit(details.shootingDays.length, 'days')}

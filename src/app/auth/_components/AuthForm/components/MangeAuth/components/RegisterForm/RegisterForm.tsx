@@ -1,6 +1,7 @@
 'use client';
 import { Button, Form, Input, message } from 'antd';
 import { signIn } from 'next-auth/react';
+import { t } from '@/lib/i18n';
 
 import styles from './styles.module.css';
 import { useState } from 'react';
@@ -64,7 +65,7 @@ export const RegisterForm = ({ email, prevStepAction }: { email: string; prevSte
       return;
     }
     if (password !== repeatPassword) {
-      messageApi.error('Passwords do not match');
+      messageApi.error(t('PASSWORDS_DO_NOT_MATCH'));
       form.setFields([{ name: 'repeatPassword', errors: [''] }]);
       return;
     }
@@ -84,21 +85,21 @@ export const RegisterForm = ({ email, prevStepAction }: { email: string; prevSte
             messageApi.error(message);
           });
         } else {
-          messageApi.error('Failed to register');
+          messageApi.error(t('FAILED_TO_REGISTER'));
         }
         return;
       }
-      messageApi.success('Registration successful');
+      messageApi.success(t('REGISTRATION_SUCCESSFUL'));
       const signInResult = await signIn('credentials', { email, password, redirect: false });
       if (signInResult?.error) {
-        messageApi.error('Invalid credentials');
+        messageApi.error(t('INVALID_CREDENTIALS'));
         form.resetFields();
         form.setFields([{ name: 'password', errors: [''] }]);
       } else {
         window.location.href = CALLBACK_URL ?? AppRoute.HOME;
       }
     } catch (error) {
-      messageApi.error('An unexpected error occurred');
+      messageApi.error(t('UNEXPECTED_ERROR'));
       console.error('Error checking email:', error);
     } finally {
       setLoading(false);
@@ -109,19 +110,25 @@ export const RegisterForm = ({ email, prevStepAction }: { email: string; prevSte
       {contextHolder}
       <div className={styles.inputWrapper}>
         <Form.Item name='name'>
-          <Input size='large' placeholder='Name' type='text' id='name' name='name' />
+          <Input size='large' placeholder={t('NAME_PLACEHOLDER')} type='text' id='name' name='name' />
         </Form.Item>
       </div>
       <div className={styles.inputWrapper}>
         <Form.Item name='password'>
-          <Input size='large' placeholder='Enter your password' type='password' id='password' name='password' />
+          <Input
+            size='large'
+            placeholder={t('ENTER_PASSWORD_PLACEHOLDER')}
+            type='password'
+            id='password'
+            name='password'
+          />
         </Form.Item>
       </div>
       <div className={styles.inputWrapper}>
         <Form.Item name='repeatPassword'>
           <Input
             size='large'
-            placeholder='Repeat your password'
+            placeholder={t('REPEAT_PASSWORD_PLACEHOLDER')}
             type='password'
             id='repeatPassword'
             name='repeatPassword'
@@ -130,10 +137,10 @@ export const RegisterForm = ({ email, prevStepAction }: { email: string; prevSte
       </div>
       <div className={styles.buttonRowGroup}>
         <Button htmlType='reset' block onClick={prevStepAction} disabled={loading}>
-          Back
+          {t('BACK')}
         </Button>
         <Button type='primary' htmlType='submit' block loading={loading}>
-          Sign up
+          {t('SIGN_UP')}
         </Button>
       </div>
     </Form>

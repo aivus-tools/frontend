@@ -12,10 +12,12 @@ import { Form, message } from 'antd';
 import { useMutateBrief } from '@/hooks/useMutateBrief';
 import { Details as DetailsType } from '@/types/brief.interface';
 import { useBrief } from '@/hooks/useBrief';
-import { GuidanceProvider } from '@/context/Guidance';
+import { GuidanceProvider } from '@/context/GuidanceProvider';
 import { useAppDispatch } from '@/store/hooks';
 import { setMode } from '@/store/slices/project';
 import { initialValues } from './initialValues';
+import { t } from '@/lib/i18n';
+import { AppRoute } from '@/constants/appRoute';
 
 export default function Details() {
   const dispatch = useAppDispatch();
@@ -44,18 +46,16 @@ export default function Details() {
           const data = await create(details);
           briefId = data?.id;
         }
-        messageApi.success('Details saved successfully');
+        messageApi.success(t('DETAILS_SAVED_SUCCESSFULLY'));
         if (briefId) {
           dispatch(setMode('view'));
-          router.push(`/app/dashboard/${briefId}/details`);
+          router.push(AppRoute.DASHBOARD_PROJECT_DETAILS(briefId));
         } else {
-          messageApi.error('An error occurred while saving the details');
+          messageApi.error(t('ERROR_SAVING_DETAILS'));
         }
       } catch (error) {
         console.error(error);
-        messageApi.error(
-          (error as { data?: { message?: string } })?.data?.message || 'An error occurred while saving the details'
-        );
+        messageApi.error((error as { data?: { message?: string } })?.data?.message || t('ERROR_SAVING_DETAILS'));
       }
     },
     [brief, create, dispatch, messageApi, router, update]
@@ -84,25 +84,25 @@ export default function Details() {
         <Wrapper>
           <Column style={{ flex: '1 1 70%' }}>
             <Section>
-              <Header>Initial parameters</Header>
+              <Header>{t('INITIAL_PARAMETERS')}</Header>
               <Content>
                 <InitialParameters />
               </Content>
             </Section>
             <Section>
-              <Header>the Client</Header>
+              <Header>{t('THE_CLIENT')}</Header>
               <Content>
                 <Client />
               </Content>
             </Section>
             <Section>
-              <Header>the Client’s brief</Header>
+              <Header>{t('THE_CLIENTS_BRIEF')}</Header>
               <Content>
                 <Brief />
               </Content>
             </Section>
             <Section>
-              <Header>Rights and Technical Specifications</Header>
+              <Header>{t('RIGHTS_AND_TECHNICAL_SPECIFICATIONS')}</Header>
               <Content>
                 <Specifications />
               </Content>

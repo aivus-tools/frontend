@@ -10,6 +10,7 @@ import { useCallback, useMemo } from 'react';
 import { useAppSelector } from '@/store/hooks';
 import { selectSubcategoryById } from '@/store/slices/offer/selectors';
 import { RootState } from '@/store/store';
+import { t } from '@/lib/i18n';
 
 const Wrapper = styled.div`
   display: flex;
@@ -89,7 +90,7 @@ export const Total = ({ text, value, clientValue, categoryId }: Props) => {
             filterOptions={handleFilter}
             componentAction={({ handleChange, handleBlur, handleFocus, value }) => (
               <Input
-                placeholder='add item'
+                placeholder={t('ADD_ITEM')}
                 variant='borderless'
                 value={value}
                 onChange={handleChange}
@@ -100,7 +101,9 @@ export const Total = ({ text, value, clientValue, categoryId }: Props) => {
           />
         </Flex>
         <Flex>
-          <Label>{text} TOTAL:</Label>
+          <Label>
+            {text} {t('TOTAL')}:
+          </Label>
           <TotalSum>{value}</TotalSum>
         </Flex>
       </Wrapper>

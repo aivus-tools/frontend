@@ -2,6 +2,7 @@ import { Input } from 'antd';
 import { styled } from 'styled-components';
 import { LibraryDropdown } from './LibraryDropdown/LibraryDropdown';
 import { useSelectOffer } from './hooks/useSelectOffer';
+import { t } from '@/lib/i18n';
 
 const Wrapper = styled.div`
   padding: 0 20px 10px 30px;
@@ -24,7 +25,7 @@ export const AddButton = () => {
         onSelect={handleSelect}
         componentAction={({ handleChange, handleBlur, handleFocus, value }) => (
           <Input
-            placeholder='Start typing here to add your first item...'
+            placeholder={t('START_TYPING_TO_ADD_ITEM')}
             variant='borderless'
             value={value}
             onChange={handleChange}

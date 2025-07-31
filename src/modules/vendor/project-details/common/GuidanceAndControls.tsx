@@ -4,10 +4,11 @@ import React, { useCallback } from 'react';
 import { Button, Flex, Typography, Form } from 'antd';
 import { useComponentSize } from '@/hooks/useComponentSize';
 import { Section, Header, Content } from '../common/styled';
-import { useGuidance } from '@/context/Guidance';
+import { useGuidance } from '@/context/GuidanceProvider';
 import { styled } from 'styled-components';
 import { useAppDispatch, useAppSelector } from '@/store/hooks';
 import { selectMode, setMode } from '@/store/slices/project';
+import { t } from '@/lib/i18n';
 
 const BorderDashedLine = styled.div`
   border: 1px dashed #99a1b7;
@@ -47,13 +48,13 @@ export const GuidanceAndControls = () => {
       <Section style={{ position: 'fixed', width: width, bottom: '24px', minWidth: '300px' }}>
         <Content>
           <Flex gap={8} align='center' justify='space-between'>
-            <Typography.Text type='secondary'>Saved at 02:14 pm</Typography.Text>
+            <Typography.Text type='secondary'>{t('SAVED_AT')} 02:14 pm</Typography.Text>
             <Button type='text' onClick={reset}>
-              Cancel
+              {t('CANCEL')}
             </Button>
             <Form.Item style={{ width: 'auto', margin: 0 }}>
               <Button type='primary' htmlType='submit'>
-                Save
+                {t('SAVE')}
               </Button>
             </Form.Item>
           </Flex>
@@ -67,7 +68,7 @@ export const GuidanceAndControls = () => {
         style={{ position: 'fixed', width: width, bottom: '24px', minWidth: '300px' }}
       >
         <Button type='primary' onClick={edit} style={{ margin: '10px 30px' }}>
-          Edit
+          {t('EDIT')}
         </Button>
       </Flex>
     );
@@ -75,17 +76,17 @@ export const GuidanceAndControls = () => {
   return (
     <Wrapper ref={observedRef}>
       <Section style={{ position: 'fixed', width: width }}>
-        <Header>Guidance</Header>
+        <Header>{t('GUIDANCE')}</Header>
         <Content>
           {focusedField ? (
             <>
               <Typography.Text>{focusedField.label}</Typography.Text>
               <BorderDashedLine />
-              <Typography.Text>What is this used for?</Typography.Text>
+              <Typography.Text>{t('WHAT_IS_THIS_USED_FOR')}</Typography.Text>
               <Description type='secondary'>{focusedField.description}</Description>
             </>
           ) : (
-            <Typography.Text>Click on a field to see guidance</Typography.Text>
+            <Typography.Text>{t('CLICK_ON_FIELD_FOR_GUIDANCE')}</Typography.Text>
           )}
         </Content>
       </Section>

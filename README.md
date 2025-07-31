@@ -15,3 +15,6 @@ AUTH_GOOGLE_SECRET
 AUTH_APPLE_ID
 
 AUTH_APPLE_SECRET
+
+
+NEXT_PUBLIC_LOCALE = "en" | "ru" - опциональная переменная, отвечающая за локаль (по-умолчанию "en")

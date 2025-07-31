@@ -2,6 +2,7 @@
 import { useRouter, useSelectedLayoutSegments } from 'next/navigation';
 import { Tabs } from './tabs';
 import { VENDOR_PROJECT_TABS } from '@/constants/constants';
+import React from 'react';
 
 export const ProjectTabs = () => {
   const router = useRouter();

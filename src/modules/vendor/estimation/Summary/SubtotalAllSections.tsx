@@ -5,6 +5,7 @@ import SettingsIcon from '@/icons/settings-icon.svg';
 import { Flex } from 'antd';
 import { useAppSelector } from '@/store/hooks';
 import { selectTotalSum, selectClientTotalSum } from '@/store/slices/offer/selectors';
+import { t } from '@/lib/i18n';
 
 const Label = styled.div`
   display: flex;
@@ -46,7 +47,7 @@ export const SubtotalAllSections = () => {
       </EmptyBlockTotalSum>
       <Label style={{ gridColumn: 'span 6' }}>
         <Flex align='center' justify='end'>
-          Subtotal for All Sections
+          {t('SUBTOTAL_FOR_ALL_SECTIONS')}
         </Flex>
         <TotalSum>{`$ ${total}`}</TotalSum>
       </Label>

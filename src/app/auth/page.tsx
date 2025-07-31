@@ -1,6 +1,6 @@
 import type { Metadata } from 'next';
 import { AuthForm } from './_components/AuthForm/AuthForm';
-import { AuthTypeProvider } from '@/context/auth-type';
+import { AuthTypeProvider } from '@/context/AuthTypeProvider';
 
 export const metadata: Metadata = {
   title: 'Aivus Web Login',
