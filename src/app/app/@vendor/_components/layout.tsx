@@ -9,6 +9,7 @@ import { styled } from 'styled-components';
 import { useSelectedLayoutSegments } from 'next/navigation';
 import { ProjectNavbar } from './project-navbar';
 import { VendorNavbar } from './vendor-navbar';
+import { GrandTotalSider } from '@/components/SiderContent/GrandTotalSider';
 
 const { Header, Content } = Layout;
 
@@ -43,6 +44,7 @@ const VendorLayout = ({ children }: PropsWithChildren) => {
     <Layout hasSider>
       <Sider style={siderStyle} width={250} theme={theme}>
         <Logo theme={theme} />
+        {!isRoot && <GrandTotalSider />}
       </Sider>
       <Layout>
         <HeaderLayout style={{ padding: '0 36px' }}>
@@ -63,4 +65,4 @@ const VendorLayout = ({ children }: PropsWithChildren) => {
   );
 };
 
-export { VendorLayout };
+export default VendorLayout;

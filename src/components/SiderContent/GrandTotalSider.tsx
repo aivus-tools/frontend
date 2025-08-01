@@ -1,0 +1,28 @@
+import { useAppSelector } from '@/store/hooks';
+import { selectGrandTotal } from '@/store/slices/offer/selectors';
+import { SiderContent } from '../SiderContent/SiderContent';
+import { PriceBlock } from '../PriceBlock/PriceBlock';
+import { t } from '@/lib/i18n';
+//import { formatPrice } from '@/helpers/helper';
+
+export const GrandTotalSider = () => {
+  const { totalValue, clientTotalValue } = useAppSelector(selectGrandTotal);
+
+  if (typeof totalValue !== 'number' || typeof clientTotalValue !== 'number') return null;
+
+  const diff = clientTotalValue - totalValue;
+  const percent = clientTotalValue !== 0 ? (diff / clientTotalValue) * 100 : 0;
+
+  return (
+    <SiderContent>
+      <PriceBlock title={t('TOTAL_CLIENTS_COST')} amount={clientTotalValue} />
+      <PriceBlock title={t('EXPENCES')} amount={totalValue} highlight />
+      <PriceBlock
+        title={t('REVENUE_AND_MARKUP')}
+        amount={diff}
+        percentDiff={Math.abs(percent)}
+        percentPositive={percent >= 0}
+      />
+    </SiderContent>
+  );
+};

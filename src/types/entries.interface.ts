@@ -26,4 +26,5 @@ export type UnitOption = {
   name: string;
   symbol?: string;
   isDefault?: boolean;
+  value?: number;
 };
