@@ -1,0 +1,75 @@
+.content {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.text {
+  font-size: 11px;
+  font-style: normal;
+  font-weight: 500;
+  line-height: normal;
+  color: var(--gray-light);
+}
+
+.action {
+  display: flex;
+  gap: 3px;
+  align-items: center;
+  cursor: pointer;
+  transition: opacity ease-in 0.3s;
+
+  &:hover {
+    opacity: 0.7;
+  }
+}
+
+.actionDisabled {
+  cursor: default;
+}
+
+.actionIcon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.actionText {
+  font-size: 11px;
+  font-style: italic;
+  font-weight: 500;
+  line-height: normal;
+  color: var(--gray-dark);
+}
+
+.actionTextDisabled {
+  color: var(--gray-light);
+}
+
+.inputGroup {
+  display: flex;
+  gap: 5px;
+}
+
+.inputPrefix {
+  position: relative;
+  top: -2px;
+  font-size: 12px;
+  font-style: normal;
+  font-weight: 500;
+  line-height: normal;
+  color: var(--gray-light);
+}
+
+/* stylelint-disable selector-class-pattern */
+/* stylelint-disable selector-no-qualifying-type */
+.input :global(.ant-input-number-input) {
+  padding-right: 5px !important;
+  text-align: right !important;
+}

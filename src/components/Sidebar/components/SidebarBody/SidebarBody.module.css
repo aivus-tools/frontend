@@ -21,13 +21,8 @@
   }
 }
 
-.collapse {
-  padding: 0 !important;
-}
-
 .collapseHeader {
-  display: flex;
-  align-items: center;
+  padding: 0 !important;
 }
 
 .collapseIcon {
@@ -44,4 +39,11 @@
   font-weight: 600;
   line-height: normal;
   color: var(--gray-dark);
+}
+
+/* stylelint-disable selector-class-pattern */
+/* stylelint-disable selector-no-qualifying-type */
+.collapse :global(.ant-collapse-content-box) {
+  padding: 0 !important;
+  padding-top: 6px !important;
 }

@@ -5,6 +5,7 @@ export const RU_LOCALES = {
   ADD_INTERNAL_MANAGERS: 'Добавьте внутренних менеджеров.',
   ADD_ITEM: 'добавить элемент',
   ADD_LINKS_TO_RELEVANT_VIDEOS: 'Добавьте ссылки на релевантные видео.',
+  ADD_UNIT: 'Добавить блок',
   ADD_UP_TO_5_ADDITIONAL_FILES:
     'Добавьте до 5 дополнительных файлов (до 5 МБ). Брифы, референсы и т.д. PDF, docx, xlsx, pptx, jpg, png',
   ADDITIONAL_VERSIONS_OF_MAIN_VIDEO: 'Дополнительные версии основного видео, если применимо.',
@@ -45,6 +46,7 @@ export const RU_LOCALES = {
   DASHBOARD_STATUS: 'Статус',
   DESCRIPTION: 'Описание',
   DETAILS_SAVED_SUCCESSFULLY: 'Детали успешно сохранены',
+  DELETE_THIS_UNIT: 'Удалить этот блок',
   DISTRIBUTION_AND_AD_PLACEMENTS: 'Распространение и размещение рекламы',
   EDIT: 'Редактировать',
   EMAIL_CONFIRMED: 'Электронная почта подтверждена',
@@ -164,6 +166,7 @@ export const RU_LOCALES = {
   TOTAL: 'ИТОГО',
   UNEXPECTED_ERROR: 'Произошла непредвиденная ошибка',
   UNFORESEEN_EXPENSES: 'Непредвиденные расходы',
+  UNIT: 'Блок',
   UNITS: 'Единицы',
   URL_ONLY: 'только URL',
   VIDEO: 'видео',

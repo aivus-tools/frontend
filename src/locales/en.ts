@@ -5,6 +5,7 @@ export const EN_LOCALES = {
   ADD_INTERNAL_MANAGERS: 'Add internal managers.',
   ADD_ITEM: 'add item',
   ADD_LINKS_TO_RELEVANT_VIDEOS: 'Add links to relevant videos.',
+  ADD_UNIT: 'Add unit',
   ADD_UP_TO_5_ADDITIONAL_FILES:
     'Add up to 5 additional files (up to 5Mb). Briefs, References, etc. PDF, docx, xlsx, pptx, jpg, png',
   ADDITIONAL_VERSIONS_OF_MAIN_VIDEO: 'Additional versions of the main video, if applicable.',
@@ -44,6 +45,7 @@ export const EN_LOCALES = {
   DASHBOARD_STATUS: 'Status',
   DESCRIPTION: 'Description',
   DETAILS_SAVED_SUCCESSFULLY: 'Details saved successfully',
+  DELETE_THIS_UNIT: 'Delete This Unit',
   DISTRIBUTION_AND_AD_PLACEMENTS: 'Distribution and Ad placements',
   EDIT: 'Edit',
   EMAIL_CONFIRMED: 'E-mail confirmed',
@@ -163,6 +165,7 @@ export const EN_LOCALES = {
   TOTAL: 'TOTAL',
   UNEXPECTED_ERROR: 'An unexpected error occurred',
   UNFORESEEN_EXPENSES: 'Unforeseen expenses',
+  UNIT: 'Unit',
   UNITS: 'Units',
   URL_ONLY: 'url only',
   VIDEO: 'video',
