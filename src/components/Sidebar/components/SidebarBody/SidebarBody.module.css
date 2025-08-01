@@ -33,6 +33,12 @@
   transform: rotate(180deg);
 }
 
+.collapseLabelWrapper {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
 .collapseLabel {
   font-size: 14px;
   font-style: normal;

@@ -8,6 +8,8 @@ import { t } from '@/lib/i18n';
 import styles from './SidebarBody.module.css';
 import { Collapse } from 'antd';
 import { SidebarExpenses } from './components/SidebarExpenses/SidebarExpenses';
+import { SidebarForClient } from './components/SidebarForClient/SidebarForClient';
+import { SidebarInput } from '@/components/Sidebar/components/SidebarBody/components/SidebarInput/SidebarInput';
 
 interface Props {
   offer: OfferData | null;
@@ -18,7 +20,7 @@ export const SidebarBody: React.FC<Props> = ({ offer }) => {
     return null;
   }
 
-  const renderCollapse = (label: string, children: React.ReactNode) => {
+  const renderCollapse = (label: string, children: React.ReactNode, extra?: React.ReactNode) => {
     return (
       <div className={styles.section}>
         <Collapse
@@ -32,7 +34,12 @@ export const SidebarBody: React.FC<Props> = ({ offer }) => {
           items={[
             {
               key: '0',
-              label: <span className={styles.collapseLabel}>{label}</span>,
+              label: (
+                <div className={styles.collapseLabelWrapper}>
+                  <div className={styles.collapseLabel}>{label}</div>
+                  {extra}
+                </div>
+              ),
               children,
               classNames: { header: styles.collapseHeader },
             },
@@ -48,7 +55,20 @@ export const SidebarBody: React.FC<Props> = ({ offer }) => {
 
       {renderCollapse(t('QUANTITY'), <SidebarQuantity unitList={offer.units} />)}
 
-      {renderCollapse('Expenses', <SidebarExpenses offer={offer} />)}
+      {renderCollapse(t('EXPENSES'), <SidebarExpenses offer={offer} />)}
+
+      {renderCollapse(
+        t('FOR_CLIENT'),
+        <SidebarForClient clientCost={offer.clientCost} clientPrice={offer.clientPrice} />,
+        <SidebarInput
+          type='input'
+          label={t('MARKUP')}
+          labelPositon='left'
+          value={offer.surcharge}
+          width={70}
+          icon='%'
+        />
+      )}
     </div>
   );
 };

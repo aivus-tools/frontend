@@ -5,27 +5,48 @@ import { QuantityUnit, TimeUnit } from '@/modules/vendor/estimation/types';
 
 import styles from './SidebarInput.module.css';
 
+interface SingleButton {
+  type: 'single btn';
+  value: string;
+  width: number;
+  onClick: () => void;
+  disabled?: boolean;
+}
+
+interface DoubleButton {
+  type: 'double btn';
+  value: [string, string];
+  width: [number, number];
+  onClick: [() => void, () => void];
+  disabled?: [boolean, boolean];
+}
+
+interface Input {
+  type: 'number';
+  value: number;
+  width: number;
+  onChange?: (value: number | null) => void;
+  disabled?: boolean;
+}
+
 interface Props {
   type: 'select' | 'input';
-  value: string;
-  options?: string[] | TimeUnit[] | QuantityUnit[];
-  label: string;
-  labelPositon?: 'top' | 'left';
+  value: number | string;
   width: number;
+  label?: string;
+  bottomLabel?: string;
+  labelPositon?: 'top' | 'left';
+  accent?: true;
+  options?: string[] | TimeUnit[] | QuantityUnit[];
+  disabled?: boolean;
   onChange?: (value: number | null) => void;
   icon?: string;
   action?: {
     icon: React.ElementType;
     label: string;
-    isActive: boolean;
+    disabled: boolean;
   };
-  extraField?: {
-    type: 'number' | 'single btn' | 'double button';
-    value: string | number;
-    width: number;
-    onChange?: (value: number | null) => void;
-    onClick?: () => void;
-  };
+  extraField?: SingleButton | DoubleButton | Input;
 }
 
 export const SidebarInput: React.FC<Props> = (props) => {
@@ -44,19 +65,25 @@ export const SidebarInput: React.FC<Props> = (props) => {
     );
   };
 
-  const renderBtn = (width: number, onClick?: () => void) => {
+  const renderBtn = (
+    value: string,
+    width: number,
+    onClick: (() => void) | undefined,
+    disabled: boolean | undefined
+  ) => {
     return (
       <Button
-        disabled={!onClick}
+        disabled={disabled}
         type='dashed'
         onClick={onClick}
         style={{
           width,
           fontSize: 12,
           fontWeight: 500,
+          padding: 0,
         }}
       >
-        ←$
+        {value}
       </Button>
     );
   };
@@ -64,10 +91,20 @@ export const SidebarInput: React.FC<Props> = (props) => {
   const renderInputNumber = (
     value: number,
     width: number,
-    onChange?: (value: number | null) => void
+    onChange: ((value: number | null) => void) | undefined,
+    isDisabled?: boolean
   ): React.JSX.Element => {
     if (!props.icon) {
-      return <InputNumber min={0} defaultValue={value} name='count' style={{ width }} onChange={onChange} />;
+      return (
+        <InputNumber
+          min={0}
+          defaultValue={value}
+          name='count'
+          style={{ width }}
+          onChange={onChange}
+          disabled={isDisabled}
+        />
+      );
     }
 
     return (
@@ -75,9 +112,11 @@ export const SidebarInput: React.FC<Props> = (props) => {
         controls={false}
         className={styles.input}
         defaultValue={value}
+        disabled={isDisabled}
         step={0.1}
         prefix={<div className={styles.inputPrefix}>{props.icon}</div>}
         style={{
+          backgroundColor: props.accent ? 'var(--bg-light-green)' : '',
           width,
         }}
         onChange={onChange}
@@ -118,11 +157,11 @@ export const SidebarInput: React.FC<Props> = (props) => {
     const Icon = props.action.icon;
 
     return (
-      <div className={cn(styles.action, { [styles.actionDisabled]: !props.action.isActive })}>
+      <div className={cn(styles.action, { [styles.actionDisabled]: props.action.disabled })}>
         <div className={styles.actionIcon}>
-          <Icon width={12} height={12} color={!props.action.isActive ? 'var(--gray-light)' : 'var(--main)'} />
+          <Icon width={12} height={12} color={props.action.disabled ? 'var(--gray-light)' : 'var(--main)'} />
         </div>
-        <div className={cn(styles.actionText, { [styles.actionTextDisabled]: !props.action.isActive })}>
+        <div className={cn(styles.actionText, { [styles.actionTextDisabled]: props.action.disabled })}>
           {props.action.label}
         </div>
       </div>
@@ -131,12 +170,12 @@ export const SidebarInput: React.FC<Props> = (props) => {
 
   const renderLabel = () => {
     if (!props.action) {
-      return <div className={styles.text}>{props.label}</div>;
+      return <div className={styles.label}>{props.label}</div>;
     }
 
     return (
       <div className={styles.header}>
-        <div className={styles.text}>{props.label}</div>
+        <div className={styles.label}>{props.label}</div>
 
         {props.action && renderAction()}
       </div>
@@ -144,7 +183,9 @@ export const SidebarInput: React.FC<Props> = (props) => {
   };
 
   const element1: React.JSX.Element | null =
-    props.type === 'select' ? renderSelect() : renderInputNumber(Number(props.value), props.width, props.onChange);
+    props.type === 'select'
+      ? renderSelect()
+      : renderInputNumber(Number(props.value), props.width, props.onChange, props.disabled);
   let element2: React.JSX.Element | null = null;
 
   switch (props.extraField?.type) {
@@ -152,21 +193,53 @@ export const SidebarInput: React.FC<Props> = (props) => {
       element2 = renderInputNumber(Number(props.extraField.value), props.extraField.width, props.extraField.onChange);
       break;
     case 'single btn':
-      element2 = renderBtn(props.extraField.width, props.extraField.onClick);
+      element2 = renderBtn(
+        props.extraField.value,
+        props.extraField.width,
+        props.extraField.onClick,
+        props.extraField.disabled
+      );
       break;
-    case 'double button':
-      element2 = null;
+    case 'double btn':
+      const [value1, value2] = props.extraField.value;
+      const [width1, width2] = props.extraField.width;
+      const [onClick1, onClick2] = props.extraField.onClick;
+      const [disabled1, disabled2] = props.extraField.disabled ?? [];
+
+      element2 = (
+        <Space>
+          {renderBtn(value1, width1, onClick1, disabled1)}
+          {renderBtn(value2, width2, onClick2, disabled2)}
+        </Space>
+      );
       break;
     default:
       break;
   }
 
+  if (props.labelPositon === 'left') {
+    return (
+      <div className={styles.rowContent}>
+        {renderLabel()}
+
+        {!props.extraField && element1}
+      </div>
+    );
+  }
+
   return (
-    <div className={styles.content}>
+    <div className={styles.columnContent}>
       {renderLabel()}
 
       {props.extraField && renderGroup(props.extraField.type, element1, element2)}
+
       {!props.extraField && element1}
+
+      {!props.extraField && props.bottomLabel && (
+        <div className={styles.label} style={{ width: props.width }}>
+          {props.bottomLabel}
+        </div>
+      )}
     </div>
   );
 };

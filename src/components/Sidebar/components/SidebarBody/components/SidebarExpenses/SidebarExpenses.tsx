@@ -2,6 +2,7 @@ import React from 'react';
 import styles from './SidebarExpenses.module.css';
 import { SidebarInput } from '@/components/Sidebar/components/SidebarBody/components/SidebarInput/SidebarInput';
 import { OfferData } from '@/modules/vendor/estimation/types';
+import { t } from '@/lib/i18n';
 
 interface Props {
   offer: OfferData | null;
@@ -12,8 +13,8 @@ export const SidebarExpenses: React.FC<Props> = () => {
     <div className={styles.content}>
       <SidebarInput
         type='input'
-        label='Item Price'
-        value={'35.0'}
+        label={t('ITEM_PRICE')}
+        value={10}
         width={110}
         icon='$'
         // onChange?: (value: string) => void;
@@ -21,14 +22,15 @@ export const SidebarExpenses: React.FC<Props> = () => {
           type: 'single btn',
           width: 30,
           value: '←$',
-          // onChange?: (value: string) => void;
+          disabled: true,
+          onClick: () => {},
         }}
       />
 
       <SidebarInput
         type='input'
-        label='Item Cost'
-        value={'840.0'}
+        label={t('ITEM_COST')}
+        value={10}
         width={150}
         icon='$'
         // onChange?: (value: string) => void;

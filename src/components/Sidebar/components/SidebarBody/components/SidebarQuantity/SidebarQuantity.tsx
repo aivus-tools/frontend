@@ -28,7 +28,7 @@ export const SidebarQuantity: React.FC<Props> = ({ unitList }) => {
         action={{
           icon: AddIcon,
           label: t('ADD_UNIT'),
-          isActive: !unit2,
+          disabled: !!unit2,
         }}
         // onChange?: (value: string) => void;
         extraField={{
@@ -49,7 +49,7 @@ export const SidebarQuantity: React.FC<Props> = ({ unitList }) => {
           action={{
             icon: RemoveIcon,
             label: t('DELETE_THIS_UNIT'),
-            isActive: true,
+            disabled: false,
           }}
           // onChange?: (value: string) => void;
           extraField={{
