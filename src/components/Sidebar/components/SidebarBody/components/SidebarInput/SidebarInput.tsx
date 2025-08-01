@@ -4,7 +4,6 @@ import cn from 'classnames';
 import { QuantityUnit, TimeUnit } from '@/modules/vendor/estimation/types';
 
 import styles from './SidebarInput.module.css';
-import { ArrowLeftOutlined } from '@ant-design/icons';
 
 interface Props {
   type: 'select' | 'input';
@@ -21,7 +20,7 @@ interface Props {
     isActive: boolean;
   };
   extraField?: {
-    type: 'number' | 'currency' | 'arrow';
+    type: 'number' | 'single btn' | 'double button';
     value: string | number;
     width: number;
     onChange?: (value: number | null) => void;
@@ -45,24 +44,19 @@ export const SidebarInput: React.FC<Props> = (props) => {
     );
   };
 
-  const renderCurrency = (width: number, onClick?: () => void) => {
+  const renderBtn = (width: number, onClick?: () => void) => {
     return (
       <Button
+        disabled={!onClick}
         type='dashed'
-        icon={<ArrowLeftOutlined style={{ color: 'rgba(0,0,0,0.25)', fontSize: 16 }} />}
         onClick={onClick}
         style={{
-          backgroundColor: '#f5f5f5',
-          borderColor: 'rgba(0,0,0,0.25)',
-          color: 'rgba(0,0,0,0.25)',
-          borderRadius: 8,
-          display: 'flex',
-          alignItems: 'center',
-          gap: 8,
           width,
+          fontSize: 12,
+          fontWeight: 500,
         }}
       >
-        $
+        ←$
       </Button>
     );
   };
@@ -92,6 +86,7 @@ export const SidebarInput: React.FC<Props> = (props) => {
   };
 
   const renderGroup = (
+    type: NonNullable<Props['extraField']>['type'],
     Element1: React.JSX.Element | null,
     Element2: React.JSX.Element | null
   ): React.JSX.Element | null => {
@@ -99,6 +94,14 @@ export const SidebarInput: React.FC<Props> = (props) => {
       return null;
     }
 
+    if (type !== 'number') {
+      return (
+        <Space size='small' className={styles.inputGroup}>
+          {Element1}
+          {Element2}
+        </Space>
+      );
+    }
     return (
       <Space.Compact block size='small' className={styles.inputGroup}>
         {Element1}
@@ -148,10 +151,10 @@ export const SidebarInput: React.FC<Props> = (props) => {
     case 'number':
       element2 = renderInputNumber(Number(props.extraField.value), props.extraField.width, props.extraField.onChange);
       break;
-    case 'currency':
-      element2 = renderCurrency(props.extraField.width, props.extraField.onClick);
+    case 'single btn':
+      element2 = renderBtn(props.extraField.width, props.extraField.onClick);
       break;
-    case 'arrow':
+    case 'double button':
       element2 = null;
       break;
     default:
@@ -162,7 +165,7 @@ export const SidebarInput: React.FC<Props> = (props) => {
     <div className={styles.content}>
       {renderLabel()}
 
-      {props.extraField && renderGroup(element1, element2)}
+      {props.extraField && renderGroup(props.extraField.type, element1, element2)}
       {!props.extraField && element1}
     </div>
   );

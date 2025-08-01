@@ -18,9 +18,9 @@ export const SidebarExpenses: React.FC<Props> = () => {
         icon='$'
         // onChange?: (value: string) => void;
         extraField={{
-          type: 'currency',
+          type: 'single btn',
           width: 30,
-          value: '$',
+          value: '←$',
           // onChange?: (value: string) => void;
         }}
       />
