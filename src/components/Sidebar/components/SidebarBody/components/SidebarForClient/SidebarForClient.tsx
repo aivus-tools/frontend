@@ -45,7 +45,7 @@ export const SidebarForClient: React.FC<Props> = ({ clientPrice, clientCost }) =
           type='input'
           label={t('PROFIT')}
           bottomLabel={t('PROFIT_CALCULATION')}
-          value={123}
+          value={0}
           width={150}
           icon='$'
           disabled={true}
@@ -55,7 +55,7 @@ export const SidebarForClient: React.FC<Props> = ({ clientPrice, clientCost }) =
           accent
           bottomLabel={t('PROFIT_PERCENTAGE_CALCULATION')}
           type='input'
-          value={12}
+          value={0}
           width={110}
           icon='%'
           disabled={true}

@@ -53,9 +53,9 @@ export const SidebarBody: React.FC<Props> = ({ offer }) => {
     <div className={styles.content}>
       <SidebarDescription title={offer.item} />
 
-      {renderCollapse(t('QUANTITY'), <SidebarQuantity unitList={offer.units} />)}
+      {renderCollapse(t('QUANTITY'), <SidebarQuantity unitList={offer.units} options={offer.options} />)}
 
-      {renderCollapse(t('EXPENSES'), <SidebarExpenses offer={offer} />)}
+      {renderCollapse(t('EXPENSES'), <SidebarExpenses price={offer.price} cost={offer.cost} />)}
 
       {renderCollapse(
         t('FOR_CLIENT'),

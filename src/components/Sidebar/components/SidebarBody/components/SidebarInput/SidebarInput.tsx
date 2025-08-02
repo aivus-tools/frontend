@@ -1,7 +1,6 @@
 import React from 'react';
 import { Button, InputNumber, Select, Space } from 'antd';
 import cn from 'classnames';
-import { QuantityUnit, TimeUnit } from '@/modules/vendor/estimation/types';
 
 import styles from './SidebarInput.module.css';
 
@@ -37,7 +36,7 @@ interface Props {
   bottomLabel?: string;
   labelPositon?: 'top' | 'left';
   accent?: true;
-  options?: string[] | TimeUnit[] | QuantityUnit[];
+  options?: { label: string; value: number }[];
   disabled?: boolean;
   onChange?: (value: number | null) => void;
   icon?: string;
@@ -58,7 +57,7 @@ export const SidebarInput: React.FC<Props> = (props) => {
     return (
       <Select
         defaultValue={Number(props.value)}
-        options={[props.options]}
+        options={props.options}
         onChange={props.onChange}
         style={{ width: props.width }}
       />

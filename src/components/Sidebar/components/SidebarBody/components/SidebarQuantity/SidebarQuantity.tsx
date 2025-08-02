@@ -8,10 +8,13 @@ import { SidebarInput } from '../SidebarInput/SidebarInput';
 
 interface Props {
   unitList: OfferData['units'];
+  options: OfferData['options'];
 }
 
-export const SidebarQuantity: React.FC<Props> = ({ unitList }) => {
+export const SidebarQuantity: React.FC<Props> = ({ unitList, options }) => {
   const [unit1, unit2] = unitList;
+  const options1 = unit1 && options[unit1?.type].map(({ label, value }) => ({ label, value }));
+  const options2 = unit2 && options[unit2?.type].map(({ label, value }) => ({ label, value }));
 
   if (!unit1) {
     return null;
@@ -22,9 +25,9 @@ export const SidebarQuantity: React.FC<Props> = ({ unitList }) => {
       <SidebarInput
         type='select'
         label={`${t('UNIT')} 1`}
-        value={unit1.label}
+        value={unit1.value}
         width={115}
-        options={[unit1 as never]}
+        options={options1}
         action={{
           icon: AddIcon,
           label: t('ADD_UNIT'),
@@ -43,9 +46,9 @@ export const SidebarQuantity: React.FC<Props> = ({ unitList }) => {
         <SidebarInput
           type='select'
           label={`${t('UNIT')} 2`}
-          value={unit2.label}
+          value={unit2.value}
           width={115}
-          options={[unit2 as never]}
+          options={options2}
           action={{
             icon: RemoveIcon,
             label: t('DELETE_THIS_UNIT'),
