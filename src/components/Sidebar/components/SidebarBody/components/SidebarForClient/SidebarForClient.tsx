@@ -2,23 +2,25 @@ import React from 'react';
 import styles from './SidebarForClient.module.css';
 import { SidebarInput } from '../SidebarInput/SidebarInput';
 import { t } from '@/lib/i18n';
+import { OfferData } from '@/modules/vendor/estimation/types';
+import { ValueOf } from 'next/dist/shared/lib/constants';
 
 interface Props {
-  clientPrice: number;
-  clientCost: number;
+  offer: OfferData;
+  handleChange: (id: number, key: keyof OfferData) => (data: ValueOf<OfferData> | null) => void;
 }
 
-export const SidebarForClient: React.FC<Props> = ({ clientPrice, clientCost }) => {
+export const SidebarForClient: React.FC<Props> = ({ offer, handleChange }) => {
   return (
     <div className={styles.content}>
       <div className={styles.block}>
         <SidebarInput
           type='input'
           label={t('CLIENT_PRICE')}
-          value={clientPrice}
+          value={offer.clientPrice}
           width={110}
           icon='$'
-          // onChange?: (value: string) => void;
+          onChange={(value) => handleChange(offer.id, 'clientPrice')(value)}
           extraField={{
             type: 'double btn',
             width: [13, 13],
@@ -31,11 +33,10 @@ export const SidebarForClient: React.FC<Props> = ({ clientPrice, clientCost }) =
         <SidebarInput
           type='input'
           label={t('CLIENT_COST')}
-          value={clientCost}
+          value={offer.clientCost}
           width={150}
           icon='$'
           disabled={true}
-          // onChange?: (value: string) => void;
         />
       </div>
 

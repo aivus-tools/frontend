@@ -3,6 +3,7 @@ import { Button, InputNumber, Select, Space } from 'antd';
 import cn from 'classnames';
 
 import styles from './SidebarInput.module.css';
+import { Key } from '@/constants/key';
 
 interface SingleButton {
   type: 'single btn';
@@ -44,6 +45,7 @@ interface Props {
     icon: React.ElementType;
     label: string;
     disabled: boolean;
+    onClick: () => void;
   };
   extraField?: SingleButton | DoubleButton | Input;
 }
@@ -155,8 +157,26 @@ export const SidebarInput: React.FC<Props> = (props) => {
 
     const Icon = props.action.icon;
 
+    const handleKeyDown = (e: React.KeyboardEvent) => {
+      if (!props.action || props.action.disabled) {
+        return;
+      }
+
+      if (e.key === Key.ENTER || e.key === Key.SPACE) {
+        e.preventDefault();
+        props.action.onClick();
+      }
+    };
+
     return (
-      <div className={cn(styles.action, { [styles.actionDisabled]: props.action.disabled })}>
+      <div
+        role='button'
+        tabIndex={props.action.disabled ? -1 : 0}
+        aria-disabled={props.action.disabled}
+        className={cn(styles.action, { [styles.actionDisabled]: props.action.disabled })}
+        onClick={props.action.disabled ? undefined : props.action.onClick}
+        onKeyDown={handleKeyDown}
+      >
         <div className={styles.actionIcon}>
           <Icon width={12} height={12} color={props.action.disabled ? 'var(--gray-light)' : 'var(--main)'} />
         </div>

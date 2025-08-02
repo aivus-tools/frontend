@@ -67,11 +67,11 @@ export const SidebarBody: React.FC<Props> = ({ initialOfferData }) => {
 
       {renderCollapse(t('QUANTITY'), <SidebarQuantity offer={offer} handleChange={handleChange} />)}
 
-      {renderCollapse(t('EXPENSES'), <SidebarExpenses price={offer.price} cost={offer.cost} />)}
+      {renderCollapse(t('EXPENSES'), <SidebarExpenses offer={offer} handleChange={handleChange} />)}
 
       {renderCollapse(
         t('FOR_CLIENT'),
-        <SidebarForClient clientCost={offer.clientCost} clientPrice={offer.clientPrice} />,
+        <SidebarForClient offer={offer} handleChange={handleChange} />,
         <SidebarInput
           type='input'
           label={t('MARKUP')}
@@ -79,6 +79,7 @@ export const SidebarBody: React.FC<Props> = ({ initialOfferData }) => {
           value={offer.surcharge}
           width={70}
           icon='%'
+          onChange={(value) => handleChange(offer.id, 'surcharge')(value)}
         />
       )}
     </div>

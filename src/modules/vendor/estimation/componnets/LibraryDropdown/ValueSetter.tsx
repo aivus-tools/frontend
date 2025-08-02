@@ -3,6 +3,7 @@ import { useSearchActiveKey } from './SearchContext';
 import { MenuItem } from '../../hooks/useSearchLibrary';
 import { OfferData } from '../../types';
 import { menuItemToOfferData } from '../../helpers/menuItemToOfferData';
+import { Key } from '@/constants/key';
 
 interface Props {
   onSelect: (item: OfferData) => void;
@@ -23,16 +24,16 @@ export const ValueSetter = ({ isTyping, items, children, onSelect }: PropsWithCh
 
   const handleEnter = useCallback(
     (e: KeyboardEvent) => {
-      if (e.key === 'Enter') {
+      if (e.key === Key.ENTER) {
         handleSelect();
       }
-      if (e.key === 'ArrowDown') {
+      if (e.key === Key.ARROW_DOWN) {
         const index = items.findIndex((it) => it.key === activeKey);
         if (index < items.length - 1) {
           changeActiveKey(items[index + 1].key);
         }
       }
-      if (e.key === 'ArrowUp') {
+      if (e.key === Key.ARROW_UP) {
         const index = items.findIndex((it) => it.key === activeKey);
         if (index > 0) {
           changeActiveKey(items[index - 1].key);
