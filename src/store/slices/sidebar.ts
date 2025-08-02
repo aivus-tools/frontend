@@ -23,6 +23,7 @@ export const sidebarSlice = createSlice({
     },
     closeSidebar: (state) => {
       state.isOpen = false;
+      state.data = null;
     },
     setSidebarType: (state, action) => {
       state.type = action.payload;
