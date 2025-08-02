@@ -10,15 +10,27 @@ import { Collapse } from 'antd';
 import { SidebarExpenses } from './components/SidebarExpenses/SidebarExpenses';
 import { SidebarForClient } from './components/SidebarForClient/SidebarForClient';
 import { SidebarInput } from '@/components/Sidebar/components/SidebarBody/components/SidebarInput/SidebarInput';
+import { ValueOf } from 'next/dist/shared/lib/constants';
+import { changeOfferRow } from '@/store/slices/offer/slice';
+import { useAppDispatch, useAppSelector } from '@/store/hooks';
+import { selectOfferById } from '@/store/slices/offer/selectors';
+import { RootState } from '@/store/store';
 
 interface Props {
-  offer: OfferData | null;
+  initialOfferData: OfferData | null;
 }
 
-export const SidebarBody: React.FC<Props> = ({ offer }) => {
+export const SidebarBody: React.FC<Props> = ({ initialOfferData }) => {
+  const dispatch = useAppDispatch();
+  const offer = useAppSelector((state: RootState) => selectOfferById(state, initialOfferData?.id ?? -1));
+
   if (!offer) {
     return null;
   }
+
+  const handleChange = (id: number, key: keyof OfferData) => (data: ValueOf<OfferData> | null) => {
+    dispatch(changeOfferRow({ id, [key]: data }));
+  };
 
   const renderCollapse = (label: string, children: React.ReactNode, extra?: React.ReactNode) => {
     return (
@@ -53,7 +65,7 @@ export const SidebarBody: React.FC<Props> = ({ offer }) => {
     <div className={styles.content}>
       <SidebarDescription title={offer.item} />
 
-      {renderCollapse(t('QUANTITY'), <SidebarQuantity unitList={offer.units} options={offer.options} />)}
+      {renderCollapse(t('QUANTITY'), <SidebarQuantity offer={offer} handleChange={handleChange} />)}
 
       {renderCollapse(t('EXPENSES'), <SidebarExpenses price={offer.price} cost={offer.cost} />)}
 

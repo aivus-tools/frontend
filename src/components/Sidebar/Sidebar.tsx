@@ -23,7 +23,7 @@ export const Sidebar = () => {
     case 'offer':
       return (
         <Drawer onClose={handleClose} open={isOpen} width={360} className={styles.sidebar}>
-          <SidebarBody offer={data} />
+          <SidebarBody initialOfferData={data} />
         </Drawer>
       );
     default:
