@@ -179,9 +179,7 @@ export function Entries({ data = [] }: { data?: OfferData[] }) {
                                 variant={isActive ? 'outlined' : 'borderless'}
                                 value={unit.value}
                                 onChange={handleChangeUnit(offer.id, unit.type)}
-                                // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-                                // @ts-ignore
-                                options={offer.options[unit.type]}
+                                options={offer.options[unit.type].map(({ label, value }) => ({ label, value }))}
                               />
                             </Flex>
                           )
