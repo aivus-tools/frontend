@@ -81,7 +81,7 @@ export const Total = ({ text, value, clientValue, categoryId }: Props) => {
         justify='center'
         style={{ backgroundColor: 'var(--bg-blue-important)', borderRadius: '0 0 0 6px' }}
       >
-        <AddIcon />
+        <AddIcon color={'var(--gray-light)'} />
       </Flex>
       <Wrapper style={{ gridColumn: 'span 6' }}>
         <Flex>

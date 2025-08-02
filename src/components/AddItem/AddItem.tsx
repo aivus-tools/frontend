@@ -8,7 +8,7 @@ export const AddItem = ({ text, className, ...props }: AddItemProps) => {
   return (
     <div className={cn(styles.addItem, className)} {...props}>
       <div className={cn(styles.icon)}>
-        <AddIcon />
+        <AddIcon color={'var(--gray-light)'} />
       </div>
       <div> {text} </div>
     </div>

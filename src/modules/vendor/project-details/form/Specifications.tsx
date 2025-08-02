@@ -171,7 +171,7 @@ export const Specifications: React.FC = () => {
                         if (fields.length > 1) remove(field.name);
                       }}
                     >
-                      <RemoveIcon />
+                      <RemoveIcon color={'var(--gray-light)'} />
                     </IconButton>
                   </Flex>
                 </Flex>

@@ -27,7 +27,7 @@ export const LabelWithAdd = ({ text, onClick }: LabelWithAddProps) => {
     <LabelContainer>
       <Typography.Text>{text}</Typography.Text>
       <IconButton onClick={onClick}>
-        <AddIcon />
+        <AddIcon color={'var(--gray-light)'} />
       </IconButton>
     </LabelContainer>
   );

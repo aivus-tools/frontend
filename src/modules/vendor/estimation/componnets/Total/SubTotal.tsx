@@ -62,7 +62,7 @@ export const SubTotal = ({ value, clientValue, subCategoryId }: Props) => {
         justify='center'
         style={{ backgroundColor: 'var(--bg-blue-subtotal)', borderRadius: '0 0 0 6px' }}
       >
-        <AddIcon />
+        <AddIcon color={'var(--gray-light)'} />
       </Flex>
       <Label align='center'>
         <LibraryDropdown

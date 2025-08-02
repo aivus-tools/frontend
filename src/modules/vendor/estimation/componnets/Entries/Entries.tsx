@@ -162,14 +162,14 @@ export function Entries({ data = [] }: { data?: OfferData[] }) {
                                         )(offer.options[UnitType.QUANTITY][0].value)
                                       }
                                     >
-                                      <AddIcon />
+                                      <AddIcon color={'var(--gray-light)'} />
                                     </IconButton>
                                   </HideElement>
                                 )}
                               {unit.type === UnitType.QUANTITY && offer.units.length === 2 && (
                                 <HideElement width={12} isVisible={isActive}>
                                   <IconButton onClick={() => handleRemoveUnit(offer.id, UnitType.QUANTITY)}>
-                                    <RemoveIcon />
+                                    <RemoveIcon color={'var(--gray-light)'} />
                                   </IconButton>
                                 </HideElement>
                               )}
