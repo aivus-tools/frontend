@@ -42,7 +42,7 @@ export const SidebarQuantity: React.FC<Props> = ({ offer, handleChange }) => {
       return;
     }
 
-    const newUnit = { ...unit, label: newLabel };
+    const newUnit = { ...unit, ...options };
 
     if (!newUnit) {
       return;
