@@ -39,6 +39,7 @@ export const SidebarExpenses: React.FC<Props> = ({ offer, handleChange }) => {
         value={offer.cost}
         width={150}
         icon='$'
+        disabled={true}
         onChange={(value) => handleChangeUnit(value, 'cost')}
       />
     </div>

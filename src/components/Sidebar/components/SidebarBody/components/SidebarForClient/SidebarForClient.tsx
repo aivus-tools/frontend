@@ -20,6 +20,7 @@ export const SidebarForClient: React.FC<Props> = ({ offer, handleChange }) => {
           value={offer.clientPrice}
           width={110}
           icon='$'
+          disabled={true}
           onChange={(value) => handleChange(offer.id, 'clientPrice')(value)}
           extraField={{
             type: 'double btn',

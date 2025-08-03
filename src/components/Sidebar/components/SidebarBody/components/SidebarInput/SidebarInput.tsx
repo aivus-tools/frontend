@@ -178,11 +178,9 @@ export const SidebarInput: React.FC<Props> = (props) => {
         onKeyDown={handleKeyDown}
       >
         <div className={styles.actionIcon}>
-          <Icon width={12} height={12} color={props.action.disabled ? 'var(--gray-light)' : 'var(--main)'} />
+          <Icon width={12} height={12} />
         </div>
-        <div className={cn(styles.actionText, { [styles.actionTextDisabled]: props.action.disabled })}>
-          {props.action.label}
-        </div>
+        <div className={styles.actionText}>{props.action.label}</div>
       </div>
     );
   };

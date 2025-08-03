@@ -29,15 +29,17 @@
   display: flex;
   gap: 3px;
   align-items: center;
+  color: var(--gray-dark);
   cursor: pointer;
-  transition: opacity ease-in 0.3s;
+  transition: color ease-in 0.3s;
 
-  &:hover {
-    opacity: 0.7;
+  &:not(.actionDisabled):hover {
+    color: var(--gray);
   }
 }
 
 .actionDisabled {
+  color: var(--gray-light);
   cursor: default;
 }
 
@@ -52,11 +54,6 @@
   font-style: italic;
   font-weight: 500;
   line-height: normal;
-  color: var(--gray-dark);
-}
-
-.actionTextDisabled {
-  color: var(--gray-light);
 }
 
 .inputGroup {

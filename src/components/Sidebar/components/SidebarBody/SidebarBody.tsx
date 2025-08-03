@@ -33,6 +33,10 @@ export const SidebarBody: React.FC<Props> = ({ initialOfferData }) => {
   };
 
   const renderCollapse = (label: string, children: React.ReactNode, extra?: React.ReactNode) => {
+    const handleLabelClick = (e: React.MouseEvent) => {
+      e.stopPropagation();
+    };
+
     return (
       <div className={styles.section}>
         <Collapse
@@ -47,7 +51,7 @@ export const SidebarBody: React.FC<Props> = ({ initialOfferData }) => {
             {
               key: '0',
               label: (
-                <div className={styles.collapseLabelWrapper}>
+                <div className={styles.collapseLabelWrapper} onClick={handleLabelClick}>
                   <div className={styles.collapseLabel}>{label}</div>
                   {extra}
                 </div>

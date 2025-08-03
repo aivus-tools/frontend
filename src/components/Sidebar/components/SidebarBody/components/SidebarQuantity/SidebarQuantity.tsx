@@ -1,5 +1,5 @@
 import React from 'react';
-import { OfferData } from '@/modules/vendor/estimation/types';
+import { OfferData, UnitType } from '@/modules/vendor/estimation/types';
 import styles from './SidebarQuantity.module.css';
 import AddIcon from '@/icons/add-icon.svg';
 import RemoveIcon from '@/icons/minus.svg';
@@ -19,12 +19,21 @@ interface Option {
 
 export const SidebarQuantity: React.FC<Props> = ({ offer, handleChange }) => {
   const [unit1, unit2] = offer.units;
-  const options1 = unit1 && offer.options[unit1?.type].map(({ label, value }) => ({ label, value }));
-  const options2 = unit2 && offer.options[unit2?.type].map(({ label, value }) => ({ label, value }));
 
   if (!unit1) {
     return null;
   }
+
+  const options1 = offer.options[unit1.type]?.map(({ label, value }) => ({ label, value }));
+
+  const unitTypes = Object.keys(offer.options) as UnitType[];
+  const [options2Name] = unitTypes.filter((name) => name !== unit1.type);
+
+  if (!options2Name) {
+    return;
+  }
+
+  const options2 = offer.options[options2Name]?.map(({ label, value }) => ({ label, value }));
 
   const handleChangeUnitLabel = (
     _: number | null,
@@ -73,13 +82,26 @@ export const SidebarQuantity: React.FC<Props> = ({ offer, handleChange }) => {
     handleChange(offer.id, 'units')(updatedList);
   };
 
-  const handleRemoveUnit = (unitToDelete: OfferData['units'][number]) => {
-    const updatedList = offer.units?.filter((unit) => unit?.value !== unitToDelete?.value) ?? [];
-    handleChange(offer.id, 'units')(updatedList);
+  const handleRemoveUnit = () => {
+    if (!unit2) {
+      return;
+    }
+
+    handleChange(offer.id, 'units')([unit1]);
   };
 
-  const handleAddUnit = (newUnit: OfferData['units'][number]) => {
-    handleChange(offer.id, 'units')([...offer.units, newUnit]);
+  const handleAddUnit = () => {
+    if (!options2) {
+      return;
+    }
+
+    const newUnit = offer.options[options2Name].at(0);
+
+    if (!newUnit) {
+      return;
+    }
+
+    handleChange(offer.id, 'units')([unit1, newUnit]);
   };
 
   return (
@@ -93,8 +115,8 @@ export const SidebarQuantity: React.FC<Props> = ({ offer, handleChange }) => {
         action={{
           icon: AddIcon,
           label: t('ADD_UNIT'),
-          disabled: !unit2,
-          onClick: () => handleAddUnit(unit1),
+          disabled: !!unit2 || options2.length === 0,
+          onClick: () => handleAddUnit(),
         }}
         onChange={(value, options) => handleChangeUnitLabel(value, options, unit1)}
         extraField={{
@@ -116,7 +138,7 @@ export const SidebarQuantity: React.FC<Props> = ({ offer, handleChange }) => {
             icon: RemoveIcon,
             label: t('DELETE_THIS_UNIT'),
             disabled: false,
-            onClick: () => handleRemoveUnit(unit2),
+            onClick: () => handleRemoveUnit(),
           }}
           onChange={(value, options) => handleChangeUnitLabel(value, options, unit2)}
           extraField={{
