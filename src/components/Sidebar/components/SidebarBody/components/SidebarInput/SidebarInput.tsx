@@ -39,7 +39,7 @@ interface Props {
   accent?: true;
   options?: { label: string; value: number }[];
   disabled?: boolean;
-  onChange?: (value: number | null) => void;
+  onChange?: (value: number | null, options?: Props['options'] | NonNullable<Props['options']>[number]) => void;
   icon?: string;
   action?: {
     icon: React.ElementType;
@@ -92,7 +92,7 @@ export const SidebarInput: React.FC<Props> = (props) => {
   const renderInputNumber = (
     value: number,
     width: number,
-    onChange: ((value: number | null) => void) | undefined,
+    onChange: Props['onChange'],
     isDisabled?: boolean
   ): React.JSX.Element => {
     if (!props.icon) {
