@@ -15,7 +15,7 @@ export const PriceBlock = ({
 }: PriceBlockProps) => {
   return (
     <div className={cn(styles.counter, className)} {...props}>
-      <div className={cn(styles.title)}>{title}</div>
+      <div className={styles.title}>{title}</div>
       <div
         className={cn(styles.count, {
           [styles.primary]: highlight,
