@@ -109,7 +109,6 @@ export const SidebarInput: React.FC<Props> = (props) => {
       );
     }
 
-    console.log('isDisabled:', value);
     return (
       <InputNumber
         controls={false}

@@ -101,26 +101,30 @@ export const offerSlice = createSlice({
     changeOfferRow: (state, action: PayloadAction<Partial<OfferData>>) => {
       const { id, ...newOfferData } = action.payload;
       const index = state.offerDetails.offers.findIndex((offer) => offer.id === id);
-      if (index !== -1) {
-        const newOffer = { ...state.offerDetails.offers[index], ...newOfferData };
-        const unitMultiplier = newOffer.units?.reduce((acc, unit) => acc * (unit?.value ?? 1), 1) ?? 1;
-        const { price = 0 } = newOffer;
-        const category = state.dictionary.category.find((cat) => cat.id === newOffer.categoryId);
-        const rootCategoryId = category?.parentCategoryId ?? category?.id;
-        const { linked = false, surcharge = 0 } = state.offerDetails.categorySurcharge[rootCategoryId ?? 0] ?? {};
 
-        newOffer.cost = price * unitMultiplier;
-        newOffer.clientPrice = price + applyPercentage(newOffer.cost, linked ? surcharge : newOffer.surcharge);
-        newOffer.clientCost = newOffer.clientPrice * unitMultiplier;
-
-        if (newOfferData.surcharge !== undefined) {
-          if (rootCategoryId !== undefined) {
-            state.offerDetails.categorySurcharge[rootCategoryId].linked = false;
-          }
-        }
-
-        state.offerDetails.offers[index] = newOffer;
+      if (index === -1) {
+        return;
       }
+
+      const newOffer = { ...state.offerDetails.offers[index], ...newOfferData };
+      const unitMultiplier = newOffer.units?.reduce((acc, unit) => acc * (unit?.value ?? 1), 1) ?? 1;
+      const { price = 0 } = newOffer;
+      const category = state.dictionary.category.find((cat) => cat.id === newOffer.categoryId);
+      const rootCategoryId = category?.parentCategoryId ?? category?.id;
+      const { linked = false, surcharge = 0 } = state.offerDetails.categorySurcharge[rootCategoryId ?? 0] ?? {};
+
+      newOffer.cost = price * unitMultiplier;
+      newOffer.clientPrice = price + applyPercentage(newOffer.cost, linked ? surcharge : newOffer.surcharge);
+      newOffer.clientCost = newOffer.clientPrice * unitMultiplier;
+      newOffer.taxPrice = newOffer.taxRate ? newOffer.price * (1 + newOffer.taxRate / 100) : newOffer.clientPrice;
+
+      if (newOfferData.surcharge !== undefined) {
+        if (rootCategoryId !== undefined) {
+          state.offerDetails.categorySurcharge[rootCategoryId].linked = false;
+        }
+      }
+
+      state.offerDetails.offers[index] = newOffer;
     },
     changeCategorySurcharge: (
       state,

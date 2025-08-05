@@ -11,8 +11,6 @@ interface Props {
 }
 
 export const SidebarForClient: React.FC<Props> = ({ offer, handleChange }) => {
-  console.log(offer.clientCost);
-
   return (
     <div className={styles.content}>
       <div className={styles.block}>
@@ -22,8 +20,7 @@ export const SidebarForClient: React.FC<Props> = ({ offer, handleChange }) => {
           value={offer.clientPrice}
           width={110}
           icon='$'
-          disabled={true}
-          onChange={(value) => handleChange(offer.id, 'clientPrice')(value)}
+          onChange={handleChange(offer.id, 'clientPrice')}
           extraField={{
             type: 'double btn',
             width: [13, 13],

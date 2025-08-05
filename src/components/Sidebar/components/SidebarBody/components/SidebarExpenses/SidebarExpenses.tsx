@@ -15,7 +15,7 @@ interface Props {
 export const SidebarExpenses: React.FC<Props> = ({ offer, handleChange }) => {
   const [isTaxOn, setIsTaxOn] = React.useState(true);
 
-  const handleChangeUnit = (newValue: number | null, field: 'price' | 'cost') => {
+  const handleChangeUnit = (field: 'price' | 'cost' | 'taxRate' | 'taxPrice') => (newValue: number | null) => {
     handleChange(offer.id, field)(newValue);
   };
 
@@ -28,7 +28,7 @@ export const SidebarExpenses: React.FC<Props> = ({ offer, handleChange }) => {
           value={offer.price}
           width={110}
           icon='$'
-          onChange={(value) => handleChangeUnit(value, 'price')}
+          onChange={handleChangeUnit('price')}
           extraField={{
             type: 'single btn',
             width: 30,
@@ -45,7 +45,7 @@ export const SidebarExpenses: React.FC<Props> = ({ offer, handleChange }) => {
           width={150}
           icon='$'
           disabled={true}
-          onChange={(value) => handleChangeUnit(value, 'cost')}
+          onChange={handleChangeUnit('cost')}
         />
       </div>
 
@@ -60,41 +60,43 @@ export const SidebarExpenses: React.FC<Props> = ({ offer, handleChange }) => {
           type='input'
           label={t('TAX_RATE')}
           labelPositon='left'
-          value={0}
+          value={offer.taxRate}
           width={70}
           disabled={!isTaxOn}
           icon='%'
-          onChange={(value) => handleChange(offer.id, 'surcharge')(value)}
+          onChange={handleChangeUnit('taxRate')}
         />
       </div>
 
-      <div className={styles.block}>
-        <SidebarInput
-          type='input'
-          label={t('ITEM_PRICE_TAX_INCL')}
-          value={offer.clientPrice}
-          width={110}
-          icon='$'
-          disabled={!isTaxOn}
-          onChange={(value) => handleChange(offer.id, 'clientPrice')(value)}
-          extraField={{
-            type: 'double btn',
-            width: [13, 13],
-            value: ['↑', '↓'],
-            disabled: [true, true],
-            onClick: [() => {}, () => {}],
-          }}
-        />
+      {isTaxOn && (
+        <div className={styles.block}>
+          <SidebarInput
+            type='input'
+            label={t('ITEM_PRICE_TAX_INCL')}
+            value={offer.taxPrice}
+            width={110}
+            icon='$'
+            disabled={!isTaxOn}
+            onChange={handleChangeUnit('taxPrice')}
+            extraField={{
+              type: 'double btn',
+              width: [13, 13],
+              value: ['↑', '↓'],
+              disabled: [true, true],
+              onClick: [() => {}, () => {}],
+            }}
+          />
 
-        <SidebarInput
-          type='input'
-          label={t('ITEM_COST_TAX_INCL')}
-          value={offer.clientCost}
-          width={150}
-          icon='$'
-          disabled={!isTaxOn}
-        />
-      </div>
+          <SidebarInput
+            type='input'
+            label={t('ITEM_COST_TAX_INCL')}
+            value={offer.clientCost}
+            width={150}
+            icon='$'
+            disabled={true}
+          />
+        </div>
+      )}
     </div>
   );
 };
