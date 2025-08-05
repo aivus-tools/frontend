@@ -83,7 +83,7 @@ export const SidebarBody: React.FC<Props> = ({ initialOfferData }) => {
           value={offer.surcharge}
           width={70}
           icon='%'
-          onChange={(value) => handleChange(offer.id, 'surcharge')(value)}
+          onChange={handleChange(offer.id, 'surcharge')}
         />
       )}
     </div>

@@ -58,7 +58,7 @@ export const SidebarInput: React.FC<Props> = (props) => {
 
     return (
       <Select
-        defaultValue={Number(props.value)}
+        value={Number(props.value)}
         options={props.options}
         onChange={props.onChange}
         style={{ width: props.width }}
@@ -98,8 +98,9 @@ export const SidebarInput: React.FC<Props> = (props) => {
     if (!props.icon) {
       return (
         <InputNumber
+          controls={false}
           min={0}
-          defaultValue={value}
+          value={value}
           name='count'
           style={{ width }}
           onChange={onChange}
@@ -108,11 +109,12 @@ export const SidebarInput: React.FC<Props> = (props) => {
       );
     }
 
+    console.log('isDisabled:', value);
     return (
       <InputNumber
         controls={false}
         className={styles.input}
-        defaultValue={value}
+        value={value}
         disabled={isDisabled}
         step={0.1}
         prefix={<div className={styles.inputPrefix}>{props.icon}</div>}

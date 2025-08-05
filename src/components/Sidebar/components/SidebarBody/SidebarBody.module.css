@@ -17,16 +17,19 @@
 
   > .section:not(:first-child) {
     padding-top: 15px;
-    border-top: 1px dotted var(--gray);
+    border-top: 1px dashed var(--gray);
   }
 }
 
 .collapseHeader {
+  align-items: center !important;
   padding: 0 !important;
 }
 
 .collapseIcon {
   margin-right: -10px;
+  color: var(--gray) !important;
+  stroke: var(--gray);
 }
 
 .collapseIconActive {

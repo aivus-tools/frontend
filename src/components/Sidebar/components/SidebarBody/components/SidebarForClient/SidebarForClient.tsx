@@ -11,6 +11,8 @@ interface Props {
 }
 
 export const SidebarForClient: React.FC<Props> = ({ offer, handleChange }) => {
+  console.log(offer.clientCost);
+
   return (
     <div className={styles.content}>
       <div className={styles.block}>
