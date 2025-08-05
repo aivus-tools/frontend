@@ -90,7 +90,7 @@ export const SidebarExpenses: React.FC<Props> = ({ offer, handleChange }) => {
           <SidebarInput
             type='input'
             label={t('ITEM_COST_TAX_INCL')}
-            value={offer.clientCost}
+            value={offer.taxRate ? offer.clientCost * (1 + offer.taxRate / 100) : offer.clientCost}
             width={150}
             icon='$'
             disabled={true}
