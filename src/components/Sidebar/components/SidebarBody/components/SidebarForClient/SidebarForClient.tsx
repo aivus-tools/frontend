@@ -11,6 +11,9 @@ interface Props {
 }
 
 export const SidebarForClient: React.FC<Props> = ({ offer, handleChange }) => {
+  const profit = offer.clientCost - offer.taxPrice;
+  const percent = (profit / offer.clientCost) * 100;
+
   return (
     <div className={styles.content}>
       <div className={styles.block}>
@@ -46,7 +49,7 @@ export const SidebarForClient: React.FC<Props> = ({ offer, handleChange }) => {
           type='input'
           label={t('PROFIT')}
           bottomLabel={t('PROFIT_CALCULATION')}
-          value={offer.clientCost - offer.taxPrice}
+          value={profit}
           width={150}
           icon='$'
           disabled={true}
@@ -56,7 +59,7 @@ export const SidebarForClient: React.FC<Props> = ({ offer, handleChange }) => {
           accent
           bottomLabel={t('PROFIT_PERCENTAGE_CALCULATION')}
           type='input'
-          value={0}
+          value={percent}
           width={110}
           icon='%'
           disabled={true}
