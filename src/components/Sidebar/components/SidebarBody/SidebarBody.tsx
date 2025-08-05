@@ -15,6 +15,7 @@ import { changeOfferRow } from '@/store/slices/offer/slice';
 import { useAppDispatch, useAppSelector } from '@/store/hooks';
 import { selectOfferById } from '@/store/slices/offer/selectors';
 import { RootState } from '@/store/store';
+import { round } from '@/lib/utils';
 
 interface Props {
   initialOfferData: OfferData | null;
@@ -65,17 +66,22 @@ export const SidebarBody: React.FC<Props> = ({ initialOfferData }) => {
     );
   };
 
+  const costWithTax = round(offer.taxRate ? offer.cost * (1 + offer.taxRate / 100) : offer.cost);
+
   return (
     <div className={styles.content}>
       <SidebarDescription title={offer.item} />
 
       {renderCollapse(t('QUANTITY'), <SidebarQuantity offer={offer} handleChange={handleChange} />)}
 
-      {renderCollapse(t('EXPENSES'), <SidebarExpenses offer={offer} handleChange={handleChange} />)}
+      {renderCollapse(
+        t('EXPENSES'),
+        <SidebarExpenses offer={offer} handleChange={handleChange} costWithTax={costWithTax} />
+      )}
 
       {renderCollapse(
         t('FOR_CLIENT'),
-        <SidebarForClient offer={offer} handleChange={handleChange} />,
+        <SidebarForClient offer={offer} handleChange={handleChange} costWithTax={costWithTax} />,
         <SidebarInput
           type='input'
           label={t('MARKUP')}

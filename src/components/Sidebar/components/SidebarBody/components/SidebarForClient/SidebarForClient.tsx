@@ -4,15 +4,17 @@ import { SidebarInput } from '../SidebarInput/SidebarInput';
 import { t } from '@/lib/i18n';
 import { OfferData } from '@/modules/vendor/estimation/types';
 import { ValueOf } from 'next/dist/shared/lib/constants';
+import { round } from '@/lib/utils';
 
 interface Props {
+  costWithTax: number;
   offer: OfferData;
   handleChange: (id: number, key: keyof OfferData) => (data: ValueOf<OfferData> | null) => void;
 }
 
-export const SidebarForClient: React.FC<Props> = ({ offer, handleChange }) => {
-  const profit = offer.clientCost - offer.taxPrice;
-  const percent = (profit / offer.clientCost) * 100;
+export const SidebarForClient: React.FC<Props> = ({ costWithTax, offer, handleChange }) => {
+  const profit = round(offer.clientCost - costWithTax);
+  const percent = round((profit / offer.clientCost) * 100);
 
   return (
     <div className={styles.content}>
@@ -60,7 +62,7 @@ export const SidebarForClient: React.FC<Props> = ({ offer, handleChange }) => {
           bottomLabel={t('PROFIT_PERCENTAGE_CALCULATION')}
           type='input'
           value={percent}
-          width={110}
+          width={150}
           icon='%'
           disabled={true}
         />

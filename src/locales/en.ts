@@ -112,7 +112,7 @@ export const EN_LOCALES = {
   PRICE: 'Price, $',
   PRIVACY_POLICY: 'Privacy Policy',
   PROFIT: 'Profit',
-  PROFIT_CALCULATION: 'Client Cost - Item Price (TAX icl.)',
+  PROFIT_CALCULATION: 'Client Cost - Item Cost (TAX icl.)',
   PROFIT_PERCENTAGE_CALCULATION: 'Profit / Client Cost * 100%',
   PROFILE_IMAGE: 'Profile image',
   PROJECT_DESCRIPTION: 'Project Description',

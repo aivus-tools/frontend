@@ -8,15 +8,21 @@ import { Switch } from 'antd';
 import cn from 'classnames';
 
 interface Props {
+  costWithTax: number;
   offer: OfferData;
   handleChange: (id: number, key: keyof OfferData) => (data: ValueOf<OfferData> | null) => void;
 }
 
-export const SidebarExpenses: React.FC<Props> = ({ offer, handleChange }) => {
+export const SidebarExpenses: React.FC<Props> = ({ costWithTax, offer, handleChange }) => {
   const [isTaxOn, setIsTaxOn] = React.useState(true);
 
   const handleChangeUnit = (field: 'price' | 'cost' | 'taxRate' | 'taxPrice') => (newValue: number | null) => {
     handleChange(offer.id, field)(newValue);
+  };
+
+  const handleTaxSwitch = (value: boolean) => {
+    setIsTaxOn(value);
+    handleChangeUnit('taxRate')(0);
   };
 
   return (
@@ -51,7 +57,7 @@ export const SidebarExpenses: React.FC<Props> = ({ offer, handleChange }) => {
 
       <div className={cn(styles.block, styles.fees)}>
         <div className={styles.feesSwitch}>
-          <Switch size='small' defaultChecked onClick={setIsTaxOn} />
+          <Switch size='small' defaultChecked onClick={handleTaxSwitch} />
 
           <div className={styles.feesLabel}>{t('TAXES_AND_FEES')}</div>
         </div>
@@ -90,7 +96,7 @@ export const SidebarExpenses: React.FC<Props> = ({ offer, handleChange }) => {
           <SidebarInput
             type='input'
             label={t('ITEM_COST_TAX_INCL')}
-            value={offer.taxRate ? offer.clientCost * (1 + offer.taxRate / 100) : offer.clientCost}
+            value={costWithTax}
             width={150}
             icon='$'
             disabled={true}
