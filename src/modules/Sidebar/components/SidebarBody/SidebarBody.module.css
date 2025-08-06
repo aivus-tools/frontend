@@ -1,0 +1,22 @@
+.section {
+  display: flex;
+  flex: 1;
+  justify-content: flex-start;
+  width: 100%;
+}
+
+.content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+
+  > .section:not(:last-child) {
+    padding-bottom: 15px;
+  }
+
+  > .section:not(:first-child) {
+    padding-top: 15px;
+    border-top: 1px dashed var(--gray);
+  }
+}

@@ -5,7 +5,7 @@ import { Button, Drawer } from 'antd';
 import { useAppDispatch, useAppSelector } from '@/store/hooks';
 import { closeSidebar, selectIsSidebarOpen, selectSidebarData, selectSidebarType } from '@/store/slices/sidebar';
 import { SidebarBody } from './components/SidebarBody/SidebarBody';
-import { SidebarHeader } from '@/components/Sidebar/components/SidebarHeader/SidebarHeader';
+import { SidebarHeader } from './components/SidebarHeader/SidebarHeader';
 import CloseIcon from '@/icons/close-icon.svg';
 
 import styles from './Sidebar.module.css';
