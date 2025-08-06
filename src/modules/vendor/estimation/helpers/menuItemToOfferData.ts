@@ -9,13 +9,13 @@ export const menuItemToOfferData = (item: MenuItem): OfferData => {
       id: unit.id.toString(),
       label: unit.name,
       type: UnitType.TIME,
-      value: unit.id || 1,
+      value: unit.id,
       count: 1,
     })),
     [UnitType.QUANTITY]: item.units.quantity.map((unit) => ({
       label: unit.name,
       type: UnitType.QUANTITY,
-      value: unit.id || 1,
+      value: unit.id,
       count: 1,
     })),
   };
