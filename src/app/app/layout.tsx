@@ -2,7 +2,7 @@ import { auth, signOut } from '@/auth/auth';
 import { ReduxStore } from '@/context/ReduxProvider';
 import { GROUPS } from '@/constants/constants';
 import React from 'react';
-import { Sidebar } from '@/components/Sidebar/Sidebar';
+import { Sidebar } from '@/modules/Sidebar/Sidebar';
 
 export default async function Layout({
   vendor,

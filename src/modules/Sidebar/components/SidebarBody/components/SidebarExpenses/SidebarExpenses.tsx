@@ -1,6 +1,6 @@
 import React from 'react';
 import styles from './SidebarExpenses.module.css';
-import { SidebarInput } from '@/components/Sidebar/components/SidebarBody/components/SidebarInput/SidebarInput';
+import { SidebarInput } from '../SidebarInput/SidebarInput';
 import { t } from '@/lib/i18n';
 import { OfferData } from '@/modules/vendor/estimation/types';
 import { ValueOf } from 'next/dist/shared/lib/constants';
