@@ -28,6 +28,10 @@ export const selectOffersByCategoryId = createSelector(
   }
 );
 
+export const selectOfferById = createSelector([selectOfferDetails, (_, id: number) => id], (offerDetails, id) => {
+  return offerDetails.offers.find((offer) => offer.id === id);
+});
+
 export const selectTotalSum = createSelector([selectOfferDetails], (offerDetails) => {
   const value = offerDetails.offers.reduce((acc, offer) => acc + offer.cost, 0);
   return { value, formatted: formatCurrency(value) };

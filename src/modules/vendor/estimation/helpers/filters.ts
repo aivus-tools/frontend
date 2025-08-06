@@ -1,5 +1,5 @@
 import { ComponentProps } from 'react';
-import { LibraryDropdown } from '../LibraryDropdown/LibraryDropdown';
+import { LibraryDropdown } from '@/modules/vendor/estimation/componnets/LibraryDropdown/LibraryDropdown';
 
 type HandleFilter = Exclude<ComponentProps<typeof LibraryDropdown>['filterOptions'], undefined>;
 

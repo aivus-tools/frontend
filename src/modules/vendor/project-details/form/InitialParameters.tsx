@@ -102,7 +102,7 @@ export const InitialParameters: React.FC = () => {
                                 if (fields.length > 1) remove(field.name);
                               }}
                             >
-                              <RemoveIcon />
+                              <RemoveIcon color={'var(--gray-light)'} />
                             </IconButton>
                           </Form.Item>
                         )}

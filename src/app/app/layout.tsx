@@ -2,6 +2,7 @@ import { auth, signOut } from '@/auth/auth';
 import { ReduxStore } from '@/context/ReduxProvider';
 import { GROUPS } from '@/constants/constants';
 import React from 'react';
+import { Sidebar } from '@/modules/Sidebar/Sidebar';
 
 export default async function Layout({
   vendor,
@@ -31,5 +32,10 @@ export default async function Layout({
     }
   };
 
-  return <ReduxStore>{getComponent()}</ReduxStore>;
+  return (
+    <ReduxStore>
+      {getComponent()}
+      <Sidebar />
+    </ReduxStore>
+  );
 }

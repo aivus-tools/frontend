@@ -6,9 +6,11 @@ import { categoriesApi } from '@/services/client/categoriesApi';
 import { offersApi } from '@/services/client/offersApi';
 import { userApi } from '@/services/client/userApi';
 import { vendorSlice } from './slices/vendor';
+import { sidebarSlice } from './slices/sidebar';
 
 export const rootReducer = combineReducers({
   [projectSlice.reducerPath]: projectSlice.reducer,
+  [sidebarSlice.reducerPath]: sidebarSlice.reducer,
   [offerSlice.reducerPath]: offerSlice.reducer,
   [vendorSlice.reducerPath]: vendorSlice.reducer,
   [briefApi.reducerPath]: briefApi.reducer,
