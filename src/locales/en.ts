@@ -160,6 +160,7 @@ export const EN_LOCALES = {
   SUBTOTAL_FOR_ALL_SECTIONS: 'Subtotal for All Sections',
   SUBTOTAL_OF_LOCATIONS: 'Subtotal of Locations:',
   SURCHARGE: 'Surcharge',
+  TOTAL_CLIENTS_COST: "Total client's cost",
   TAXPAYER_ID: 'Taxpayer Id',
   TEMPLATE: 'Template',
   TEMPLATES: 'Templates',
@@ -183,4 +184,6 @@ export const EN_LOCALES = {
   WORLDWIDE: 'Worldwide',
   YEARS: 'Years',
   YOUR_EMAIL_ADDRESS: 'Your email address',
+  EXPENCES: 'Expenses',
+  REVENUE_AND_MARKUP: 'Revenue & Mark-Up',
 };

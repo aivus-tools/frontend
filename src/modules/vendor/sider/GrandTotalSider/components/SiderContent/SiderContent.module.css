@@ -1,0 +1,8 @@
+.siderContent {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  width: 100%;
+  height: calc(100% - 70px);
+  padding: 40px 0;
+}
