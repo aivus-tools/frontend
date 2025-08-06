@@ -103,7 +103,7 @@ export const offerSlice = createSlice({
       const index = state.offerDetails.offers.findIndex((offer) => offer.id === id);
       if (index !== -1) {
         const newOffer = { ...state.offerDetails.offers[index], ...newOfferData };
-        const unitMultiplier = newOffer.units?.reduce((acc, unit) => acc * (unit?.value ?? 1), 1) ?? 1;
+        const unitMultiplier = newOffer.units?.reduce((acc, unit) => acc * (unit?.count ?? 1), 1) ?? 1;
         const { price = 0 } = newOffer;
         const category = state.dictionary.category.find((cat) => cat.id === newOffer.categoryId);
         const rootCategoryId = category?.parentCategoryId ?? category?.id;

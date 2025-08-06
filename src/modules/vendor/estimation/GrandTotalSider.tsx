@@ -1,7 +1,7 @@
 import { useAppSelector } from '@/store/hooks';
 import { selectGrandTotal } from '@/store/slices/offer/selectors';
-import { SiderContent } from '../SiderContent/SiderContent';
-import { PriceBlock } from '../PriceBlock/PriceBlock';
+import { SiderContent } from '../../../components/SiderContent/SiderContent';
+import { PriceBlock } from '../../../components/PriceBlock/PriceBlock';
 import { t } from '@/lib/i18n';
 
 export const GrandTotalSider = () => {
