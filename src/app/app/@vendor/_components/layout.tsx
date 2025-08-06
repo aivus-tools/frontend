@@ -9,7 +9,7 @@ import { styled } from 'styled-components';
 import { useSelectedLayoutSegments } from 'next/navigation';
 import { ProjectNavbar } from './project-navbar';
 import { VendorNavbar } from './vendor-navbar';
-import { GrandTotalSider } from '@/modules/vendor/estimation/GrandTotalSider';
+import { GrandTotalSider } from '@/modules/vendor/sider/GrandTotalSider/GrandTotalSider';
 
 const { Header, Content } = Layout;
 
