@@ -73,17 +73,7 @@ export const SidebarInput: React.FC<Props> = (props) => {
     disabled: boolean | undefined
   ) => {
     return (
-      <Button
-        disabled={disabled}
-        type='dashed'
-        onClick={onClick}
-        style={{
-          width,
-          fontSize: 12,
-          fontWeight: 500,
-          padding: 0,
-        }}
-      >
+      <Button className={styles.button} disabled={disabled} type='dashed' onClick={onClick} style={{ width }}>
         {value}
       </Button>
     );
