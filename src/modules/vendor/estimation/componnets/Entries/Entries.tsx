@@ -256,7 +256,7 @@ export function Entries({ data = [] }: { data?: OfferData[] }) {
                   <InputNumberRight
                     variant={isActive ? 'outlined' : 'borderless'}
                     onChange={handleChange(offer.id, key)}
-                    value={offer[key] as number}
+                    value={offer.surcharge}
                     controls={false}
                     {...itemProps}
                   />

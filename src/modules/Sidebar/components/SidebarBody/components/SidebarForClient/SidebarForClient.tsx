@@ -4,13 +4,18 @@ import { SidebarInput } from '../SidebarInput/SidebarInput';
 import { t } from '@/lib/i18n';
 import { OfferData } from '@/modules/vendor/estimation/types';
 import { ValueOf } from 'next/dist/shared/lib/constants';
+import { round } from '@/lib/utils';
 
 interface Props {
+  costWithTax: number;
   offer: OfferData;
   handleChange: (id: number, key: keyof OfferData) => (data: ValueOf<OfferData> | null) => void;
 }
 
-export const SidebarForClient: React.FC<Props> = ({ offer, handleChange }) => {
+export const SidebarForClient: React.FC<Props> = ({ costWithTax, offer, handleChange }) => {
+  const profit = round(offer.clientCost - costWithTax);
+  const percent = round((profit / offer.clientCost) * 100);
+
   return (
     <div className={styles.content}>
       <div className={styles.block}>
@@ -20,8 +25,7 @@ export const SidebarForClient: React.FC<Props> = ({ offer, handleChange }) => {
           value={offer.clientPrice}
           width={110}
           icon='$'
-          disabled={true}
-          onChange={(value) => handleChange(offer.id, 'clientPrice')(value)}
+          onChange={handleChange(offer.id, 'clientPrice')}
           extraField={{
             type: 'double btn',
             width: [13, 13],
@@ -47,7 +51,7 @@ export const SidebarForClient: React.FC<Props> = ({ offer, handleChange }) => {
           type='input'
           label={t('PROFIT')}
           bottomLabel={t('PROFIT_CALCULATION')}
-          value={0}
+          value={profit}
           width={150}
           icon='$'
           disabled={true}
@@ -57,8 +61,8 @@ export const SidebarForClient: React.FC<Props> = ({ offer, handleChange }) => {
           accent
           bottomLabel={t('PROFIT_PERCENTAGE_CALCULATION')}
           type='input'
-          value={0}
-          width={110}
+          value={percent}
+          width={150}
           icon='%'
           disabled={true}
         />

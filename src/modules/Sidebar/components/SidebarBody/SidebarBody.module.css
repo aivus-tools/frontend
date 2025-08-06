@@ -1,7 +1,7 @@
 .section {
   display: flex;
   flex: 1;
-  justify-content: start;
+  justify-content: flex-start;
   width: 100%;
 }
 
@@ -17,6 +17,6 @@
 
   > .section:not(:first-child) {
     padding-top: 15px;
-    border-top: 1px dotted var(--gray);
+    border-top: 1px dashed var(--gray);
   }
 }

@@ -1,9 +1,12 @@
 .collapseHeader {
+  align-items: center !important;
   padding: 0 !important;
 }
 
 .collapseIcon {
   margin-right: -10px;
+  color: var(--gray) !important;
+  stroke: var(--gray);
 }
 
 .collapseIconActive {
