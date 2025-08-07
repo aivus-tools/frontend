@@ -32,6 +32,8 @@ export const menuItemToOfferData = (item: MenuItem): OfferData => {
     clientPrice: 0,
     clientCost: 0,
     marketRange: '',
+    taxRate: 0,
+    taxPrice: 0,
     options,
   };
 };

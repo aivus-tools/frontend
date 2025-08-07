@@ -1,3 +1,6 @@
+import { t } from '@/lib/i18n';
+import styles from './SidebarHeader.module.css';
+
 export const SidebarHeader = () => {
-  return null;
+  return <div className={styles.title}>{t('SETTINGS')}</div>;
 };

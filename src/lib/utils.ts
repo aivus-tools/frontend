@@ -11,6 +11,8 @@ export const applyPercentage = (value: number, percent: number): number => {
   return value * (percent / 100);
 };
 
+export const round = (x: number) => Math.round(x * 100) / 100;
+
 const formatter = new Intl.NumberFormat('en-US', {
   style: 'decimal',
   currency: 'USD',
