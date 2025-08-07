@@ -163,6 +163,7 @@ export const RU_LOCALES = {
   SUBTOTAL_FOR_ALL_SECTIONS: 'Промежуточный итог всех разделов',
   SUBTOTAL_OF_LOCATIONS: 'Промежуточный итог локаций:',
   SURCHARGE: 'Наценка',
+  TOTAL_CLIENTS_COST: 'Общая стоимость клиента',
   TAXPAYER_ID: 'Идентификационный номер налогоплательщика',
   TAXES_AND_FEES: 'Налоги и сборы',
   TAX_RATE: 'Ставка налога',
@@ -188,4 +189,6 @@ export const RU_LOCALES = {
   WORLDWIDE: 'Весь мир',
   YEARS: 'Годы',
   YOUR_EMAIL_ADDRESS: 'Адрес вашей электронной почты',
+  EXPENCES: 'Расходы',
+  REVENUE_AND_MARKUP: 'Доходы и наценка',
 };
