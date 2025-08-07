@@ -1,5 +1,29 @@
 .content {
   display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.block {
+  display: flex;
   flex: 1;
   justify-content: space-between;
+}
+
+.fees {
+  padding-top: 5px;
+}
+
+.feesSwitch {
+  display: flex;
+  align-items: center;
+}
+
+.feesLabel {
+  margin-left: 5px;
+  font-size: 14px;
+  font-style: normal;
+  font-weight: 600;
+  line-height: normal;
+  color: var(--gray-dark);
 }

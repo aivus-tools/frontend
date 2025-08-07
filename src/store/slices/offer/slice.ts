@@ -1,4 +1,4 @@
-import { applyPercentage } from '@/lib/utils';
+import { applyPercentage, round } from '@/lib/utils';
 import { Category, OfferData, Entry } from '@/modules/vendor/estimation/types';
 import { createSlice } from '@reduxjs/toolkit';
 
@@ -101,26 +101,48 @@ export const offerSlice = createSlice({
     changeOfferRow: (state, action: PayloadAction<Partial<OfferData>>) => {
       const { id, ...newOfferData } = action.payload;
       const index = state.offerDetails.offers.findIndex((offer) => offer.id === id);
-      if (index !== -1) {
-        const newOffer = { ...state.offerDetails.offers[index], ...newOfferData };
-        const unitMultiplier = newOffer.units?.reduce((acc, unit) => acc * (unit?.count ?? 1), 1) ?? 1;
-        const { price = 0 } = newOffer;
-        const category = state.dictionary.category.find((cat) => cat.id === newOffer.categoryId);
-        const rootCategoryId = category?.parentCategoryId ?? category?.id;
-        const { linked = false, surcharge = 0 } = state.offerDetails.categorySurcharge[rootCategoryId ?? 0] ?? {};
 
-        newOffer.cost = price * unitMultiplier;
-        newOffer.clientPrice = price + applyPercentage(newOffer.cost, linked ? surcharge : newOffer.surcharge);
-        newOffer.clientCost = newOffer.clientPrice * unitMultiplier;
-
-        if (newOfferData.surcharge !== undefined) {
-          if (rootCategoryId !== undefined) {
-            state.offerDetails.categorySurcharge[rootCategoryId].linked = false;
-          }
-        }
-
-        state.offerDetails.offers[index] = newOffer;
+      if (index === -1) {
+        return;
       }
+
+      const newOffer = { ...state.offerDetails.offers[index], ...newOfferData };
+
+      const updatedParameter = Object.keys(newOfferData).filter((key): key is keyof OfferData => key in newOffer);
+
+      if (updatedParameter.includes('taxPrice') && updatedParameter.length === 1) {
+        newOffer.taxRate = (newOffer.taxPrice / newOffer.price - 1) * 100;
+        state.offerDetails.offers[index] = newOffer;
+
+        return;
+      }
+
+      if (updatedParameter.includes('clientPrice') && updatedParameter.length === 1) {
+        newOffer.surcharge = ((newOffer.clientPrice - newOffer.price) * 100) / newOffer.cost;
+        state.offerDetails.offers[index] = newOffer;
+
+        return;
+      }
+
+      const unitMultiplier = newOffer.units?.reduce((acc, unit) => acc * (unit?.count ?? 1), 1) ?? 1;
+      const { price = 0 } = newOffer;
+      const category = state.dictionary.category.find((cat) => cat.id === newOffer.categoryId);
+      const rootCategoryId = category?.parentCategoryId ?? category?.id;
+      const { linked = false, surcharge = 0 } = state.offerDetails.categorySurcharge[rootCategoryId ?? 0] ?? {};
+
+      newOffer.cost = price * unitMultiplier;
+      newOffer.taxPrice = round(newOffer.price * (1 + newOffer.taxRate / 100));
+      const markup = linked ? surcharge : newOffer.surcharge;
+      newOffer.clientPrice = round(newOffer.taxPrice * (1 + markup / 100));
+      newOffer.clientCost = round(newOffer.clientPrice * unitMultiplier);
+
+      if (newOfferData.surcharge !== undefined) {
+        if (rootCategoryId !== undefined) {
+          state.offerDetails.categorySurcharge[rootCategoryId].linked = false;
+        }
+      }
+
+      state.offerDetails.offers[index] = newOffer;
     },
     changeCategorySurcharge: (
       state,

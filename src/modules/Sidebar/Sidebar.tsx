@@ -19,11 +19,7 @@ export const Sidebar = () => {
 
   switch (type) {
     case 'offer':
-      return (
-        <Drawer onClose={handleClose} open={isOpen} width={360}>
-          <OfferSidebar data={data} />
-        </Drawer>
-      );
+      return <OfferSidebar data={data} isOpen={isOpen} handleClose={handleClose} />;
     case 'rate': {
       return (
         <Drawer onClose={handleClose} open={isOpen} width={390}>

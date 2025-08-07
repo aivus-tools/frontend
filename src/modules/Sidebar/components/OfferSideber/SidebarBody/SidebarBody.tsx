@@ -1,17 +1,18 @@
-import { SidebarDescription } from './components/SidebarDescription/SidebarDescription';
 import { OfferData } from '@/modules/vendor/estimation/types';
 import React from 'react';
-import { SidebarQuantity } from './components/SidebarQuantity/SidebarQuantity';
 import { t } from '@/lib/i18n';
-import { SidebarExpenses } from './components/SidebarExpenses/SidebarExpenses';
-import { SidebarForClient } from './components/SidebarForClient/SidebarForClient';
-import { SidebarInput } from './components/SidebarInput/SidebarInput';
 import { ValueOf } from 'next/dist/shared/lib/constants';
 import { changeOfferRow } from '@/store/slices/offer/slice';
 import { useAppDispatch, useAppSelector } from '@/store/hooks';
 import { selectOfferById } from '@/store/slices/offer/selectors';
 import { RootState } from '@/store/store';
 import { SidebarCollapse } from './components/SidebarCollapse/SidebarCollapse';
+import { round } from '@/lib/utils';
+import { SidebarDescription } from './components/SidebarDescription/SidebarDescription';
+import { SidebarQuantity } from './components/SidebarQuantity/SidebarQuantity';
+import { SidebarExpenses } from './components/SidebarExpenses/SidebarExpenses';
+import { SidebarForClient } from './components/SidebarForClient/SidebarForClient';
+import { SidebarInput } from './components/SidebarInput/SidebarInput';
 
 import styles from './SidebarBody.module.css';
 
@@ -31,6 +32,8 @@ export const SidebarBody: React.FC<Props> = ({ initialOfferData }) => {
     dispatch(changeOfferRow({ id, [key]: data }));
   };
 
+  const costWithTax = round(offer.taxRate ? offer.cost * (1 + offer.taxRate / 100) : offer.cost);
+
   return (
     <div className={styles.content}>
       <SidebarDescription title={offer.item} />
@@ -45,14 +48,14 @@ export const SidebarBody: React.FC<Props> = ({ initialOfferData }) => {
       <div className={styles.section}>
         <SidebarCollapse
           label={t('EXPENSES')}
-          content={<SidebarExpenses offer={offer} handleChange={handleChange} />}
+          content={<SidebarExpenses offer={offer} handleChange={handleChange} costWithTax={costWithTax} />}
         />
       </div>
 
       <div className={styles.section}>
         <SidebarCollapse
           label={t('FOR_CLIENT')}
-          content={<SidebarForClient offer={offer} handleChange={handleChange} />}
+          content={<SidebarForClient offer={offer} handleChange={handleChange} costWithTax={costWithTax} />}
           extra={
             <SidebarInput
               type='input'
@@ -61,7 +64,7 @@ export const SidebarBody: React.FC<Props> = ({ initialOfferData }) => {
               value={offer.surcharge}
               width={70}
               icon='%'
-              onChange={(value) => handleChange(offer.id, 'surcharge')(value)}
+              onChange={handleChange(offer.id, 'surcharge')}
             />
           }
         />
