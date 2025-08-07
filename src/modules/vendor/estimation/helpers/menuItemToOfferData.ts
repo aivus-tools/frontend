@@ -1,5 +1,5 @@
 import { MenuItem } from '../hooks/useSearchLibrary';
-import { OfferData, UnitType } from '../types';
+import { OfferData, UnitType } from '@/types/estimation.interface';
 
 const generateNumeralId = () => Math.floor(Math.random() * 1000000);
 

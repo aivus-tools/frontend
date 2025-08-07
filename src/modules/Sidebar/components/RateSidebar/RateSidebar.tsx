@@ -1,25 +1,25 @@
 import React from 'react';
-import { OfferData } from '@/types/estimation.interface';
 import { SidebarBody } from './SidebarBody/SidebarBody';
 import { Button, Drawer } from 'antd';
 import CloseIcon from '@/icons/close-icon.svg';
 import { SidebarHeader } from './SidebarHeader/SidebarHeader';
+import { Rate } from '@/types/rate.interface';
 
-import styles from './OfferSidebar.module.css';
+import styles from './RateSidebar.module.css';
 
 interface Props {
-  data: OfferData | null;
+  data: Rate | null;
   isOpen: boolean;
   handleClose: () => void;
 }
 
-export const OfferSidebar = ({ data, isOpen, handleClose }: Props) => {
+export const RateSidebar = ({ data, isOpen, handleClose }: Props) => {
   return (
     <Drawer
       closable={false}
       onClose={handleClose}
       open={isOpen}
-      width={360}
+      width={390}
       title={<SidebarHeader />}
       extra={<Button type='text' icon={<CloseIcon className={styles.closeButton} />} onClick={handleClose} />}
       styles={{
@@ -31,7 +31,7 @@ export const OfferSidebar = ({ data, isOpen, handleClose }: Props) => {
         },
       }}
     >
-      <SidebarBody initialOfferData={data} />
+      <SidebarBody initialRateData={data} />
     </Drawer>
   );
 };

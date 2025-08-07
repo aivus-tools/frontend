@@ -2,7 +2,7 @@
 
 import { Dropdown } from 'antd';
 import { useCallback, useMemo, useState } from 'react';
-import { OfferData } from '../../types';
+import { OfferData } from '@/types/estimation.interface';
 import { useRowHover } from '../../context/hover';
 import { MenuItem, useSearchLibrary } from '../../hooks/useSearchLibrary';
 import debounce from 'lodash.debounce';

@@ -1,31 +1,26 @@
 'use client';
 
 import React from 'react';
-import { Drawer } from 'antd';
 import { useAppDispatch, useAppSelector } from '@/store/hooks';
-import { closeSidebar, selectIsSidebarOpen, selectSidebarData, selectSidebarType } from '@/store/slices/sidebar';
+import { closeSidebar, selectIsSidebarOpen, selectSidebarInfo } from '@/store/slices/sidebar';
 import { OfferSidebar } from '@/modules/Sidebar/components/OfferSideber/OfferSidebar';
+import { RateSidebar } from '@/modules/Sidebar/components/RateSidebar/RateSidebar';
 
 export const Sidebar = () => {
   const dispatch = useAppDispatch();
 
   const isOpen = useAppSelector(selectIsSidebarOpen);
-  const type = useAppSelector(selectSidebarType);
-  const data = useAppSelector(selectSidebarData);
+  const info = useAppSelector(selectSidebarInfo);
 
   const handleClose = () => {
     dispatch(closeSidebar());
   };
 
-  switch (type) {
+  switch (info?.type) {
     case 'offer':
-      return <OfferSidebar data={data} isOpen={isOpen} handleClose={handleClose} />;
+      return <OfferSidebar data={info.data} isOpen={isOpen} handleClose={handleClose} />;
     case 'rate': {
-      return (
-        <Drawer onClose={handleClose} open={isOpen} width={390}>
-          {/*<SidebarBody initialOfferData={data} />*/}
-        </Drawer>
-      );
+      return <RateSidebar data={info.data} isOpen={isOpen} handleClose={handleClose} />;
     }
     default:
       return null;

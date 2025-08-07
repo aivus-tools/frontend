@@ -1,5 +1,5 @@
 import { applyPercentage, round } from '@/lib/utils';
-import { Category, OfferData, Entry } from '@/modules/vendor/estimation/types';
+import { Category, OfferData, Entry } from '@/types/estimation.interface';
 import { createSlice } from '@reduxjs/toolkit';
 
 import type { PayloadAction } from '@reduxjs/toolkit';

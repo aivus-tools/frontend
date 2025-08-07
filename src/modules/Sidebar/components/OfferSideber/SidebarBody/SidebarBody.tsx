@@ -1,4 +1,4 @@
-import { OfferData } from '@/modules/vendor/estimation/types';
+import { OfferData } from '@/types/estimation.interface';
 import React from 'react';
 import { t } from '@/lib/i18n';
 import { ValueOf } from 'next/dist/shared/lib/constants';
