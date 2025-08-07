@@ -4,7 +4,7 @@ import React from 'react';
 import { Drawer } from 'antd';
 import { useAppDispatch, useAppSelector } from '@/store/hooks';
 import { closeSidebar, selectIsSidebarOpen, selectSidebarData, selectSidebarType } from '@/store/slices/sidebar';
-import { SidebarBody } from './components/SidebarBody/SidebarBody';
+import { OfferSidebar } from '@/modules/Sidebar/components/OfferSideber/OfferSidebar';
 
 export const Sidebar = () => {
   const dispatch = useAppDispatch();
@@ -21,9 +21,16 @@ export const Sidebar = () => {
     case 'offer':
       return (
         <Drawer onClose={handleClose} open={isOpen} width={360}>
-          <SidebarBody initialOfferData={data} />
+          <OfferSidebar data={data} />
         </Drawer>
       );
+    case 'rate': {
+      return (
+        <Drawer onClose={handleClose} open={isOpen} width={390}>
+          {/*<SidebarBody initialOfferData={data} />*/}
+        </Drawer>
+      );
+    }
     default:
       return null;
   }

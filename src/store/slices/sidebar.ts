@@ -4,7 +4,7 @@ import { OfferData } from '@/modules/vendor/estimation/types';
 
 export interface SidebarState {
   isOpen: boolean;
-  type: 'offer';
+  type: 'offer' | 'rate';
   data: OfferData | null;
 }
 
