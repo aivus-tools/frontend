@@ -32,7 +32,7 @@ export const SidebarBody: React.FC<Props> = ({ initialOfferData }) => {
     dispatch(changeOfferRow({ id, [key]: data }));
   };
 
-  const costWithTax = round(offer.taxRate ? offer.cost * (1 + offer.taxRate / 100) : offer.cost);
+  const costWithTax = round(offer.showTax ? offer.cost * (1 + offer.taxRate / 100) : offer.cost);
 
   return (
     <div className={styles.content}>

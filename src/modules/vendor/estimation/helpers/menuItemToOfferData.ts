@@ -34,6 +34,7 @@ export const menuItemToOfferData = (item: MenuItem): OfferData => {
     marketRange: '',
     taxRate: 0,
     taxPrice: 0,
+    showTax: false,
     options,
   };
 };

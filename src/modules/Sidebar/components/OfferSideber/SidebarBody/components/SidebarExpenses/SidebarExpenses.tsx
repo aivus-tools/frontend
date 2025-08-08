@@ -14,15 +14,13 @@ interface Props {
 }
 
 export const SidebarExpenses: React.FC<Props> = ({ costWithTax, offer, handleChange }) => {
-  const [isTaxOn, setIsTaxOn] = React.useState(true);
-
-  const handleChangeUnit = (field: 'price' | 'cost' | 'taxRate' | 'taxPrice') => (newValue: number | null) => {
-    handleChange(offer.id, field)(newValue);
-  };
+  const handleChangeUnit =
+    (field: 'price' | 'cost' | 'taxRate' | 'taxPrice' | 'showTax') => (newValue: number | null | boolean) => {
+      handleChange(offer.id, field)(newValue);
+    };
 
   const handleTaxSwitch = (value: boolean) => {
-    setIsTaxOn(value);
-    handleChangeUnit('taxRate')(0);
+    handleChangeUnit('showTax')(value);
   };
 
   return (
@@ -57,7 +55,7 @@ export const SidebarExpenses: React.FC<Props> = ({ costWithTax, offer, handleCha
 
       <div className={cn(styles.block, styles.fees)}>
         <div className={styles.feesSwitch}>
-          <Switch size='small' defaultChecked onClick={handleTaxSwitch} />
+          <Switch size='small' checked={offer.showTax} onClick={handleTaxSwitch} />
 
           <div className={styles.feesLabel}>{t('TAXES_AND_FEES')}</div>
         </div>
@@ -68,13 +66,13 @@ export const SidebarExpenses: React.FC<Props> = ({ costWithTax, offer, handleCha
           labelPositon='left'
           value={offer.taxRate}
           width={70}
-          disabled={!isTaxOn}
+          disabled={!offer.showTax}
           icon='%'
           onChange={handleChangeUnit('taxRate')}
         />
       </div>
 
-      {isTaxOn && (
+      {offer.showTax && (
         <div className={styles.block}>
           <SidebarInput
             type='input'
@@ -82,7 +80,7 @@ export const SidebarExpenses: React.FC<Props> = ({ costWithTax, offer, handleCha
             value={offer.taxPrice}
             width={110}
             icon='$'
-            disabled={!isTaxOn}
+            disabled={!offer.showTax}
             onChange={handleChangeUnit('taxPrice')}
             // extraField={{
             //   type: 'double btn',
