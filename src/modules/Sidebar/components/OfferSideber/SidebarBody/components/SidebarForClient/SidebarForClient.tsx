@@ -23,7 +23,7 @@ export const SidebarForClient: React.FC<Props> = ({ costWithTax, offer, handleCh
           type='input'
           label={t('CLIENT_PRICE')}
           value={offer.clientPrice}
-          width={110}
+          width={150}
           icon='$'
           onChange={handleChange(offer.id, 'clientPrice')}
           // extraField={{
@@ -48,22 +48,23 @@ export const SidebarForClient: React.FC<Props> = ({ costWithTax, offer, handleCh
       <div className={styles.block}>
         <SidebarInput
           accent
-          type='input'
-          label={t('PROFIT')}
-          bottomLabel={t('PROFIT_CALCULATION')}
-          value={profit}
-          width={150}
-          icon='$'
-          disabled={true}
-        />
-
-        <SidebarInput
-          accent
+          label={t('MARGIN')}
           bottomLabel={t('PROFIT_PERCENTAGE_CALCULATION')}
           type='input'
           value={percent}
           width={150}
           icon='%'
+          disabled={true}
+        />
+
+        <SidebarInput
+          accent
+          type='input'
+          label={t('PROFIT')}
+          bottomLabel={offer.showTax ? t('PROFIT_CALCULATION_WITH_TAX') : t('PROFIT_CALCULATION')}
+          value={profit}
+          width={150}
+          icon='$'
           disabled={true}
         />
       </div>
