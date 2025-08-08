@@ -26,13 +26,13 @@ export const SidebarForClient: React.FC<Props> = ({ costWithTax, offer, handleCh
           width={110}
           icon='$'
           onChange={handleChange(offer.id, 'clientPrice')}
-          extraField={{
-            type: 'double btn',
-            width: [13, 13],
-            value: ['↑', '↓'],
-            disabled: [true, true],
-            onClick: [() => {}, () => {}],
-          }}
+          // extraField={{
+          //   type: 'double btn',
+          //   width: [13, 13],
+          //   value: ['↑', '↓'],
+          //   disabled: [true, true],
+          //   onClick: [() => {}, () => {}],
+          // }}
         />
 
         <SidebarInput

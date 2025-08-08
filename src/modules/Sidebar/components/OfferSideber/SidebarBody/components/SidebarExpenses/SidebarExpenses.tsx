@@ -35,13 +35,13 @@ export const SidebarExpenses: React.FC<Props> = ({ costWithTax, offer, handleCha
           width={110}
           icon='$'
           onChange={handleChangeUnit('price')}
-          extraField={{
-            type: 'single btn',
-            width: 30,
-            value: '←$',
-            disabled: true,
-            onClick: () => {},
-          }}
+          // extraField={{
+          //   type: 'single btn',
+          //   width: 30,
+          //   value: '←$',
+          //   disabled: true,
+          //   onClick: () => {},
+          // }}
         />
 
         <SidebarInput
@@ -84,13 +84,13 @@ export const SidebarExpenses: React.FC<Props> = ({ costWithTax, offer, handleCha
             icon='$'
             disabled={!isTaxOn}
             onChange={handleChangeUnit('taxPrice')}
-            extraField={{
-              type: 'double btn',
-              width: [13, 13],
-              value: ['↑', '↓'],
-              disabled: [true, true],
-              onClick: [() => {}, () => {}],
-            }}
+            // extraField={{
+            //   type: 'double btn',
+            //   width: [13, 13],
+            //   value: ['↑', '↓'],
+            //   disabled: [true, true],
+            //   onClick: [() => {}, () => {}],
+            // }}
           />
 
           <SidebarInput
