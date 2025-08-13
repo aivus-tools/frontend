@@ -223,13 +223,15 @@ export function Entries({ data = [] }: { data?: OfferData[] }) {
               );
             }
 
+            const priceKey = offer.showTax ? 'taxPrice' : 'price';
+
             return (
               <EstimationItem key={`${offer.id}-${key}`} style={itemStyle} {...rowProps}>
                 <InputNumberRight
                   style={{ flex: 1 }}
                   variant={isActive ? 'outlined' : 'borderless'}
                   onChange={handleChange(offer.id, key)}
-                  value={offer[key] as number}
+                  value={offer[priceKey]}
                   controls={false}
                   {...itemProps}
                 />

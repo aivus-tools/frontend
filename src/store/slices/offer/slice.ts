@@ -110,6 +110,12 @@ export const offerSlice = createSlice({
 
       const updatedParameter = Object.keys(newOfferData).filter((key): key is keyof OfferData => key in newOffer);
 
+      if (updatedParameter.includes('showTax') && updatedParameter.length === 1) {
+        state.offerDetails.offers[index] = newOffer;
+
+        return;
+      }
+
       if (updatedParameter.includes('taxPrice') && updatedParameter.length === 1) {
         newOffer.taxRate = (newOffer.taxPrice / newOffer.price - 1) * 100;
         state.offerDetails.offers[index] = newOffer;
