@@ -7,8 +7,8 @@ interface HoverContextType {
   getRowProps: (id: number) => {
     onMouseEnter: () => void;
     onMouseLeave: () => void;
-    hovered: boolean;
-    focused: boolean;
+    $hovered: boolean;
+    $focused: boolean;
   };
 }
 
@@ -28,8 +28,8 @@ export const HoverProvider: React.FC<FocusProviderProps> = ({ children }) => {
       onMouseLeave: () => setHoveredRow(null),
       onFocus: () => setFocusedRow(id),
       onBlur: () => setFocusedRow(null),
-      hovered: hoveredRow === id || focusedRow === id,
-      focused: focusedRow === id,
+      $hovered: hoveredRow === id || focusedRow === id,
+      $focused: focusedRow === id,
     }),
     [focusedRow, hoveredRow]
   );

@@ -32,7 +32,7 @@ export const Line = styled.div`
   border-bottom: 0.5px dashed var(--gray);
 `;
 
-export const EstimationItem = styled.div<{ $hovered?: boolean }>`
+export const EstimationItem = styled.div<{ $hovered?: boolean; $focused?: boolean }>`
   text-align: center;
   background-color: ${({ $hovered }) => ($hovered ? 'var(--bg-blue-subsection)' : 'var(--white)')};
 

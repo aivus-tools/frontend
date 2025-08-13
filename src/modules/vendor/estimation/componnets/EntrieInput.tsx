@@ -2,7 +2,7 @@
 
 import { Input as LibInput } from 'antd';
 import { styled } from 'styled-components';
-import { OfferData } from '../types';
+import { OfferData } from '@/types/estimation.interface';
 import { LibraryDropdown } from './LibraryDropdown/LibraryDropdown';
 import { useAppDispatch, useAppSelector } from '@/store/hooks';
 import { selectAllCategories } from '@/store/slices/offer/selectors';

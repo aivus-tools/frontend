@@ -2,7 +2,7 @@ import React from 'react';
 import styles from './SidebarExpenses.module.css';
 import { SidebarInput } from '../SidebarInput/SidebarInput';
 import { t } from '@/lib/i18n';
-import { OfferData } from '@/modules/vendor/estimation/types';
+import { OfferData } from '@/types/estimation.interface';
 import { ValueOf } from 'next/dist/shared/lib/constants';
 import { Switch } from 'antd';
 import cn from 'classnames';
@@ -14,15 +14,13 @@ interface Props {
 }
 
 export const SidebarExpenses: React.FC<Props> = ({ costWithTax, offer, handleChange }) => {
-  const [isTaxOn, setIsTaxOn] = React.useState(true);
-
-  const handleChangeUnit = (field: 'price' | 'cost' | 'taxRate' | 'taxPrice') => (newValue: number | null) => {
-    handleChange(offer.id, field)(newValue);
-  };
+  const handleChangeUnit =
+    (field: 'price' | 'cost' | 'taxRate' | 'taxPrice' | 'showTax') => (newValue: number | null | boolean) => {
+      handleChange(offer.id, field)(newValue);
+    };
 
   const handleTaxSwitch = (value: boolean) => {
-    setIsTaxOn(value);
-    handleChangeUnit('taxRate')(0);
+    handleChangeUnit('showTax')(value);
   };
 
   return (
@@ -32,16 +30,16 @@ export const SidebarExpenses: React.FC<Props> = ({ costWithTax, offer, handleCha
           type='input'
           label={t('ITEM_PRICE')}
           value={offer.price}
-          width={110}
+          width={150}
           icon='$'
           onChange={handleChangeUnit('price')}
-          extraField={{
-            type: 'single btn',
-            width: 30,
-            value: '←$',
-            disabled: true,
-            onClick: () => {},
-          }}
+          // extraField={{
+          //   type: 'single btn',
+          //   width: 30,
+          //   value: '←$',
+          //   disabled: true,
+          //   onClick: () => {},
+          // }}
         />
 
         <SidebarInput
@@ -57,7 +55,7 @@ export const SidebarExpenses: React.FC<Props> = ({ costWithTax, offer, handleCha
 
       <div className={cn(styles.block, styles.fees)}>
         <div className={styles.feesSwitch}>
-          <Switch size='small' defaultChecked onClick={handleTaxSwitch} />
+          <Switch size='small' checked={offer.showTax} onClick={handleTaxSwitch} />
 
           <div className={styles.feesLabel}>{t('TAXES_AND_FEES')}</div>
         </div>
@@ -68,29 +66,29 @@ export const SidebarExpenses: React.FC<Props> = ({ costWithTax, offer, handleCha
           labelPositon='left'
           value={offer.taxRate}
           width={70}
-          disabled={!isTaxOn}
+          disabled={!offer.showTax}
           icon='%'
           onChange={handleChangeUnit('taxRate')}
         />
       </div>
 
-      {isTaxOn && (
+      {offer.showTax && (
         <div className={styles.block}>
           <SidebarInput
             type='input'
             label={t('ITEM_PRICE_TAX_INCL')}
             value={offer.taxPrice}
-            width={110}
+            width={150}
             icon='$'
-            disabled={!isTaxOn}
+            disabled={!offer.showTax}
             onChange={handleChangeUnit('taxPrice')}
-            extraField={{
-              type: 'double btn',
-              width: [13, 13],
-              value: ['↑', '↓'],
-              disabled: [true, true],
-              onClick: [() => {}, () => {}],
-            }}
+            // extraField={{
+            //   type: 'double btn',
+            //   width: [13, 13],
+            //   value: ['↑', '↓'],
+            //   disabled: [true, true],
+            //   onClick: [() => {}, () => {}],
+            // }}
           />
 
           <SidebarInput

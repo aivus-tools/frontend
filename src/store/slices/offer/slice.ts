@@ -1,5 +1,5 @@
 import { applyPercentage, round } from '@/lib/utils';
-import { Category, OfferData, Entry } from '@/modules/vendor/estimation/types';
+import { Category, OfferData, Entry } from '@/types/estimation.interface';
 import { createSlice } from '@reduxjs/toolkit';
 
 import type { PayloadAction } from '@reduxjs/toolkit';
@@ -109,6 +109,12 @@ export const offerSlice = createSlice({
       const newOffer = { ...state.offerDetails.offers[index], ...newOfferData };
 
       const updatedParameter = Object.keys(newOfferData).filter((key): key is keyof OfferData => key in newOffer);
+
+      if (updatedParameter.includes('showTax') && updatedParameter.length === 1) {
+        state.offerDetails.offers[index] = newOffer;
+
+        return;
+      }
 
       if (updatedParameter.includes('taxPrice') && updatedParameter.length === 1) {
         newOffer.taxRate = (newOffer.taxPrice / newOffer.price - 1) * 100;

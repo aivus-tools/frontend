@@ -1,17 +1,25 @@
 import { createSlice } from '@reduxjs/toolkit';
 import { RootState } from '@/store/store';
-import { OfferData } from '@/modules/vendor/estimation/types';
+import { OfferData } from '@/types/estimation.interface';
+import { Rate } from '@/types/rate.interface';
+
+export interface OfferSidebarInfo {
+  type: 'offer';
+  data: OfferData;
+}
+export interface RateSidebarInfo {
+  type: 'rate';
+  data: Rate;
+}
 
 export interface SidebarState {
   isOpen: boolean;
-  type: 'offer';
-  data: OfferData | null;
+  info: OfferSidebarInfo | RateSidebarInfo | null;
 }
 
 const initialState: SidebarState = {
   isOpen: false,
-  type: 'offer',
-  data: null,
+  info: null,
 };
 
 export const sidebarSlice = createSlice({
@@ -23,19 +31,15 @@ export const sidebarSlice = createSlice({
     },
     closeSidebar: (state) => {
       state.isOpen = false;
-      state.data = null;
+      state.info = null;
     },
-    setSidebarType: (state, action) => {
-      state.type = action.payload;
-    },
-    setSidebarData: (state, action) => {
-      state.data = action.payload;
+    setSidebarInfo: (state, action) => {
+      state.info = action.payload;
     },
   },
 });
 
-export const { openSidebar, closeSidebar, setSidebarType, setSidebarData } = sidebarSlice.actions;
+export const { openSidebar, closeSidebar, setSidebarInfo } = sidebarSlice.actions;
 
 export const selectIsSidebarOpen = (state: RootState) => state.sidebar.isOpen;
-export const selectSidebarType = (state: RootState) => state.sidebar.type;
-export const selectSidebarData = (state: RootState) => state.sidebar.data;
+export const selectSidebarInfo = (state: RootState) => state.sidebar.info;

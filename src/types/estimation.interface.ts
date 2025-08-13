@@ -29,6 +29,7 @@ export interface OfferData {
   units: Partial<(TimeUnit | QuantityUnit)[]>;
   taxRate: number;
   taxPrice: number;
+  showTax: boolean;
   cost: number;
   surcharge: number;
   clientPrice: number;

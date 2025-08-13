@@ -3,7 +3,7 @@ import { selectAllCategories } from '@/store/slices/offer/selectors';
 import { addOfferRow } from '@/store/slices/offer/slice';
 import { useCallback } from 'react';
 import { useExpandedKeys } from '../context/expanded';
-import { OfferData } from '../types';
+import { OfferData } from '@/types/estimation.interface';
 
 export const useSelectOffer = () => {
   const dispatch = useAppDispatch();

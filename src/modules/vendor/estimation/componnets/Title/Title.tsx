@@ -1,6 +1,6 @@
 'use client';
 
-import type { Category } from '../../types';
+import type { Category } from '@/types/estimation.interface';
 import { useExpandedKeys } from '../../context/expanded';
 import { useCallback } from 'react';
 import { Flex } from 'antd';

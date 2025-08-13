@@ -1,4 +1,4 @@
-import { Category, Entry, OfferData } from '@/modules/vendor/estimation/types';
+import { Category, Entry, OfferData } from '@/types/estimation.interface';
 import { Offer } from '@/types/offer.interface';
 
 export interface UnforeseenExpenses {

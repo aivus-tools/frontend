@@ -1,5 +1,5 @@
 import SettingsIcon from '@/icons/settings-icon.svg';
-import type { Headers } from './types';
+import type { Headers } from '@/types/estimation.interface';
 import { percentFormat, percentParser, priceFormat, priceParser } from './helpers/format';
 import { t } from '@/lib/i18n';
 
