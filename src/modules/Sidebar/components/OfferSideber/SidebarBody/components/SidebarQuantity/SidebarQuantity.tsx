@@ -1,5 +1,5 @@
 import React from 'react';
-import { OfferData, UnitType } from '@/modules/vendor/estimation/types';
+import { OfferData, UnitType } from '@/types/estimation.interface';
 import styles from './SidebarQuantity.module.css';
 import AddIcon from '@/icons/add-icon.svg';
 import RemoveIcon from '@/icons/minus.svg';

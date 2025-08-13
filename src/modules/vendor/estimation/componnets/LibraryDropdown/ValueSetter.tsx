@@ -1,7 +1,7 @@
 import { PropsWithChildren, useCallback, useEffect } from 'react';
 import { useSearchActiveKey } from './SearchContext';
 import { MenuItem } from '../../hooks/useSearchLibrary';
-import { OfferData } from '../../types';
+import { OfferData } from '@/types/estimation.interface';
 import { menuItemToOfferData } from '../../helpers/menuItemToOfferData';
 import { Key } from '@/constants/key';
 

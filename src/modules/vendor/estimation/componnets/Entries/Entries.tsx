@@ -1,6 +1,6 @@
 'use client';
 
-import { HeaderKey, OfferData, UnitType } from '../../types';
+import { HeaderKey, OfferData, UnitType } from '@/types/estimation.interface';
 import { CLIENTS_HEADERS, HEADERS } from '../../constants';
 import { useRowHover } from '../../context/hover';
 import SettingsIcon from '@/icons/settings-icon.svg';
@@ -17,7 +17,7 @@ import React, { Fragment } from 'react';
 import { ValueOf } from 'next/dist/shared/lib/constants';
 import { formatCurrency } from '@/lib/utils';
 import { t } from '@/lib/i18n';
-import { openSidebar, setSidebarData } from '@/store/slices/sidebar';
+import { openSidebar, setSidebarInfo } from '@/store/slices/sidebar';
 
 const timeUnitFirst = (a: OfferData['units'][number], b: OfferData['units'][number]) => {
   return a?.type === UnitType.TIME && b?.type === UnitType.QUANTITY ? -1 : 1;
@@ -88,7 +88,7 @@ export function Entries({ data = [] }: { data?: OfferData[] }) {
 
   const showSidebar = (offer: OfferData): void => {
     dispatch(openSidebar());
-    dispatch(setSidebarData(offer));
+    dispatch(setSidebarInfo({ type: 'offer', data: offer }));
   };
 
   return (
@@ -218,10 +218,12 @@ export function Entries({ data = [] }: { data?: OfferData[] }) {
             if (key === 'cost') {
               return (
                 <EstimationItem key={`${offer.id}-${key}`} style={itemStyle} {...rowProps}>
-                  {formatCurrency(offer[key])}
+                  {formatCurrency(offer.cost)}
                 </EstimationItem>
               );
             }
+
+            const priceKey = offer.showTax ? 'taxPrice' : 'price';
 
             return (
               <EstimationItem key={`${offer.id}-${key}`} style={itemStyle} {...rowProps}>
@@ -229,7 +231,7 @@ export function Entries({ data = [] }: { data?: OfferData[] }) {
                   style={{ flex: 1 }}
                   variant={isActive ? 'outlined' : 'borderless'}
                   onChange={handleChange(offer.id, key)}
-                  value={offer[key] as number}
+                  value={offer[priceKey]}
                   controls={false}
                   {...itemProps}
                 />

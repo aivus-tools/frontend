@@ -1,48 +1,27 @@
 'use client';
 
 import React from 'react';
-import { Button, Drawer } from 'antd';
 import { useAppDispatch, useAppSelector } from '@/store/hooks';
-import { closeSidebar, selectIsSidebarOpen, selectSidebarData, selectSidebarType } from '@/store/slices/sidebar';
-import { SidebarBody } from './components/SidebarBody/SidebarBody';
-import { SidebarHeader } from './components/SidebarHeader/SidebarHeader';
-import CloseIcon from '@/icons/close-icon.svg';
-
-import styles from './Sidebar.module.css';
+import { closeSidebar, selectIsSidebarOpen, selectSidebarInfo } from '@/store/slices/sidebar';
+import { OfferSidebar } from '@/modules/Sidebar/components/OfferSideber/OfferSidebar';
+import { RateSidebar } from '@/modules/Sidebar/components/RateSidebar/RateSidebar';
 
 export const Sidebar = () => {
   const dispatch = useAppDispatch();
 
   const isOpen = useAppSelector(selectIsSidebarOpen);
-  const type = useAppSelector(selectSidebarType);
-  const data = useAppSelector(selectSidebarData);
+  const info = useAppSelector(selectSidebarInfo);
 
   const handleClose = () => {
     dispatch(closeSidebar());
   };
 
-  switch (type) {
+  switch (info?.type) {
     case 'offer':
-      return (
-        <Drawer
-          closable={false}
-          onClose={handleClose}
-          open={isOpen}
-          width={360}
-          title={<SidebarHeader />}
-          extra={<Button type='text' icon={<CloseIcon className={styles.closeButton} />} onClick={handleClose} />}
-          styles={{
-            header: {
-              border: 'none',
-            },
-            body: {
-              paddingTop: 0,
-            },
-          }}
-        >
-          <SidebarBody initialOfferData={data} />
-        </Drawer>
-      );
+      return <OfferSidebar data={info.data} isOpen={isOpen} handleClose={handleClose} />;
+    case 'rate': {
+      return <RateSidebar data={info.data} isOpen={isOpen} handleClose={handleClose} />;
+    }
     default:
       return null;
   }

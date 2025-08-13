@@ -1,4 +1,4 @@
-import { OfferData } from '@/modules/vendor/estimation/types';
+import { OfferData } from '@/types/estimation.interface';
 import React from 'react';
 import { t } from '@/lib/i18n';
 import { ValueOf } from 'next/dist/shared/lib/constants';
@@ -32,7 +32,7 @@ export const SidebarBody: React.FC<Props> = ({ initialOfferData }) => {
     dispatch(changeOfferRow({ id, [key]: data }));
   };
 
-  const costWithTax = round(offer.taxRate ? offer.cost * (1 + offer.taxRate / 100) : offer.cost);
+  const costWithTax = round(offer.showTax ? offer.cost * (1 + offer.taxRate / 100) : offer.cost);
 
   return (
     <div className={styles.content}>

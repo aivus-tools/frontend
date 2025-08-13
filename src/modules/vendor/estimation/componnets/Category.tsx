@@ -1,6 +1,6 @@
 'use client';
 
-import type { Category as TypeCategory } from '../types';
+import type { Category as TypeCategory } from '@/types/estimation.interface';
 import { Entries } from './Entries/Entries';
 import { useExpandedKeys } from '../context/expanded';
 import { Total } from './Total/Total';
