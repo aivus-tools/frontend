@@ -59,7 +59,7 @@ export const RU_LOCALES = {
   ERROR_SAVING_DETAILS: 'Произошла ошибка при сохранении деталей',
   ESTIMATION: 'Оценка',
   EXPENCES: 'Расходы',
-  EXPENSES: 'Расходы',
+  EXPORT: 'Экспорт',
   EXTRA_MATERIALS: 'Дополнительные материалы',
   FAILED_TO_REGISTER: 'Не удалось зарегистрироваться',
   FOR_CLIENT: 'Для клиента',
