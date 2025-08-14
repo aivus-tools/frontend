@@ -58,6 +58,7 @@ export const EN_LOCALES = {
   ERROR_SAVING_DETAILS: 'An error occurred while saving the details',
   ESTIMATION: 'Estimation',
   EXPENSES: 'Expenses',
+  EXPORT: 'Export',
   EXTRA_MATERIALS: 'Extra materials',
   FAILED_TO_REGISTER: 'Failed to register',
   FOR_CLIENT: 'For client',
