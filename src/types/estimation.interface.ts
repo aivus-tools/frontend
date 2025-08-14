@@ -32,6 +32,7 @@ export interface OfferData {
   showTax: boolean;
   cost: number;
   surcharge: number;
+  linkedSurcharge: boolean;
   clientPrice: number;
   clientCost: number;
   marketRange: string;

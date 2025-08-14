@@ -31,6 +31,7 @@ export const menuItemToOfferData = (item: MenuItem): OfferData => {
     surcharge: 0,
     clientPrice: 0,
     clientCost: 0,
+    linkedSurcharge: false,
     marketRange: '',
     taxRate: 0,
     taxPrice: 0,

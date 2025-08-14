@@ -6,7 +6,7 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint --dir src",
+    "lint": "next lint --dir src --fix",
     "lint:styles": "stylelint **/*.{css,scss,sass}",
     "test": "echo \"Error: no test specified\"",
     "typecheck": "tsc --noEmit",

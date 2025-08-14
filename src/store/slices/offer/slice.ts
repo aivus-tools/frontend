@@ -134,19 +134,21 @@ export const offerSlice = createSlice({
       const { price = 0 } = newOffer;
       const category = state.dictionary.category.find((cat) => cat.id === newOffer.categoryId);
       const rootCategoryId = category?.parentCategoryId ?? category?.id;
-      const { linked = false, surcharge = 0 } = state.offerDetails.categorySurcharge[rootCategoryId ?? 0] ?? {};
-
-      newOffer.cost = price * unitMultiplier;
-      newOffer.taxPrice = round(newOffer.price * (1 + newOffer.taxRate / 100));
-      const markup = linked ? surcharge : newOffer.surcharge;
-      newOffer.clientPrice = round(newOffer.taxPrice * (1 + markup / 100));
-      newOffer.clientCost = round(newOffer.clientPrice * unitMultiplier);
+      const { surcharge = 0 } = state.offerDetails.categorySurcharge[rootCategoryId ?? 0] ?? {};
 
       if (newOfferData.surcharge !== undefined) {
         if (rootCategoryId !== undefined) {
           state.offerDetails.categorySurcharge[rootCategoryId].linked = false;
+          newOffer.linkedSurcharge = false;
         }
       }
+
+      newOffer.cost = price * unitMultiplier;
+      newOffer.taxPrice = round(newOffer.price * (1 + newOffer.taxRate / 100));
+      const markup = newOffer.linkedSurcharge ? surcharge : newOffer.surcharge;
+      newOffer.surcharge = markup;
+      newOffer.clientPrice = round(newOffer.taxPrice * (1 + markup / 100));
+      newOffer.clientCost = round(newOffer.clientPrice * unitMultiplier);
 
       state.offerDetails.offers[index] = newOffer;
     },
@@ -161,26 +163,27 @@ export const offerSlice = createSlice({
       const { categoryId, ...newData } = action.payload;
       const lastData = state.offerDetails.categorySurcharge[categoryId];
       const newCategorySurcharge = { ...lastData, ...newData };
-      if (newData.surcharge !== undefined) {
-        newCategorySurcharge.linked = true;
-      }
 
       state.offerDetails.categorySurcharge[categoryId] = newCategorySurcharge;
-      if (newCategorySurcharge.linked) {
-        const currentCategories = state.dictionary.category
-          .filter((category) => category.id === categoryId || category.parentCategoryId === categoryId)
-          .map((category) => category.id);
-        state.offerDetails.offers.forEach((offer) => {
-          if (currentCategories.includes(offer.categoryId)) {
+      const currentCategories = state.dictionary.category
+        .filter((category) => category.id === categoryId || category.parentCategoryId === categoryId)
+        .map((category) => category.id);
+      state.offerDetails.offers.forEach((offer) => {
+        if (currentCategories.includes(offer.categoryId)) {
+          if (newData.linked !== undefined) {
+            offer.linkedSurcharge = newData.linked;
+          }
+
+          if (newData.linked || offer.linkedSurcharge) {
             const unitMultiplier = offer.units?.reduce((acc, unit) => acc * (unit?.count ?? 1), 1) ?? 1;
             const { price = 0 } = offer;
             const { surcharge = 0 } = newCategorySurcharge;
             offer.surcharge = surcharge;
-            offer.clientPrice = price + applyPercentage(offer.cost, surcharge);
+            offer.clientPrice = price + applyPercentage(offer.price, surcharge);
             offer.clientCost = offer.clientPrice * unitMultiplier;
           }
-        });
-      }
+        }
+      });
     },
     changeUnforeseenExpenses: (state, action: PayloadAction<Partial<UnforeseenExpenses>>) => {
       state.offerDetails.unforeseenExpenses = {
