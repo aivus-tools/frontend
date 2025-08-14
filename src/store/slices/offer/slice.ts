@@ -141,7 +141,6 @@ export const offerSlice = createSlice({
 
       if (rootCategoryId !== undefined) {
         if (newOfferData.surcharge !== undefined) {
-        
           state.offerDetails.categorySurcharge[rootCategoryId].linked = false;
           newOffer.linkedSurcharge = false;
         }
