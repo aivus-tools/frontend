@@ -84,7 +84,7 @@ export const offerSlice = createSlice({
 
       tempState.offerDetails.offers.push({
         ...action.payload,
-        surcharge: tempState.offerDetails.categorySurcharge[category.id].surcharge,
+        surcharge: tempState.offerDetails.categorySurcharge[category.id]?.surcharge || 0,
       });
 
       // Обновляем основной state
