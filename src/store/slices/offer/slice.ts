@@ -52,7 +52,7 @@ export const offerSlice = createSlice({
           tempState.offerDetails.categories.push(category);
           tempState.offerDetails.categorySurcharge[category.id] = {
             surcharge: 0,
-            linked: false,
+            linked: true,
           };
         }
       };
@@ -82,7 +82,10 @@ export const offerSlice = createSlice({
         addCategoryIfNeeded(category);
       }
 
-      tempState.offerDetails.offers.push(action.payload);
+      tempState.offerDetails.offers.push({
+        ...action.payload,
+        surcharge: tempState.offerDetails.categorySurcharge[category.id].surcharge,
+      });
 
       // Обновляем основной state
       Object.assign(state, tempState);
@@ -136,10 +139,14 @@ export const offerSlice = createSlice({
       const rootCategoryId = category?.parentCategoryId ?? category?.id;
       const { surcharge = 0 } = state.offerDetails.categorySurcharge[rootCategoryId ?? 0] ?? {};
 
-      if (newOfferData.surcharge !== undefined) {
-        if (rootCategoryId !== undefined) {
+      if (rootCategoryId !== undefined) {
+        if (newOfferData.surcharge !== undefined) {
+        
           state.offerDetails.categorySurcharge[rootCategoryId].linked = false;
           newOffer.linkedSurcharge = false;
+        }
+        if (newOfferData.linkedSurcharge === false && rootCategoryId !== undefined) {
+          state.offerDetails.categorySurcharge[rootCategoryId].linked = false;
         }
       }
 
