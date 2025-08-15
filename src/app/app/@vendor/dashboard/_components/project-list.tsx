@@ -15,7 +15,6 @@ import { Project } from '@/types/project.interface.';
 import { formatPrice } from '@/helpers/helper';
 import Spinner from '@/components/Spinner';
 import { AppRoute } from '@/constants/appRoute';
-import { DataRow, exportFromTemplate } from '@/helpers/exportFromTemplate';
 
 const mapBriefsToProjects = (briefs: Brief[]): Project[] => {
   if (!briefs || !Array.isArray(briefs)) {
@@ -93,18 +92,6 @@ export const ProjectList = () => {
           />
         ))}
       </div>
-
-      <button
-        onClick={() =>
-          exportFromTemplate([
-            { name: 'Книги', qty: 12, price: 15.9 },
-            { name: 'Игрушки', qty: 5, price: 23.5 },
-            { name: 'Настолки', qty: 8, price: 42 },
-          ] satisfies DataRow[])
-        }
-      >
-        Скачать Excel
-      </button>
     </main>
   );
 };
