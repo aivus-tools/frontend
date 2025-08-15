@@ -1,6 +1,6 @@
 'use client';
 import { useRouter, useSelectedLayoutSegments } from 'next/navigation';
-import { Tabs } from './tabs';
+import { Tabs } from '../../../Tabs/Tabs';
 import { VENDOR_PROJECT_TABS } from '@/constants/constants';
 import React from 'react';
 
