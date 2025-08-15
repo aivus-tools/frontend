@@ -193,4 +193,12 @@ export const EN_LOCALES = {
   YOUR_EMAIL_ADDRESS: 'Your email address',
   EXPENCES: 'Expenses',
   REVENUE_AND_MARKUP: 'Revenue & Mark-Up',
+  EXPORT_VERSION_SAVED_HELPER:
+    'This version of the calculation will be <b>saved</b> and will always be available for re-download.',
+  NAME_THIS_VERSION: 'Name this version',
+  VERSION_NAME: 'Version’s name',
+  INCLUDE_DATE: 'Include date',
+  WATERMARK: 'Watermark',
+  EXAMPLE: 'Example',
+  SAVE_AND_DOWNLOAD: 'Save and download',
 };

@@ -193,4 +193,12 @@ export const RU_LOCALES = {
   WORLDWIDE: 'Весь мир',
   YEARS: 'Годы',
   YOUR_EMAIL_ADDRESS: 'Адрес вашей электронной почты',
+  EXPORT_VERSION_SAVED_HELPER:
+    'Эта версия расчета будет <b>сохранена</b> и всегда будет доступна для повторного скачивания.',
+  NAME_THIS_VERSION: 'Назовите эту версию',
+  VERSION_NAME: 'Название версии',
+  INCLUDE_DATE: 'Включить дату',
+  WATERMARK: 'Водяной знак',
+  EXAMPLE: 'Пример',
+  SAVE_AND_DOWNLOAD: 'Сохранить и скачать',
 };
