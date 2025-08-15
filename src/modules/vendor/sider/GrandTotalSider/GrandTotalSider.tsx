@@ -13,7 +13,7 @@ export const GrandTotalSider = () => {
   return (
     <SiderContent>
       <PriceBlock title={t('TOTAL_CLIENTS_COST')} amount={clientTotalValue} />
-      <PriceBlock title={t('EXPENCES')} amount={totalValue} highlight />
+      <PriceBlock title={t('EXPENSES')} amount={totalValue} highlight />
       <PriceBlock
         title={t('REVENUE_AND_MARKUP')}
         amount={diff}
