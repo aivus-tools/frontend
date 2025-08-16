@@ -9,6 +9,7 @@ import { ProjectTabs } from './components/ProjectTabs/ProjectTabs';
 import { ExportPopover } from './components/Popover/Popover';
 
 import styles from './ProjectNavbar.module.css';
+import { exportToExcel } from '@/helpers/exportToExcel';
 
 export const ProjectNavbar = () => {
   useSetProject();
@@ -16,13 +17,29 @@ export const ProjectNavbar = () => {
 
   const [, , tab] = useSelectedLayoutSegments();
 
+  const handleExport = async ({
+    format,
+    name,
+    date,
+    watermark,
+  }: {
+    format: 'xlsx' | 'pdf' | 'csv';
+    name: string;
+    date?: string;
+    watermark?: string;
+  }) => {
+    if (format === 'xlsx') {
+      await exportToExcel([], name, date, watermark);
+    }
+  };
+
   return (
     <div className={styles.navbar}>
       <ProjectTabs />
 
       <div className={styles.buttons}>
         {tab === VENDOR_PROJECT_TAB_KEYS.OFFER && (
-          <ExportPopover>
+          <ExportPopover action={handleExport}>
             <Button className={styles.export} type='primary'>
               {t('EXPORT')}
             </Button>
