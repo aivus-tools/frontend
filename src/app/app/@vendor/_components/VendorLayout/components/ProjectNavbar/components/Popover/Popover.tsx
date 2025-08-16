@@ -10,17 +10,10 @@ import styles from './Popover.module.css';
 
 export type ExportPopoverProps = {
   children: React.ReactElement;
-  onSubmit?: (data: {
-    format: 'xlsx' | 'pdf' | 'csv';
-    name: string;
-    includeDate: boolean;
-    date: string | null;
-    watermarkEnabled: boolean;
-    watermark: string;
-  }) => void;
+  action: (data: { format: 'xlsx' | 'pdf' | 'csv'; name: string; date?: string; watermark?: string }) => void;
 };
 
-export const ExportPopover: React.FC<ExportPopoverProps> = ({ children, onSubmit }) => {
+export const ExportPopover: React.FC<ExportPopoverProps> = ({ children, action }) => {
   const [format, setFormat] = useState<'xlsx' | 'pdf' | 'csv'>('xlsx');
   const [name, setName] = useState('');
   const [includeDate, setIncludeDate] = useState(true);
@@ -31,13 +24,11 @@ export const ExportPopover: React.FC<ExportPopoverProps> = ({ children, onSubmit
   const disableWatermark = !watermarkEnabled;
 
   const handleSubmit = () => {
-    onSubmit?.({
+    action({
       format,
       name,
-      includeDate,
-      date: includeDate && date ? date.toISOString() : null,
-      watermarkEnabled,
-      watermark,
+      date: includeDate && date ? date.toISOString() : undefined,
+      watermark: watermarkEnabled && watermark !== '' ? watermark : undefined,
     });
   };
 
