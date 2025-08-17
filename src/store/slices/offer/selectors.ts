@@ -168,6 +168,7 @@ export const selectCategoriesExportData = createSelector(
           const items: ExportItem[] = offerDetails.offers
             .filter((offer) => offer.categoryId === subCategory.id)
             .map((offer) => ({
+              name: offer.item,
               clientPrice: offer.clientPrice,
               units: prepareUnits(offer.units),
             }));
@@ -187,6 +188,7 @@ export const selectCategoriesExportData = createSelector(
       const items: ExportItem[] = offerDetails.offers
         .filter((offer) => offer.categoryId === category.id)
         .map((offer) => ({
+          name: offer.item,
           clientPrice: offer.clientPrice,
           units: prepareUnits(offer.units),
         }));
