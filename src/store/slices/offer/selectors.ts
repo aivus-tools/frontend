@@ -115,3 +115,16 @@ export const selectCategorySurcharge = createSelector(
     return offerDetails.categorySurcharge[categoryId] || { surcharge: 0, linked: false };
   }
 );
+
+export const makeSelectCostPerVideo = () =>
+  createSelector(
+    [selectGrandTotal, (_: { offer: OfferState }, count: number) => (Number.isFinite(count) && count > 0 ? count : 1)],
+    ({ totalValue, clientTotalValue }, count) => {
+      const safe = count === 0 ? 1 : count;
+
+      return {
+        vendor: totalValue / safe,
+        client: clientTotalValue / safe,
+      };
+    }
+  );

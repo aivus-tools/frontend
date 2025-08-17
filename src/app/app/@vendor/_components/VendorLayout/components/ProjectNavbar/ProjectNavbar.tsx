@@ -10,10 +10,15 @@ import { ExportPopover } from './components/Popover/Popover';
 
 import styles from './ProjectNavbar.module.css';
 import { exportToExcel } from '@/helpers/exportToExcel';
+import { useAppSelector } from '@/store/hooks';
+import { selectGrandTotal } from '@/store/slices/offer/selectors';
+import { useCostPerVideo } from '@/hooks/useCostPerVideo';
 
 export const ProjectNavbar = () => {
   useSetProject();
   useSetVendor();
+  const { clientTotal } = useAppSelector(selectGrandTotal);
+  const { clientCostPerVideo } = useCostPerVideo();
 
   const [, , tab] = useSelectedLayoutSegments();
 
@@ -29,7 +34,7 @@ export const ProjectNavbar = () => {
     watermark?: string;
   }) => {
     if (format === 'xlsx') {
-      await exportToExcel([], name, date, watermark);
+      await exportToExcel([], clientTotal, clientCostPerVideo, name, date, watermark);
     }
   };
 
