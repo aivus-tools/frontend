@@ -36,7 +36,7 @@ export interface OfferState {
 
 export interface ExportItem {
   clientPrice: number;
-  units: OfferData['units'];
+  units: { key: string; value: number }[];
 }
 
 export interface CategoryWithSubcategories {
