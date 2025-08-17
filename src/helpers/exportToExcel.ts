@@ -1,6 +1,11 @@
 import ExcelJS from 'exceljs';
 import { saveAs } from 'file-saver';
-import { CategoriesExportData } from '@/types/store.interface';
+import {
+  CategoriesExportData,
+  CategoryWithoutSubcategories,
+  CategoryWithSubcategories,
+  ExportItem,
+} from '@/types/store.interface';
 
 export interface DataRow {
   name: string;
@@ -82,6 +87,41 @@ function setNamedCell(wb: ExcelJS.Workbook, name: string, value: ExcelJS.CellVal
   ref.sheet.getCell(ref.a1).value = value;
 }
 
+function getNextRowFirstColumn(sheet: ExcelJS.Worksheet, rowIdx: number, colIndex: number) {
+  const row = sheet.getRow(rowIdx);
+
+  return row.getCell(colIndex);
+}
+
+function addItems(items: ExportItem[], rowIdx: number, colIndex: number, sheet: ExcelJS.Worksheet) {
+  let nextRow = rowIdx;
+
+  const defaultValue = '-';
+
+  for (let i = 0; i < items.length; i++) {
+    const itemName = items.at(i)?.name;
+
+    if (!itemName) {
+      continue;
+    }
+
+    getNextRowFirstColumn(sheet, nextRow, colIndex).value = itemName;
+    getNextRowFirstColumn(sheet, nextRow, colIndex + 1).value = items.at(i)?.clientPrice ?? defaultValue;
+    const unit1Name = items.at(i)?.units.at(0)?.key ?? defaultValue;
+    const unit2Name = items.at(i)?.units.at(1)?.key ?? defaultValue;
+    getNextRowFirstColumn(sheet, nextRow, colIndex + 2).value = unit1Name;
+    getNextRowFirstColumn(sheet, nextRow, colIndex + 3).value =
+      unit1Name !== defaultValue ? items.at(i)?.units.at(0)?.value || 0 : defaultValue;
+    getNextRowFirstColumn(sheet, nextRow, colIndex + 4).value = unit2Name;
+    getNextRowFirstColumn(sheet, nextRow, colIndex + 5).value =
+      unit2Name !== defaultValue ? items.at(i)?.units.at(1)?.value || 0 : defaultValue;
+
+    nextRow += 1;
+  }
+
+  return nextRow;
+}
+
 export async function exportToExcel(
   data: CategoriesExportData,
   clientTotal: string,
@@ -109,37 +149,47 @@ export async function exportToExcel(
   }
 
   // add data from TableStart
-  const start = getDefinedRef(wb, 'TableStart');
-  const sheet = start.sheet;
+  const startCell = getDefinedRef(wb, 'TableStart');
+  const sheet = startCell.sheet;
+  let nextRow = startCell.row + 1;
 
   for (let i = 0; i < data.length; i++) {
-    const rowIdx = start.row + i;
-    const r = sheet.getRow(rowIdx);
-    const c0 = start.col;
+    const currentBlock = data.at(i);
 
-    r.getCell(c0 + 0).value = data[i].name;
-    r.getCell(c0 + 1).value = data[i].qty;
-    r.getCell(c0 + 2).value = data[i].price;
-    // формула суммы по строке — используем фактические буквы колонки из TableStart
-    const colB = c0 + 1; // вторая колонка относительно старта
-    const colC = c0 + 2;
-    const toA1 = (col: number, row: number) => {
-      let s = '';
-      let n = col;
-      while (n > 0) {
-        const rem = (n - 1) % 26;
-        s = String.fromCharCode(65 + rem) + s;
-        n = Math.floor((n - 1) / 26);
+    if (!currentBlock) {
+      continue;
+    }
+
+    getNextRowFirstColumn(sheet, nextRow, startCell.col).value = currentBlock.category;
+
+    nextRow += 1;
+
+    export const isCategoryWithSubcategories = (
+      v: CategoryWithSubcategories | CategoryWithoutSubcategories
+    ): v is CategoryWithSubcategories => Array.isArray(v.data);
+
+    if (isCategoryWithSubcategories(currentBlock)) {
+      const blockData = currentBlock.data;
+
+      for (let j = 0; j < blockData.length; i++) {
+        getNextRowFirstColumn(sheet, nextRow, startCell.col).value = blockData.at(j)?.subcategory;
+        nextRow += 1;
+
+        nextRow = addItems(blockData.at(j)?.items ?? [], nextRow, startCell.col, sheet);
+
+        nextRow += 1;
       }
-      return `$${s}$${row}`;
-    };
-    r.getCell(c0 + 3).value = { formula: `${toA1(colB, rowIdx)}*${toA1(colC, rowIdx)}` };
-    r.commit?.();
+    } else {
+      nextRow = addItems(currentBlock.data.items ?? [], nextRow, startCell.col, sheet);
+
+      nextRow += 1;
+    }
+
+    // row.commit?.();
   }
 
   wb.calcProperties.fullCalcOnLoad = true;
 
-  // 5) скачиваем
   const buf = await wb.xlsx.writeBuffer();
   saveAs(
     new Blob([buf], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' }),

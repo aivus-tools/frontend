@@ -33,6 +33,7 @@ export interface OfferState {
 }
 
 export interface ExportItem {
+  name: string;
   clientPrice: number;
   units: { key: string; value: number }[];
 }
