@@ -33,3 +33,20 @@ export interface OfferState {
   };
   external: boolean;
 }
+
+export interface ExportItem {
+  clientPrice: number;
+  units: OfferData['units'];
+}
+
+export interface CategoryWithSubcategories {
+  category: string;
+  data: { subcategory: string; items: ExportItem[] }[];
+}
+
+export interface CategoryWithoutSubcategories {
+  category: string;
+  data: { items: ExportItem[] };
+}
+
+export type CategoriesExportData = Array<CategoryWithSubcategories | CategoryWithoutSubcategories>;

@@ -1,7 +1,13 @@
 import { applyPercentage, formatCurrency } from '@/lib/utils';
 import { createSelector } from '@reduxjs/toolkit';
 
-import { OfferState } from './types';
+import {
+  CategoriesExportData,
+  CategoryWithoutSubcategories,
+  CategoryWithSubcategories,
+  ExportItem,
+  OfferState,
+} from '@/types/store.interface';
 
 export const selectOfferDetails = (state: { offer: OfferState }) => state.offer.offerDetails;
 export const selectDictionary = (state: { offer: OfferState }) => state.offer.dictionary;
@@ -135,3 +141,49 @@ export const makeSelectCostPerVideo = () =>
       };
     }
   );
+
+export const selectCategoriesExportData = createSelector(
+  [selectOfferDetails, selectRootCategories],
+  (offerDetails, rootCategories): CategoriesExportData => {
+    const result = rootCategories.map((category): CategoryWithSubcategories | CategoryWithoutSubcategories => {
+      const subCategories = offerDetails.subCategories.filter(
+        (subCategory) => subCategory.parentCategoryId === category.id
+      );
+
+      if (subCategories.length > 0) {
+        const data = subCategories.map((subCategory) => {
+          const items: ExportItem[] = offerDetails.offers
+            .filter((offer) => offer.categoryId === subCategory.id)
+            .map((offer) => ({
+              clientPrice: offer.clientPrice,
+              units: offer.units,
+            }));
+
+          return {
+            subcategory: subCategory.name,
+            items,
+          };
+        });
+
+        return {
+          category: category.name,
+          data,
+        };
+      }
+
+      const items: ExportItem[] = offerDetails.offers
+        .filter((offer) => offer.categoryId === category.id)
+        .map((offer) => ({
+          clientPrice: offer.clientPrice,
+          units: offer.units,
+        }));
+
+      return {
+        category: category.name,
+        data: { items },
+      };
+    });
+
+    return result;
+  }
+);

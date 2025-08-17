@@ -1,5 +1,6 @@
 import ExcelJS from 'exceljs';
 import { saveAs } from 'file-saver';
+import { CategoriesExportData } from '@/types/store.interface';
 
 export interface DataRow {
   name: string;
@@ -82,7 +83,7 @@ function setNamedCell(wb: ExcelJS.Workbook, name: string, value: ExcelJS.CellVal
 }
 
 export async function exportToExcel(
-  data: DataRow[],
+  data: CategoriesExportData,
   clientTotal: string,
   clientCostPerVideo: number,
   fileName: string,
