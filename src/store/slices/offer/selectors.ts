@@ -8,6 +8,7 @@ import {
   ExportItem,
   OfferState,
 } from '@/types/store.interface';
+import { OfferData } from '@/types/estimation.interface';
 
 export const selectOfferDetails = (state: { offer: OfferState }) => state.offer.offerDetails;
 export const selectDictionary = (state: { offer: OfferState }) => state.offer.dictionary;
@@ -138,7 +139,19 @@ export const makeSelectCostPerVideo = () =>
 export const selectCategoriesExportData = createSelector(
   [selectOfferDetails, selectRootCategories],
   (offerDetails, rootCategories): CategoriesExportData => {
-    const result = rootCategories.map((category): CategoryWithSubcategories | CategoryWithoutSubcategories => {
+    const prepareUnits = (units: OfferData['units']) => {
+      return units
+        .map((unit) => {
+          if (!unit) {
+            return undefined;
+          }
+
+          return { key: unit.label, value: unit.count };
+        })
+        .filter((unit): unit is { key: string; value: number } => unit !== undefined);
+    };
+
+    return rootCategories.map((category): CategoryWithSubcategories | CategoryWithoutSubcategories => {
       const subCategories = offerDetails.subCategories.filter(
         (subCategory) => subCategory.parentCategoryId === category.id
       );
@@ -149,7 +162,7 @@ export const selectCategoriesExportData = createSelector(
             .filter((offer) => offer.categoryId === subCategory.id)
             .map((offer) => ({
               clientPrice: offer.clientPrice,
-              units: offer.units,
+              units: prepareUnits(offer.units),
             }));
 
           return {
@@ -168,7 +181,7 @@ export const selectCategoriesExportData = createSelector(
         .filter((offer) => offer.categoryId === category.id)
         .map((offer) => ({
           clientPrice: offer.clientPrice,
-          units: offer.units,
+          units: prepareUnits(offer.units),
         }));
 
       return {
@@ -176,7 +189,5 @@ export const selectCategoriesExportData = createSelector(
         data: { items },
       };
     });
-
-    return result;
   }
 );
