@@ -83,7 +83,13 @@ function setNamedCell(wb: ExcelJS.Workbook, name: string, value: ExcelJS.CellVal
 
 const getCell = (sheet: ExcelJS.Worksheet, row: number, col: number): ExcelJS.Cell => sheet.getRow(row).getCell(col);
 
-function addItems(items: ExportItem[], rowIdx: number, colIndex: number, sheet: ExcelJS.Worksheet): number {
+function addItems(
+  items: ExportItem[],
+  rowIdx: number,
+  colIndex: number,
+  sheet: ExcelJS.Worksheet,
+  color: string
+): number {
   let nextRow = rowIdx;
 
   const defaultValue = '-';
@@ -96,21 +102,24 @@ function addItems(items: ExportItem[], rowIdx: number, colIndex: number, sheet: 
     }
 
     getCell(sheet, nextRow, colIndex).value = item.name;
-    getCell(sheet, nextRow, colIndex + 1).value = item.clientPrice ?? defaultValue;
+    const clientPriceCell = getCell(sheet, nextRow, colIndex + 1);
+    clientPriceCell.value = item.clientPrice ?? defaultValue;
 
     const [unit1, unit2] = item.units ?? [];
 
     const unit1Name = unit1.key ?? defaultValue;
     const unit2Name = unit2.key ?? defaultValue;
     getCell(sheet, nextRow, colIndex + 2).value = unit1Name;
-    getCell(sheet, nextRow, colIndex + 3).value = unit1Name !== defaultValue ? unit1.value || 0 : defaultValue;
+    const unit1ValCell = getCell(sheet, nextRow, colIndex + 3);
+    unit1ValCell.value = unit1Name !== defaultValue ? unit1.value || 0 : defaultValue;
     getCell(sheet, nextRow, colIndex + 4).value = unit2Name;
-    getCell(sheet, nextRow, colIndex + 5).value = unit2Name !== defaultValue ? unit2.value || 0 : defaultValue;
+    const unit2ValCell = getCell(sheet, nextRow, colIndex + 5);
+    unit2ValCell.value = unit2Name !== defaultValue ? unit2.value || 0 : defaultValue;
 
     // Insert the formula into the next cell: clientPrice * (unit1.value ?? 1) * (unit2.value ?? 1)
-    const clientPriceCellAddress = getCell(sheet, nextRow, colIndex + 1).address;
-    const unit1ValAddress = getCell(sheet, nextRow, colIndex + 3).address;
-    const unit2ValAddress = getCell(sheet, nextRow, colIndex + 5).address;
+    const clientPriceCellAddress = clientPriceCell.address;
+    const unit1ValAddress = unit1ValCell.address;
+    const unit2ValAddress = unit2ValCell.address;
 
     const itemSumFormula = `=${clientPriceCellAddress}*IF(ISNUMBER(${unit1ValAddress}),${unit1ValAddress},1)*IF(ISNUMBER(${unit2ValAddress}),${unit2ValAddress},1)`;
     getCell(sheet, nextRow, colIndex + 6).value = { formula: itemSumFormula };
@@ -123,7 +132,16 @@ function addItems(items: ExportItem[], rowIdx: number, colIndex: number, sheet: 
     const firstAddr = getCell(sheet, rowIdx, colIndex + 6).address;
     const lastAddr = getCell(sheet, nextRow - 1, colIndex + 6).address;
     const itemsSumFormula = `=SUM(${firstAddr}:${lastAddr})`;
-    getCell(sheet, nextRow, colIndex + 6).value = { formula: itemsSumFormula };
+
+    const totalCell = getCell(sheet, nextRow, colIndex + 6);
+    totalCell.value = { formula: itemsSumFormula };
+    totalCell.fill = {
+      type: 'pattern',
+      pattern: 'solid',
+      fgColor: { argb: color },
+    };
+
+    getCell(sheet, rowIdx - 1, colIndex + 6).value = { formula: totalCell.address };
   } else {
     // No items added; avoid empty SUM range
     getCell(sheet, nextRow, colIndex + 6).value = defaultValue;
@@ -133,6 +151,26 @@ function addItems(items: ExportItem[], rowIdx: number, colIndex: number, sheet: 
 
   return nextRow;
 }
+
+const addColorToCellGroup = (
+  sheet: ExcelJS.Worksheet,
+  rowIndex: number,
+  startColumn: number,
+  endColumn: number,
+  color: string
+): void => {
+  const row = sheet.getRow(rowIndex);
+
+  for (let col = startColumn; col <= endColumn; col++) {
+    const cell = row.getCell(col);
+
+    cell.fill = {
+      type: 'pattern',
+      pattern: 'solid',
+      fgColor: { argb: color },
+    };
+  }
+};
 
 const isCategoryWithSubcategories = (
   v: CategoryWithSubcategories | CategoryWithoutSubcategories
@@ -176,6 +214,7 @@ export async function exportToExcel(
       continue;
     }
 
+    addColorToCellGroup(sheet, nextRow, startCell.col, startCell.col + 6, '#60d394');
     getCell(sheet, nextRow, startCell.col).value = currentBlock.category;
 
     nextRow += 1;
@@ -184,15 +223,27 @@ export async function exportToExcel(
       const blockData = currentBlock.data;
 
       for (let j = 0; j < blockData.length; j++) {
-        getCell(sheet, nextRow, startCell.col).value = blockData.at(j)?.subcategory;
+        const subcategory = blockData.at(j)?.subcategory;
+
+        if (!subcategory) {
+          continue;
+        }
+
+        addColorToCellGroup(sheet, nextRow, startCell.col, startCell.col + 6, '#60d394');
+
+        getCell(sheet, nextRow, startCell.col).value = subcategory;
         nextRow += 1;
 
-        nextRow = addItems(blockData.at(j)?.items ?? [], nextRow, startCell.col, sheet);
+        nextRow = addItems(blockData.at(j)?.items ?? [], nextRow, startCell.col, sheet, '#a3e8f0');
+        getCell(sheet, nextRow - 1, startCell.col + 5).value =
+          `Итог по разделу ${currentBlock.category.toUpperCase()} | ${subcategory}`;
 
         nextRow += 1;
       }
     } else {
-      nextRow = addItems(currentBlock.data.items ?? [], nextRow, startCell.col, sheet);
+      nextRow = addItems(currentBlock.data.items ?? [], nextRow, startCell.col, sheet, '#60d394');
+      getCell(sheet, nextRow - 1, startCell.col + 5).value = `ИТОГО ${currentBlock.category.toUpperCase()}`;
+      addColorToCellGroup(sheet, nextRow - 1, startCell.col, startCell.col + 5, '#60d394');
 
       nextRow += 1;
     }
