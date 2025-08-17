@@ -81,7 +81,14 @@ function setNamedCell(wb: ExcelJS.Workbook, name: string, value: ExcelJS.CellVal
   ref.sheet.getCell(ref.a1).value = value;
 }
 
-export async function exportToExcel(data: DataRow[], fileName: string, date?: string, watermark?: string) {
+export async function exportToExcel(
+  data: DataRow[],
+  clientTotal: string,
+  clientCostPerVideo: number,
+  fileName: string,
+  date?: string,
+  watermark?: string
+) {
   const res = await fetch('/template.xlsx');
   if (!res.ok) {
     throw new Error(`Failed to fetch template.xlsx: ${res.status} ${res.statusText}`);
