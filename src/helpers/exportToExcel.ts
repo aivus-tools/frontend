@@ -7,12 +7,6 @@ import {
   ExportItem,
 } from '@/types/store.interface';
 
-export interface DataRow {
-  name: string;
-  qty: number;
-  price: number;
-}
-
 type DefinedRef = {
   sheet: ExcelJS.Worksheet;
   a1: string; // например "$B$2"
@@ -82,45 +76,67 @@ function getDefinedRef(wb: ExcelJS.Workbook, name: string): DefinedRef {
 }
 
 /** add value to a named cell */
-function setNamedCell(wb: ExcelJS.Workbook, name: string, value: ExcelJS.CellValue) {
+function setNamedCell(wb: ExcelJS.Workbook, name: string, value: ExcelJS.CellValue): void {
   const ref = getDefinedRef(wb, name);
   ref.sheet.getCell(ref.a1).value = value;
 }
 
-function getNextRowFirstColumn(sheet: ExcelJS.Worksheet, rowIdx: number, colIndex: number) {
-  const row = sheet.getRow(rowIdx);
+const getCell = (sheet: ExcelJS.Worksheet, row: number, col: number): ExcelJS.Cell => sheet.getRow(row).getCell(col);
 
-  return row.getCell(colIndex);
-}
-
-function addItems(items: ExportItem[], rowIdx: number, colIndex: number, sheet: ExcelJS.Worksheet) {
+function addItems(items: ExportItem[], rowIdx: number, colIndex: number, sheet: ExcelJS.Worksheet): number {
   let nextRow = rowIdx;
 
   const defaultValue = '-';
 
   for (let i = 0; i < items.length; i++) {
-    const itemName = items.at(i)?.name;
+    const item = items.at(i);
 
-    if (!itemName) {
+    if (!item) {
       continue;
     }
 
-    getNextRowFirstColumn(sheet, nextRow, colIndex).value = itemName;
-    getNextRowFirstColumn(sheet, nextRow, colIndex + 1).value = items.at(i)?.clientPrice ?? defaultValue;
-    const unit1Name = items.at(i)?.units.at(0)?.key ?? defaultValue;
-    const unit2Name = items.at(i)?.units.at(1)?.key ?? defaultValue;
-    getNextRowFirstColumn(sheet, nextRow, colIndex + 2).value = unit1Name;
-    getNextRowFirstColumn(sheet, nextRow, colIndex + 3).value =
-      unit1Name !== defaultValue ? items.at(i)?.units.at(0)?.value || 0 : defaultValue;
-    getNextRowFirstColumn(sheet, nextRow, colIndex + 4).value = unit2Name;
-    getNextRowFirstColumn(sheet, nextRow, colIndex + 5).value =
-      unit2Name !== defaultValue ? items.at(i)?.units.at(1)?.value || 0 : defaultValue;
+    getCell(sheet, nextRow, colIndex).value = item.name;
+    getCell(sheet, nextRow, colIndex + 1).value = item.clientPrice ?? defaultValue;
+
+    const [unit1, unit2] = item.units ?? [];
+
+    const unit1Name = unit1.key ?? defaultValue;
+    const unit2Name = unit2.key ?? defaultValue;
+    getCell(sheet, nextRow, colIndex + 2).value = unit1Name;
+    getCell(sheet, nextRow, colIndex + 3).value = unit1Name !== defaultValue ? unit1.value || 0 : defaultValue;
+    getCell(sheet, nextRow, colIndex + 4).value = unit2Name;
+    getCell(sheet, nextRow, colIndex + 5).value = unit2Name !== defaultValue ? unit2.value || 0 : defaultValue;
+
+    // Insert the formula into the next cell: clientPrice * (unit1.value ?? 1) * (unit2.value ?? 1)
+    const clientPriceCellAddress = getCell(sheet, nextRow, colIndex + 1).address;
+    const unit1ValAddress = getCell(sheet, nextRow, colIndex + 3).address;
+    const unit2ValAddress = getCell(sheet, nextRow, colIndex + 5).address;
+
+    const itemSumFormula = `=${clientPriceCellAddress}*IF(ISNUMBER(${unit1ValAddress}),${unit1ValAddress},1)*IF(ISNUMBER(${unit2ValAddress}),${unit2ValAddress},1)`;
+    getCell(sheet, nextRow, colIndex + 6).value = { formula: itemSumFormula };
 
     nextRow += 1;
   }
 
+  // Sum all item totals calculated above in this block (column colIndex + 6)
+  if (nextRow > rowIdx) {
+    const firstAddr = getCell(sheet, rowIdx, colIndex + 6).address;
+    const lastAddr = getCell(sheet, nextRow - 1, colIndex + 6).address;
+    const itemsSumFormula = `=SUM(${firstAddr}:${lastAddr})`;
+    getCell(sheet, nextRow, colIndex + 6).value = { formula: itemsSumFormula };
+  } else {
+    // No items added; avoid empty SUM range
+    getCell(sheet, nextRow, colIndex + 6).value = defaultValue;
+  }
+
+  nextRow += 1;
+
   return nextRow;
 }
+
+const isCategoryWithSubcategories = (
+  v: CategoryWithSubcategories | CategoryWithoutSubcategories
+): v is CategoryWithSubcategories => Array.isArray(v.data);
 
 export async function exportToExcel(
   data: CategoriesExportData,
@@ -160,19 +176,15 @@ export async function exportToExcel(
       continue;
     }
 
-    getNextRowFirstColumn(sheet, nextRow, startCell.col).value = currentBlock.category;
+    getCell(sheet, nextRow, startCell.col).value = currentBlock.category;
 
     nextRow += 1;
-
-    export const isCategoryWithSubcategories = (
-      v: CategoryWithSubcategories | CategoryWithoutSubcategories
-    ): v is CategoryWithSubcategories => Array.isArray(v.data);
 
     if (isCategoryWithSubcategories(currentBlock)) {
       const blockData = currentBlock.data;
 
-      for (let j = 0; j < blockData.length; i++) {
-        getNextRowFirstColumn(sheet, nextRow, startCell.col).value = blockData.at(j)?.subcategory;
+      for (let j = 0; j < blockData.length; j++) {
+        getCell(sheet, nextRow, startCell.col).value = blockData.at(j)?.subcategory;
         nextRow += 1;
 
         nextRow = addItems(blockData.at(j)?.items ?? [], nextRow, startCell.col, sheet);
@@ -184,8 +196,6 @@ export async function exportToExcel(
 
       nextRow += 1;
     }
-
-    // row.commit?.();
   }
 
   wb.calcProperties.fullCalcOnLoad = true;
