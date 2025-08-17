@@ -22,7 +22,7 @@ export function Category({ category }: { category: TypeCategory }) {
   const subCategories = useAppSelector(
     useCallback((state: RootState) => selectSubcategoryById(state, category.id), [category.id])
   );
-  const offers = useAppSelector(
+  const offer = useAppSelector(
     useCallback((state: RootState) => selectOffersByCategoryId(state, category.id), [category.id])
   );
 
@@ -38,7 +38,7 @@ export function Category({ category }: { category: TypeCategory }) {
           {subCategories?.map((subCategory) => (
             <SubCategory key={`${key}${subCategory.id}`} subCategory={subCategory} />
           ))}
-          <Entries data={offers} />
+          <Entries data={offer} />
           <Total text={category.name} value={`$ ${total}`} clientValue={`$ ${clientTotal}`} categoryId={category.id} />
         </>
       )}
