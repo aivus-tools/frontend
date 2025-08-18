@@ -81,7 +81,43 @@ function setNamedCell(wb: ExcelJS.Workbook, name: string, value: ExcelJS.CellVal
   ref.sheet.getCell(ref.a1).value = value;
 }
 
-const getCell = (sheet: ExcelJS.Worksheet, row: number, col: number): ExcelJS.Cell => sheet.getRow(row).getCell(col);
+type CellSide = 'top' | 'left' | 'bottom' | 'right';
+function addBorderToCell(cell: ExcelJS.Cell, exclude: CellSide[] = []): void {
+  cell.border = {
+    top: exclude.includes('top') ? undefined : { style: 'thin', color: { argb: 'FF000000' } },
+    left: exclude.includes('left') ? undefined : { style: 'thin', color: { argb: 'FF000000' } },
+    bottom: exclude.includes('bottom') ? undefined : { style: 'thin', color: { argb: 'FF000000' } },
+    right: exclude.includes('right') ? undefined : { style: 'thin', color: { argb: 'FF000000' } },
+  };
+}
+
+function addBorderToRow(sheet: ExcelJS.Worksheet, rowIndex: number, startCol: number, endCol: number) {
+  const row = sheet.getRow(rowIndex);
+
+  for (let col = startCol; col <= endCol; col++) {
+    addBorderToCell(row.getCell(col));
+  }
+}
+
+function addBorderToLine(sheet: ExcelJS.Worksheet, rowIndex: number, startCol: number, endCol: number) {
+  const row = sheet.getRow(rowIndex);
+
+  for (let col = startCol; col <= endCol; col++) {
+    const exclude: CellSide[] = [];
+    if (col === startCol) {
+      exclude.push('right');
+    } else if (col === endCol) {
+      exclude.push('left');
+    } else {
+      exclude.push('left');
+      exclude.push('right');
+    }
+
+    addBorderToCell(row.getCell(col), exclude);
+  }
+}
+
+const getCell = (sheet: ExcelJS.Worksheet, row: number, col: number): ExcelJS.Cell => sheet.getCell(row, col);
 
 function addItems(
   items: ExportItem[],
@@ -107,22 +143,24 @@ function addItems(
 
     const [unit1, unit2] = item.units ?? [];
 
-    const unit1Name = unit1.key ?? defaultValue;
-    const unit2Name = unit2.key ?? defaultValue;
+    const unit1Name = unit1?.key ?? defaultValue;
+    const unit2Name = unit2?.key ?? defaultValue;
     getCell(sheet, nextRow, colIndex + 2).value = unit1Name;
     const unit1ValCell = getCell(sheet, nextRow, colIndex + 3);
-    unit1ValCell.value = unit1Name !== defaultValue ? unit1.value || 0 : defaultValue;
+    unit1ValCell.value = unit1Name !== defaultValue ? unit1?.value || 0 : defaultValue;
     getCell(sheet, nextRow, colIndex + 4).value = unit2Name;
     const unit2ValCell = getCell(sheet, nextRow, colIndex + 5);
-    unit2ValCell.value = unit2Name !== defaultValue ? unit2.value || 0 : defaultValue;
+    unit2ValCell.value = unit2Name !== defaultValue ? unit2?.value || 0 : defaultValue;
 
     // Insert the formula into the next cell: clientPrice * (unit1.value ?? 1) * (unit2.value ?? 1)
     const clientPriceCellAddress = clientPriceCell.address;
     const unit1ValAddress = unit1ValCell.address;
     const unit2ValAddress = unit2ValCell.address;
 
-    const itemSumFormula = `=${clientPriceCellAddress}*IF(ISNUMBER(${unit1ValAddress}),${unit1ValAddress},1)*IF(ISNUMBER(${unit2ValAddress}),${unit2ValAddress},1)`;
+    const itemSumFormula = `${clientPriceCellAddress}*IF(ISNUMBER(${unit1ValAddress}),${unit1ValAddress},1)*IF(ISNUMBER(${unit2ValAddress}),${unit2ValAddress},1)`;
     getCell(sheet, nextRow, colIndex + 6).value = { formula: itemSumFormula };
+
+    addBorderToRow(sheet, nextRow, colIndex, colIndex + 6);
 
     nextRow += 1;
   }
@@ -131,7 +169,7 @@ function addItems(
   if (nextRow > rowIdx) {
     const firstAddr = getCell(sheet, rowIdx, colIndex + 6).address;
     const lastAddr = getCell(sheet, nextRow - 1, colIndex + 6).address;
-    const itemsSumFormula = `=SUM(${firstAddr}:${lastAddr})`;
+    const itemsSumFormula = `SUM(${firstAddr}:${lastAddr})`;
 
     const totalCell = getCell(sheet, nextRow, colIndex + 6);
     totalCell.value = { formula: itemsSumFormula };
@@ -140,6 +178,7 @@ function addItems(
       pattern: 'solid',
       fgColor: { argb: color },
     };
+    addBorderToCell(totalCell);
 
     getCell(sheet, rowIdx - 1, colIndex + 6).value = { formula: totalCell.address };
   } else {
@@ -203,7 +242,7 @@ export async function exportToExcel(
   }
 
   // add data from TableStart
-  const startCell = getDefinedRef(wb, 'TableStart');
+  const startCell = getDefinedRef(wb, 'tableStart');
   const sheet = startCell.sheet;
   let nextRow = startCell.row + 1;
 
@@ -214,8 +253,10 @@ export async function exportToExcel(
       continue;
     }
 
-    addColorToCellGroup(sheet, nextRow, startCell.col, startCell.col + 6, '#60d394');
-    getCell(sheet, nextRow, startCell.col).value = currentBlock.category;
+    addColorToCellGroup(sheet, nextRow, startCell.col, startCell.col + 6, 'FF60D394');
+    addBorderToLine(sheet, nextRow, startCell.col, startCell.col + 6);
+    const categoryTitleCell = getCell(sheet, nextRow, startCell.col);
+    categoryTitleCell.value = currentBlock.category;
 
     nextRow += 1;
 
@@ -229,21 +270,39 @@ export async function exportToExcel(
           continue;
         }
 
-        addColorToCellGroup(sheet, nextRow, startCell.col, startCell.col + 6, '#60d394');
+        addColorToCellGroup(sheet, nextRow, startCell.col, startCell.col + 6, 'FFB2F7EF');
+        addBorderToLine(sheet, nextRow, startCell.col, startCell.col + 6);
 
         getCell(sheet, nextRow, startCell.col).value = subcategory;
         nextRow += 1;
 
-        nextRow = addItems(blockData.at(j)?.items ?? [], nextRow, startCell.col, sheet, '#a3e8f0');
+        const totalTitle = 'Итог по разделу';
+
+        nextRow = addItems(blockData.at(j)?.items ?? [], nextRow, startCell.col, sheet, 'FFB2F7EF');
         getCell(sheet, nextRow - 1, startCell.col + 5).value =
-          `Итог по разделу ${currentBlock.category.toUpperCase()} | ${subcategory}`;
+          `${totalTitle} ${currentBlock.category.toUpperCase()} | ${subcategory}`;
+
+        if (j === blockData.length - 1) {
+          getCell(sheet, nextRow, startCell.col + 5).value = `ИТОГО ${currentBlock.category.toUpperCase()}`;
+          addColorToCellGroup(sheet, nextRow, startCell.col, startCell.col + 5, 'FF7CDFF2');
+          addBorderToLine(sheet, nextRow, startCell.col, startCell.col + 5);
+          const categoryResultCell = getCell(sheet, nextRow, startCell.col + 6);
+          categoryResultCell.fill = {
+            type: 'pattern',
+            pattern: 'solid',
+            fgColor: { argb: 'FF60D394' },
+          };
+          categoryResultCell.value = { formula: `SUMIF($G:$G,"${totalTitle} "&${categoryTitleCell.address}&" *",H:H)` };
+          addBorderToCell(categoryResultCell);
+        }
 
         nextRow += 1;
       }
     } else {
-      nextRow = addItems(currentBlock.data.items ?? [], nextRow, startCell.col, sheet, '#60d394');
+      nextRow = addItems(currentBlock.data.items ?? [], nextRow, startCell.col, sheet, 'FF60D394');
       getCell(sheet, nextRow - 1, startCell.col + 5).value = `ИТОГО ${currentBlock.category.toUpperCase()}`;
-      addColorToCellGroup(sheet, nextRow - 1, startCell.col, startCell.col + 5, '#60d394');
+      addColorToCellGroup(sheet, nextRow - 1, startCell.col, startCell.col + 5, 'FF7CDFF2');
+      addBorderToLine(sheet, nextRow - 1, startCell.col, startCell.col + 5);
 
       nextRow += 1;
     }
