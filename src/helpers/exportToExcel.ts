@@ -9,73 +9,88 @@ import {
 
 type DefinedRef = {
   sheet: ExcelJS.Worksheet;
+  /** Всегда одиночный A1-адрес верхней-левой ячейки */
   a1: string; // например "$B$2"
   row: number; // 2
   col: number; // 2 (для B)
 };
 
-/** Берём первый диапазон по имени, поддерживая разные сигнатуры getRanges() в ExcelJS */
-function getFirstNamedRange(wb: ExcelJS.Workbook, name: string): string {
+/** Берём ПЕРВЫЙ диапазон по имени, приводим к строке "'Лист'!$C$21" ИЛИ "'Лист'!$C$21:$D$21" */
+function getFirstNamedRangeRaw(wb: ExcelJS.Workbook, name: string): string {
   const dn: any = (wb as any).definedNames;
-  const raw = dn.getRanges(name);
+  if (!dn?.getRanges) {
+    throw new Error('Workbook.definedNames.getRanges is unavailable in this ExcelJS version');
+  }
 
+  const raw = dn.getRanges(name);
   let first: string | undefined;
 
   if (Array.isArray(raw)) {
     first = raw[0];
   } else if (raw && typeof raw === 'object') {
-    // словарь вида { "'Лист1'!$B$2": ["'Лист1'!$B$2"], ... } или { addressStr: string[] }
     for (const v of Object.values(raw as Record<string, string[] | undefined>)) {
       if (Array.isArray(v) && v.length > 0) {
         first = v[0];
         break;
       }
     }
-    // иногда ключом уже является адрес
     if (!first) {
       const keys = Object.keys(raw as Record<string, unknown>);
-      if (keys.length > 0) first = keys[0];
+      if (keys.length > 0) first = keys[0] as string;
     }
   }
 
-  if (!first) throw new Error(`Named range "${name}" not found`);
-  return first;
+  if (!first) {
+    throw new Error(`Named range "${name}" not found`);
+  }
+
+  return first; // например "'EXPORT_TMP'!$C$21:$D$21"
+}
+
+/** Возвращает пару [sheetName, addr] где addr может быть "A1" или "A1:B2" */
+function splitSheetAndAddr(namedRef: string): { sheetName: string; addr: string } {
+  const [sheetQuoted, addrRaw] = namedRef.split('!');
+  const sheetName = sheetQuoted.replace(/^'/, '').replace(/'$/, '');
+  const addr = addrRaw.replace(/\s+/g, '');
+  return { sheetName, addr };
+}
+
+/** Берём верхнюю-левую ячейку из адреса, поддерживая и одиночные A1, и диапазоны A1:A2 */
+function addrToTopLeftA1(addr: string): string {
+  if (!addr.includes(':')) return addr;
+  const [leftTop] = addr.split(':');
+  return leftTop;
 }
 
 function a1ToRC(a1: string): { row: number; col: number } {
-  const m = a1.match(/\$?([A-Z]+)\$?(\d+)/i);
-
+  const m = a1.match(/\$?([A-Z]+)\$?(\d+)$/i);
   if (!m) {
     throw new Error(`Bad A1 address: ${a1}`);
   }
   const letters = m[1].toUpperCase();
   const row = parseInt(m[2], 10);
   let col = 0;
-
   for (let i = 0; i < letters.length; i++) {
     col = col * 26 + (letters.charCodeAt(i) - 64);
   }
-
   return { row, col };
 }
 
-/** return a link to a named cell */
+/** Ссылка на именованную верхнюю-левую ячейку (если диапазон — берём её верхнюю-левую) */
 function getDefinedRef(wb: ExcelJS.Workbook, name: string): DefinedRef {
-  const ref = getFirstNamedRange(wb, name); // "'Отчёт'!$B$2"
-  const [sheetQuoted, addr] = ref.split('!');
-  const sheetName = sheetQuoted.replace(/^'/, '').replace(/'$/, '');
+  const raw = getFirstNamedRangeRaw(wb, name);
+  const { sheetName, addr } = splitSheetAndAddr(raw);
+  const topLeft = addrToTopLeftA1(addr);
   const sheet = wb.getWorksheet(sheetName);
-
   if (!sheet) {
     throw new Error(`Worksheet "${sheetName}" not found for named range "${name}"`);
   }
 
-  const rc = a1ToRC(addr);
-
-  return { sheet, a1: addr, row: rc.row, col: rc.col };
+  const rc = a1ToRC(topLeft);
+  return { sheet, a1: topLeft, row: rc.row, col: rc.col };
 }
 
-/** add value to a named cell */
+/** Поставить значение в именованную (или верхнюю-левую) ячейку */
 function setNamedCell(wb: ExcelJS.Workbook, name: string, value: ExcelJS.CellValue): void {
   const ref = getDefinedRef(wb, name);
   ref.sheet.getCell(ref.a1).value = value;
@@ -109,8 +124,7 @@ function addBorderToLine(sheet: ExcelJS.Worksheet, rowIndex: number, startCol: n
     } else if (col === endCol) {
       exclude.push('left');
     } else {
-      exclude.push('left');
-      exclude.push('right');
+      exclude.push('left', 'right');
     }
 
     addBorderToCell(row.getCell(col), exclude);
@@ -124,7 +138,8 @@ function addItems(
   rowIdx: number,
   colIndex: number,
   sheet: ExcelJS.Worksheet,
-  color: string
+  color: string,
+  minPrevRowForRollup?: number
 ): number {
   let nextRow = rowIdx;
 
@@ -142,23 +157,29 @@ function addItems(
     clientPriceCell.value = item.clientPrice ?? defaultValue;
 
     const [unit1, unit2] = item.units ?? [];
-
     const unit1Name = unit1?.key ?? defaultValue;
     const unit2Name = unit2?.key ?? defaultValue;
+
     getCell(sheet, nextRow, colIndex + 2).value = unit1Name;
     const unit1ValCell = getCell(sheet, nextRow, colIndex + 3);
     unit1ValCell.value = unit1Name !== defaultValue ? unit1?.value || 0 : defaultValue;
+
     getCell(sheet, nextRow, colIndex + 4).value = unit2Name;
     const unit2ValCell = getCell(sheet, nextRow, colIndex + 5);
     unit2ValCell.value = unit2Name !== defaultValue ? unit2?.value || 0 : defaultValue;
 
-    // Insert the formula into the next cell: clientPrice * (unit1.value ?? 1) * (unit2.value ?? 1)
+    // Insert the formula into the next cell: IF(ISNUMBER(price),price,0) * IF(ISNUMBER(u1),u1,1) * IF(ISNUMBER(u2),u2,1)
     const clientPriceCellAddress = clientPriceCell.address;
     const unit1ValAddress = unit1ValCell.address;
     const unit2ValAddress = unit2ValCell.address;
 
-    const itemSumFormula = `${clientPriceCellAddress}*IF(ISNUMBER(${unit1ValAddress}),${unit1ValAddress},1)*IF(ISNUMBER(${unit2ValAddress}),${unit2ValAddress},1)`;
-    getCell(sheet, nextRow, colIndex + 6).value = { formula: itemSumFormula };
+    const itemSumFormula =
+      `IF(ISNUMBER(${clientPriceCellAddress}),${clientPriceCellAddress},0)` +
+      `*IF(ISNUMBER(${unit1ValAddress}),${unit1ValAddress},1)` +
+      `*IF(ISNUMBER(${unit2ValAddress}),${unit2ValAddress},1)`;
+
+    const sumCell = getCell(sheet, nextRow, colIndex + 6);
+    sumCell.value = { formula: itemSumFormula };
 
     addBorderToRow(sheet, nextRow, colIndex, colIndex + 6);
 
@@ -173,14 +194,12 @@ function addItems(
 
     const totalCell = getCell(sheet, nextRow, colIndex + 6);
     totalCell.value = { formula: itemsSumFormula };
-    totalCell.fill = {
-      type: 'pattern',
-      pattern: 'solid',
-      fgColor: { argb: color },
-    };
+    totalCell.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: color } };
     addBorderToCell(totalCell);
-
-    getCell(sheet, rowIdx - 1, colIndex + 6).value = { formula: totalCell.address };
+    const prevRow = rowIdx - 1;
+    if (minPrevRowForRollup === undefined || prevRow >= minPrevRowForRollup) {
+      getCell(sheet, prevRow, colIndex + 6).value = { formula: totalCell.address };
+    }
   } else {
     // No items added; avoid empty SUM range
     getCell(sheet, nextRow, colIndex + 6).value = defaultValue;
@@ -198,16 +217,13 @@ const addColorToCellGroup = (
   endColumn: number,
   color: string
 ): void => {
-  const row = sheet.getRow(rowIndex);
+  // const row = sheet.getRow(rowIndex);
 
   for (let col = startColumn; col <= endColumn; col++) {
-    const cell = row.getCell(col);
-
-    cell.fill = {
-      type: 'pattern',
-      pattern: 'solid',
-      fgColor: { argb: color },
-    };
+    // const cell = row.getCell(col);
+    const cell = sheet.getCell(rowIndex, col);
+    cell.value = cell.value ?? null; // заставляем создать именно ячейку
+    cell.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: color } };
   }
 };
 
@@ -229,7 +245,6 @@ export async function exportToExcel(
   }
 
   const arrBuf = await res.arrayBuffer();
-
   const wb = new ExcelJS.Workbook();
   await wb.xlsx.load(arrBuf);
 
@@ -241,10 +256,10 @@ export async function exportToExcel(
     setNamedCell(wb, 'watermark', watermark);
   }
 
-  // add data from TableStart
+  // Точка старта таблицы
   const startCell = getDefinedRef(wb, 'tableStart');
   const sheet = startCell.sheet;
-  let nextRow = startCell.row + 1;
+  let nextRow = startCell.row;
 
   for (let i = 0; i < data.length; i++) {
     const currentBlock = data.at(i);
@@ -253,8 +268,9 @@ export async function exportToExcel(
       continue;
     }
 
-    addColorToCellGroup(sheet, nextRow, startCell.col, startCell.col + 6, 'FF60D394');
+    addColorToCellGroup(sheet, nextRow, startCell.col, startCell.col + 6, 'FF7BDFF2');
     addBorderToLine(sheet, nextRow, startCell.col, startCell.col + 6);
+
     const categoryTitleCell = getCell(sheet, nextRow, startCell.col);
     categoryTitleCell.value = currentBlock.category;
 
@@ -264,46 +280,46 @@ export async function exportToExcel(
       const blockData = currentBlock.data;
 
       for (let j = 0; j < blockData.length; j++) {
-        const subcategory = blockData.at(j)?.subcategory;
+        const sub = blockData.at(j);
+        const subcategory = sub?.subcategory;
 
         if (!subcategory) {
           continue;
         }
 
         addColorToCellGroup(sheet, nextRow, startCell.col, startCell.col + 6, 'FFB2F7EF');
-        addBorderToLine(sheet, nextRow, startCell.col, startCell.col + 6);
-
+        addBorderToLine(sheet, nextRow, startCell.col, startCell.col + 5);
         getCell(sheet, nextRow, startCell.col).value = subcategory;
         nextRow += 1;
 
         const totalTitle = 'Итог по разделу';
 
-        nextRow = addItems(blockData.at(j)?.items ?? [], nextRow, startCell.col, sheet, 'FFB2F7EF');
+        nextRow = addItems(sub?.items ?? [], nextRow, startCell.col, sheet, 'FFB2F7EF', startCell.row);
         getCell(sheet, nextRow - 1, startCell.col + 5).value =
           `${totalTitle} ${currentBlock.category.toUpperCase()} | ${subcategory}`;
 
         if (j === blockData.length - 1) {
           getCell(sheet, nextRow, startCell.col + 5).value = `ИТОГО ${currentBlock.category.toUpperCase()}`;
-          addColorToCellGroup(sheet, nextRow, startCell.col, startCell.col + 5, 'FF7CDFF2');
+          addColorToCellGroup(sheet, nextRow, startCell.col, startCell.col + 5, 'FFB2F7EF');
           addBorderToLine(sheet, nextRow, startCell.col, startCell.col + 5);
+
           const categoryResultCell = getCell(sheet, nextRow, startCell.col + 6);
-          categoryResultCell.fill = {
-            type: 'pattern',
-            pattern: 'solid',
-            fgColor: { argb: 'FF60D394' },
+          categoryResultCell.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FF60D394' } };
+          categoryResultCell.value = {
+            formula:
+              `SUMIF($${sheet.getColumn(startCell.col + 5).letter}:$${sheet.getColumn(startCell.col + 5).letter},` +
+              `"${totalTitle} "&${categoryTitleCell.address}&"*",$${sheet.getColumn(startCell.col + 6).letter}:$${sheet.getColumn(startCell.col + 6).letter})`,
           };
-          categoryResultCell.value = { formula: `SUMIF($G:$G,"${totalTitle} "&${categoryTitleCell.address}&" *",H:H)` };
           addBorderToCell(categoryResultCell);
         }
 
         nextRow += 1;
       }
     } else {
-      nextRow = addItems(currentBlock.data.items ?? [], nextRow, startCell.col, sheet, 'FF60D394');
+      nextRow = addItems(currentBlock.data.items ?? [], nextRow, startCell.col, sheet, 'FF60D394', startCell.row);
       getCell(sheet, nextRow - 1, startCell.col + 5).value = `ИТОГО ${currentBlock.category.toUpperCase()}`;
-      addColorToCellGroup(sheet, nextRow - 1, startCell.col, startCell.col + 5, 'FF7CDFF2');
+      addColorToCellGroup(sheet, nextRow - 1, startCell.col, startCell.col + 5, 'FF7BDFF2');
       addBorderToLine(sheet, nextRow - 1, startCell.col, startCell.col + 5);
-
       nextRow += 1;
     }
   }
