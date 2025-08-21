@@ -6,6 +6,7 @@ import {
   CategoryWithSubcategories,
   ExportItem,
 } from '@/types/store.interface';
+import { Dayjs } from 'dayjs';
 
 type DefinedRef = {
   sheet: ExcelJS.Worksheet;
@@ -96,6 +97,29 @@ function setNamedCell(wb: ExcelJS.Workbook, name: string, value: ExcelJS.CellVal
   ref.sheet.getCell(ref.a1).value = value;
 }
 
+function writeNamedDate(wb: ExcelJS.Workbook, namedRange = 'date', value?: Dayjs) {
+  const ref = getDefinedRef(wb, namedRange);
+  const cell = ref.sheet.getCell(ref.a1);
+
+  let y: number, m: number, d: number;
+
+  if (value) {
+    y = value.year();
+    m = value.month();
+    d = value.date();
+  } else {
+    const now = new Date();
+    y = now.getFullYear();
+    m = now.getMonth();
+    d = now.getDate();
+  }
+
+  cell.value = new Date(Date.UTC(y, m, d));
+  cell.numFmt = '[$-419]dd mmmm yyyy "г."';
+  cell.font = { name: 'Montserrat', size: 12, color: { argb: 'FF0F4C5C' } };
+  cell.alignment = { horizontal: 'left', vertical: 'middle' };
+}
+
 type CellSide = 'top' | 'left' | 'bottom' | 'right';
 function addBorderToCell(cell: ExcelJS.Cell, exclude: CellSide[] = []): void {
   cell.border = {
@@ -104,6 +128,21 @@ function addBorderToCell(cell: ExcelJS.Cell, exclude: CellSide[] = []): void {
     bottom: exclude.includes('bottom') ? undefined : { style: 'thin', color: { argb: 'FF000000' } },
     right: exclude.includes('right') ? undefined : { style: 'thin', color: { argb: 'FF000000' } },
   };
+}
+
+function addFont(cell: ExcelJS.Cell, bold: boolean = false): void {
+  cell.font = {
+    name: 'Montserrat',
+    size: 10,
+    bold,
+    color: { argb: 'FF0F4C5C' },
+  };
+}
+
+function addNumberFormat(cell: ExcelJS.Cell): void {
+  if (typeof cell.value === 'number') {
+    cell.numFmt = '#,##0.00';
+  }
 }
 
 function addBorderToRow(sheet: ExcelJS.Worksheet, rowIndex: number, startCol: number, endCol: number) {
@@ -152,21 +191,39 @@ function addItems(
       continue;
     }
 
-    getCell(sheet, nextRow, colIndex).value = item.name;
+    const nameCell = getCell(sheet, nextRow, colIndex);
+    nameCell.value = item.name;
+    addFont(nameCell);
     const clientPriceCell = getCell(sheet, nextRow, colIndex + 1);
     clientPriceCell.value = item.clientPrice ?? defaultValue;
+    addFont(clientPriceCell);
+    addNumberFormat(clientPriceCell);
 
     const [unit1, unit2] = item.units ?? [];
     const unit1Name = unit1?.key ?? defaultValue;
     const unit2Name = unit2?.key ?? defaultValue;
 
-    getCell(sheet, nextRow, colIndex + 2).value = unit1Name;
+    const unit1KeyCell = getCell(sheet, nextRow, colIndex + 2);
+    unit1KeyCell.value = unit1Name;
+    addFont(unit1KeyCell);
+    addNumberFormat(unit1KeyCell);
+    unit1KeyCell.alignment = { horizontal: 'right', vertical: 'middle' };
+
     const unit1ValCell = getCell(sheet, nextRow, colIndex + 3);
     unit1ValCell.value = unit1Name !== defaultValue ? unit1?.value || 0 : defaultValue;
+    addFont(unit1ValCell);
+    unit1ValCell.alignment = { horizontal: 'center', vertical: 'middle' };
 
-    getCell(sheet, nextRow, colIndex + 4).value = unit2Name;
+    const unit2KeyCell = getCell(sheet, nextRow, colIndex + 4);
+    unit2KeyCell.value = unit2Name;
+    addFont(unit2KeyCell);
+    addNumberFormat(unit2KeyCell);
+    unit2KeyCell.alignment = { horizontal: 'right', vertical: 'middle' };
+
     const unit2ValCell = getCell(sheet, nextRow, colIndex + 5);
     unit2ValCell.value = unit2Name !== defaultValue ? unit2?.value || 0 : defaultValue;
+    addFont(unit2ValCell);
+    unit2ValCell.alignment = { horizontal: 'center', vertical: 'middle' };
 
     // Insert the formula into the next cell: IF(ISNUMBER(price),price,0) * IF(ISNUMBER(u1),u1,1) * IF(ISNUMBER(u2),u2,1)
     const clientPriceCellAddress = clientPriceCell.address;
@@ -180,6 +237,8 @@ function addItems(
 
     const sumCell = getCell(sheet, nextRow, colIndex + 6);
     sumCell.value = { formula: itemSumFormula };
+    addFont(sumCell, true);
+    addNumberFormat(sumCell);
 
     addBorderToRow(sheet, nextRow, colIndex, colIndex + 6);
 
@@ -196,9 +255,16 @@ function addItems(
     totalCell.value = { formula: itemsSumFormula };
     totalCell.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: color } };
     addBorderToCell(totalCell);
+    addFont(totalCell, true);
+    addNumberFormat(totalCell);
+
     const prevRow = rowIdx - 1;
+
     if (minPrevRowForRollup === undefined || prevRow >= minPrevRowForRollup) {
-      getCell(sheet, prevRow, colIndex + 6).value = { formula: totalCell.address };
+      const secondTotalCell = getCell(sheet, prevRow, colIndex + 6);
+      secondTotalCell.value = { formula: totalCell.address };
+      addFont(secondTotalCell, true);
+      addNumberFormat(secondTotalCell);
     }
   } else {
     // No items added; avoid empty SUM range
@@ -236,7 +302,7 @@ export async function exportToExcel(
   clientTotal: string,
   clientCostPerVideo: number,
   fileName: string,
-  date?: string,
+  date?: Dayjs,
   watermark?: string
 ) {
   const res = await fetch('/template.xlsx');
@@ -250,13 +316,12 @@ export async function exportToExcel(
 
   // add data to named excel ranges
   if (date) {
-    setNamedCell(wb, 'date', date);
+    writeNamedDate(wb, 'date', date);
   }
   if (watermark) {
     setNamedCell(wb, 'watermark', watermark);
   }
 
-  // Точка старта таблицы
   const startCell = getDefinedRef(wb, 'tableStart');
   const sheet = startCell.sheet;
   let nextRow = startCell.row;
@@ -272,7 +337,8 @@ export async function exportToExcel(
     addBorderToLine(sheet, nextRow, startCell.col, startCell.col + 6);
 
     const categoryTitleCell = getCell(sheet, nextRow, startCell.col);
-    categoryTitleCell.value = currentBlock.category;
+    categoryTitleCell.value = currentBlock.category.toUpperCase();
+    addFont(categoryTitleCell, true);
 
     nextRow += 1;
 
@@ -289,17 +355,28 @@ export async function exportToExcel(
 
         addColorToCellGroup(sheet, nextRow, startCell.col, startCell.col + 6, 'FFB2F7EF');
         addBorderToLine(sheet, nextRow, startCell.col, startCell.col + 5);
-        getCell(sheet, nextRow, startCell.col).value = subcategory;
+
+        const subcategoryCell = getCell(sheet, nextRow, startCell.col);
+        subcategoryCell.value = subcategory.toUpperCase();
+        addFont(subcategoryCell, true);
+
         nextRow += 1;
 
         const totalTitle = 'Итог по разделу';
 
         nextRow = addItems(sub?.items ?? [], nextRow, startCell.col, sheet, 'FFB2F7EF', startCell.row);
-        getCell(sheet, nextRow - 1, startCell.col + 5).value =
-          `${totalTitle} ${currentBlock.category.toUpperCase()} | ${subcategory}`;
+
+        const subTotalCell = getCell(sheet, nextRow - 1, startCell.col + 5);
+        subTotalCell.value = `${totalTitle} ${currentBlock.category.toUpperCase()} | ${subcategory}`;
+        addFont(subTotalCell, true);
+        subTotalCell.alignment = { horizontal: 'right', vertical: 'middle' };
 
         if (j === blockData.length - 1) {
-          getCell(sheet, nextRow, startCell.col + 5).value = `ИТОГО ${currentBlock.category.toUpperCase()}`;
+          const totalCell = getCell(sheet, nextRow, startCell.col + 5);
+          totalCell.value = `ИТОГО ${currentBlock.category.toUpperCase()}`;
+          addFont(totalCell, true);
+          totalCell.alignment = { horizontal: 'right', vertical: 'middle' };
+
           addColorToCellGroup(sheet, nextRow, startCell.col, startCell.col + 5, 'FFB2F7EF');
           addBorderToLine(sheet, nextRow, startCell.col, startCell.col + 5);
 
@@ -310,6 +387,8 @@ export async function exportToExcel(
               `SUMIF($${sheet.getColumn(startCell.col + 5).letter}:$${sheet.getColumn(startCell.col + 5).letter},` +
               `"${totalTitle} "&${categoryTitleCell.address}&"*",$${sheet.getColumn(startCell.col + 6).letter}:$${sheet.getColumn(startCell.col + 6).letter})`,
           };
+          addFont(categoryResultCell, true);
+          addNumberFormat(categoryResultCell);
           addBorderToCell(categoryResultCell);
         }
 
@@ -317,7 +396,11 @@ export async function exportToExcel(
       }
     } else {
       nextRow = addItems(currentBlock.data.items ?? [], nextRow, startCell.col, sheet, 'FF60D394', startCell.row);
-      getCell(sheet, nextRow - 1, startCell.col + 5).value = `ИТОГО ${currentBlock.category.toUpperCase()}`;
+      const totalCell = getCell(sheet, nextRow - 1, startCell.col + 5);
+      totalCell.value = `ИТОГО ${currentBlock.category.toUpperCase()}`;
+      totalCell.alignment = { horizontal: 'right', vertical: 'middle' };
+      addFont(totalCell, true);
+
       addColorToCellGroup(sheet, nextRow - 1, startCell.col, startCell.col + 5, 'FF7BDFF2');
       addBorderToLine(sheet, nextRow - 1, startCell.col, startCell.col + 5);
       nextRow += 1;

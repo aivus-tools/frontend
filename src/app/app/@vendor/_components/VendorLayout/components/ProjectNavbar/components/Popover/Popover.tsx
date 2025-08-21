@@ -10,7 +10,7 @@ import styles from './Popover.module.css';
 
 export type ExportPopoverProps = {
   children: React.ReactElement;
-  action: (data: { format: 'xlsx' | 'pdf' | 'csv'; name: string; date?: string; watermark?: string }) => void;
+  action: (data: { format: 'xlsx' | 'pdf' | 'csv'; name: string; date?: Dayjs; watermark?: string }) => void;
 };
 
 export const ExportPopover: React.FC<ExportPopoverProps> = ({ children, action }) => {
@@ -27,7 +27,7 @@ export const ExportPopover: React.FC<ExportPopoverProps> = ({ children, action }
     action({
       format,
       name,
-      date: includeDate && date ? date.toISOString() : undefined,
+      date: includeDate && date ? date : undefined,
       watermark: watermarkEnabled && watermark !== '' ? watermark : undefined,
     });
   };

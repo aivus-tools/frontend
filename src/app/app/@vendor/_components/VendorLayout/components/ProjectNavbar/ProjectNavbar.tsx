@@ -13,6 +13,7 @@ import { exportToExcel } from '@/helpers/exportToExcel';
 import { useAppSelector } from '@/store/hooks';
 import { selectGrandTotal, selectCategoriesExportData } from '@/store/slices/offer/selectors';
 import { useCostPerVideo } from '@/hooks/useCostPerVideo';
+import { Dayjs } from 'dayjs';
 
 export const ProjectNavbar = () => {
   useSetProject();
@@ -31,7 +32,7 @@ export const ProjectNavbar = () => {
   }: {
     format: 'xlsx' | 'pdf' | 'csv';
     name: string;
-    date?: string;
+    date?: Dayjs;
     watermark?: string;
   }) => {
     if (format === 'xlsx') {
