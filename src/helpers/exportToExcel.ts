@@ -410,7 +410,7 @@ export async function exportToExcel(
     }
   }
 
-  nextRow += 2;
+  nextRow += 1;
 
   const managementTitleCell = getCell(sheet, nextRow, startCell.col);
   managementTitleCell.value = 'Управление проектом';
@@ -457,6 +457,7 @@ export async function exportToExcel(
   taxValueCell.alignment = { horizontal: 'right', vertical: 'middle' };
   addBorderToCell(taxValueCell);
   addNumberFormat(taxValueCell);
+  addFont(taxValueCell);
   taxValueCell.value = { formula: `${taxInfoCell2.address} * ${totalSumBeforeTaxValueCell.address}` };
 
   nextRow += 1;
@@ -486,6 +487,7 @@ export async function exportToExcel(
   videoValueCell.alignment = { horizontal: 'right', vertical: 'middle' };
   addBorderToCell(videoValueCell);
   addNumberFormat(videoValueCell);
+  addFont(videoValueCell);
   videoValueCell.value = { formula: `IFERROR(${totalSumValueCell.address}/C9, "-")` };
 
   wb.calcProperties.fullCalcOnLoad = true;
