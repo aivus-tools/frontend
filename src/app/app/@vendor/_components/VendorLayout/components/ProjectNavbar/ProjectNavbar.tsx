@@ -9,7 +9,7 @@ import { ProjectTabs } from './components/ProjectTabs/ProjectTabs';
 import { ExportPopover } from './components/Popover/Popover';
 
 import styles from './ProjectNavbar.module.css';
-import { exportToExcel } from '@/helpers/exportToExcel';
+import { exportToExcel } from '@/helpers/excelExport/exportToExcel';
 import { useAppSelector } from '@/store/hooks';
 import { selectCategoriesExportData } from '@/store/slices/offer/selectors';
 import { Dayjs } from 'dayjs';
