@@ -10,16 +10,23 @@ import { Dayjs } from 'dayjs';
 
 type DefinedRef = {
   sheet: ExcelJS.Worksheet;
-  address: string;
+  a1: string;
   row: number;
   col: number;
 };
+
+const COLOR = {
+  HEADER: 'FF7BDFF2',
+  SUB: 'FFB2F7EF',
+  TOTAL: 'FF60D394',
+} as const;
 
 function getNamedCellRef(wb: ExcelJS.Workbook, name: string): DefinedRef {
   for (const sheet of wb.worksheets) {
     sheet.eachRow({ includeEmpty: false }, (row) => {
       row.eachCell({ includeEmpty: false }, (cell) => {
         const names = (cell as any).names as string[] | undefined;
+
         if (names?.includes(name)) {
           const { row: r, col: c } = a1ToRC(cell.address);
           return {
@@ -37,22 +44,29 @@ function getNamedCellRef(wb: ExcelJS.Workbook, name: string): DefinedRef {
 
 function a1ToRC(a1: string): { row: number; col: number } {
   const m = a1.match(/\$?([A-Z]+)\$?(\d+)$/i);
-  if (!m) throw new Error(`Bad A1 address: ${a1}`);
+
+  if (!m) {
+    throw new Error(`Bad A1 address: ${a1}`);
+  }
+
   const letters = m[1].toUpperCase();
   const row = parseInt(m[2], 10);
   let col = 0;
-  for (let i = 0; i < letters.length; i++) col = col * 26 + (letters.charCodeAt(i) - 64);
+
+  for (let i = 0; i < letters.length; i++) {
+    col = col * 26 + (letters.charCodeAt(i) - 64);
+  }
   return { row, col };
 }
 
 function setNamedCell(wb: ExcelJS.Workbook, name: string, value: ExcelJS.CellValue): void {
   const ref = getNamedCellRef(wb, name);
-  ref.sheet.getCell(ref.address).value = value;
+  ref.sheet.getCell(ref.a1).value = value;
 }
 
 function writeNamedDate(wb: ExcelJS.Workbook, namedRange = 'date', value?: Dayjs) {
   const ref = getNamedCellRef(wb, namedRange);
-  const cell = ref.sheet.getCell(ref.address);
+  const cell = ref.sheet.getCell(ref.a1);
 
   let y: number, m: number, d: number;
 
@@ -268,7 +282,7 @@ export async function exportToExcel(data: CategoriesExportData, fileName: string
       continue;
     }
 
-    addColorToCellGroup(sheet, nextRow, startCell.col, startCell.col + 6, 'FF7BDFF2');
+    addColorToCellGroup(sheet, nextRow, startCell.col, startCell.col + 6, COLOR.HEADER);
     addBorderToLine(sheet, nextRow, startCell.col, startCell.col + 6);
 
     const categoryTitleCell = getCell(sheet, nextRow, startCell.col);
@@ -290,7 +304,7 @@ export async function exportToExcel(data: CategoriesExportData, fileName: string
           continue;
         }
 
-        addColorToCellGroup(sheet, nextRow, startCell.col, startCell.col + 6, 'FFB2F7EF');
+        addColorToCellGroup(sheet, nextRow, startCell.col, startCell.col + 6, COLOR.SUB);
         addBorderToLine(sheet, nextRow, startCell.col, startCell.col + 6);
 
         const subcategoryCell = getCell(sheet, nextRow, startCell.col);
@@ -301,7 +315,7 @@ export async function exportToExcel(data: CategoriesExportData, fileName: string
 
         const totalTitle = 'Итог по разделу';
 
-        nextRow = addItems(sub?.items ?? [], nextRow, startCell.col, sheet, 'FFB2F7EF', startCell.row);
+        nextRow = addItems(sub?.items ?? [], nextRow, startCell.col, sheet, COLOR.SUB, startCell.row);
 
         const subTotalCell = getCell(sheet, nextRow - 1, startCell.col + 5);
         subTotalCell.value = `${totalTitle} ${currentBlock.category.toUpperCase()} | ${subcategory}`;
@@ -314,11 +328,11 @@ export async function exportToExcel(data: CategoriesExportData, fileName: string
           addFont(totalCell, true);
           totalCell.alignment = { horizontal: 'right', vertical: 'middle' };
 
-          addColorToCellGroup(sheet, nextRow, startCell.col, startCell.col + 5, 'FF7BDFF2');
+          addColorToCellGroup(sheet, nextRow, startCell.col, startCell.col + 5, COLOR.HEADER);
           addBorderToLine(sheet, nextRow, startCell.col, startCell.col + 5);
 
           const categoryResultCell = getCell(sheet, nextRow, startCell.col + 6);
-          categoryResultCell.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FF60D394' } };
+          categoryResultCell.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: COLOR.TOTAL } };
           categoryResultCell.value = {
             formula:
               `SUMIF($${sheet.getColumn(startCell.col + 5).letter}:$${sheet.getColumn(startCell.col + 5).letter},` +
@@ -337,14 +351,14 @@ export async function exportToExcel(data: CategoriesExportData, fileName: string
         nextRow += 1;
       }
     } else {
-      nextRow = addItems(currentBlock.data.items ?? [], nextRow, startCell.col, sheet, 'FF60D394', startCell.row);
+      nextRow = addItems(currentBlock.data.items ?? [], nextRow, startCell.col, sheet, COLOR.TOTAL, startCell.row);
       const totalCell = getCell(sheet, nextRow - 1, startCell.col + 5);
       totalCell.value = `ИТОГО ${currentBlock.category.toUpperCase()}`;
       totalCell.alignment = { horizontal: 'right', vertical: 'middle' };
       addFont(totalCell, true);
       categoryTotals.push(getCell(sheet, nextRow - 1, startCell.col + 6).address);
 
-      addColorToCellGroup(sheet, nextRow - 1, startCell.col, startCell.col + 5, 'FF7BDFF2');
+      addColorToCellGroup(sheet, nextRow - 1, startCell.col, startCell.col + 5, COLOR.HEADER);
       addBorderToLine(sheet, nextRow - 1, startCell.col, startCell.col + 5);
       nextRow += 1;
     }
@@ -365,7 +379,7 @@ export async function exportToExcel(data: CategoriesExportData, fileName: string
   const totalSumBeforeTaxTitleCell = getCell(sheet, nextRow, startCell.col);
   totalSumBeforeTaxTitleCell.value = 'Общая сумма до налогов';
   addBorderToLine(sheet, nextRow, startCell.col, startCell.col + 5);
-  addColorToCellGroup(sheet, nextRow, startCell.col, startCell.col + 6, 'FFB2F7EF');
+  addColorToCellGroup(sheet, nextRow, startCell.col, startCell.col + 6, COLOR.SUB);
   addFont(totalSumBeforeTaxTitleCell, true);
 
   const totalSumBeforeTaxValueCell = getCell(sheet, nextRow, startCell.col + 6);
@@ -405,7 +419,7 @@ export async function exportToExcel(data: CategoriesExportData, fileName: string
   const totalSumTitleCell = getCell(sheet, nextRow, startCell.col);
   totalSumTitleCell.value = 'Общая сумма (Без НДС)';
   addBorderToLine(sheet, nextRow, startCell.col, startCell.col + 5);
-  addColorToCellGroup(sheet, nextRow, startCell.col, startCell.col + 5, 'FF7BDFF2');
+  addColorToCellGroup(sheet, nextRow, startCell.col, startCell.col + 5, COLOR.HEADER);
   addFont(totalSumTitleCell, true);
 
   const totalSumValueCell = getCell(sheet, nextRow, startCell.col + 6);
@@ -414,7 +428,7 @@ export async function exportToExcel(data: CategoriesExportData, fileName: string
   totalSumValueCell.value = { formula: `${taxValueCell.address} + ${totalSumBeforeTaxValueCell.address}` };
   totalSumValueCell.alignment = { horizontal: 'right', vertical: 'middle' };
   addNumberFormat(totalSumValueCell);
-  totalSumValueCell.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FF60D394' } };
+  totalSumValueCell.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: COLOR.TOTAL } };
 
   nextRow += 1;
 
@@ -430,7 +444,7 @@ export async function exportToExcel(data: CategoriesExportData, fileName: string
   addFont(videoValueCell);
   const videoCountCell = getNamedCellRef(wb, 'videoCount');
 
-  videoValueCell.value = { formula: `IFERROR(${totalSumValueCell.address}/${videoCountCell.address}, "-")` };
+  videoValueCell.value = { formula: `IFERROR(${totalSumValueCell.address}/${videoCountCell.a1}, "-")` };
 
   wb.calcProperties.fullCalcOnLoad = true;
 
