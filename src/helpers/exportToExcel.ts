@@ -10,96 +10,49 @@ import { Dayjs } from 'dayjs';
 
 type DefinedRef = {
   sheet: ExcelJS.Worksheet;
-  /** Всегда одиночный A1-адрес верхней-левой ячейки */
-  a1: string; // например "$B$2"
-  row: number; // 2
-  col: number; // 2 (для B)
+  address: string;
+  row: number;
+  col: number;
 };
 
-/** Берём ПЕРВЫЙ диапазон по имени, приводим к строке "'Лист'!$C$21" ИЛИ "'Лист'!$C$21:$D$21" */
-function getFirstNamedRangeRaw(wb: ExcelJS.Workbook, name: string): string {
-  const dn: any = (wb as any).definedNames;
-  if (!dn?.getRanges) {
-    throw new Error('Workbook.definedNames.getRanges is unavailable in this ExcelJS version');
+function getNamedCellRef(wb: ExcelJS.Workbook, name: string): DefinedRef {
+  for (const sheet of wb.worksheets) {
+    sheet.eachRow({ includeEmpty: false }, (row) => {
+      row.eachCell({ includeEmpty: false }, (cell) => {
+        const names = (cell as any).names as string[] | undefined;
+        if (names?.includes(name)) {
+          const { row: r, col: c } = a1ToRC(cell.address);
+          return {
+            sheet,
+            a1: cell.address.startsWith('$') ? cell.address : `$${sheet.getColumn(c).letter}$${r}`,
+            row: r,
+            col: c,
+          };
+        }
+      });
+    });
   }
-
-  const raw = dn.getRanges(name);
-  let first: string | undefined;
-
-  if (Array.isArray(raw)) {
-    first = raw[0];
-  } else if (raw && typeof raw === 'object') {
-    for (const v of Object.values(raw as Record<string, string[] | undefined>)) {
-      if (Array.isArray(v) && v.length > 0) {
-        first = v[0];
-        break;
-      }
-    }
-    if (!first) {
-      const keys = Object.keys(raw as Record<string, unknown>);
-      if (keys.length > 0) first = keys[0] as string;
-    }
-  }
-
-  if (!first) {
-    throw new Error(`Named range "${name}" not found`);
-  }
-
-  return first; // например "'EXPORT_TMP'!$C$21:$D$21"
-}
-
-/** Возвращает пару [sheetName, addr] где addr может быть "A1" или "A1:B2" */
-function splitSheetAndAddr(namedRef: string): { sheetName: string; addr: string } {
-  const [sheetQuoted, addrRaw] = namedRef.split('!');
-  const sheetName = sheetQuoted.replace(/^'/, '').replace(/'$/, '');
-  const addr = addrRaw.replace(/\s+/g, '');
-  return { sheetName, addr };
-}
-
-/** Берём верхнюю-левую ячейку из адреса, поддерживая и одиночные A1, и диапазоны A1:A2 */
-function addrToTopLeftA1(addr: string): string {
-  if (!addr.includes(':')) return addr;
-  const [leftTop] = addr.split(':');
-  return leftTop;
+  throw new Error(`Named single-cell "${name}" not found. Make sure it's a single named cell in the template.`);
 }
 
 function a1ToRC(a1: string): { row: number; col: number } {
   const m = a1.match(/\$?([A-Z]+)\$?(\d+)$/i);
-  if (!m) {
-    throw new Error(`Bad A1 address: ${a1}`);
-  }
+  if (!m) throw new Error(`Bad A1 address: ${a1}`);
   const letters = m[1].toUpperCase();
   const row = parseInt(m[2], 10);
   let col = 0;
-  for (let i = 0; i < letters.length; i++) {
-    col = col * 26 + (letters.charCodeAt(i) - 64);
-  }
+  for (let i = 0; i < letters.length; i++) col = col * 26 + (letters.charCodeAt(i) - 64);
   return { row, col };
 }
 
-/** Ссылка на именованную верхнюю-левую ячейку (если диапазон — берём её верхнюю-левую) */
-function getDefinedRef(wb: ExcelJS.Workbook, name: string): DefinedRef {
-  const raw = getFirstNamedRangeRaw(wb, name);
-  const { sheetName, addr } = splitSheetAndAddr(raw);
-  const topLeft = addrToTopLeftA1(addr);
-  const sheet = wb.getWorksheet(sheetName);
-  if (!sheet) {
-    throw new Error(`Worksheet "${sheetName}" not found for named range "${name}"`);
-  }
-
-  const rc = a1ToRC(topLeft);
-  return { sheet, a1: topLeft, row: rc.row, col: rc.col };
-}
-
-/** Поставить значение в именованную (или верхнюю-левую) ячейку */
 function setNamedCell(wb: ExcelJS.Workbook, name: string, value: ExcelJS.CellValue): void {
-  const ref = getDefinedRef(wb, name);
-  ref.sheet.getCell(ref.a1).value = value;
+  const ref = getNamedCellRef(wb, name);
+  ref.sheet.getCell(ref.address).value = value;
 }
 
 function writeNamedDate(wb: ExcelJS.Workbook, namedRange = 'date', value?: Dayjs) {
-  const ref = getDefinedRef(wb, namedRange);
-  const cell = ref.sheet.getCell(ref.a1);
+  const ref = getNamedCellRef(wb, namedRange);
+  const cell = ref.sheet.getCell(ref.address);
 
   let y: number, m: number, d: number;
 
@@ -131,12 +84,7 @@ function addBorderToCell(cell: ExcelJS.Cell, exclude: CellSide[] = []): void {
 }
 
 function addFont(cell: ExcelJS.Cell, bold: boolean = false): void {
-  cell.font = {
-    name: 'Montserrat',
-    size: 10,
-    bold,
-    color: { argb: 'FF0F4C5C' },
-  };
+  cell.font = { name: 'Montserrat', size: 10, bold, color: { argb: 'FF0F4C5C' } };
 }
 
 function addNumberFormat(cell: ExcelJS.Cell): void {
@@ -192,6 +140,7 @@ function addItems(
     const nameCell = getCell(sheet, nextRow, colIndex);
     nameCell.value = item.name;
     addFont(nameCell);
+
     const clientPriceCell = getCell(sheet, nextRow, colIndex + 1);
     clientPriceCell.value = item.clientPrice ?? defaultValue;
     addFont(clientPriceCell);
@@ -209,7 +158,6 @@ function addItems(
     const unit1ValCell = getCell(sheet, nextRow, colIndex + 3);
     unit1ValCell.value = unit1Name !== defaultValue ? unit1?.value || 0 : defaultValue;
     addFont(unit1ValCell);
-    addNumberFormat(unit1ValCell);
     unit1ValCell.alignment = { horizontal: 'center', vertical: 'middle' };
 
     const unit2KeyCell = getCell(sheet, nextRow, colIndex + 4);
@@ -220,7 +168,6 @@ function addItems(
     const unit2ValCell = getCell(sheet, nextRow, colIndex + 5);
     unit2ValCell.value = unit2Name !== defaultValue ? unit2?.value || 0 : defaultValue;
     addFont(unit2ValCell);
-    addNumberFormat(unit2ValCell);
     unit2ValCell.alignment = { horizontal: 'center', vertical: 'middle' };
 
     // Insert the formula into the next cell: IF(ISNUMBER(price),price,0) * IF(ISNUMBER(u1),u1,1) * IF(ISNUMBER(u2),u2,1)
@@ -291,14 +238,7 @@ const isCategoryWithSubcategories = (
   v: CategoryWithSubcategories | CategoryWithoutSubcategories
 ): v is CategoryWithSubcategories => Array.isArray(v.data);
 
-export async function exportToExcel(
-  data: CategoriesExportData,
-  clientTotal: string,
-  clientCostPerVideo: number,
-  fileName: string,
-  date?: Dayjs,
-  watermark?: string
-) {
+export async function exportToExcel(data: CategoriesExportData, fileName: string, date?: Dayjs, watermark?: string) {
   const res = await fetch('/template.xlsx');
   if (!res.ok) {
     throw new Error(`Failed to fetch template.xlsx: ${res.status} ${res.statusText}`);
@@ -316,7 +256,7 @@ export async function exportToExcel(
     setNamedCell(wb, 'watermark', watermark);
   }
 
-  const startCell = getDefinedRef(wb, 'tableStart');
+  const startCell = getNamedCellRef(wb, 'tableStart');
   const sheet = startCell.sheet;
   let nextRow = startCell.row;
 
@@ -488,7 +428,9 @@ export async function exportToExcel(
   addBorderToCell(videoValueCell);
   addNumberFormat(videoValueCell);
   addFont(videoValueCell);
-  videoValueCell.value = { formula: `IFERROR(${totalSumValueCell.address}/C9, "-")` };
+  const videoCountCell = getNamedCellRef(wb, 'videoCount');
+
+  videoValueCell.value = { formula: `IFERROR(${totalSumValueCell.address}/${videoCountCell.address}, "-")` };
 
   wb.calcProperties.fullCalcOnLoad = true;
 
