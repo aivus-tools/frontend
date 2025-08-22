@@ -140,9 +140,7 @@ function addFont(cell: ExcelJS.Cell, bold: boolean = false): void {
 }
 
 function addNumberFormat(cell: ExcelJS.Cell): void {
-  if (typeof cell.value === 'number') {
-    cell.numFmt = '#,##0.00';
-  }
+  cell.numFmt = '#,##0.00';
 }
 
 function addBorderToRow(sheet: ExcelJS.Worksheet, rowIndex: number, startCol: number, endCol: number) {
@@ -206,23 +204,23 @@ function addItems(
     const unit1KeyCell = getCell(sheet, nextRow, colIndex + 2);
     unit1KeyCell.value = unit1Name;
     addFont(unit1KeyCell);
-    addNumberFormat(unit1KeyCell);
     unit1KeyCell.alignment = { horizontal: 'right', vertical: 'middle' };
 
     const unit1ValCell = getCell(sheet, nextRow, colIndex + 3);
     unit1ValCell.value = unit1Name !== defaultValue ? unit1?.value || 0 : defaultValue;
     addFont(unit1ValCell);
+    addNumberFormat(unit1ValCell);
     unit1ValCell.alignment = { horizontal: 'center', vertical: 'middle' };
 
     const unit2KeyCell = getCell(sheet, nextRow, colIndex + 4);
     unit2KeyCell.value = unit2Name;
     addFont(unit2KeyCell);
-    addNumberFormat(unit2KeyCell);
     unit2KeyCell.alignment = { horizontal: 'right', vertical: 'middle' };
 
     const unit2ValCell = getCell(sheet, nextRow, colIndex + 5);
     unit2ValCell.value = unit2Name !== defaultValue ? unit2?.value || 0 : defaultValue;
     addFont(unit2ValCell);
+    addNumberFormat(unit2ValCell);
     unit2ValCell.alignment = { horizontal: 'center', vertical: 'middle' };
 
     // Insert the formula into the next cell: IF(ISNUMBER(price),price,0) * IF(ISNUMBER(u1),u1,1) * IF(ISNUMBER(u2),u2,1)
@@ -283,12 +281,8 @@ const addColorToCellGroup = (
   endColumn: number,
   color: string
 ): void => {
-  // const row = sheet.getRow(rowIndex);
-
   for (let col = startColumn; col <= endColumn; col++) {
-    // const cell = row.getCell(col);
     const cell = sheet.getCell(rowIndex, col);
-    cell.value = cell.value ?? null; // заставляем создать именно ячейку
     cell.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: color } };
   }
 };
@@ -326,6 +320,7 @@ export async function exportToExcel(
   const sheet = startCell.sheet;
   let nextRow = startCell.row;
 
+  const categoryTotals: string[] = [];
   for (let i = 0; i < data.length; i++) {
     const currentBlock = data.at(i);
 
@@ -392,6 +387,7 @@ export async function exportToExcel(
           addFont(categoryResultCell, true);
           addNumberFormat(categoryResultCell);
           addBorderToCell(categoryResultCell);
+          categoryTotals.push(categoryResultCell.address);
 
           headerTotalCell.value = { formula: categoryResultCell.address };
           addFont(headerTotalCell, true);
@@ -406,12 +402,91 @@ export async function exportToExcel(
       totalCell.value = `ИТОГО ${currentBlock.category.toUpperCase()}`;
       totalCell.alignment = { horizontal: 'right', vertical: 'middle' };
       addFont(totalCell, true);
+      categoryTotals.push(getCell(sheet, nextRow - 1, startCell.col + 6).address);
 
       addColorToCellGroup(sheet, nextRow - 1, startCell.col, startCell.col + 5, 'FF7BDFF2');
       addBorderToLine(sheet, nextRow - 1, startCell.col, startCell.col + 5);
       nextRow += 1;
     }
   }
+
+  nextRow += 2;
+
+  const managementTitleCell = getCell(sheet, nextRow, startCell.col);
+  managementTitleCell.value = 'Управление проектом';
+  addBorderToLine(sheet, nextRow, startCell.col, startCell.col + 5);
+  addFont(managementTitleCell);
+
+  const managementValueCell = getCell(sheet, nextRow, startCell.col + 6);
+  addBorderToCell(managementValueCell);
+
+  nextRow += 1;
+
+  const totalSumBeforeTaxTitleCell = getCell(sheet, nextRow, startCell.col);
+  totalSumBeforeTaxTitleCell.value = 'Общая сумма до налогов';
+  addBorderToLine(sheet, nextRow, startCell.col, startCell.col + 5);
+  addColorToCellGroup(sheet, nextRow, startCell.col, startCell.col + 6, 'FFB2F7EF');
+  addFont(totalSumBeforeTaxTitleCell, true);
+
+  const totalSumBeforeTaxValueCell = getCell(sheet, nextRow, startCell.col + 6);
+  addBorderToCell(totalSumBeforeTaxValueCell);
+  addFont(totalSumBeforeTaxValueCell, true);
+  totalSumBeforeTaxValueCell.value = { formula: `SUM(${categoryTotals.join(',')}, ${managementValueCell.address})` };
+  totalSumBeforeTaxValueCell.alignment = { horizontal: 'right', vertical: 'middle' };
+  addNumberFormat(totalSumBeforeTaxValueCell);
+
+  nextRow += 2;
+
+  const taxTitleCell = getCell(sheet, nextRow, startCell.col);
+  taxTitleCell.value = 'Налоги';
+  addBorderToLine(sheet, nextRow, startCell.col, startCell.col + 5);
+  addFont(taxTitleCell);
+
+  const taxInfoCell1 = getCell(sheet, nextRow, startCell.col + 4);
+  taxInfoCell1.value = 'УСН';
+  addFont(taxInfoCell1);
+  taxInfoCell1.alignment = { horizontal: 'right', vertical: 'middle' };
+
+  const taxInfoCell2 = getCell(sheet, nextRow, startCell.col + 5);
+  taxInfoCell2.value = 0.06;
+  taxInfoCell2.numFmt = '0%';
+  addFont(taxInfoCell2);
+  taxInfoCell2.alignment = { horizontal: 'center', vertical: 'middle' };
+
+  const taxValueCell = getCell(sheet, nextRow, startCell.col + 6);
+  taxValueCell.alignment = { horizontal: 'right', vertical: 'middle' };
+  addBorderToCell(taxValueCell);
+  addNumberFormat(taxValueCell);
+  taxValueCell.value = { formula: `${taxInfoCell2.address} * ${totalSumBeforeTaxValueCell.address}` };
+
+  nextRow += 1;
+
+  const totalSumTitleCell = getCell(sheet, nextRow, startCell.col);
+  totalSumTitleCell.value = 'Общая сумма (Без НДС)';
+  addBorderToLine(sheet, nextRow, startCell.col, startCell.col + 5);
+  addColorToCellGroup(sheet, nextRow, startCell.col, startCell.col + 5, 'FF7BDFF2');
+  addFont(totalSumTitleCell, true);
+
+  const totalSumValueCell = getCell(sheet, nextRow, startCell.col + 6);
+  addBorderToCell(totalSumValueCell);
+  addFont(totalSumValueCell, true);
+  totalSumValueCell.value = { formula: `${taxValueCell.address} + ${totalSumBeforeTaxValueCell.address}` };
+  totalSumValueCell.alignment = { horizontal: 'right', vertical: 'middle' };
+  addNumberFormat(totalSumValueCell);
+  totalSumValueCell.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FF60D394' } };
+
+  nextRow += 1;
+
+  const videoTitleCell = getCell(sheet, nextRow, startCell.col);
+  videoTitleCell.value = 'Примерно за один ролик (для справки)';
+  addBorderToLine(sheet, nextRow, startCell.col, startCell.col + 5);
+  addFont(videoTitleCell);
+
+  const videoValueCell = getCell(sheet, nextRow, startCell.col + 6);
+  videoValueCell.alignment = { horizontal: 'right', vertical: 'middle' };
+  addBorderToCell(videoValueCell);
+  addNumberFormat(videoValueCell);
+  videoValueCell.value = { formula: `IFERROR(${totalSumValueCell.address}/C9, "-")` };
 
   wb.calcProperties.fullCalcOnLoad = true;
 
