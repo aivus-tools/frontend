@@ -261,10 +261,10 @@ function addItems(
     const prevRow = rowIdx - 1;
 
     if (minPrevRowForRollup === undefined || prevRow >= minPrevRowForRollup) {
-      const secondTotalCell = getCell(sheet, prevRow, colIndex + 6);
-      secondTotalCell.value = { formula: totalCell.address };
-      addFont(secondTotalCell, true);
-      addNumberFormat(secondTotalCell);
+      const headerTotalCell = getCell(sheet, prevRow, colIndex + 6);
+      headerTotalCell.value = { formula: totalCell.address };
+      addFont(headerTotalCell, true);
+      addNumberFormat(headerTotalCell);
     }
   } else {
     // No items added; avoid empty SUM range
@@ -343,6 +343,8 @@ export async function exportToExcel(
     nextRow += 1;
 
     if (isCategoryWithSubcategories(currentBlock)) {
+      const headerTotalCell = getCell(sheet, nextRow - 1, startCell.col + 6);
+
       const blockData = currentBlock.data;
 
       for (let j = 0; j < blockData.length; j++) {
@@ -354,10 +356,10 @@ export async function exportToExcel(
         }
 
         addColorToCellGroup(sheet, nextRow, startCell.col, startCell.col + 6, 'FFB2F7EF');
-        addBorderToLine(sheet, nextRow, startCell.col, startCell.col + 5);
+        addBorderToLine(sheet, nextRow, startCell.col, startCell.col + 6);
 
         const subcategoryCell = getCell(sheet, nextRow, startCell.col);
-        subcategoryCell.value = subcategory.toUpperCase();
+        subcategoryCell.value = subcategory;
         addFont(subcategoryCell, true);
 
         nextRow += 1;
@@ -377,7 +379,7 @@ export async function exportToExcel(
           addFont(totalCell, true);
           totalCell.alignment = { horizontal: 'right', vertical: 'middle' };
 
-          addColorToCellGroup(sheet, nextRow, startCell.col, startCell.col + 5, 'FFB2F7EF');
+          addColorToCellGroup(sheet, nextRow, startCell.col, startCell.col + 5, 'FF7BDFF2');
           addBorderToLine(sheet, nextRow, startCell.col, startCell.col + 5);
 
           const categoryResultCell = getCell(sheet, nextRow, startCell.col + 6);
@@ -390,6 +392,10 @@ export async function exportToExcel(
           addFont(categoryResultCell, true);
           addNumberFormat(categoryResultCell);
           addBorderToCell(categoryResultCell);
+
+          headerTotalCell.value = { formula: categoryResultCell.address };
+          addFont(headerTotalCell, true);
+          addNumberFormat(headerTotalCell);
         }
 
         nextRow += 1;
