@@ -1,7 +1,9 @@
-import ExcelJS from 'exceljs';
+import ExcelJS, { type BorderStyle } from 'exceljs';
 import { Dayjs } from 'dayjs';
 
 type CellSide = 'top' | 'left' | 'bottom' | 'right';
+const FONT_NAME = 'Montserrat';
+const FONT_COLOR = { argb: 'FF0F4C5C' };
 
 export class ExcelState {
   constructor(wb: ExcelJS.Workbook) {
@@ -15,16 +17,18 @@ export class ExcelState {
   }
 
   addBorderToCell(cell: ExcelJS.Cell, exclude: CellSide[] = []): void {
+    const thinBorder = { style: 'thin' as BorderStyle, color: { argb: 'FF000000' } };
+
     cell.border = {
-      top: exclude.includes('top') ? undefined : { style: 'thin', color: { argb: 'FF000000' } },
-      left: exclude.includes('left') ? undefined : { style: 'thin', color: { argb: 'FF000000' } },
-      bottom: exclude.includes('bottom') ? undefined : { style: 'thin', color: { argb: 'FF000000' } },
-      right: exclude.includes('right') ? undefined : { style: 'thin', color: { argb: 'FF000000' } },
+      top: exclude.includes('top') ? undefined : thinBorder,
+      left: exclude.includes('left') ? undefined : thinBorder,
+      bottom: exclude.includes('bottom') ? undefined : thinBorder,
+      right: exclude.includes('right') ? undefined : thinBorder,
     };
   }
 
   addFont(cell: ExcelJS.Cell, bold: boolean = false): void {
-    cell.font = { name: 'Montserrat', size: 10, bold, color: { argb: 'FF0F4C5C' } };
+    cell.font = { name: FONT_NAME, size: 10, bold, color: FONT_COLOR };
   }
 
   addColorToCellGroup(rowIndex: number, length: number, color: string, startColumn?: number): void {
@@ -108,6 +112,7 @@ export class ExcelState {
     let minCol = Infinity;
 
     for (const cell of cells) {
+      // eslint-disable-next-line
       const cellWithAddress = cell as any;
       const address = cellWithAddress.$col$row || cellWithAddress.address || cell.address;
       const { row, col } = this.a1ToRC(String(address));
@@ -157,19 +162,19 @@ export class ExcelState {
 
     cell.value = new Date(Date.UTC(y, m, d));
     cell.numFmt = '[$-419]dd mmmm yyyy "г."';
-    cell.font = { name: 'Montserrat', size: 12, color: { argb: 'FF0F4C5C' } };
+    cell.font = { name: FONT_NAME, size: 12, color: FONT_COLOR };
     cell.alignment = { horizontal: 'left', vertical: 'middle' };
   }
 
   private a1ToRC(a1: string): { row: number; col: number } {
-    const m = a1.match(/\$?([A-Z]+)\$?(\d+)$/i);
+    const match = a1.match(/\$?([A-Z]+)\$?(\d+)$/i);
 
-    if (!m) {
+    if (!match) {
       throw new Error(`Bad A1 address: ${a1}`);
     }
 
-    const letters = m[1].toUpperCase();
-    const row = parseInt(m[2], 10);
+    const letters = match[1].toUpperCase();
+    const row = parseInt(match[2], 10);
     let col = 0;
 
     for (let i = 0; i < letters.length; i++) {
