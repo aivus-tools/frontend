@@ -96,40 +96,41 @@ export class ExcelState {
       }
     | undefined {
     const matrix = this.wb.definedNames.getMatrix(name);
+
     const cells = matrix.map((cell) => cell);
 
     if (cells.length === 0) {
       return undefined;
     }
 
-    let best = cells[0];
-    let rMin = Infinity;
-    let cMin = Infinity;
+    let bestCell = cells[0];
+    let minRow = Infinity;
+    let minCol = Infinity;
 
-    for (const c of cells) {
-      const a1 = (c as any).$col$row ?? (c as any).address ?? c.address;
-      const { row, col } = this.a1ToRC(String(a1));
+    for (const cell of cells) {
+      const cellWithAddress = cell as any;
+      const address = cellWithAddress.$col$row || cellWithAddress.address || cell.address;
+      const { row, col } = this.a1ToRC(String(address));
 
-      if (row < rMin || (row === rMin && col < cMin)) {
-        rMin = row;
-        cMin = col;
-        best = c;
+      if (row < minRow || (row === minRow && col < minCol)) {
+        minRow = row;
+        minCol = col;
+        bestCell = cell;
       }
     }
-    const sheet = best.worksheet;
-    const a1 = `$${sheet.getColumn(cMin).letter}$${rMin}`;
 
-    return { sheet, a1, row: rMin, col: cMin };
+    const sheet = bestCell.worksheet;
+    const a1 = `$${sheet.getColumn(minCol).letter}$${minRow}`;
+
+    return { sheet, a1, row: minRow, col: minCol };
   }
 
   setNamedCell(name: string, value: ExcelJS.CellValue): void {
     const ref = this.getNamedCellRef(name);
 
-    if (!ref) {
-      return;
+    if (ref) {
+      ref.sheet.getCell(ref.a1).value = value;
     }
-
-    ref.sheet.getCell(ref.a1).value = value;
   }
 
   writeNamedDate(namedRange = 'date', value?: Dayjs) {
