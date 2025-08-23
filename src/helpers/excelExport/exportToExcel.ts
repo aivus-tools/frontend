@@ -15,6 +15,9 @@ const COLOR = {
   TOTAL: 'FF60D394',
 } as const;
 
+const RIGHT_MIDDLE = { horizontal: 'right', vertical: 'middle' } as const;
+const CENTER_MIDDLE = { horizontal: 'center', vertical: 'middle' } as const;
+
 function addItems(
   excel: ExcelState,
   items: ExportItem[],
@@ -50,22 +53,22 @@ function addItems(
     const unit1KeyCell = excel.getCell(nextRow, colIndex + 2);
     unit1KeyCell.value = unit1Name;
     excel.addFont(unit1KeyCell);
-    unit1KeyCell.alignment = { horizontal: 'right', vertical: 'middle' };
+    unit1KeyCell.alignment = RIGHT_MIDDLE;
 
     const unit1ValCell = excel.getCell(nextRow, colIndex + 3);
-    unit1ValCell.value = unit1Name !== defaultValue ? unit1?.value || 0 : defaultValue;
+    unit1ValCell.value = unit1Name !== defaultValue ? (unit1?.value ?? 0) : defaultValue;
     excel.addFont(unit1ValCell);
-    unit1ValCell.alignment = { horizontal: 'center', vertical: 'middle' };
+    unit1ValCell.alignment = CENTER_MIDDLE;
 
     const unit2KeyCell = excel.getCell(nextRow, colIndex + 4);
     unit2KeyCell.value = unit2Name;
     excel.addFont(unit2KeyCell);
-    unit2KeyCell.alignment = { horizontal: 'right', vertical: 'middle' };
+    unit2KeyCell.alignment = RIGHT_MIDDLE;
 
     const unit2ValCell = excel.getCell(nextRow, colIndex + 5);
-    unit2ValCell.value = unit2Name !== defaultValue ? unit2?.value || 0 : defaultValue;
+    unit2ValCell.value = unit2Name !== defaultValue ? (unit2?.value ?? 0) : defaultValue;
     excel.addFont(unit2ValCell);
-    unit2ValCell.alignment = { horizontal: 'center', vertical: 'middle' };
+    unit2ValCell.alignment = CENTER_MIDDLE;
 
     // Insert the formula into the next cell: IF(ISNUMBER(price),price,0) * IF(ISNUMBER(u1),u1,1) * IF(ISNUMBER(u2),u2,1)
     const clientPriceCellAddress = clientPriceCell.address;
@@ -196,13 +199,13 @@ export async function exportToExcel(data: CategoriesExportData, fileName: string
         const subTotalCell = excel.getCell(nextRow - 1, 5);
         subTotalCell.value = `${totalTitle} ${currentBlock.category.toUpperCase()} | ${subcategory}`;
         excel.addFont(subTotalCell, true);
-        subTotalCell.alignment = { horizontal: 'right', vertical: 'middle' };
+        subTotalCell.alignment = RIGHT_MIDDLE;
 
         if (j === blockData.length - 1) {
           const totalCell = excel.getCell(nextRow, 5);
           totalCell.value = `ИТОГО ${currentBlock.category.toUpperCase()}`;
           excel.addFont(totalCell, true);
-          totalCell.alignment = { horizontal: 'right', vertical: 'middle' };
+          totalCell.alignment = RIGHT_MIDDLE;
 
           excel.addColorToCellGroup(nextRow, 5, COLOR.HEADER);
           excel.addBorderToLine(nextRow, 5);
@@ -210,10 +213,12 @@ export async function exportToExcel(data: CategoriesExportData, fileName: string
           const categoryResultCell = excel.getCell(nextRow, 6);
           categoryResultCell.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: COLOR.TOTAL } };
 
+          const col5Letter = sheet.getColumn(startCol + 5).letter;
+          const col6Letter = sheet.getColumn(startCol + 6).letter;
           categoryResultCell.value = {
             formula:
-              `SUMIF($${sheet.getColumn(startCol + 5).letter}:$${sheet.getColumn(startCol + 5).letter},` +
-              `"${totalTitle} "&${categoryTitleCell.address}&"*",$${sheet.getColumn(startCol + 6).letter}:$${sheet.getColumn(startCol + 6).letter})`,
+              `SUMIF($${col5Letter}:$${col5Letter},` +
+              `"${totalTitle} "&${categoryTitleCell.address}&"*",$${col6Letter}:$${col6Letter})`,
           };
           excel.addFont(categoryResultCell, true);
           excel.addNumberFormat(categoryResultCell);
@@ -231,7 +236,7 @@ export async function exportToExcel(data: CategoriesExportData, fileName: string
       nextRow = addItems(excel, currentBlock.data.items ?? [], nextRow, startCol, COLOR.TOTAL, startRow);
       const totalCell = excel.getCell(nextRow - 1, 5);
       totalCell.value = `ИТОГО ${currentBlock.category.toUpperCase()}`;
-      totalCell.alignment = { horizontal: 'right', vertical: 'middle' };
+      totalCell.alignment = RIGHT_MIDDLE;
       excel.addFont(totalCell, true);
       categoryTotals.push(excel.getCell(nextRow - 1, 6).address);
 
@@ -263,7 +268,7 @@ export async function exportToExcel(data: CategoriesExportData, fileName: string
   excel.addBorderToCell(totalSumBeforeTaxValueCell);
   excel.addFont(totalSumBeforeTaxValueCell, true);
   totalSumBeforeTaxValueCell.value = { formula: `SUM(${categoryTotals.join(',')}, ${managementValueCell.address})` };
-  totalSumBeforeTaxValueCell.alignment = { horizontal: 'right', vertical: 'middle' };
+  totalSumBeforeTaxValueCell.alignment = RIGHT_MIDDLE;
   excel.addNumberFormat(totalSumBeforeTaxValueCell);
 
   nextRow += 2;
@@ -276,16 +281,16 @@ export async function exportToExcel(data: CategoriesExportData, fileName: string
   const taxInfoCell1 = excel.getCell(nextRow, 4);
   taxInfoCell1.value = 'УСН';
   excel.addFont(taxInfoCell1);
-  taxInfoCell1.alignment = { horizontal: 'right', vertical: 'middle' };
+  taxInfoCell1.alignment = RIGHT_MIDDLE;
 
   const taxInfoCell2 = excel.getCell(nextRow, 5);
   taxInfoCell2.value = 0.06;
   taxInfoCell2.numFmt = '0%';
   excel.addFont(taxInfoCell2);
-  taxInfoCell2.alignment = { horizontal: 'center', vertical: 'middle' };
+  taxInfoCell2.alignment = CENTER_MIDDLE;
 
   const taxValueCell = excel.getCell(nextRow, 6);
-  taxValueCell.alignment = { horizontal: 'right', vertical: 'middle' };
+  taxValueCell.alignment = RIGHT_MIDDLE;
   excel.addBorderToCell(taxValueCell);
   excel.addNumberFormat(taxValueCell);
   excel.addFont(taxValueCell);
@@ -303,7 +308,7 @@ export async function exportToExcel(data: CategoriesExportData, fileName: string
   excel.addBorderToCell(totalSumValueCell);
   excel.addFont(totalSumValueCell, true);
   totalSumValueCell.value = { formula: `${taxValueCell.address} + ${totalSumBeforeTaxValueCell.address}` };
-  totalSumValueCell.alignment = { horizontal: 'right', vertical: 'middle' };
+  totalSumValueCell.alignment = RIGHT_MIDDLE;
   excel.addNumberFormat(totalSumValueCell);
   totalSumValueCell.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: COLOR.TOTAL } };
 
@@ -315,7 +320,7 @@ export async function exportToExcel(data: CategoriesExportData, fileName: string
   excel.addFont(videoTitleCell);
 
   const videoValueCell = excel.getCell(nextRow, 6);
-  videoValueCell.alignment = { horizontal: 'right', vertical: 'middle' };
+  videoValueCell.alignment = RIGHT_MIDDLE;
   excel.addBorderToCell(videoValueCell);
   excel.addNumberFormat(videoValueCell);
   excel.addFont(videoValueCell);
