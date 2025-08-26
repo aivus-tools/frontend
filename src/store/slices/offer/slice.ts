@@ -172,7 +172,7 @@ export const offerSlice = createSlice({
           .map((category) => category.id);
         state.offerDetails.offers.forEach((offer) => {
           if (currentCategories.includes(offer.categoryId)) {
-            const unitMultiplier = offer.units?.reduce((acc, unit) => acc * (unit?.value ?? 1), 1) ?? 1;
+            const unitMultiplier = offer.units?.reduce((acc, unit) => acc * (unit?.count ?? 1), 1) ?? 1;
             const { price = 0 } = offer;
             const { surcharge = 0 } = newCategorySurcharge;
             offer.surcharge = surcharge;

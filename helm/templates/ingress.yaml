@@ -10,6 +10,9 @@ metadata:
     {{- include "my-chart.dynamicIngressAnnotations" . | nindent 4 }}
 
 spec:
+  {{- if .Values.ingress.className }}
+  ingressClassName: {{ .Values.ingress.className }}
+  {{- end }}
   tls:
     - hosts:
         - {{ .Values.ingress.hosts | first }}
