@@ -14,6 +14,8 @@ export const RU_LOCALES = {
   ALREADY_REGISTERED_WITH_GOOGLE: 'Вы уже зарегистрированы с помощью Google. Пожалуйста, войдите с помощью Google',
   ANALYSIS: 'Анализ',
   AND: 'и',
+  AT_LEAST_ONE_PLACEMENT_REQUIRED: 'Требуется хотя бы одно размещение',
+  AT_LEAST_ONE_REFERENCE_VIDEO_REQUIRED: 'Требуется хотя бы одно референсное видео',
   BACK: 'Назад',
   BRAND_NAME: 'Название бренда',
   CANCEL: 'Отмена',
