@@ -1,0 +1,57 @@
+.container {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  width: 300px;
+  padding: 8px;
+}
+
+.section {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.headerRow {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  justify-content: start;
+}
+
+.headerLabel {
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.formatSelect {
+  width: 75px;
+}
+
+.helper {
+  font-size: 12px;
+  line-height: 18px;
+  color: var(--gray-light);
+}
+
+.label {
+  font-size: 14px;
+  text-align: left;
+}
+
+.block {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.row {
+  display: grid;
+  grid-template-columns: auto 115px 28px;
+  gap: 20px;
+  align-items: center;
+}
+
+.actionButton {
+  margin-top: 4px;
+}

@@ -38,29 +38,40 @@ export const VENDOR_TABS = [
   },
 ];
 
+export const VENDOR_PROJECT_TAB_KEYS = {
+  DETAILS: 'details',
+  ESTIMATION: 'estimation',
+  OFFER: 'offer',
+  TIMING: 'timing',
+  PRESENTATION: 'presentation',
+  ANALYSIS: 'analysis',
+} as const;
+
+export type VendorProjectTabKey = (typeof VENDOR_PROJECT_TAB_KEYS)[keyof typeof VENDOR_PROJECT_TAB_KEYS];
+
 export const VENDOR_PROJECT_TABS = [
   {
-    key: 'details',
+    key: VENDOR_PROJECT_TAB_KEYS.DETAILS,
     label: t('PROJECT_DETAILS'),
   },
   {
-    key: 'estimation',
+    key: VENDOR_PROJECT_TAB_KEYS.ESTIMATION,
     label: t('ESTIMATION'),
   },
   {
-    key: 'offer',
+    key: VENDOR_PROJECT_TAB_KEYS.OFFER,
     label: t('CLIENTS_OFFER'),
   },
   {
-    key: 'timing',
+    key: VENDOR_PROJECT_TAB_KEYS.TIMING,
     label: t('TIMING'),
   },
   {
-    key: 'presentation',
+    key: VENDOR_PROJECT_TAB_KEYS.PRESENTATION,
     label: t('PRESENTATION'),
   },
   {
-    key: 'analysis',
+    key: VENDOR_PROJECT_TAB_KEYS.ANALYSIS,
     label: t('ANALYSIS'),
   },
 ];
