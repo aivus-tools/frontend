@@ -4,7 +4,7 @@ import { createSlice } from '@reduxjs/toolkit';
 
 import type { PayloadAction } from '@reduxjs/toolkit';
 import clone from 'lodash.clone';
-import { OfferDetails, OfferState, UnforeseenExpenses } from 'src/types/types';
+import { OfferDetails, OfferState, UnforeseenExpenses } from '@/types/store.interface';
 import { CATEGORIES } from '@/modules/vendor/estimation/mock/categories';
 import { ENTRIES } from '@/modules/vendor/estimation/mock/entries';
 
