@@ -31,3 +31,21 @@ export interface OfferState {
   };
   external: boolean;
 }
+
+export interface ExportItem {
+  name: string;
+  clientPrice: number;
+  units: { key: string; value: number }[];
+}
+
+export interface CategoryWithSubcategories {
+  category: string;
+  data: { subcategory: string; items: ExportItem[] }[];
+}
+
+export interface CategoryWithoutSubcategories {
+  category: string;
+  data: { items: ExportItem[] };
+}
+
+export type CategoriesExportData = Array<CategoryWithSubcategories | CategoryWithoutSubcategories>;

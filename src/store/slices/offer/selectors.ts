@@ -1,7 +1,14 @@
 import { applyPercentage, formatCurrency } from '@/lib/utils';
 import { createSelector } from '@reduxjs/toolkit';
 
-import { OfferState } from './types';
+import {
+  CategoriesExportData,
+  CategoryWithoutSubcategories,
+  CategoryWithSubcategories,
+  ExportItem,
+  OfferState,
+} from '@/types/store.interface';
+import { OfferData } from '@/types/estimation.interface';
 
 export const selectOfferDetails = (state: { offer: OfferState }) => state.offer.offerDetails;
 export const selectDictionary = (state: { offer: OfferState }) => state.offer.dictionary;
@@ -113,5 +120,63 @@ export const selectCategorySurcharge = createSelector(
   [selectOfferDetails, (_, categoryId) => categoryId],
   (offerDetails, categoryId) => {
     return offerDetails.categorySurcharge[categoryId] || { surcharge: 0, linked: false };
+  }
+);
+
+export const selectCategoriesExportData = createSelector(
+  [selectOfferDetails, selectRootCategories],
+  (offerDetails, rootCategories): CategoriesExportData => {
+    const prepareUnits = (units: OfferData['units']) => {
+      return units
+        .map((unit) => {
+          if (!unit) {
+            return undefined;
+          }
+
+          return { key: unit.label, value: unit.count };
+        })
+        .filter((unit): unit is { key: string; value: number } => unit !== undefined);
+    };
+
+    return rootCategories.map((category): CategoryWithSubcategories | CategoryWithoutSubcategories => {
+      const subCategories = offerDetails.subCategories.filter(
+        (subCategory) => subCategory.parentCategoryId === category.id
+      );
+
+      if (subCategories.length > 0) {
+        const data = subCategories.map((subCategory) => {
+          const items: ExportItem[] = offerDetails.offers
+            .filter((offer) => offer.categoryId === subCategory.id)
+            .map((offer) => ({
+              name: offer.item,
+              clientPrice: offer.clientPrice,
+              units: prepareUnits(offer.units),
+            }));
+
+          return {
+            subcategory: subCategory.name,
+            items,
+          };
+        });
+
+        return {
+          category: category.name,
+          data,
+        };
+      }
+
+      const items: ExportItem[] = offerDetails.offers
+        .filter((offer) => offer.categoryId === category.id)
+        .map((offer) => ({
+          name: offer.item,
+          clientPrice: offer.clientPrice,
+          units: prepareUnits(offer.units),
+        }));
+
+      return {
+        category: category.name,
+        data: { items },
+      };
+    });
   }
 );
