@@ -123,8 +123,18 @@ export class ExcelState {
         bestCell = cell;
       }
     }
+    const sheetName: string | undefined = bestCell.sheetName || bestCell.worksheet?.name;
 
-    const sheet = bestCell.worksheet;
+    if (!sheetName) {
+      return undefined;
+    }
+
+    const sheet = this.wb.getWorksheet(sheetName);
+
+    if (!sheet) {
+      return undefined;
+    }
+
     const a1 = `$${sheet.getColumn(minCol).letter}$${minRow}`;
 
     return { sheet, a1, row: minRow, col: minCol };
