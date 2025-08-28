@@ -37,11 +37,11 @@ function addItems(
       continue;
     }
 
-    const nameCell = excel.getCell(nextRow, colIndex);
+    const nameCell = excel.getCell(nextRow, 0);
     nameCell.value = item.name;
     excel.addFont(nameCell);
 
-    const clientPriceCell = excel.getCell(nextRow, colIndex + 1);
+    const clientPriceCell = excel.getCell(nextRow, 1);
     clientPriceCell.value = item.clientPrice ?? defaultValue;
     excel.addFont(clientPriceCell);
     excel.addNumberFormat(clientPriceCell);
@@ -50,22 +50,22 @@ function addItems(
     const unit1Name = unit1?.key ?? defaultValue;
     const unit2Name = unit2?.key ?? defaultValue;
 
-    const unit1KeyCell = excel.getCell(nextRow, colIndex + 2);
+    const unit1KeyCell = excel.getCell(nextRow, 2);
     unit1KeyCell.value = unit1Name;
     excel.addFont(unit1KeyCell);
     unit1KeyCell.alignment = RIGHT_MIDDLE;
 
-    const unit1ValCell = excel.getCell(nextRow, colIndex + 3);
+    const unit1ValCell = excel.getCell(nextRow, 3);
     unit1ValCell.value = unit1Name !== defaultValue ? (unit1?.value ?? 0) : defaultValue;
     excel.addFont(unit1ValCell);
     unit1ValCell.alignment = CENTER_MIDDLE;
 
-    const unit2KeyCell = excel.getCell(nextRow, colIndex + 4);
+    const unit2KeyCell = excel.getCell(nextRow, 4);
     unit2KeyCell.value = unit2Name;
     excel.addFont(unit2KeyCell);
     unit2KeyCell.alignment = RIGHT_MIDDLE;
 
-    const unit2ValCell = excel.getCell(nextRow, colIndex + 5);
+    const unit2ValCell = excel.getCell(nextRow, 5);
     unit2ValCell.value = unit2Name !== defaultValue ? (unit2?.value ?? 0) : defaultValue;
     excel.addFont(unit2ValCell);
     unit2ValCell.alignment = CENTER_MIDDLE;
@@ -80,23 +80,23 @@ function addItems(
       `*IF(ISNUMBER(${unit1ValAddress}),${unit1ValAddress},1)` +
       `*IF(ISNUMBER(${unit2ValAddress}),${unit2ValAddress},1)`;
 
-    const sumCell = excel.getCell(nextRow, colIndex + 6);
+    const sumCell = excel.getCell(nextRow, 6);
     sumCell.value = { formula: itemSumFormula };
     excel.addFont(sumCell, true);
     excel.addNumberFormat(sumCell);
 
-    excel.addBorderToRow(nextRow, colIndex, colIndex + 6);
+    excel.addBorderToRow(nextRow, colIndex, 6);
 
     nextRow += 1;
   }
 
-  // Sum all item totals calculated above in this block (column colIndex + 6)
+  // Sum all item totals calculated above in this block (column  6)
   if (nextRow > rowIdx) {
-    const firstAddr = excel.getCell(rowIdx, colIndex + 6).address;
-    const lastAddr = excel.getCell(nextRow - 1, colIndex + 6).address;
+    const firstAddr = excel.getCell(rowIdx, 6).address;
+    const lastAddr = excel.getCell(nextRow - 1, 6).address;
     const itemsSumFormula = `SUM(${firstAddr}:${lastAddr})`;
 
-    const totalCell = excel.getCell(nextRow, colIndex + 6);
+    const totalCell = excel.getCell(nextRow, 6);
     totalCell.value = { formula: itemsSumFormula };
     totalCell.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: color } };
     excel.addBorderToCell(totalCell);
@@ -106,14 +106,14 @@ function addItems(
     const prevRow = rowIdx - 1;
 
     if (minPrevRowForRollup === undefined || prevRow >= minPrevRowForRollup) {
-      const headerTotalCell = excel.getCell(prevRow, colIndex + 6);
+      const headerTotalCell = excel.getCell(prevRow, 6);
       headerTotalCell.value = { formula: totalCell.address };
       excel.addFont(headerTotalCell, true);
       excel.addNumberFormat(headerTotalCell);
     }
   } else {
     // No items added; avoid empty SUM range
-    excel.getCell(nextRow, colIndex + 6).value = defaultValue;
+    excel.getCell(nextRow, 6).value = defaultValue;
   }
 
   nextRow += 1;
