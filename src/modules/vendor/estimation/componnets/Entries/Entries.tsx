@@ -50,7 +50,7 @@ export function Entries({ data = [] }: { data?: OfferData[] }) {
     if (!offer) {
       return;
     }
-    dispatch(changeOfferRow({ id, linkedSurcharge: !offer.linkedSurcharge }));
+    dispatch(changeOfferRow({ id, isLinkedSurcharge: !offer.isLinkedSurcharge }));
   };
   const handleChangeUnit = (id: number, unitType: UnitType) => (newUnitValue: number) => {
     const offer = data.find((it) => it.id === id);
@@ -258,7 +258,7 @@ export function Entries({ data = [] }: { data?: OfferData[] }) {
               return (
                 <EstimationItem key={key} {...rowProps}>
                   <Flex align='center' justify='center'>
-                    <LinkButton link={offer.linkedSurcharge} onClickAction={handleToggleLink(offer.id)} />
+                    <LinkButton link={offer.isLinkedSurcharge} onClickAction={handleToggleLink(offer.id)} />
                   </Flex>
                 </EstimationItem>
               );

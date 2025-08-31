@@ -115,3 +115,11 @@ export const selectCategorySurcharge = createSelector(
     return offerDetails.categorySurcharge[categoryId] || { surcharge: 0, linked: false };
   }
 );
+
+export const selectOverallSurcharge = createSelector([selectOfferDetails], (offerDetails) => {
+  console.log(offerDetails);
+  return {
+    surcharge: offerDetails.overallSurcharge,
+    linked: offerDetails.isLinkedOverallSurcharge,
+  };
+});

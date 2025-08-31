@@ -192,4 +192,7 @@ export const EN_LOCALES = {
   YOUR_EMAIL_ADDRESS: 'Your email address',
   EXPENCES: 'Expenses',
   REVENUE_AND_MARKUP: 'Revenue & Mark-Up',
+  OVERALL_SURCHARGE: 'Overall Surcharge',
+  IF_LINKED_THE_OVERALL_: 'If linked, the Overall Surcharge Percentage is added to all items in the calculation.',
+  IF_UNLINKED_THE_OVERALL_: 'If unlinked, the Overall Surcharge percentage is added only to the linked items.',
 };

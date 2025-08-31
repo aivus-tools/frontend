@@ -20,6 +20,8 @@ export interface OfferDetails {
   >;
   unforeseenExpenses: UnforeseenExpenses;
   showCostPerVideo: boolean;
+  overallSurcharge: number;
+  isLinkedOverallSurcharge: boolean;
 }
 
 export interface OfferState {

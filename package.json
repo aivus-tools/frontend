@@ -7,7 +7,7 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint --dir src --fix",
-    "lint:styles": "stylelint **/*.{css,scss,sass}",
+    "lint:styles": "stylelint **/*.{css,scss,sass} --fix",
     "test": "echo \"Error: no test specified\"",
     "typecheck": "tsc --noEmit",
     "standalone": "node --env-file=.next/.env .next/standalone/server.js",

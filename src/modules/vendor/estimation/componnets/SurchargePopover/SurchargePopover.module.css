@@ -1,0 +1,91 @@
+.popoverContent {
+  width: 315px;
+  padding: 0 8px;
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-bottom: 12px;
+}
+
+.title {
+  font-size: 14px;
+  font-weight: 700;
+  line-height: 100%;
+  color: #4b5675;
+}
+
+.label {
+  font-size: 13px;
+  font-weight: 500;
+  line-height: 100%;
+  color: #8a91a4;
+
+}
+
+.closeButton {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  padding: 4px;
+  font-size: 18px;
+  color: #8c8c8c;
+  cursor: pointer;
+  background: none;
+  border-radius: 4px;
+  transition: all 0.2s;
+}
+
+.closeButton:hover {
+  color: #262626;
+  background-color: #f5f5f5;
+}
+
+.surchargeSection {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 0;
+}
+
+.explanation {
+  padding: 16px 0;
+}
+
+.explanationItem {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  padding: 8px 0;
+}
+
+.explanationItem svg {
+  fill: #8a91a4;
+} 
+
+.explanationText {
+  font-size: 9px;
+  font-weight: 500;
+  line-height: 100%;
+  color: #4b5675;
+}
+
+.explanationItem:last-child {
+  margin-bottom: 0;
+}
+
+.chainIcon {
+  flex-shrink: 0;
+  margin-top: 2px;
+  font-size: 14px;
+}
+
+
+
+.surchargePopover {
+  min-width: 320px;
+}

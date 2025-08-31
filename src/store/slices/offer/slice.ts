@@ -20,6 +20,8 @@ const initialState: OfferState = {
       isVisible: true,
     },
     showCostPerVideo: true,
+    overallSurcharge: 0,
+    isLinkedOverallSurcharge: false,
   },
   metaData: null,
   dictionary: {
@@ -140,23 +142,53 @@ export const offerSlice = createSlice({
       const { surcharge = 0 } = state.offerDetails.categorySurcharge[rootCategoryId ?? 0] ?? {};
 
       if (rootCategoryId !== undefined) {
-        if (newOfferData.surcharge !== undefined) {
+        if (updatedParameter.includes('surcharge')) {
           state.offerDetails.categorySurcharge[rootCategoryId].linked = false;
-          newOffer.linkedSurcharge = false;
+          newOffer.isLinkedSurcharge = false;
         }
-        if (newOfferData.linkedSurcharge === false && rootCategoryId !== undefined) {
+        if (newOfferData.isLinkedSurcharge === false) {
           state.offerDetails.categorySurcharge[rootCategoryId].linked = false;
         }
       }
 
       newOffer.cost = price * unitMultiplier;
       newOffer.taxPrice = round(newOffer.price * (1 + newOffer.taxRate / 100));
-      const markup = newOffer.linkedSurcharge ? surcharge : newOffer.surcharge;
+      const markup = newOffer.isLinkedSurcharge ? surcharge : newOffer.surcharge;
       newOffer.surcharge = markup;
       newOffer.clientPrice = round(newOffer.taxPrice * (1 + markup / 100));
       newOffer.clientCost = round(newOffer.clientPrice * unitMultiplier);
 
       state.offerDetails.offers[index] = newOffer;
+    },
+    changeOverallSurcharge: (
+      state,
+      action: PayloadAction<{
+        surcharge?: number;
+        linked?: boolean;
+      }>
+    ) => {
+      const { surcharge, linked } = action.payload;
+      if (linked !== undefined) {
+        state.offerDetails.isLinkedOverallSurcharge = linked;
+      }
+      if (surcharge !== undefined || linked !== undefined) {
+        const newSurcharge = surcharge ?? state.offerDetails.overallSurcharge;
+        state.offerDetails.overallSurcharge = newSurcharge;
+        if (state.offerDetails.isLinkedOverallSurcharge) {
+          Object.keys(state.offerDetails.categorySurcharge).forEach((categoryId) => {
+            state.offerDetails.categorySurcharge[Number(categoryId)].surcharge = newSurcharge;
+          });
+          state.offerDetails.offers.forEach((offer) => {
+            const unitMultiplier = offer.units?.reduce((acc, unit) => acc * (unit?.count ?? 1), 1) ?? 1;
+            const { price = 0 } = offer;
+            const { surcharge = 0 } = state.offerDetails.categorySurcharge[offer.categoryId] || {};
+            offer.surcharge = surcharge;
+            offer.clientPrice = price + applyPercentage(offer.price, surcharge);
+            offer.clientCost = offer.clientPrice * unitMultiplier;
+            offer.isLinkedSurcharge = true;
+          });
+        }
+      }
     },
     changeCategorySurcharge: (
       state,
@@ -169,18 +201,21 @@ export const offerSlice = createSlice({
       const { categoryId, ...newData } = action.payload;
       const lastData = state.offerDetails.categorySurcharge[categoryId];
       const newCategorySurcharge = { ...lastData, ...newData };
-
+      if (newData.surcharge !== undefined) {
+        state.offerDetails.isLinkedOverallSurcharge = false;
+      }
       state.offerDetails.categorySurcharge[categoryId] = newCategorySurcharge;
       const currentCategories = state.dictionary.category
         .filter((category) => category.id === categoryId || category.parentCategoryId === categoryId)
         .map((category) => category.id);
+
       state.offerDetails.offers.forEach((offer) => {
         if (currentCategories.includes(offer.categoryId)) {
           if (newData.linked !== undefined) {
-            offer.linkedSurcharge = newData.linked;
+            offer.isLinkedSurcharge = newData.linked;
           }
 
-          if (newData.linked || offer.linkedSurcharge) {
+          if (newData.linked || offer.isLinkedSurcharge) {
             const unitMultiplier = offer.units?.reduce((acc, unit) => acc * (unit?.count ?? 1), 1) ?? 1;
             const { price = 0 } = offer;
             const { surcharge = 0 } = newCategorySurcharge;
@@ -228,4 +263,5 @@ export const {
   changeUnforeseenExpenses,
   changeShowCostPerVideo,
   setExternal,
+  changeOverallSurcharge,
 } = offerSlice.actions;
