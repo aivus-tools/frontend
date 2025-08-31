@@ -213,4 +213,7 @@ export const EN_LOCALES = {
   WATERMARK: 'Watermark',
   EXAMPLE: 'Example',
   SAVE_AND_DOWNLOAD: 'Save and download',
+  OVERALL_SURCHARGE: 'Overall Surcharge',
+  IF_LINKED_THE_OVERALL_: 'If linked, the Overall Surcharge Percentage is added to all items in the calculation.',
+  IF_UNLINKED_THE_OVERALL_: 'If unlinked, the Overall Surcharge percentage is added only to the linked items.',
 };
