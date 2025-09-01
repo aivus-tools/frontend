@@ -21,7 +21,7 @@
   font-size: 13px;
   font-weight: 500;
   line-height: 100%;
-  color: var(--text-gray, #99A1B7);
+  color: var(--text-gray, #99a1b7);
 }
 
 .closeButton {
@@ -32,7 +32,7 @@
   height: 24px;
   padding: 4px;
   font-size: 18px;
-  color: var(--text-dark, #121B3E); 
+  color: var(--text-dark, #121b3e);
   cursor: pointer;
   background: none;
   border-radius: 4px;
@@ -62,7 +62,7 @@
 }
 
 .explanationItem svg {
-  fill: var(--text-gray, #99A1B7);
+  fill: var(--text-gray, #99a1b7);
 } 
 
 .explanationText {
