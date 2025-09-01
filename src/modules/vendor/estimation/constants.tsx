@@ -57,7 +57,7 @@ export const CLIENTS_HEADERS: Headers[] = [
     key: 'link',
   },
   {
-    label: t('SURCHARGE'),
+    label: t('MARKUP'),
     key: 'surcharge',
     itemStyle: {
       color: 'var(--gray-light)',

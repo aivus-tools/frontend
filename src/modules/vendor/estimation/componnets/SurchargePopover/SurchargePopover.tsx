@@ -50,7 +50,7 @@ export const SurchargePopover = () => {
       <div className={styles.popoverContent}>
         <div className={styles.header}>
           <Text strong className={styles.title}>
-            {t('SURCHARGE')}
+            {t('MARKUP')}
           </Text>
           <button onClick={hide} className={styles.closeButton}>
             ✕
@@ -58,7 +58,7 @@ export const SurchargePopover = () => {
         </div>
         <Line />
         <div className={styles.surchargeSection}>
-          <span className={styles.label}>{t('OVERALL_SURCHARGE')}</span>
+          <span className={styles.label}>{t('OVERALL_MURKUP')}</span>
           <Space>
             <InputNumberRight
               value={surcharge}
@@ -75,7 +75,7 @@ export const SurchargePopover = () => {
         <div className={styles.explanation}>
           <div className={styles.explanationItem}>
             <LinkIcon width={24} height={24} />
-            <span className={styles.explanationText}>{t('IF_UNLINKED_THE_OVERALL_')}</span>
+            <span className={styles.explanationText}>{t('IF_LINKED_THE_OVERALL_')}</span>
           </div>
           <div className={styles.explanationItem}>
             <UnLinkIcon width={24} height={24} />
@@ -87,15 +87,10 @@ export const SurchargePopover = () => {
   };
 
   return (
-    <Popover
-      content={renderContent()}
-      trigger='click'
-      open={open}
-      placement='bottom'
-      onOpenChange={handleOpenChange}
-      overlayClassName={styles.surchargePopover}
-    >
-      <SettingsIcon />
+    <Popover content={renderContent()} trigger='click' open={open} placement='bottom' onOpenChange={handleOpenChange}>
+      <button>
+        <SettingsIcon />
+      </button>
     </Popover>
   );
 };
