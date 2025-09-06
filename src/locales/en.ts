@@ -202,6 +202,6 @@ export const EN_LOCALES = {
   YOUR_EMAIL_ADDRESS: 'Your email address',
   EXPENCES: 'Expenses',
   OVERALL_MURKUP: 'Overall Markup',
-  IF_LINKED_THE_OVERALL_: 'If linked, the Overall Markup Percentage is added to all items in the calculation.',
-  IF_UNLINKED_THE_OVERALL_: 'If unlinked, the Overall Markup percentage is added only to the linked items.',
+  IF_LINKED_THE_OVERALL: 'If linked, the Overall Markup Percentage is added to all items in the calculation.',
+  IF_UNLINKED_THE_OVERALL: 'If unlinked, the Overall Markup percentage is added only to the linked items.',
 };

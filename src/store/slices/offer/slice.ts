@@ -53,7 +53,7 @@ export const offerSlice = createSlice({
         if (!tempState.offerDetails.categories.some((cat) => cat.id === category.id)) {
           tempState.offerDetails.categories.push(category);
           tempState.offerDetails.categorySurcharge[category.id] = {
-            surcharge: 0,
+            surcharge: state.offerDetails.isLinkedOverallSurcharge ? state.offerDetails.overallSurcharge : 0,
             linked: true,
           };
         }
@@ -63,6 +63,16 @@ export const offerSlice = createSlice({
         if (!tempState.offerDetails.subCategories.some((cat) => cat.id === subcategory.id)) {
           tempState.offerDetails.subCategories.push(subcategory);
         }
+      };
+
+      const getCategorySurcharge = (category: Category) => {
+        if (category.parentCategoryId) {
+          return tempState.offerDetails.categorySurcharge[category.parentCategoryId]?.surcharge;
+        }
+        if (tempState.offerDetails.categorySurcharge[category.id]?.surcharge) {
+          return tempState.offerDetails.categorySurcharge[category.id]?.surcharge;
+        }
+        return 0;
       };
 
       const category = findCategory(categoryId);
@@ -84,9 +94,10 @@ export const offerSlice = createSlice({
         addCategoryIfNeeded(category);
       }
 
+      const categorySurcharge = getCategorySurcharge(category);
       tempState.offerDetails.offers.push({
         ...action.payload,
-        surcharge: tempState.offerDetails.categorySurcharge[category.id]?.surcharge || 0,
+        surcharge: categorySurcharge,
       });
 
       // Обновляем основной state
@@ -144,6 +155,7 @@ export const offerSlice = createSlice({
       if (rootCategoryId !== undefined) {
         if (updatedParameter.includes('surcharge')) {
           state.offerDetails.categorySurcharge[rootCategoryId].linked = false;
+          state.offerDetails.isLinkedOverallSurcharge = false;
           newOffer.isLinkedSurcharge = false;
         }
         if (newOfferData.isLinkedSurcharge === false) {
@@ -177,13 +189,13 @@ export const offerSlice = createSlice({
         if (state.offerDetails.isLinkedOverallSurcharge) {
           Object.keys(state.offerDetails.categorySurcharge).forEach((categoryId) => {
             state.offerDetails.categorySurcharge[Number(categoryId)].surcharge = newSurcharge;
+            state.offerDetails.categorySurcharge[Number(categoryId)].linked = true;
           });
           state.offerDetails.offers.forEach((offer) => {
             const unitMultiplier = offer.units?.reduce((acc, unit) => acc * (unit?.count ?? 1), 1) ?? 1;
             const { price = 0 } = offer;
-            const { surcharge = 0 } = state.offerDetails.categorySurcharge[offer.categoryId] || {};
-            offer.surcharge = surcharge;
-            offer.clientPrice = price + applyPercentage(offer.price, surcharge);
+            offer.surcharge = newSurcharge;
+            offer.clientPrice = price + applyPercentage(offer.price, newSurcharge);
             offer.clientCost = offer.clientPrice * unitMultiplier;
             offer.isLinkedSurcharge = true;
           });

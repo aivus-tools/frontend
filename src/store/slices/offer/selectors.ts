@@ -123,7 +123,6 @@ export const selectCategorySurcharge = createSelector(
   }
 );
 
-
 export const selectOverallSurcharge = createSelector([selectOfferDetails], (offerDetails) => {
   return {
     surcharge: offerDetails.overallSurcharge,

@@ -75,11 +75,11 @@ export const SurchargePopover = () => {
         <div className={styles.explanation}>
           <div className={styles.explanationItem}>
             <LinkIcon width={24} height={24} />
-            <span className={styles.explanationText}>{t('IF_LINKED_THE_OVERALL_')}</span>
+            <span className={styles.explanationText}>{t('IF_LINKED_THE_OVERALL')}</span>
           </div>
           <div className={styles.explanationItem}>
             <UnLinkIcon width={24} height={24} />
-            <span className={styles.explanationText}>{t('IF_UNLINKED_THE_OVERALL_')}</span>
+            <span className={styles.explanationText}>{t('IF_UNLINKED_THE_OVERALL')}</span>
           </div>
         </div>
       </div>
