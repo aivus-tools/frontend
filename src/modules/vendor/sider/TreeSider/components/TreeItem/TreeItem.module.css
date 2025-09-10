@@ -1,0 +1,71 @@
+.treeItem {
+  display: flex;
+  width: 100%;
+  transition: background-color 0.2s;
+}
+
+.treeItem:hover {
+  background-color: rgb(24 144 255 / 5%);
+}
+
+.content {
+  display: flex;
+  flex: 1;
+  align-items: center;
+  justify-content: space-between;
+  padding: 4px 8px;
+  border-radius: 4px;
+}
+
+.title {
+  flex: 1 1 auto;
+  width: 120px;
+  overflow: hidden;
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--text-primary);
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.visibilityToggle {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 20px;
+  height: 20px;
+  margin-left: 8px;
+  cursor: pointer;
+  border-radius: 4px;
+  transition: background-color 0.2s;
+}
+
+.visibilityToggle:hover {
+  background-color: rgb(0 0 0 / 5%);
+}
+
+.eyeIcon {
+  width: 16px;
+  height: 16px;
+  stroke: var(--text-secondary);
+  transition: stroke 0.2s;
+}
+
+.visibilityToggle:hover .eyeIcon {
+  stroke: var(--main);
+}
+
+.category .title {
+  font-weight: 600;
+  color: var(--main);
+}
+
+.subcategory .title {
+  font-weight: 500;
+  color: var(--text-primary);
+}
+
+.offer .title {
+  font-weight: 400;
+  color: var(--text-secondary);
+}

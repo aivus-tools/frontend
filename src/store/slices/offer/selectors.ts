@@ -123,6 +123,8 @@ export const selectCategorySurcharge = createSelector(
   }
 );
 
+export const selectVisibilityMap = (state: { offer: OfferState }) => state.offer.visibilityMap;
+
 export const selectCategoriesExportData = createSelector(
   [selectOfferDetails, selectRootCategories],
   (offerDetails, rootCategories): CategoriesExportData => {

@@ -1,0 +1,131 @@
+/* stylelint-disable selector-class-pattern */
+.treeSider {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  max-width: 250px;
+  overflow: hidden;
+  background-color: var(--white);
+  border-right: 1px solid var(--border-color);
+}
+
+
+.header {
+  padding: 16px;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.logo {
+  display: flex;
+  align-items: center;
+  margin-bottom: 16px;
+}
+
+.homeIcon {
+  width: 20px;
+  height: 20px;
+  margin-right: 8px;
+}
+
+.logoText {
+  font-size: 18px;
+  font-weight: 600;
+  color: var(--main);
+}
+
+.searchContainer {
+  margin-bottom: 12px;
+}
+
+.search {
+  width: 100%;
+}
+
+.search :global(.ant-input) {
+  border: 1px solid var(--border-color);
+  border-radius: 6px;
+}
+
+.search :global(.ant-input:focus) {
+  border-color: var(--main);
+  box-shadow: 0 0 0 2px rgb(24 144 255 / 10%);
+}
+
+.tabs {
+  display: flex;
+  gap: 8px;
+}
+
+.tab {
+  padding: 6px 12px;
+  font-size: 14px;
+  color: var(--text-secondary);
+  cursor: pointer;
+  border-radius: 4px;
+  transition: all 0.2s;
+}
+
+.activeTab {
+  color: var(--white);
+  background-color: var(--main);
+}
+
+.projectInfo {
+  padding: 16px;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.projectItem {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 8px;
+  font-size: 14px;
+}
+
+.projectItem:last-child {
+  margin-bottom: 0;
+}
+
+.label {
+  font-weight: 500;
+  color: var(--text-secondary);
+}
+
+.value {
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.treeContainer {
+  flex: 1;
+  width: 100%;
+  height: 100%;
+  padding-left: 8px;
+  overflow: hidden auto;
+}
+
+.treeContainer :global(.ant-tree) {
+  width: 100%;
+  max-width: 100%;
+}
+
+.treeContainer :global(.ant-tree-treenode) {
+  box-sizing: border-box;
+  width: 100%;
+  max-width: 100%;
+}
+
+.treeContainer :global(.ant-tree-title) {
+  box-sizing: border-box;
+  display: flex;
+  width: 100%;
+  min-width: 0;
+  max-width: 100%;
+}
+
+.treeContainer :global(.ant-tree-node-content-wrapper) {
+  width: 100%;
+  padding-right: 0 !important;
+  padding-left: 0 !important;
+}
+/* stylelint-enable selector-class-pattern */

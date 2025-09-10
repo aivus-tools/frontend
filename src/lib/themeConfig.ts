@@ -24,6 +24,10 @@ const theme: ThemeConfig = {
     Tabs: {
       cardGutter: 0,
     },
+    Tree: {
+      titleHeight: 16,
+      fontSize: 13,
+    },
   },
 };
 

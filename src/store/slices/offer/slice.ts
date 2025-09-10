@@ -27,6 +27,7 @@ const initialState: OfferState = {
     entry: [],
   },
   external: false,
+  visibilityMap: {},
 };
 
 export const offerSlice = createSlice({
@@ -191,6 +192,13 @@ export const offerSlice = createSlice({
     changeShowCostPerVideo: (state, action: PayloadAction<boolean>) => {
       state.offerDetails.showCostPerVideo = action.payload;
     },
+    toggleItemVisibility: (state, action: PayloadAction<{ key: string; isVisible: boolean }>) => {
+      const { key, isVisible } = action.payload;
+      state.visibilityMap = {
+        ...state.visibilityMap,
+        [key]: isVisible,
+      };
+    },
     addDictionaryCategory: (state, action: PayloadAction<Category[]>) => {
       state.dictionary.category = action.payload;
     },
@@ -218,5 +226,6 @@ export const {
   changeCategorySurcharge,
   changeUnforeseenExpenses,
   changeShowCostPerVideo,
+  toggleItemVisibility,
   setExternal,
 } = offerSlice.actions;

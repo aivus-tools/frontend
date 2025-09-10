@@ -3,6 +3,7 @@ import { selectGrandTotal } from '@/store/slices/offer/selectors';
 import { SiderContent } from './components/SiderContent/SiderContent';
 import { PriceBlock } from './components/PriceBlock/PriceBlock';
 import { t } from '@/lib/i18n';
+import { TreeSider } from '../TreeSider';
 
 export const GrandTotalSider = () => {
   const { totalValue, clientTotalValue } = useAppSelector(selectGrandTotal);
@@ -12,6 +13,7 @@ export const GrandTotalSider = () => {
 
   return (
     <SiderContent>
+      <TreeSider />
       <PriceBlock title={t('TOTAL_CLIENTS_COST')} amount={clientTotalValue} />
       <PriceBlock title={t('EXPENSES')} amount={totalValue} highlight />
       <PriceBlock

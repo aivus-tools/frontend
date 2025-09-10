@@ -30,6 +30,7 @@ export interface OfferState {
     entry: Entry[];
   };
   external: boolean;
+  visibilityMap: Record<string, boolean>;
 }
 
 export interface ExportItem {
