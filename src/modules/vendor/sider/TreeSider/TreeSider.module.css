@@ -128,4 +128,8 @@
   padding-right: 0 !important;
   padding-left: 0 !important;
 }
+
+.treeContainer :global(.ant-tree-indent-unit) {
+  width: 10px !important;
+}
 /* stylelint-enable selector-class-pattern */
