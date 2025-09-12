@@ -2,7 +2,7 @@
 import { Button } from 'antd';
 import { useRouter } from 'next/navigation';
 import { useEffect } from 'react';
-import { VendorTabs } from './vendor-tabs';
+import { VendorTabs } from './components/VendorTabs/VendorTabs';
 import { NEW_BRIEF_SLUG } from '@/constants/constants';
 import { t } from '@/lib/i18n';
 import { AppRoute } from '@/constants/appRoute';

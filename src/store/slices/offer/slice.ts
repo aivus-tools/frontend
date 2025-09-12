@@ -4,7 +4,7 @@ import { createSlice } from '@reduxjs/toolkit';
 
 import type { PayloadAction } from '@reduxjs/toolkit';
 import clone from 'lodash.clone';
-import { OfferDetails, OfferState, UnforeseenExpenses } from './types';
+import { OfferDetails, OfferState, UnforeseenExpenses } from '@/types/store.interface';
 import { CATEGORIES } from '@/modules/vendor/estimation/mock/categories';
 import { ENTRIES } from '@/modules/vendor/estimation/mock/entries';
 
@@ -172,7 +172,7 @@ export const offerSlice = createSlice({
           .map((category) => category.id);
         state.offerDetails.offers.forEach((offer) => {
           if (currentCategories.includes(offer.categoryId)) {
-            const unitMultiplier = offer.units?.reduce((acc, unit) => acc * (unit?.value ?? 1), 1) ?? 1;
+            const unitMultiplier = offer.units?.reduce((acc, unit) => acc * (unit?.count ?? 1), 1) ?? 1;
             const { price = 0 } = offer;
             const { surcharge = 0 } = newCategorySurcharge;
             offer.surcharge = surcharge;

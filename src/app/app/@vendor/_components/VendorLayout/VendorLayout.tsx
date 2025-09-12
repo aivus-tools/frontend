@@ -2,13 +2,13 @@
 import { PropsWithChildren } from 'react';
 import { Layout } from 'antd';
 import Sider from 'antd/es/layout/Sider';
-import { Logo } from './Logo';
+import { Logo } from './components/Logo/Logo';
 import { useLayoutTheme } from '@/hooks/useLayoutTheme';
 import { Profile } from '@/components/Profile/Profile';
 import { styled } from 'styled-components';
 import { useSelectedLayoutSegments } from 'next/navigation';
-import { ProjectNavbar } from './project-navbar';
-import { VendorNavbar } from './vendor-navbar';
+import { ProjectNavbar } from './components/ProjectNavbar/ProjectNavbar';
+import { VendorNavbar } from './components/VendorNavbar/VendorNavbar';
 import { GrandTotalSider } from '@/modules/vendor/sider/GrandTotalSider/GrandTotalSider';
 
 const { Header, Content } = Layout;

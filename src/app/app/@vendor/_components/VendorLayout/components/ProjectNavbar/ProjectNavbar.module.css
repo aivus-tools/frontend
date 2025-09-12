@@ -1,0 +1,22 @@
+.navbar {
+  display: flex;
+  flex: 1;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.buttons {
+  display: flex;
+  gap: 19px;
+}
+
+.navbar .export {
+  display: flex;
+  align-items: center;
+  background: var(--main-dark);
+}
+
+.navbar .share {
+  display: flex;
+  align-items: center;
+}

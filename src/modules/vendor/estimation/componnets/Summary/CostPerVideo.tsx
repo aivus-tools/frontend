@@ -1,5 +1,4 @@
 'use client';
-
 import { styled } from 'styled-components';
 import { Flex } from 'antd';
 import EyeCrossed from '@/icons/eye-crossed.svg';
@@ -30,11 +29,9 @@ const TotalSum = styled.div`
   align-items: center;
   justify-content: flex-end;
 `;
-
 const EmptyBlockTotalSum = styled.div`
   background-color: var(--white);
 `;
-
 export const CostPerVideo = () => {
   const { data: brief } = useBrief();
   const dispatch = useAppDispatch();
