@@ -18,6 +18,9 @@ export const ApiRoute = {
   OFFERS_BY_BRIEF_ID: (briefId: string | number) => `/service/offers/brief/${briefId}`,
   OFFER_BY_ID: (id: string | number) => `/service/offers/${id}`,
   OFFER_LIST: `/service/offers`,
+  RATE: (id: string | number) => `/service/rates/${id}`,
+  RATES: '/service/rates',
+  RATES_FORK: '/service/rates/fork',
   REGISTER: `${BASE_URL}/auth/register`,
   USER_CHANGE_GROUP: (userId: string | number) => `/service/users/${userId}/change-group`, // TODO проверить, нужен ли тут /service
   USER_INFO: `${BASE_URL}/users/me`,

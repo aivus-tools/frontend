@@ -18,3 +18,8 @@ AUTH_APPLE_SECRET
 
 
 NEXT_PUBLIC_LOCALE = "en" | "ru" - опциональная переменная, отвечающая за локаль (по-умолчанию "en")
+
+
+
+документация:
+https://api.aivus.co/api/doc#/
