@@ -3,6 +3,8 @@ import { Vendor } from '@/types/vendor.interface';
 
 export const rateOption = ['fixed', 'percentage'] as const;
 
+type Date = string;
+
 export interface Rate {
   id: number;
   name: string;
