@@ -1,4 +1,4 @@
-import { Rate } from '@/types/rate.interface';
+import { ChangeRate, Rate } from '@/types/rate.interface';
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
 import { ApiRoute } from '@/constants/apiRoute';
 
@@ -6,7 +6,7 @@ export const ratesApi = createApi({
   reducerPath: 'ratesApi',
   baseQuery: fetchBaseQuery(),
   endpoints: (builder) => ({
-    createRate: builder.mutation<void, Rate>({
+    createRate: builder.mutation<void, ChangeRate>({
       query: (body) => ({
         url: ApiRoute.RATES,
         method: 'POST',
