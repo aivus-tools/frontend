@@ -8,7 +8,7 @@ export interface Entry {
   categoryId: number;
   isApproved: boolean;
   createdAt: string;
-  updatedAt?: string;
+  updatedAt: string;
   units: {
     quantity: UnitOption[];
     temporal: UnitOption[];

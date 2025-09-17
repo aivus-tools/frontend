@@ -44,7 +44,7 @@ export const fakeData: Rate[] = [
         level: 1,
         createdAt: '2024-10-15T08:00:00Z',
         parentCategoryId: 1,
-      },
+      } as never,
     },
   },
   {
@@ -86,7 +86,16 @@ export const RateTable = () => {
   return (
     <>
       <Header />
-      <TableCollapse label={t('PRE_PRODUCTION')} extra={<div>add item</div>} content={<Content rates={rates} />} />
+      {rates.map((rate) => {
+        return (
+          <TableCollapse
+            key={rate.id}
+            label={t('PRE_PRODUCTION')}
+            extra={<div>add item</div>}
+            content={<Content rates={rates} />}
+          />
+        );
+      })}
       <button onClick={() => showSidebar({} as never)}>show sidebar</button>
     </>
   );

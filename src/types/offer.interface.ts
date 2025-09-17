@@ -20,7 +20,7 @@ export interface Offer {
   // возможно ли редактировать
   isLocked: boolean;
   createdAt: string; // DATE UTC
-  updatedAt?: string; // DATE UTC
+  updatedAt: string; // DATE UTC
 }
 
 export type NewOffer = Omit<Offer, 'id' | 'uuid' | 'createdAt' | 'updatedAt'>;

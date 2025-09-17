@@ -4,5 +4,5 @@ export interface Category {
   level: number;
   parentCategoryId?: number;
   createdAt: string;
-  updatedAt?: string;
+  updatedAt: string;
 }
