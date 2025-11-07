@@ -9,6 +9,7 @@ export const ApiPathname = {
   LOGIN: '/api/v1/auth/login',
   REGISTER: '/api/v1/auth/register',
   CHECK_EMAIL: '/api/v1/auth/check-email',
+  RESEND_CONFIRMATION: '/api/v1/auth/resend-confirmation',
   USER_INFO: '/api/v1/users/me',
   CHANGE_ROLE: (id: number | string) => `/api/v1/auth/change-group/${id}`,
   GET_USERS: '/api/v1/users',
@@ -23,7 +24,9 @@ export const ApiRoute = {
   CATEGORY_LIST: `/service/categories`,
   CHANGE_ROLE: (id: number | string) => `${BASE_URL}/auth/change-group/${id}`,
   CHECK_EMAIL: `${BASE_URL}/auth/check-email`,
-  CONFIRM_EMAIL: (token: string) => `/service/auth/confirm-email?token=${token}`, // TODO проверить, нужен ли тут /service
+  CONFIRM_EMAIL: (token: string) => `/service/auth/confirm-email?token=${token}`,
+  RESEND_CONFIRMATION: `${BASE_URL}/auth/resend-confirmation`,
+  RESEND_CONFIRMATION_SERVICE: `/service/auth/resend-confirmation`,
   ENTRY: (id: string | number) => `/service/entries/${id}`,
   ENTRY_LIST: `/service/entries`,
   GET_USERS: `${BASE_URL}/users`,

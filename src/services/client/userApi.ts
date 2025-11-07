@@ -24,7 +24,14 @@ export const userApi = createApi({
         method: 'GET',
       }),
     }),
+    resendConfirmation: builder.mutation<{ message: string }, string>({
+      query: (email) => ({
+        url: ApiRoute.RESEND_CONFIRMATION_SERVICE,
+        method: 'POST',
+        body: { email },
+      }),
+    }),
   }),
 });
 
-export const { useChangeGroupMutation, useConfirmEmailMutation } = userApi;
+export const { useChangeGroupMutation, useConfirmEmailMutation, useResendConfirmationMutation } = userApi;
