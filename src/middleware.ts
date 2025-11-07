@@ -10,9 +10,17 @@ const MOCK_ENDPOINTS = ['/api/v1/briefs'];
 const userGroups = new Set<string | undefined>([GROUPS.client, GROUPS.vendor]);
 const HMAC_SECRET = process.env.HMAC_SECRET;
 
+// CSP для development с unsafe-eval
+const isDevelopment = process.env.NODE_ENV === 'development';
+const CSP = isDevelopment
+  ? "default-src 'self'; script-src 'self' 'unsafe-eval' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data: https:; font-src 'self' data:; connect-src 'self' http://localhost:8000; frame-ancestors 'self' https://www.vilkaservice.com https://app.aivus.co"
+  : "default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data: https:; font-src 'self' data:; connect-src 'self' https://api.aivus.co; frame-ancestors 'self' https://www.vilkaservice.com https://app.aivus.co";
+
 export default auth(async (req) => {
   if (req.nextUrl.pathname.startsWith('/external')) {
-    return NextResponse.next();
+    const response = NextResponse.next();
+    response.headers.set('Content-Security-Policy', CSP);
+    return response;
   }
 
   if (!HMAC_SECRET) {
@@ -26,14 +34,20 @@ export default auth(async (req) => {
     if (id && group) {
       if (userGroups.has(group)) {
         logger.info('redirecting to /app/dashboard');
-        return NextResponse.redirect(new URL(AppRoute.DASHBOARD, req.url));
+        const response = NextResponse.redirect(new URL(AppRoute.DASHBOARD, req.url));
+        response.headers.set('Content-Security-Policy', CSP);
+        return response;
       } else {
         logger.info('redirecting to /app/confirm');
-        return NextResponse.redirect(new URL(AppRoute.CONFIRM, req.url));
+        const response = NextResponse.redirect(new URL(AppRoute.CONFIRM, req.url));
+        response.headers.set('Content-Security-Policy', CSP);
+        return response;
       }
     }
     logger.info('redirecting to /auth');
-    return NextResponse.redirect(new URL(AppRoute.AUTH, req.url));
+    const response = NextResponse.redirect(new URL(AppRoute.AUTH, req.url));
+    response.headers.set('Content-Security-Policy', CSP);
+    return response;
   }
 
   const { pathname, search } = req.nextUrl;
@@ -58,30 +72,45 @@ export default auth(async (req) => {
 
     if (MOCK_ENDPOINTS.some((path) => newPathname.startsWith(path)) && process.env.MOCK_API) {
       logger.info('mocking request', { pathname, newPathname });
-      return NextResponse.rewrite(new URL(newPathname, req.url));
+      const response = NextResponse.rewrite(new URL(newPathname, req.url));
+      response.headers.set('Content-Security-Policy', CSP);
+      return response;
     }
     logger.info('proxying request', { apiUrl: process.env.API_URL, newPathname, pathname });
-    return NextResponse.rewrite(new URL(newPathname, process.env.API_URL), {
+    const response = NextResponse.rewrite(new URL(newPathname, process.env.API_URL), {
       request: {
         headers,
       },
     });
+    response.headers.set('Content-Security-Policy', CSP);
+    return response;
   }
 
   if (pathname.startsWith('/auth') && id && group) {
     if (userGroups.has(group)) {
       logger.info('redirecting to /app/dashboard');
-      return NextResponse.redirect(new URL(AppRoute.DASHBOARD, req.url));
+      const response = NextResponse.redirect(new URL(AppRoute.DASHBOARD, req.url));
+      response.headers.set('Content-Security-Policy', CSP);
+      return response;
     } else {
       logger.info('redirecting to /app/confirm');
-      return NextResponse.redirect(new URL(AppRoute.CONFIRM, req.url));
+      const response = NextResponse.redirect(new URL(AppRoute.CONFIRM, req.url));
+      response.headers.set('Content-Security-Policy', CSP);
+      return response;
     }
   }
 
   if (pathname.startsWith('/app') && (!id || !group)) {
     logger.info('redirecting to /auth');
-    return NextResponse.redirect(new URL(AppRoute.AUTH, req.url));
+    const response = NextResponse.redirect(new URL(AppRoute.AUTH, req.url));
+    response.headers.set('Content-Security-Policy', CSP);
+    return response;
   }
+
+  // Добавляем CSP ко всем остальным запросам
+  const response = NextResponse.next();
+  response.headers.set('Content-Security-Policy', CSP);
+  return response;
 });
 
 export const config = {

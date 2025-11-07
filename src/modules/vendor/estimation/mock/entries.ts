@@ -1,6 +1,4 @@
-import { Entry } from '@/types/entries.interface';
-
-export const ENTRIES: Entry[] = [
+export const ENTRIES = [
   {
     id: 1,
     name: 'Написание сценария',

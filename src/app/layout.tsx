@@ -36,8 +36,8 @@ export default async function RootLayout({
   const creationDate = stats.birthtime.toISOString();
 
   return (
-    <html lang={locale}>
-      <body className={montserrat.className}>
+    <html lang={locale} suppressHydrationWarning>
+      <body className={montserrat.className} suppressHydrationWarning>
         <VersionLogger creationDate={creationDate} />
         <StyledComponentsRegistry>
           <AntdRegistry>

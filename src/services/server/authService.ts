@@ -8,7 +8,7 @@ type Credentials = Partial<Record<'email' | 'password', unknown>> & { authType: 
  * @returns Данные пользователя
  */
 export async function login(credentials: Credentials): Promise<{
-  id: number;
+  id: string;
   name: string;
   email: string;
   group: Groups;
@@ -48,7 +48,7 @@ export async function register({
 }): Promise<{
   message: string;
   group?: Groups;
-  id: number;
+  id: string;
 }> {
   try {
     logger.info('Registering user:', { name, email, authType, password });

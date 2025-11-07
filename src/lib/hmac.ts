@@ -12,7 +12,5 @@ export async function createHmacSHA256(message: string) {
     .map((b) => b.toString(16).padStart(2, '0'))
     .join('');
 
-  console.log('string', string);
-  console.log('message', message);
   return string;
 }

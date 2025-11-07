@@ -6,6 +6,7 @@ import logger from '@/lib/logger';
 import { AUTH_TYPES, GROUPS } from '@/constants/constants';
 import { updateUserSession } from '@/services/server/userService';
 import { AppRoute } from '@/constants/appRoute';
+import type { Groups } from '@/types/user.interface.';
 
 export const { handlers, signIn, signOut, auth } = NextAuth({
   debug: Boolean(process.env.DEBUG),
@@ -79,12 +80,20 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
       return token;
     },
     async session({ session, token }) {
-      const aivusUser = await updateUserSession({
-        userId: token.id as string,
-      });
-      session.user.group = aivusUser.group;
-      session.user.id = token.id as string;
-      logger.info('update session', session);
+      try {
+        const aivusUser = await updateUserSession({
+          userId: token.id as string,
+          userGroup: token.group as string,
+        });
+        session.user.group = aivusUser.group;
+        session.user.id = token.id as string;
+        logger.info('update session', session);
+      } catch (error) {
+        // Fallback - используем данные из токена если запрос упал
+        logger.warn('Failed to update session from API, using token data', error);
+        session.user.group = token.group as Groups;
+        session.user.id = token.id as string;
+      }
       return session;
     },
     authorized: async ({ auth }) => {

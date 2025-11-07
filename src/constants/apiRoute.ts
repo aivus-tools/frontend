@@ -2,6 +2,19 @@ const BASE_URL = `${process.env.API_URL}/api/v1`;
 
 export const CALLBACK_URL = process.env.CALLBACK_URL ?? '';
 
+/**
+ * API pathnames (without domain) - used for HMAC signature generation
+ */
+export const ApiPathname = {
+  LOGIN: '/api/v1/auth/login',
+  REGISTER: '/api/v1/auth/register',
+  CHECK_EMAIL: '/api/v1/auth/check-email',
+  USER_INFO: '/api/v1/users/me',
+  CHANGE_ROLE: (id: number | string) => `/api/v1/auth/change-group/${id}`,
+  GET_USERS: '/api/v1/users',
+  USER_CHANGE_GROUP: (userId: string | number) => `/api/v1/users/${userId}/change-group`,
+} as const;
+
 // TODO приставку BASE_URL из некоторых роутов нужно будет из этого файла убрать
 export const ApiRoute = {
   BRIEF: (id: string | number) => `/service/briefs/${id}`,

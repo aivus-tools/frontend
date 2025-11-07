@@ -16,7 +16,7 @@ export interface Offer {
   // current date
   deadline: string; // DATE UTC
   // PLATFORM | UPLOAD
-  source: typeof source;
+  source: (typeof source)[number];
   // возможно ли редактировать
   isLocked: boolean;
   createdAt: string; // DATE UTC
