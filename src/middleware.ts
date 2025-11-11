@@ -36,22 +36,33 @@ export default auth(async (req) => {
   }
 
   const { id, group } = req.auth?.user ?? {};
+  logger.debug('middleware: user_id=%s, user_group=%s, pathname=%s', id, group, req.nextUrl.pathname);
 
   if (req.nextUrl.pathname === AppRoute.HOME) {
     if (id && group) {
+      // CLIENT или VENDOR → dashboard
       if (userGroups.has(group)) {
-        logger.info('redirecting to /app/dashboard');
+        logger.info('redirecting to /app/dashboard (client/vendor)');
         const response = NextResponse.redirect(new URL(AppRoute.DASHBOARD, req.url));
         response.headers.set('Content-Security-Policy', CSP);
         return response;
-      } else {
-        logger.info('redirecting to /app/confirm');
+      }
+      // CONFIRMED → выбор роли
+      else if (group === GROUPS.confirmed) {
+        logger.info('redirecting to /app/group (confirmed)');
+        const response = NextResponse.redirect(new URL(AppRoute.GROUP, req.url));
+        response.headers.set('Content-Security-Policy', CSP);
+        return response;
+      }
+      // UNCONFIRMED → подтверждение email
+      else {
+        logger.info('redirecting to /app/confirm (unconfirmed)');
         const response = NextResponse.redirect(new URL(AppRoute.CONFIRM, req.url));
         response.headers.set('Content-Security-Policy', CSP);
         return response;
       }
     }
-    logger.info('redirecting to /auth');
+    logger.info('redirecting to /auth (no user)');
     const response = NextResponse.redirect(new URL(AppRoute.AUTH, req.url));
     response.headers.set('Content-Security-Policy', CSP);
     return response;
@@ -95,13 +106,23 @@ export default auth(async (req) => {
 
   // Если путь /auth, но НЕ публичный (confirm-email, reset-password и т.д.)
   if (pathname.startsWith('/auth') && !isPublicAuthPath(pathname) && id && group) {
+    // CLIENT или VENDOR → dashboard
     if (userGroups.has(group)) {
-      logger.info('redirecting to /app/dashboard');
+      logger.info('redirecting to /app/dashboard (from /auth, client/vendor)');
       const response = NextResponse.redirect(new URL(AppRoute.DASHBOARD, req.url));
       response.headers.set('Content-Security-Policy', CSP);
       return response;
-    } else {
-      logger.info('redirecting to /app/confirm');
+    }
+    // CONFIRMED → выбор роли
+    else if (group === GROUPS.confirmed) {
+      logger.info('redirecting to /app/group (from /auth, confirmed)');
+      const response = NextResponse.redirect(new URL(AppRoute.GROUP, req.url));
+      response.headers.set('Content-Security-Policy', CSP);
+      return response;
+    }
+    // UNCONFIRMED → подтверждение email
+    else {
+      logger.info('redirecting to /app/confirm (from /auth, unconfirmed)');
       const response = NextResponse.redirect(new URL(AppRoute.CONFIRM, req.url));
       response.headers.set('Content-Security-Policy', CSP);
       return response;
@@ -109,10 +130,39 @@ export default auth(async (req) => {
   }
 
   if (pathname.startsWith('/app') && (!id || !group)) {
-    logger.info('redirecting to /auth');
+    logger.info('redirecting to /auth (no user in /app)');
     const response = NextResponse.redirect(new URL(AppRoute.AUTH, req.url));
     response.headers.set('Content-Security-Policy', CSP);
     return response;
+  }
+
+  // Защита страниц /app в зависимости от группы
+  if (pathname.startsWith('/app') && id && group) {
+    // Если пользователь UNCONFIRMED, может быть только на /app/confirm
+    if (group === GROUPS.unconfirmed && !pathname.startsWith(AppRoute.CONFIRM)) {
+      logger.info('redirecting to /app/confirm (unconfirmed user)');
+      const response = NextResponse.redirect(new URL(AppRoute.CONFIRM, req.url));
+      response.headers.set('Content-Security-Policy', CSP);
+      return response;
+    }
+
+    // Если пользователь CONFIRMED, может быть только на /app/group
+    if (group === GROUPS.confirmed && !pathname.startsWith(AppRoute.GROUP)) {
+      logger.info('redirecting to /app/group (confirmed user)');
+      const response = NextResponse.redirect(new URL(AppRoute.GROUP, req.url));
+      response.headers.set('Content-Security-Policy', CSP);
+      return response;
+    }
+
+    // Если пользователь CLIENT/VENDOR, НЕ может быть на /app/confirm или /app/group
+    if (userGroups.has(group)) {
+      if (pathname.startsWith(AppRoute.CONFIRM) || pathname.startsWith(AppRoute.GROUP)) {
+        logger.info('redirecting to /app/dashboard (client/vendor on wrong page)');
+        const response = NextResponse.redirect(new URL(AppRoute.DASHBOARD, req.url));
+        response.headers.set('Content-Security-Policy', CSP);
+        return response;
+      }
+    }
   }
 
   // Добавляем CSP ко всем остальным запросам

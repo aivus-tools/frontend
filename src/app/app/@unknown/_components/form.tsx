@@ -10,6 +10,7 @@ import { useChangeGroup } from '@/hooks/useChangeGroup';
 import { useSession } from 'next-auth/react';
 import Spinner from '@/components/Spinner';
 import { t } from '@/lib/i18n';
+import { logout } from '@/auth/actions/logout';
 
 const { Title } = Typography;
 
@@ -52,6 +53,9 @@ export function Form() {
         </Button>
         <Button onClick={trigger(GROUPS.vendor)} loading={loading && group === GROUPS.vendor} disabled={loading}>
           {t('IM_A_VENDOR')}
+        </Button>
+        <Button onClick={logout} type='text' style={{ marginTop: '16px' }}>
+          {t('LOGOUT')}
         </Button>
       </div>
     </main>

@@ -69,10 +69,10 @@ export const Confirm = () => {
       return <Spinner />;
     }
     return (
-      <Flex align='center' justify='center' vertical gap={12} style={{ height: '100vh', width: '100%' }}>
+      <Flex align='center' justify='center' vertical gap={16} style={{ height: '100vh', width: '100%' }}>
         <Typography.Title level={3}>{t('PLEASE_CONFIRM_YOUR_EMAIL')}</Typography.Title>
         <Typography.Text type='secondary'>{t('EMAIL_CONFIRMATION_SENT')}</Typography.Text>
-        <Flex gap={12}>
+        <Flex gap={12} wrap='wrap' justify='center'>
           <Button onClick={logout}>{t('BACK')}</Button>
           <Button type='primary' onClick={handleResend} loading={isResending}>
             {t('RESEND')}

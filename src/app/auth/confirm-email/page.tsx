@@ -55,16 +55,18 @@ const ConfirmEmailPage = () => {
       messageApi.success(t('EMAIL_CONFIRMED'));
       setStatus('success');
 
-      // Ждём перед редиректом
-      await new Promise((resolve) => setTimeout(resolve, CONFIRM_DELAY_MS));
-
       if (session?.user) {
-        // Пользователь залогинен - обновляем сессию и редиректим на выбор роли
+        // Пользователь залогинен - обновляем сессию
         await updateSession();
-        // Используем window.location для гарантированной перезагрузки со свежей сессией
+        
+        // Ждём, чтобы NextAuth записал cookie
+        await new Promise((resolve) => setTimeout(resolve, CONFIRM_DELAY_MS));
+        
+        // Используем window.location для полной перезагрузки со свежей сессией
         window.location.href = AppRoute.GROUP;
       } else {
-        // Пользователь не залогинен - редиректим на auth
+        // Пользователь не залогинен - ждём и редиректим на auth
+        await new Promise((resolve) => setTimeout(resolve, CONFIRM_DELAY_MS));
         router.replace(AppRoute.AUTH);
       }
     } catch (error) {
