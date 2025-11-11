@@ -10,6 +10,13 @@ const MOCK_ENDPOINTS = ['/api/v1/briefs'];
 const userGroups = new Set<string | undefined>([GROUPS.client, GROUPS.vendor]);
 const HMAC_SECRET = process.env.HMAC_SECRET;
 
+// Публичные пути внутри /auth, доступные всем (авторизованным и нет)
+const PUBLIC_AUTH_PATHS = ['/auth/confirm-email', '/auth/reset-password', '/auth/forgot-password'];
+
+const isPublicAuthPath = (pathname: string): boolean => {
+  return PUBLIC_AUTH_PATHS.some((path) => pathname.startsWith(path));
+};
+
 // CSP для development с unsafe-eval
 const isDevelopment = process.env.NODE_ENV === 'development';
 const CSP = isDevelopment
@@ -86,7 +93,8 @@ export default auth(async (req) => {
     return response;
   }
 
-  if (pathname.startsWith('/auth') && id && group) {
+  // Если путь /auth, но НЕ публичный (confirm-email, reset-password и т.д.)
+  if (pathname.startsWith('/auth') && !isPublicAuthPath(pathname) && id && group) {
     if (userGroups.has(group)) {
       logger.info('redirecting to /app/dashboard');
       const response = NextResponse.redirect(new URL(AppRoute.DASHBOARD, req.url));

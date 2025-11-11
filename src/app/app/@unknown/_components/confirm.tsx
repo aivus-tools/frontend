@@ -3,13 +3,13 @@ import { Button, Flex, message, Typography } from 'antd';
 
 import { useSearchParams } from 'next/navigation';
 import Spinner from '@/components/Spinner';
-import { useEffect } from 'react';
 import { useSession } from 'next-auth/react';
 import { GROUPS } from '@/constants/constants';
 import { logout } from '@/auth/actions/logout';
 import { useConfirmEmailMutation, useResendConfirmationMutation } from '@/services/client/userApi';
 import { AppRoute } from '@/constants/appRoute';
 import { t } from '@/lib/i18n';
+import { useOnceAsync } from '@/hooks/useOnce';
 
 type Error = {
   data: {
@@ -45,17 +45,15 @@ export const Confirm = () => {
     }
   };
 
-  useEffect(() => {
+  // Подтверждение email из токена в URL (один раз, даже в Strict Mode)
+  useOnceAsync(async () => {
+    if (!token) return;
+
     try {
-      if (token) {
-        confirmEmail(token)
-          .unwrap()
-          .then(() => {
-            messageApi.success(t('EMAIL_CONFIRMED'));
-            session.update();
-            window.location.href = AppRoute.DASHBOARD;
-          });
-      }
+      await confirmEmail(token).unwrap();
+      messageApi.success(t('EMAIL_CONFIRMED'));
+      await session.update();
+      window.location.href = AppRoute.DASHBOARD;
     } catch (error) {
       messageApi.error(t('UNEXPECTED_ERROR'));
 

@@ -72,28 +72,32 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
       }
       return Promise.resolve(true);
     },
-    async jwt({ token, user }) {
+    async jwt({ token, user, trigger }) {
       if (user) {
         token.group = user.group;
         token.id = user.id;
       }
+
+      // Обновляем токен из API только при явном вызове update()
+      if (trigger === 'update') {
+        try {
+          const aivusUser = await updateUserSession({
+            userId: token.id as string,
+            userGroup: (token.group as string) || GROUPS.unconfirmed,
+          });
+          token.group = aivusUser.group;
+          logger.info('JWT token updated from API', { group: aivusUser.group });
+        } catch (error) {
+          logger.warn('Failed to update JWT from API, keeping existing token data', error);
+        }
+      }
+
       return token;
     },
     async session({ session, token }) {
-      try {
-        const aivusUser = await updateUserSession({
-          userId: token.id as string,
-          userGroup: token.group as string,
-        });
-        session.user.group = aivusUser.group;
-        session.user.id = token.id as string;
-        logger.info('update session', session);
-      } catch (error) {
-        // Fallback - используем данные из токена если запрос упал
-        logger.warn('Failed to update session from API, using token data', error);
-        session.user.group = token.group as Groups;
-        session.user.id = token.id as string;
-      }
+      // Просто копируем данные из токена в сессию
+      session.user.group = token.group as Groups;
+      session.user.id = token.id as string;
       return session;
     },
     authorized: async ({ auth }) => {
