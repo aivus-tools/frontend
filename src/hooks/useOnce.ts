@@ -18,15 +18,17 @@ import { useRef, useEffect } from 'react';
  */
 export function useOnce(effect: () => void | (() => void), deps: React.DependencyList = []) {
   const hasRun = useRef(false);
-  const cleanup = useRef<(() => void) | void>();
+  const cleanup = useRef<(() => void) | void>(undefined);
 
   useEffect(() => {
-    if (hasRun.current) return cleanup.current;
+    if (hasRun.current) {
+      return typeof cleanup.current === 'function' ? cleanup.current : undefined;
+    }
 
     hasRun.current = true;
     cleanup.current = effect();
 
-    return cleanup.current;
+    return typeof cleanup.current === 'function' ? cleanup.current : undefined;
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, deps);
 }

@@ -58,10 +58,10 @@ const ConfirmEmailPage = () => {
       if (session?.user) {
         // Пользователь залогинен - обновляем сессию
         await updateSession();
-        
+
         // Ждём, чтобы NextAuth записал cookie
         await new Promise((resolve) => setTimeout(resolve, CONFIRM_DELAY_MS));
-        
+
         // Используем window.location для полной перезагрузки со свежей сессией
         window.location.href = AppRoute.GROUP;
       } else {
