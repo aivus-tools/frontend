@@ -31,8 +31,8 @@ export const useSearchLibrary = () => {
     let entries: Entry[] = [];
 
     if (skip) {
-      categories = CATEGORIES;
-      entries = ENTRIES;
+      categories = CATEGORIES as Category[];
+      entries = ENTRIES as Entry[];
     } else {
       if (categoriesQuery.isSuccess) {
         categories = categoriesQuery.data;

@@ -8,7 +8,7 @@ type Credentials = Partial<Record<'email' | 'password', unknown>> & { authType: 
  * @returns Данные пользователя
  */
 export async function login(credentials: Credentials): Promise<{
-  id: number;
+  id: string;
   name: string;
   email: string;
   group: Groups;
@@ -48,7 +48,7 @@ export async function register({
 }): Promise<{
   message: string;
   group?: Groups;
-  id: number;
+  id: string;
 }> {
   try {
     logger.info('Registering user:', { name, email, authType, password });
@@ -122,6 +122,29 @@ export async function changeRole(id: string, newGroup: Groups): Promise<boolean>
     return true;
   } catch (error) {
     logger.error('Error changing role:', error);
+    throw error;
+  }
+}
+
+/**
+ * Resend email confirmation.
+ * @returns Promise<{ message: string }>
+ */
+export async function resendConfirmation(email: string): Promise<{ message: string }> {
+  try {
+    const response = await fetch(ApiRoute.RESEND_CONFIRMATION, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ email }),
+    });
+    if (!response.ok) {
+      throw new Error(`Failed to fetch ${ApiRoute.RESEND_CONFIRMATION}: ${response.statusText}`);
+    }
+    return await response.json();
+  } catch (error) {
+    logger.error('Error resending confirmation:', error);
     throw error;
   }
 }

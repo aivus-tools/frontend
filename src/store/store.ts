@@ -3,6 +3,7 @@ import { configureStore } from '@reduxjs/toolkit';
 import { rootReducer } from '@/store/rootReducer';
 import { briefApi } from '@/services/client/briefApi';
 import { categoriesApi } from '@/services/client/categoriesApi';
+import { ratesApi } from '@/services/client/ratesApi';
 import { offersApi } from '@/services/client/offersApi';
 import { userApi } from '@/services/client/userApi';
 import { listenerMiddleware } from '@/lib/listenerMiddleware';
@@ -15,6 +16,7 @@ export const makeStore = () => {
         briefApi.middleware,
         userApi.middleware,
         categoriesApi.middleware,
+        ratesApi.middleware,
         offersApi.middleware,
         listenerMiddleware.middleware
       ),

@@ -3,13 +3,13 @@ import { Button, Flex, message, Typography } from 'antd';
 
 import { useSearchParams } from 'next/navigation';
 import Spinner from '@/components/Spinner';
-import { useEffect } from 'react';
 import { useSession } from 'next-auth/react';
 import { GROUPS } from '@/constants/constants';
 import { logout } from '@/auth/actions/logout';
-import { useConfirmEmailMutation } from '@/services/client/userApi';
+import { useConfirmEmailMutation, useResendConfirmationMutation } from '@/services/client/userApi';
 import { AppRoute } from '@/constants/appRoute';
 import { t } from '@/lib/i18n';
+import { useOnceAsync } from '@/hooks/useOnce';
 
 type Error = {
   data: {
@@ -24,21 +24,36 @@ export const Confirm = () => {
   const token = searchParams.get('token');
   const session = useSession();
   const group = session.data?.user?.group;
+  const email = session.data?.user?.email;
   const [messageApi, contextHolder] = message.useMessage();
 
   const [confirmEmail, { isLoading }] = useConfirmEmailMutation();
+  const [resendConfirmation, { isLoading: isResending }] = useResendConfirmationMutation();
 
-  useEffect(() => {
+  const handleResend = async () => {
+    if (!email) {
+      messageApi.error(t('EMAIL_NOT_FOUND'));
+      return;
+    }
+
     try {
-      if (token) {
-        confirmEmail(token)
-          .unwrap()
-          .then(() => {
-            messageApi.success(t('EMAIL_CONFIRMED'));
-            session.update();
-            window.location.href = AppRoute.DASHBOARD;
-          });
-      }
+      await resendConfirmation(email).unwrap();
+      messageApi.success(t('EMAIL_RESENT_SUCCESS'));
+    } catch (error) {
+      messageApi.error(t('EMAIL_RESEND_FAILED'));
+      console.error('Failed to resend confirmation:', error);
+    }
+  };
+
+  // Подтверждение email из токена в URL (один раз, даже в Strict Mode)
+  useOnceAsync(async () => {
+    if (!token) return;
+
+    try {
+      await confirmEmail(token).unwrap();
+      messageApi.success(t('EMAIL_CONFIRMED'));
+      await session.update();
+      window.location.href = AppRoute.DASHBOARD;
     } catch (error) {
       messageApi.error(t('UNEXPECTED_ERROR'));
 
@@ -54,11 +69,15 @@ export const Confirm = () => {
       return <Spinner />;
     }
     return (
-      <Flex align='center' justify='center' vertical gap={12} style={{ height: '100vh', width: '100%' }}>
-        <Typography.Title level={3}>Please confirm your e-mail</Typography.Title>
-        <Button type='primary' onClick={logout}>
-          {t('BACK')}
-        </Button>
+      <Flex align='center' justify='center' vertical gap={16} style={{ height: '100vh', width: '100%' }}>
+        <Typography.Title level={3}>{t('PLEASE_CONFIRM_YOUR_EMAIL')}</Typography.Title>
+        <Typography.Text type='secondary'>{t('EMAIL_CONFIRMATION_SENT')}</Typography.Text>
+        <Flex gap={12} wrap='wrap' justify='center'>
+          <Button onClick={logout}>{t('BACK')}</Button>
+          <Button type='primary' onClick={handleResend} loading={isResending}>
+            {t('RESEND')}
+          </Button>
+        </Flex>
       </Flex>
     );
   };

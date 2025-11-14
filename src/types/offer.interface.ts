@@ -1,20 +1,22 @@
+export const source = ['PLATFORM', 'UPLOAD'] as const;
+
 export interface Offer {
   id: number;
   uuid: string;
   projectName: string;
   parentOfferId?: number;
-  briefId: number;
+  briefId?: number;
   vendorId: number;
   status: 'DRAFT';
   //
-  cost: number;
+  cost?: number;
   //
-  profit: number;
+  profit?: number;
   details: string; // JSON stringify(OfferDetails)
   // current date
   deadline: string; // DATE UTC
   // PLATFORM | UPLOAD
-  source: 'PLATFORM';
+  source: (typeof source)[number];
   // возможно ли редактировать
   isLocked: boolean;
   createdAt: string; // DATE UTC

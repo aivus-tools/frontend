@@ -6,6 +6,7 @@ import logger from '@/lib/logger';
 import { AUTH_TYPES, GROUPS } from '@/constants/constants';
 import { updateUserSession } from '@/services/server/userService';
 import { AppRoute } from '@/constants/appRoute';
+import type { Groups } from '@/types/user.interface.';
 
 export const { handlers, signIn, signOut, auth } = NextAuth({
   debug: Boolean(process.env.DEBUG),
@@ -71,20 +72,33 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
       }
       return Promise.resolve(true);
     },
-    async jwt({ token, user }) {
+    async jwt({ token, user, trigger }) {
+      logger.info('jwt callback', { token, user, trigger });
       if (user) {
         token.group = user.group;
         token.id = user.id;
       }
+
+      // // Обновляем токен из API только при явном вызове update()
+      // if (trigger === 'update') {
+      try {
+        const aivusUser = await updateUserSession({
+          userId: token.id as string,
+          userGroup: (token.group as string) || GROUPS.unconfirmed,
+        });
+        token.group = aivusUser.group;
+        logger.info('JWT token updated from API', { group: aivusUser.group });
+      } catch (error) {
+        logger.warn('Failed to update JWT from API, keeping existing token data', error);
+      }
+      // }
+
       return token;
     },
     async session({ session, token }) {
-      const aivusUser = await updateUserSession({
-        userId: token.id as string,
-      });
-      session.user.group = aivusUser.group;
+      // Просто копируем данные из токена в сессию
+      session.user.group = token.group as Groups;
       session.user.id = token.id as string;
-      logger.info('update session', session);
       return session;
     },
     authorized: async ({ auth }) => {

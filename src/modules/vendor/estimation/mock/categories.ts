@@ -1,6 +1,4 @@
-import { Category } from '@/types/categories.interface';
-
-export const CATEGORIES: Category[] = [
+export const CATEGORIES = [
   {
     id: 1,
     name: 'Креативная разработка',

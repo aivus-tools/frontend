@@ -1,8 +1,7 @@
-export interface Category {
+export interface Vendor {
   id: number;
   name: string;
-  level: number;
-  parentCategoryId?: number;
+  ownerId: number;
   createdAt: string;
   updatedAt: string;
 }
