@@ -1,24 +1,18 @@
-import { Category } from '@/types/categories.interface';
-
 export interface Entry {
-  id: number;
-  uuid: string;
+  id: string;
   name: string;
   description?: string;
-  categoryId: number;
-  isApproved: boolean;
-  createdAt: string;
-  updatedAt: string;
-  units: {
+  categoryId: string;
+  units?: {
     quantity: UnitOption[];
     temporal: UnitOption[];
   };
-  categoryPath: Category[];
 }
 
 export type UnitOption = {
-  id: number;
+  id: string;
   name: string;
   symbol: string;
+  dimension: string;
   isDefault: boolean;
 };

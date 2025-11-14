@@ -35,7 +35,7 @@ export const selectOffersByCategoryId = createSelector(
   }
 );
 
-export const selectOfferById = createSelector([selectOfferDetails, (_, id: number) => id], (offerDetails, id) => {
+export const selectOfferById = createSelector([selectOfferDetails, (_, id: string) => id], (offerDetails, id) => {
   return offerDetails.offers.find((offer) => offer.id === id);
 });
 

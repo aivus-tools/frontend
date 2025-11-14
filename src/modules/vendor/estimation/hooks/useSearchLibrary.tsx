@@ -7,6 +7,7 @@ import { selectIsExternal } from '@/store/slices/offer/selectors';
 import { CATEGORIES } from '../mock/categories';
 import { Category } from '@/types/categories.interface';
 import { ENTRIES } from '../mock/entries';
+import { KEY_SEPARATOR } from '../constants';
 
 export interface MenuItem extends Entry {
   key: string;
@@ -31,8 +32,8 @@ export const useSearchLibrary = () => {
     let entries: Entry[] = [];
 
     if (skip) {
-      categories = CATEGORIES as Category[];
-      entries = ENTRIES as Entry[];
+      categories = CATEGORIES;
+      entries = ENTRIES;
     } else {
       if (categoriesQuery.isSuccess) {
         categories = categoriesQuery.data;
@@ -53,8 +54,8 @@ export const useSearchLibrary = () => {
 
         acc.push({
           ...entry,
-          key: `${category.id}-${entry.id}`,
-          label: <Label itemKey={`${category.id}-${entry.id}`}>{`${entry.name}`}</Label>,
+          key: `${category.id}${KEY_SEPARATOR}${entry.id}`,
+          label: <Label itemKey={`${category.id}${KEY_SEPARATOR}${entry.id}`}>{`${entry.name}`}</Label>,
           value: `${entry.name}`,
           name: entry.name,
         });

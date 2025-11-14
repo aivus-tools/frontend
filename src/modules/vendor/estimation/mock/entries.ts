@@ -1,8 +1,10 @@
-export const ENTRIES = [
+/* eslint-disable @typescript-eslint/no-explicit-any */
+// Mock data for entries - used only in external mode
+export const ENTRIES: any[] = [
   {
-    id: 1,
+    id: '1',
     name: 'Написание сценария',
-    categoryId: 1,
+    categoryId: '1',
     units: {
       quantity: [
         {

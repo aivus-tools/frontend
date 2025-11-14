@@ -48,7 +48,7 @@ const Label = styled(Flex)`
 interface Props {
   value: string;
   clientValue: string;
-  subCategoryId?: number;
+  subCategoryId?: string;
 }
 
 export const SubTotal = ({ value, clientValue, subCategoryId }: Props) => {

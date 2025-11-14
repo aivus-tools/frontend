@@ -43,7 +43,7 @@ export const offerSlice = createSlice({
       const tempState = clone(state);
       const { categoryId } = action.payload;
 
-      const findCategory = (id: number) =>
+      const findCategory = (id: string) =>
         tempState.offerDetails.categories.find((cat) => cat.id === id) ||
         tempState.dictionary.category.find((cat) => cat.id === id);
 
@@ -87,7 +87,7 @@ export const offerSlice = createSlice({
       // Обновляем основной state
       Object.assign(state, tempState);
     },
-    removeOfferRow: (state, action: PayloadAction<number>) => {
+    removeOfferRow: (state, action: PayloadAction<string>) => {
       state.offerDetails.offers = state.offerDetails.offers.filter((offer) => offer.id !== action.payload);
       state.offerDetails.subCategories = state.offerDetails.subCategories.filter((subCategory) =>
         state.offerDetails.offers.find((offer) => offer.categoryId === subCategory.id)
@@ -153,7 +153,7 @@ export const offerSlice = createSlice({
     changeCategorySurcharge: (
       state,
       action: PayloadAction<{
-        categoryId: number;
+        categoryId: string;
         surcharge?: number;
         linked?: boolean;
       }>

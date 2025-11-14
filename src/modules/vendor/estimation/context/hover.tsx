@@ -1,10 +1,10 @@
 import React, { createContext, useContext, ReactNode, useState, useMemo, useCallback } from 'react';
 
 interface HoverContextType {
-  hoveredRow: number | null;
-  focusedRow: number | null;
-  focusRow: (id: number | null) => void;
-  getRowProps: (id: number) => {
+  hoveredRow: string | null;
+  focusedRow: string | null;
+  focusRow: (id: string | null) => void;
+  getRowProps: (id: string) => {
     onMouseEnter: () => void;
     onMouseLeave: () => void;
     $hovered: boolean;
@@ -19,11 +19,11 @@ interface FocusProviderProps {
 }
 
 export const HoverProvider: React.FC<FocusProviderProps> = ({ children }) => {
-  const [hoveredRow, setHoveredRow] = useState<number | null>(null);
-  const [focusedRow, setFocusedRow] = useState<number | null>(null);
+  const [hoveredRow, setHoveredRow] = useState<string | null>(null);
+  const [focusedRow, setFocusedRow] = useState<string | null>(null);
 
   const getRowProps = useCallback(
-    (id: number) => ({
+    (id: string) => ({
       onMouseEnter: () => setHoveredRow(id),
       onMouseLeave: () => setHoveredRow(null),
       onFocus: () => setFocusedRow(id),
@@ -35,7 +35,7 @@ export const HoverProvider: React.FC<FocusProviderProps> = ({ children }) => {
   );
 
   const focusRow = useCallback(
-    (id: number | null) => {
+    (id: string | null) => {
       setFocusedRow(id);
     },
     [setFocusedRow]

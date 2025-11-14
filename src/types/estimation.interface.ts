@@ -21,9 +21,9 @@ export interface QuantityUnit {
 }
 
 export interface OfferData {
-  id: number;
-  entryId: number;
-  categoryId: number;
+  id: string;
+  entryId: string;
+  categoryId: string;
   item: string;
   price: number;
   units: Partial<(TimeUnit | QuantityUnit)[]>;
@@ -51,18 +51,9 @@ export interface Headers {
   itemProps?: InputNumberProps<number>;
 }
 
-export interface Category {
-  id: number;
-  name: string;
-  parentCategoryId?: number;
-}
-
-export interface Entry {
-  id: number;
-  name: string;
-  categoryId: number;
-  variants?: EntryVariant[];
-}
+// Re-export from main types to avoid duplication
+export type { Category } from './categories.interface';
+export type { Entry } from './entries.interface';
 
 export interface EntryVariant {
   id: number;

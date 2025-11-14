@@ -9,10 +9,11 @@ import { RootState } from '@/store/store';
 import { useCallback } from 'react';
 import { useAppSelector } from '@/store/hooks';
 import { SubTotal } from './Total/SubTotal';
+import { KEY_SEPARATOR } from '../constants';
 
 export function SubCategory({ subCategory }: { subCategory: Category }) {
   const { keys } = useExpandedKeys();
-  const key = `${subCategory.parentCategoryId}-${subCategory.id}`;
+  const key = `${subCategory.parentCategoryId}${KEY_SEPARATOR}${subCategory.id}`;
   const isOpen = keys?.includes(key);
   const offers = useAppSelector(
     useCallback((state: RootState) => selectOffersByCategoryId(state, subCategory.id), [subCategory.id])

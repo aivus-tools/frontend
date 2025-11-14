@@ -4,6 +4,7 @@ import { addOfferRow } from '@/store/slices/offer/slice';
 import { useCallback } from 'react';
 import { useExpandedKeys } from '../context/expanded';
 import { OfferData } from '@/types/estimation.interface';
+import { KEY_SEPARATOR } from '../constants';
 
 export const useSelectOffer = () => {
   const dispatch = useAppDispatch();
@@ -17,7 +18,7 @@ export const useSelectOffer = () => {
       if (!category) return;
       const parentCategory = allCategories.find((cat) => cat.id === category.parentCategoryId);
       if (parentCategory) {
-        addKey(`${parentCategory.id}-${category.id}`);
+        addKey(`${parentCategory.id}${KEY_SEPARATOR}${category.id}`);
         addKey(`${parentCategory.id}`);
       } else {
         addKey(`${category.id}`);

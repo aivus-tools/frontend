@@ -10,7 +10,7 @@ import cn from 'classnames';
 interface Props {
   costWithTax: number;
   offer: OfferData;
-  handleChange: (id: number, key: keyof OfferData) => (data: ValueOf<OfferData> | null) => void;
+  handleChange: (id: string, key: keyof OfferData) => (data: ValueOf<OfferData> | null) => void;
 }
 
 export const SidebarExpenses: React.FC<Props> = ({ costWithTax, offer, handleChange }) => {

@@ -22,13 +22,13 @@ interface Props {
 
 export const SidebarBody: React.FC<Props> = ({ initialOfferData }) => {
   const dispatch = useAppDispatch();
-  const offer = useAppSelector((state: RootState) => selectOfferById(state, initialOfferData?.id ?? -1));
+  const offer = useAppSelector((state: RootState) => selectOfferById(state, initialOfferData?.id ?? ''));
 
   if (!offer) {
     return null;
   }
 
-  const handleChange = (id: number, key: keyof OfferData) => (data: ValueOf<OfferData> | null) => {
+  const handleChange = (id: string, key: keyof OfferData) => (data: ValueOf<OfferData> | null) => {
     dispatch(changeOfferRow({ id, [key]: data }));
   };
 
