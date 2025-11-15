@@ -35,8 +35,14 @@ export default auth(async (req) => {
     return new NextResponse('HMAC_SECRET not set', { status: 500 });
   }
 
-  const { id, group } = req.auth?.user ?? {};
-  logger.debug('middleware: user_id=%s, user_group=%s, pathname=%s', id, group, req.nextUrl.pathname);
+  const { id, group, vendorId } = req.auth?.user ?? {};
+  logger.debug(
+    'middleware: user_id=%s, user_group=%s, vendor_id=%s, pathname=%s',
+    id,
+    group,
+    vendorId,
+    req.nextUrl.pathname
+  );
 
   if (req.nextUrl.pathname === AppRoute.HOME) {
     if (id && group) {
@@ -81,6 +87,9 @@ export default auth(async (req) => {
       headers.set('x-timestamp', timestamp);
       headers.set('x-user-id', id ?? '');
       headers.set('x-user-group', group ?? '');
+      if (vendorId) {
+        headers.set('x-vendor-id', vendorId);
+      }
 
       const method = req.method;
       const stringToSign = `${method}:${newPathname}:${timestamp}:${id}:${group}`;

@@ -2,16 +2,17 @@ import { ProjectStatus } from './project.interface.';
 import { Roles } from './user.interface.';
 
 export interface Brief {
-  status: ProjectStatus;
-  /** JSON stringified Details */
-  details: Details;
-  clientId: number;
-  team: Team[];
   id: string;
   uuid: string;
+  status: ProjectStatus;
+  /** JSON object with brief details */
+  details: Details;
+  clientId?: string | null;
   createdAt: string;
   updatedAt: string | null;
 }
+
+export type NewBrief = Omit<Brief, 'id' | 'uuid' | 'createdAt' | 'updatedAt'>;
 
 export interface Team {
   userId: number;

@@ -38,18 +38,21 @@ export default function Details() {
     async (details: DetailsType) => {
       console.log('details', details);
       try {
-        let briefId: string | undefined;
+        let projectId: string | undefined;
         if (brief) {
-          briefId = brief.id;
+          // Update existing brief
           await update({ ...brief, details });
+          // TODO: Get projectId from brief or store
+          projectId = brief.id; // Temporary: using briefId as projectId
         } else {
+          // Create new brief + project + offer
           const data = await create(details);
-          briefId = data?.id;
+          projectId = (data as { projectId?: string })?.projectId || data?.id;
         }
         messageApi.success(t('DETAILS_SAVED_SUCCESSFULLY'));
-        if (briefId) {
+        if (projectId) {
           dispatch(setMode('view'));
-          router.push(AppRoute.DASHBOARD_PROJECT_DETAILS(briefId));
+          router.push(AppRoute.DASHBOARD_PROJECT_DETAILS(projectId));
         } else {
           messageApi.error(t('ERROR_SAVING_DETAILS'));
         }

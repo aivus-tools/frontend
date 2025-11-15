@@ -1,23 +1,19 @@
+import { OfferDetails } from './store.interface';
+
 export const source = ['PLATFORM', 'UPLOAD'] as const;
 
 export interface Offer {
-  id: number;
+  id: string;
   uuid: string;
   projectName: string;
-  parentOfferId?: number;
-  briefId?: number;
-  vendorId: number;
+  parentOfferId?: string | null;
+  projectId?: string | null;
   status: 'DRAFT';
-  //
-  cost?: number;
-  //
-  profit?: number;
-  details: string; // JSON stringify(OfferDetails)
-  // current date
+  cost?: number | null;
+  profit?: number | null;
+  details: OfferDetails | Record<string, unknown>; // JSON object (OfferDetails)
   deadline: string; // DATE UTC
-  // PLATFORM | UPLOAD
   source: (typeof source)[number];
-  // возможно ли редактировать
   isLocked: boolean;
   createdAt: string; // DATE UTC
   updatedAt: string; // DATE UTC

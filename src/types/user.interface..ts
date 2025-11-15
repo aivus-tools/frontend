@@ -13,6 +13,8 @@ export type User = {
   group: Groups;
   position: string | null;
   authType: AuthType;
+  vendorId?: string;
+  clientId?: string;
   createdAt: string;
   updatedAt: string;
 };

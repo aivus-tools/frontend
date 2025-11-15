@@ -4,6 +4,7 @@ import { offerSlice } from './slices/offer/slice';
 import { briefApi } from '@/services/client/briefApi';
 import { categoriesApi } from '@/services/client/categoriesApi';
 import { offersApi } from '@/services/client/offersApi';
+import { projectsApi } from '@/services/client/projectsApi';
 import { userApi } from '@/services/client/userApi';
 import { vendorSlice } from './slices/vendor';
 import { ratesApi } from '@/services/client/ratesApi';
@@ -18,5 +19,6 @@ export const rootReducer = combineReducers({
   [categoriesApi.reducerPath]: categoriesApi.reducer,
   [ratesApi.reducerPath]: ratesApi.reducer,
   [offersApi.reducerPath]: offersApi.reducer,
+  [projectsApi.reducerPath]: projectsApi.reducer,
   [userApi.reducerPath]: userApi.reducer,
 });

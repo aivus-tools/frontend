@@ -16,43 +16,43 @@ export const selectOfferMetaData = (state: { offer: OfferState }) => state.offer
 export const selectIsExternal = (state: { offer: OfferState }) => state.offer.external;
 export const selectShowCostPerVideo = createSelector(
   [selectOfferDetails],
-  (offerDetails) => offerDetails.showCostPerVideo
+  (offerDetails) => offerDetails?.showCostPerVideo ?? true
 );
 export const selectRootCategories = createSelector([selectOfferDetails], (offerDetails) => {
-  return offerDetails.categories.filter((category) => !category.parentCategoryId);
+  return offerDetails?.categories?.filter((category) => !category.parentCategoryId) || [];
 });
 export const selectSubcategoryById = createSelector(
   [selectOfferDetails, (_, categoryId) => categoryId],
   (offerDetails, categoryId) => {
-    return offerDetails.subCategories.filter((category) => category.parentCategoryId === categoryId);
+    return offerDetails?.subCategories?.filter((category) => category.parentCategoryId === categoryId) || [];
   }
 );
 
 export const selectOffersByCategoryId = createSelector(
   [selectOfferDetails, (_, categoryId) => categoryId],
   (offerDetails, categoryId) => {
-    return offerDetails.offers.filter((offer) => offer.categoryId === categoryId);
+    return offerDetails?.offers?.filter((offer) => offer.categoryId === categoryId) || [];
   }
 );
 
 export const selectOfferById = createSelector([selectOfferDetails, (_, id: string) => id], (offerDetails, id) => {
-  return offerDetails.offers.find((offer) => offer.id === id);
+  return offerDetails?.offers?.find((offer) => offer.id === id);
 });
 
 export const selectTotalSum = createSelector([selectOfferDetails], (offerDetails) => {
-  const value = offerDetails.offers.reduce((acc, offer) => acc + offer.cost, 0);
+  const value = offerDetails?.offers?.reduce((acc, offer) => acc + offer.cost, 0) || 0;
   return { value, formatted: formatCurrency(value) };
 });
 
 export const selectClientTotalSum = createSelector([selectOfferDetails], (offerDetails) => {
-  const value = offerDetails.offers.reduce((acc, offer) => acc + offer.clientCost, 0);
+  const value = offerDetails?.offers?.reduce((acc, offer) => acc + offer.clientCost, 0) || 0;
   return { value, formatted: formatCurrency(value) };
 });
 
 export const selectUnforeseenExpenses = createSelector(
   [selectOfferDetails, selectTotalSum, selectClientTotalSum],
   (offerDetails, { value }, { value: clientValue }) => {
-    const { percent, clientPercent, isVisible } = offerDetails.unforeseenExpenses;
+    const { percent = 0, clientPercent = 0, isVisible = true } = offerDetails?.unforeseenExpenses || {};
     return {
       isVisible,
       percent,
@@ -82,6 +82,13 @@ export const selectGrandTotal = createSelector(
 export const selectTotalSumByCategoryId = createSelector(
   [selectOfferDetails, (_, categoryId) => categoryId],
   (offerDetails, categoryId) => {
+    if (!offerDetails?.offers || !offerDetails?.subCategories) {
+      return {
+        total: formatCurrency(0),
+        clientTotal: formatCurrency(0),
+      };
+    }
+
     const { sum, clientSum } = offerDetails.offers
       .filter((offer) => offer.categoryId === categoryId)
       .reduce(
@@ -119,7 +126,7 @@ export const selectAllCategories = createSelector([selectDictionary], (dictionar
 export const selectCategorySurcharge = createSelector(
   [selectOfferDetails, (_, categoryId) => categoryId],
   (offerDetails, categoryId) => {
-    return offerDetails.categorySurcharge[categoryId] || { surcharge: 0, linked: false };
+    return offerDetails?.categorySurcharge?.[categoryId] || { surcharge: 0, linked: false };
   }
 );
 
@@ -139,13 +146,13 @@ export const selectCategoriesExportData = createSelector(
     };
 
     return rootCategories.map((category): CategoryWithSubcategories | CategoryWithoutSubcategories => {
-      const subCategories = offerDetails.subCategories.filter(
+      const subCategories = (offerDetails?.subCategories || []).filter(
         (subCategory) => subCategory.parentCategoryId === category.id
       );
 
       if (subCategories.length > 0) {
         const data = subCategories.map((subCategory) => {
-          const items: ExportItem[] = offerDetails.offers
+          const items: ExportItem[] = (offerDetails?.offers || [])
             .filter((offer) => offer.categoryId === subCategory.id)
             .map((offer) => ({
               name: offer.item,
@@ -165,7 +172,7 @@ export const selectCategoriesExportData = createSelector(
         };
       }
 
-      const items: ExportItem[] = offerDetails.offers
+      const items: ExportItem[] = (offerDetails?.offers || [])
         .filter((offer) => offer.categoryId === category.id)
         .map((offer) => ({
           name: offer.item,

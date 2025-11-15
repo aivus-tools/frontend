@@ -1,1 +1,65 @@
-[]
+[
+  {
+    "status": "DRAFT",
+    "details": {
+      "crmId": "",
+      "estimationTemplate": "",
+      "projectName": "1234",
+      "description": "",
+      "collaborators": [
+        ""
+      ],
+      "clientName": "1234",
+      "irsEin": "",
+      "brandName": "",
+      "managers": [
+        {
+          "manager": "",
+          "position": ""
+        }
+      ],
+      "projectDescription": "1234",
+      "referenceVideos": [
+        {
+          "url": "",
+          "comment": ""
+        }
+      ],
+      "visibleForVendors": false,
+      "budget": 1234,
+      "distributionAndAdPlacements": "1234",
+      "territory": [
+        "US",
+        "CA"
+      ],
+      "term": {
+        "length": "",
+        "unit": ""
+      },
+      "mainVideoDuration": {
+        "number": "",
+        "length": "",
+        "timeUnit": "",
+        "comment": ""
+      },
+      "cuts": [
+        {
+          "timeUnit": "",
+          "number": "",
+          "length": "",
+          "comment": ""
+        }
+      ],
+      "shootingDays": {
+        "number": "",
+        "length": "",
+        "comment": ""
+      }
+    },
+    "clientId": null,
+    "id": "62a86be5-b5fa-4c43-9be6-9b2003458916",
+    "uuid": "5fde4f66-4254-44f5-95ee-b8f9c63da164",
+    "createdAt": "2025-11-15T12:49:53.562Z",
+    "updatedAt": null
+  }
+]
