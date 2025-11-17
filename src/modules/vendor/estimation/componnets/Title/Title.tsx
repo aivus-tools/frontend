@@ -20,9 +20,10 @@ interface Props {
   itemKey: string;
   value: string;
   clientValue: string;
+  clientView?: boolean;
 }
 
-export const Title = ({ category, itemKey, value, clientValue }: Props) => {
+export const Title = ({ category, itemKey, value, clientValue, clientView = false }: Props) => {
   const dispatch = useAppDispatch();
   const { keys, switchKey } = useExpandedKeys();
   const isOpen = !!keys?.includes(itemKey);

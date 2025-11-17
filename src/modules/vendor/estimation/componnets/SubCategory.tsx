@@ -11,7 +11,12 @@ import { useAppSelector } from '@/store/hooks';
 import { SubTotal } from './Total/SubTotal';
 import { KEY_SEPARATOR } from '../constants';
 
-export function SubCategory({ subCategory }: { subCategory: Category }) {
+interface SubCategoryProps {
+  subCategory: Category;
+  clientView?: boolean;
+}
+
+export function SubCategory({ subCategory, clientView = false }: SubCategoryProps) {
   const { keys } = useExpandedKeys();
   const key = `${subCategory.parentCategoryId}${KEY_SEPARATOR}${subCategory.id}`;
   const isOpen = keys?.includes(key);
