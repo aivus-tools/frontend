@@ -53,10 +53,9 @@ interface Props {
   value: string;
   clientValue: string;
   categoryId?: string;
-  clientView?: boolean;
 }
 
-export const Total = ({ text, value, clientValue, categoryId, clientView = false }: Props) => {
+export const Total = ({ text, value, clientValue, categoryId }: Props) => {
   const handleSelect = useSelectOffer();
   const subCategories = useAppSelector(
     useCallback((state: RootState) => selectSubcategoryById(state, categoryId), [categoryId])

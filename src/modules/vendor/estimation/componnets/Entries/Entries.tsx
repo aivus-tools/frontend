@@ -35,12 +35,7 @@ const HideElement = ({
   return isVisible ? children : <div style={{ width }} />;
 };
 
-interface EntriesProps {
-  data: OfferData[];
-  clientView?: boolean;
-}
-
-export function Entries({ data, clientView = false }: EntriesProps) {
+export function Entries({ data }: { data: OfferData[] }) {
   const dispatch = useAppDispatch();
   const handleRemove = (id: string) => {
     dispatch(removeOfferRow(id));
