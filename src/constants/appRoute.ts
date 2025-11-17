@@ -2,6 +2,7 @@ export const AppRoute = {
   APP: '/app',
   AUTH: '/auth',
   CONFIRM: '/app/confirm',
+  CONFIRM_EMAIL: '/auth/confirm-email',
   DASHBOARD: '/app/dashboard',
   DASHBOARD_PROJECT: (projectId: string) => `/app/dashboard/${projectId}`,
   DASHBOARD_PROJECT_ANALYSIS: (projectId: string) => `/app/dashboard/${projectId}/analysis`,
@@ -11,9 +12,11 @@ export const AppRoute = {
   DASHBOARD_PROJECT_PRESENTATION: (projectId: string) => `/app/dashboard/${projectId}/presentation`,
   DASHBOARD_PROJECT_TIMING: (projectId: string) => `/app/dashboard/${projectId}/timing`,
   EXTERNAL: '/external',
+  FORGOT_PASSWORD: '/auth/forgot-password',
   GROUP: '/app/group',
   HOME: '/',
   RATES: '/app/rates',
+  RESET_PASSWORD: '/auth/reset-password',
   TEMPLATES: '/app/templates',
 } as const;
 

@@ -1,6 +1,7 @@
 'use client';
 import { Button, Form, Input, message } from 'antd';
 import { signIn } from 'next-auth/react';
+import Link from 'next/link';
 import { t } from '@/lib/i18n';
 import styles from './styles.module.css';
 import { useState } from 'react';
@@ -38,7 +39,7 @@ export const PasswordForm = ({ email, prevStepAction }: { email: string; prevSte
     <Form form={form} layout='vertical' onFinish={handleFinish}>
       {contextHolder}
       <div className={styles.inputWrapper}>
-        <Form.Item name='password'>
+        <Form.Item name='password' style={{ marginBottom: 8 }}>
           <Input
             size='large'
             placeholder={t('ENTER_PASSWORD_PLACEHOLDER')}
@@ -47,6 +48,11 @@ export const PasswordForm = ({ email, prevStepAction }: { email: string; prevSte
             name='password'
           />
         </Form.Item>
+      </div>
+      <div style={{ textAlign: 'right', marginBottom: 16 }}>
+        <Link href={AppRoute.FORGOT_PASSWORD} style={{ fontSize: '14px', fontWeight: 400 }}>
+          {t('FORGOT_PASSWORD_TITLE')}
+        </Link>
       </div>
       <div className={styles.buttonRowGroup}>
         <Button onClick={prevStepAction} htmlType='reset' block disabled={loading}>
