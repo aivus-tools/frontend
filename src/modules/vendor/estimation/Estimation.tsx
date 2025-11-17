@@ -13,7 +13,12 @@ import { AddButton } from './componnets/AddButton';
 import { useLoadData } from './hooks/useLoadData';
 import { useSetExternal } from './hooks/useSetExternal';
 
-export function Estimation({ external }: { external?: boolean }) {
+interface EstimationProps {
+  external?: boolean;
+  clientView?: boolean;
+}
+
+export function Estimation({ external, clientView = false }: EstimationProps) {
   useSetExternal(external);
   const isExternal = useAppSelector(selectIsExternal);
   const categories = useAppSelector(selectRootCategories);
@@ -29,14 +34,14 @@ export function Estimation({ external }: { external?: boolean }) {
       <HoverProvider>
         <Wrapper>
           <Table>
-            <Header />
+            <Header clientView={clientView} />
             {categories.map((category) => (
-              <Category key={category.id} category={category} />
+              <Category key={category.id} category={category} clientView={clientView} />
             ))}
-            {hasData && <Summary />}
+            {!clientView && <AddButton hasData={hasData} />}
+            {hasData && <Summary clientView={clientView} />}
           </Table>
         </Wrapper>
-        {!hasData && <AddButton />}
       </HoverProvider>
     </KeysProvider>
   );

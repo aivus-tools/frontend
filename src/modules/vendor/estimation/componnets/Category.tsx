@@ -15,7 +15,12 @@ import {
 import { useCallback } from 'react';
 import { RootState } from '@/store/store';
 
-export function Category({ category }: { category: TypeCategory }) {
+interface CategoryProps {
+  category: TypeCategory;
+  clientView?: boolean;
+}
+
+export function Category({ category, clientView = false }: CategoryProps) {
   const { keys } = useExpandedKeys();
   const key = `${category.id}`;
   const isOpen = keys?.includes(key);
@@ -32,14 +37,26 @@ export function Category({ category }: { category: TypeCategory }) {
 
   return (
     <>
-      <Title category={category} itemKey={key} value={`$ ${total}`} clientValue={`$ ${clientTotal}`} />
+      <Title
+        category={category}
+        itemKey={key}
+        value={`$ ${total}`}
+        clientValue={`$ ${clientTotal}`}
+        clientView={clientView}
+      />
       {isOpen && (
         <>
           {subCategories?.map((subCategory) => (
-            <SubCategory key={`${key}${subCategory.id}`} subCategory={subCategory} />
+            <SubCategory key={`${key}${subCategory.id}`} subCategory={subCategory} clientView={clientView} />
           ))}
-          <Entries data={offers} />
-          <Total text={category.name} value={`$ ${total}`} clientValue={`$ ${clientTotal}`} categoryId={category.id} />
+          <Entries data={offers} clientView={clientView} />
+          <Total
+            text={category.name}
+            value={`$ ${total}`}
+            clientValue={`$ ${clientTotal}`}
+            categoryId={category.id}
+            clientView={clientView}
+          />
         </>
       )}
       <div style={{ gridColumn: 'span 13', padding: '15px' }} />

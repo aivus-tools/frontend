@@ -182,6 +182,7 @@ export const EN_LOCALES = {
   SIGN_UP: 'Sign up',
   SPECIFY_BRAND_WITHIN_COMPANY: 'Specify the specific brand within your company, if needed.',
   START_TYPING_TO_ADD_ITEM: 'Start typing here to add your first item...',
+  START_TYPING_TO_ADD_OPTION: 'Start typing here to add option for any category',
   STATUS_COMPLETED: 'Completed',
   STATUS_DRAFT: 'DRAFT',
   STATUS_ONGOING: 'Ongoing',

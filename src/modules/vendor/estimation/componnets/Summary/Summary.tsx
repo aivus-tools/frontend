@@ -11,7 +11,7 @@ export const Summary = () => {
       <SubtotalAllSections />
       <UnforeseenExpenses />
       <GrandTotal />
-      <CostPerVideo />
+      {/* <CostPerVideo /> */}
     </>
   );
 };

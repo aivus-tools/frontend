@@ -183,6 +183,7 @@ export const RU_LOCALES = {
   SIGN_UP: 'Зарегистрироваться',
   SPECIFY_BRAND_WITHIN_COMPANY: 'Укажите конкретный бренд в вашей компании, если необходимо.',
   START_TYPING_TO_ADD_ITEM: 'Начните вводить текст здесь, чтобы добавить первый элемент...',
+  START_TYPING_TO_ADD_OPTION: 'Начните вводить текст, чтобы добавить позицию в любую категорию',
   STATUS_COMPLETED: 'Завершено',
   STATUS_DRAFT: 'ЧЕРНОВИК',
   STATUS_ONGOING: 'В процессе',

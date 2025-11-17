@@ -2,7 +2,29 @@
 
 import { CLIENTS_HEADERS, HEADERS } from '../constants';
 
-export function Header() {
+interface HeaderProps {
+  clientView?: boolean;
+}
+
+export function Header({ clientView = false }: HeaderProps) {
+  if (clientView) {
+    // Client view: only show item name and client price columns
+    return (
+      <>
+        <div className='estimation-header' style={{ textAlign: 'left', paddingLeft: '8px' }}>
+          Item
+        </div>
+        <div className='estimation-header'>Units</div>
+        <div className='estimation-header'>Quantity</div>
+        <div className='estimation-header'>Price, $</div>
+        <div />
+        <div />
+        <div />
+      </>
+    );
+  }
+
+  // Full view: show all columns
   return (
     <>
       {HEADERS.map(({ label, style, key }) => (
