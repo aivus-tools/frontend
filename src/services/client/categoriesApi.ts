@@ -36,6 +36,9 @@ export const categoriesApi = createApi({
     getEntries: builder.query<{ entries: Entry[] }, void>({
       query: () => ApiRoute.ENTRY_LIST,
     }),
+    getEntriesFull: builder.query<{ entries: Entry[] }, void>({
+      query: () => `${ApiRoute.ENTRY_LIST}?full=true`,
+    }),
     getEntry: builder.query<Entry, string>({
       query: (id) => ApiRoute.ENTRY(id),
     }),

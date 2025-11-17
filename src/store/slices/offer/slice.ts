@@ -43,11 +43,17 @@ export const offerSlice = createSlice({
       const tempState = clone(state);
       const { categoryId } = action.payload;
 
-      const findCategory = (id: number) =>
-        tempState.offerDetails.categories.find((cat) => cat.id === id) ||
-        tempState.dictionary.category.find((cat) => cat.id === id);
+      const findCategory = (id: string) =>
+        tempState.offerDetails?.categories?.find((cat) => cat.id === id) ||
+        tempState.dictionary?.category?.find((cat) => cat.id === id);
 
       const addCategoryIfNeeded = (category: Category) => {
+        if (!tempState.offerDetails?.categories) {
+          tempState.offerDetails.categories = [];
+        }
+        if (!tempState.offerDetails?.categorySurcharge) {
+          tempState.offerDetails.categorySurcharge = {};
+        }
         if (!tempState.offerDetails.categories.some((cat) => cat.id === category.id)) {
           tempState.offerDetails.categories.push(category);
           tempState.offerDetails.categorySurcharge[category.id] = {
@@ -58,6 +64,9 @@ export const offerSlice = createSlice({
       };
 
       const addSubCategoryIfNeeded = (subcategory: Category) => {
+        if (!tempState.offerDetails?.subCategories) {
+          tempState.offerDetails.subCategories = [];
+        }
         if (!tempState.offerDetails.subCategories.some((cat) => cat.id === subcategory.id)) {
           tempState.offerDetails.subCategories.push(subcategory);
         }
@@ -82,23 +91,36 @@ export const offerSlice = createSlice({
         addCategoryIfNeeded(category);
       }
 
+      if (!tempState.offerDetails?.offers) {
+        tempState.offerDetails.offers = [];
+      }
       tempState.offerDetails.offers.push(action.payload);
 
       // Обновляем основной state
       Object.assign(state, tempState);
     },
-    removeOfferRow: (state, action: PayloadAction<number>) => {
+    removeOfferRow: (state, action: PayloadAction<string>) => {
+      if (!state.offerDetails?.offers) return;
+
       state.offerDetails.offers = state.offerDetails.offers.filter((offer) => offer.id !== action.payload);
-      state.offerDetails.subCategories = state.offerDetails.subCategories.filter((subCategory) =>
-        state.offerDetails.offers.find((offer) => offer.categoryId === subCategory.id)
-      );
-      state.offerDetails.categories = state.offerDetails.categories.filter(
-        (category) =>
-          state.offerDetails.offers.find((offer) => offer.categoryId === category.id) ||
-          state.offerDetails.subCategories.find((subcategory) => subcategory.parentCategoryId === category.id)
-      );
+
+      if (state.offerDetails?.subCategories) {
+        state.offerDetails.subCategories = state.offerDetails.subCategories.filter((subCategory) =>
+          state.offerDetails.offers.find((offer) => offer.categoryId === subCategory.id)
+        );
+      }
+
+      if (state.offerDetails?.categories) {
+        state.offerDetails.categories = state.offerDetails.categories.filter(
+          (category) =>
+            state.offerDetails.offers.find((offer) => offer.categoryId === category.id) ||
+            state.offerDetails.subCategories?.find((subcategory) => subcategory.parentCategoryId === category.id)
+        );
+      }
     },
     changeOfferRow: (state, action: PayloadAction<Partial<OfferData>>) => {
+      if (!state.offerDetails?.offers) return;
+
       const { id, ...newOfferData } = action.payload;
       const index = state.offerDetails.offers.findIndex((offer) => offer.id === id);
 
@@ -153,7 +175,7 @@ export const offerSlice = createSlice({
     changeCategorySurcharge: (
       state,
       action: PayloadAction<{
-        categoryId: number;
+        categoryId: string;
         surcharge?: number;
         linked?: boolean;
       }>

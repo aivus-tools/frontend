@@ -4,5 +4,6 @@ import { Groups } from '@/types/user.interface.';
 declare module 'next-auth' {
   interface User extends NextUser {
     group?: Groups;
+    vendorId?: string;
   }
 }

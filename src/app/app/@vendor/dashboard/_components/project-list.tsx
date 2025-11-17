@@ -8,46 +8,31 @@ import styles from './project-list.module.css';
 import React, { useEffect, useMemo } from 'react';
 import { THeadItem } from '@/components/THeadItem/THeadItem';
 import { ProjectItem } from '@/components/ProjectItem/ProjectItem';
-import { useBriefs } from '@/hooks/useBriefs';
-import { Brief } from '@/types/brief.interface';
+import { useProjects } from '@/hooks/useProjects';
+import { Project, ProjectListItem } from '@/types/project.interface.';
 import { format } from 'date-fns';
-import { Project } from '@/types/project.interface.';
 import { formatPrice } from '@/helpers/helper';
 import Spinner from '@/components/Spinner';
 import { AppRoute } from '@/constants/appRoute';
 
-const mapBriefsToProjects = (briefs: Brief[]): Project[] => {
-  if (!briefs || !Array.isArray(briefs)) {
+const mapProjectsToListItems = (projects: Project[]): ProjectListItem[] => {
+  if (!projects || !Array.isArray(projects)) {
     return [];
   }
 
-  return briefs.map((brief: Brief) => {
-    const { details } = brief;
-
-    const { options } = details;
-    const assignee = details.collaborators
-      .map((email) => {
-        const collaborator = options?.collaborators?.find((person) => person.email === email);
-        if (!collaborator) {
-          return null;
-        }
-        return `${collaborator.firstName} ${collaborator.surname}`;
-      })
-      .filter(Boolean)
-      .join(', ');
-
+  return projects.map((project: Project) => {
     return {
-      id: brief.id,
-      title: details.projectName,
-      assignee,
-      clientName: details.clientName,
-      clientContact: '?????????',
-      status: brief.status,
-      cost: formatPrice(details.budget ?? 0),
-      expenses: formatPrice(0),
-      profit: formatPrice(0),
-      deadline: '?????????',
-      createdAt: format(new Date(brief.createdAt), 'MM/dd/yyyy'),
+      id: project.id,
+      title: project.name,
+      assignee: '', // TODO: Get from team
+      clientName: '', // TODO: Get from brief.details
+      clientContact: '', // TODO: Get from brief.details
+      status: project.status,
+      cost: formatPrice(0), // TODO: Calculate from offer
+      expenses: formatPrice(0), // TODO: Calculate from offer
+      profit: formatPrice(0), // TODO: Calculate from offer
+      deadline: '', // TODO: Get from offer
+      createdAt: format(new Date(project.createdAt), 'MM/dd/yyyy'),
     };
   });
 };
@@ -55,12 +40,12 @@ const mapBriefsToProjects = (briefs: Brief[]): Project[] => {
 export const ProjectList = () => {
   const router = useRouter();
 
-  const { data: briefs = [], isLoading } = useBriefs();
+  const { data: projects = [], isLoading } = useProjects();
 
-  const data = useMemo(() => mapBriefsToProjects(briefs), [briefs]);
+  const data = useMemo(() => mapProjectsToListItems(projects), [projects]);
 
   useEffect(() => {
-    data.forEach((item: Project) => {
+    data.forEach((item: ProjectListItem) => {
       router.prefetch(AppRoute.DASHBOARD_PROJECT_DETAILS(item.id));
     });
   }, [router, data]);
@@ -83,7 +68,7 @@ export const ProjectList = () => {
         ))}
       </div>
       <div className={cn(styles.content)}>
-        {data.map((item: Project) => (
+        {data.map((item: ProjectListItem) => (
           <ProjectItem
             className={cn(styles.projectItem)}
             key={`project_${item.id}`}

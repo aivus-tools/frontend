@@ -9,7 +9,7 @@ import { ValueOf } from 'next/dist/shared/lib/constants';
 
 interface Props {
   offer: OfferData;
-  handleChange: (id: number, key: keyof OfferData) => (data: ValueOf<OfferData> | null) => void;
+  handleChange: (id: string, key: keyof OfferData) => (data: ValueOf<OfferData> | null) => void;
 }
 
 interface Option {

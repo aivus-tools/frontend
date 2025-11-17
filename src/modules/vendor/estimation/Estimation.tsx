@@ -33,10 +33,10 @@ export function Estimation({ external }: { external?: boolean }) {
             {categories.map((category) => (
               <Category key={category.id} category={category} />
             ))}
+            <AddButton hasData={hasData} />
             {hasData && <Summary />}
           </Table>
         </Wrapper>
-        {!hasData && <AddButton />}
       </HoverProvider>
     </KeysProvider>
   );

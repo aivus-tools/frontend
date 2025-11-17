@@ -9,7 +9,7 @@ import { round } from '@/lib/utils';
 interface Props {
   costWithTax: number;
   offer: OfferData;
-  handleChange: (id: number, key: keyof OfferData) => (data: ValueOf<OfferData> | null) => void;
+  handleChange: (id: string, key: keyof OfferData) => (data: ValueOf<OfferData> | null) => void;
 }
 
 export const SidebarForClient: React.FC<Props> = ({ costWithTax, offer, handleChange }) => {

@@ -7,7 +7,8 @@ export const useLoadData = (external?: boolean) => {
 
   const categoriesQuery = categoriesApi.useGetCategoriesQuery(undefined, { skip: external });
   const entriesQuery = categoriesApi.useGetEntriesQuery(undefined, { skip: external });
-  offersApi.useGetOffersByBriefIdQuery(projectId!, {
+  // Changed from getOffersByBriefId to getOffersByProjectId
+  offersApi.useGetOffersByProjectIdQuery(projectId!, {
     skip: !projectId || !!external,
   });
 

@@ -1,8 +1,6 @@
 export interface Category {
-  id: number;
+  id: string;
   name: string;
   level: number;
-  parentCategoryId?: number;
-  createdAt: string;
-  updatedAt: string;
+  parentCategoryId?: string | null;
 }

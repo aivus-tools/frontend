@@ -4,7 +4,7 @@ import { LibraryDropdown } from '@/modules/vendor/estimation/componnets/LibraryD
 type HandleFilter = Exclude<ComponentProps<typeof LibraryDropdown>['filterOptions'], undefined>;
 
 export const filterOptionsById =
-  (id?: number): HandleFilter =>
+  (id?: string): HandleFilter =>
   (options, searchValue) => {
     if (!searchValue && id) {
       return options.filter((option) => option.categoryId === id);
@@ -13,7 +13,7 @@ export const filterOptionsById =
   };
 
 export const filterOptionsBySetOfId =
-  (setIds?: Set<number>): HandleFilter =>
+  (setIds?: Set<string>): HandleFilter =>
   (options, searchValue) => {
     if (!searchValue && setIds) {
       return options.filter((option) => setIds.has(option.categoryId));

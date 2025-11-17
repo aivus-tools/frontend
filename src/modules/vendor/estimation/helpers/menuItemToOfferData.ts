@@ -1,29 +1,32 @@
 import { MenuItem } from '../hooks/useSearchLibrary';
 import { OfferData, UnitType } from '@/types/estimation.interface';
+import { KEY_SEPARATOR } from '../constants';
 
-const generateNumeralId = () => Math.floor(Math.random() * 1000000);
+const generateStringId = () => Math.floor(Math.random() * 1000000).toString();
 
 export const menuItemToOfferData = (item: MenuItem): OfferData => {
+  const temporalUnits = item.units?.temporal || [];
+  const quantityUnits = item.units?.quantity || [];
+
   const options: OfferData['options'] = {
-    [UnitType.TIME]: item.units.temporal.map((unit) => ({
-      id: unit.id.toString(),
+    [UnitType.TIME]: temporalUnits.map((unit) => ({
       label: unit.name,
       type: UnitType.TIME,
-      value: unit.id,
+      value: parseInt(unit.id, 10) || 0,
       count: 1,
     })),
-    [UnitType.QUANTITY]: item.units.quantity.map((unit) => ({
+    [UnitType.QUANTITY]: quantityUnits.map((unit) => ({
       label: unit.name,
       type: UnitType.QUANTITY,
-      value: unit.id,
+      value: parseInt(unit.id, 10) || 0,
       count: 1,
     })),
   };
 
   return {
-    id: generateNumeralId(),
-    entryId: +item.key.split('-')[1],
-    categoryId: +item.key.split('-')[0],
+    id: generateStringId(),
+    entryId: item.key.split(KEY_SEPARATOR)[1],
+    categoryId: item.key.split(KEY_SEPARATOR)[0],
     item: item.name,
     price: 0,
     units: [options[UnitType.TIME][0] ?? options[UnitType.QUANTITY][0]],

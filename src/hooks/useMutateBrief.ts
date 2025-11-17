@@ -1,7 +1,9 @@
 import { useSession } from 'next-auth/react';
 import { Brief, Details } from '@/types/brief.interface';
-import { ROLES } from '@/constants/constants';
 import { briefApi } from '@/services/client/briefApi';
+import { projectsApi } from '@/services/client/projectsApi';
+import { offersApi } from '@/services/client/offersApi';
+import { addMonthsUTC } from '@/helpers/helper';
 
 export const { useCreateBriefMutation, useUpdateBriefMutation } = briefApi;
 
@@ -9,23 +11,57 @@ export const useMutateBrief = () => {
   const session = useSession();
   const [createBrief, { isLoading: isCreating }] = useCreateBriefMutation();
   const [updateBrief, { isLoading: isUpdating }] = useUpdateBriefMutation();
+  const [createProject] = projectsApi.useCreateProjectMutation();
+  const [createOffer] = offersApi.useCreateOfferMutation();
 
   return {
     isLoading: isCreating || isUpdating,
     create: async (details: Details) => {
-      if (session.data?.user?.id) {
-        return await createBrief({
-          status: 'DRAFT',
-          details,
-          clientId: Number(session.data.user.id),
-          team: [
-            {
-              role: ROLES.ADMIN,
-              userId: Number(session.data.user.id) as unknown as number,
-            },
-          ],
-        }).unwrap();
+      const userId = session.data?.user?.id;
+      const vendorId = session.data?.user?.vendorId;
+
+      if (!userId || !vendorId) {
+        throw new Error('User or vendor ID not found');
       }
+
+      console.log('Creating brief with details:', details);
+
+      // Step 1: Create Brief
+      const brief = await createBrief({
+        status: 'DRAFT',
+        details,
+        clientId: null, // No client yet for vendor-initiated flow
+      }).unwrap();
+
+      console.log('Brief created:', brief);
+
+      // Step 2: Create Project
+      const project = await createProject({
+        name: details.projectName || 'New Project',
+        vendorId,
+        briefId: brief.id,
+        status: 'DRAFT',
+      }).unwrap();
+
+      console.log('Project created:', project);
+
+      // Step 3: Create Offer
+      const offer = await createOffer({
+        projectName: details.projectName || 'New Project',
+        projectId: project.id,
+        status: 'DRAFT',
+        details: {},
+        deadline: addMonthsUTC(new Date(), 2).toISOString(),
+        source: 'PLATFORM',
+        isLocked: false,
+        cost: null,
+        profit: null,
+      }).unwrap();
+
+      console.log('Offer created:', offer);
+
+      // Return project ID for navigation
+      return { projectId: project.id, brief, project, offer };
     },
     update: async (brief: Brief) => {
       await updateBrief(brief).unwrap();

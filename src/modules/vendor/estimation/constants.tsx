@@ -90,3 +90,12 @@ export const CLIENTS_HEADERS: Headers[] = [
     key: 'marketRange',
   },
 ];
+
+export enum UnitType {
+  TIME = 'time',
+  QUANTITY = 'quantity',
+}
+
+// Separator for composite keys (category:entry, parent:child, etc.)
+// Using colon instead of hyphen because UUIDs contain hyphens
+export const KEY_SEPARATOR = ':';

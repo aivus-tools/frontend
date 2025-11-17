@@ -12,7 +12,7 @@ export interface OfferDetails {
   categories: Category[];
   subCategories: Category[];
   categorySurcharge: Record<
-    number,
+    string,
     {
       surcharge: number;
       linked: boolean;

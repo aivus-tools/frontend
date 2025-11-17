@@ -5,6 +5,7 @@ import { briefApi } from '@/services/client/briefApi';
 import { categoriesApi } from '@/services/client/categoriesApi';
 import { ratesApi } from '@/services/client/ratesApi';
 import { offersApi } from '@/services/client/offersApi';
+import { projectsApi } from '@/services/client/projectsApi';
 import { userApi } from '@/services/client/userApi';
 import { listenerMiddleware } from '@/lib/listenerMiddleware';
 
@@ -18,6 +19,7 @@ export const makeStore = () => {
         categoriesApi.middleware,
         ratesApi.middleware,
         offersApi.middleware,
+        projectsApi.middleware,
         listenerMiddleware.middleware
       ),
   });

@@ -5,7 +5,8 @@ import { useSelectOffer } from '../hooks/useSelectOffer';
 import { t } from '@/lib/i18n';
 
 const Wrapper = styled.div`
-  padding: 0 20px 10px 30px;
+  grid-column: 1 / -1;
+  padding: 0 20px 30px 10px;
   background-color: var(--bg-gray-page);
   display: flex;
   align-items: flex-end;
@@ -15,7 +16,11 @@ const Wrapper = styled.div`
   }
 `;
 
-export const AddButton = () => {
+interface AddButtonProps {
+  hasData?: boolean;
+}
+
+export const AddButton = ({ hasData = false }: AddButtonProps) => {
   const handleSelect = useSelectOffer();
 
   return (
@@ -26,7 +31,7 @@ export const AddButton = () => {
         componentAction={({ handleChange, handleBlur, handleFocus, value }) => (
           <Input
             name='product_type'
-            placeholder={t('START_TYPING_TO_ADD_ITEM')}
+            placeholder={t(hasData ? 'START_TYPING_TO_ADD_OPTION' : 'START_TYPING_TO_ADD_ITEM')}
             variant='borderless'
             value={value}
             onChange={handleChange}

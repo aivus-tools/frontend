@@ -11,10 +11,7 @@ import {
   setOfferDetails,
 } from './slice';
 import { isAnyOf } from '@reduxjs/toolkit';
-import { addMonthsUTC } from '@/helpers/helper';
 import { selectIsNewBrief, selectProjectId } from '../project';
-import { briefApi } from '@/services/client/briefApi';
-import { selectVendorId } from '../vendor';
 
 export const offerListener = (startListening: AppStartListening) => {
   startListening({
@@ -45,49 +42,30 @@ export const offerListener = (startListening: AppStartListening) => {
         return;
       }
 
-      const briefQueryState = briefApi.endpoints.getBrief.select(projectId)(state).data;
-
-      if (!briefQueryState) {
-        console.warn('Brief query state is not available');
-        return;
-      }
+      // TODO: This listener needs to be updated to work with Projects instead of Briefs
+      // For now, it only handles updating existing offers
       if (state.offer.metaData) {
         dispatch(
           offersApi.endpoints.updateOffer.initiate({
             ...state.offer.metaData,
-            details: JSON.stringify(state.offer.offerDetails),
-          })
-        );
-      } else {
-        const { details, id: briefId } = briefQueryState;
-        const vendorId = selectVendorId(state);
-        dispatch(
-          offersApi.endpoints.createOffer.initiate({
-            projectName: details.projectName,
-            details: JSON.stringify(state.offer.offerDetails),
-            briefId: Number(briefId),
-            vendorId: Number(vendorId),
-            status: 'DRAFT',
-            cost: 0,
-            profit: 0,
-            deadline: addMonthsUTC(new Date(), 2).toISOString(),
-            source: 'PLATFORM',
-            isLocked: false,
+            details: state.offer.offerDetails, // Changed from JSON.stringify
           })
         );
       }
+      // Note: Offer creation is now handled in useMutateBrief hook
     },
   });
 
   startListening({
-    matcher: offersApi.endpoints.getOffersByBriefId.matchFulfilled,
+    matcher: offersApi.endpoints.getOffersByProjectId.matchFulfilled,
     effect: async (action, { dispatch }) => {
       const offer = action.payload[0];
       if (offer) {
         try {
           const { details, ...metaData } = offer;
           dispatch(setMetaData(metaData));
-          dispatch(setOfferDetails(JSON.parse(details)));
+          // Details is already an object, no need to parse
+          dispatch(setOfferDetails(typeof details === 'string' ? JSON.parse(details) : details));
         } catch (error) {
           console.error('Error parsing offer details:', error);
         }

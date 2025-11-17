@@ -52,7 +52,7 @@ interface Props {
   text: string;
   value: string;
   clientValue: string;
-  categoryId?: number;
+  categoryId?: string;
 }
 
 export const Total = ({ text, value, clientValue, categoryId }: Props) => {
@@ -61,7 +61,7 @@ export const Total = ({ text, value, clientValue, categoryId }: Props) => {
     useCallback((state: RootState) => selectSubcategoryById(state, categoryId), [categoryId])
   );
   const categorySet = useMemo(() => {
-    const set = new Set<number>();
+    const set = new Set<string>();
     if (categoryId) {
       set.add(categoryId);
     }

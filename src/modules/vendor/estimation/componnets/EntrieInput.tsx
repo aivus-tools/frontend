@@ -8,6 +8,7 @@ import { useAppDispatch, useAppSelector } from '@/store/hooks';
 import { selectAllCategories } from '@/store/slices/offer/selectors';
 import { addOfferRow, removeOfferRow } from '@/store/slices/offer/slice';
 import { useExpandedKeys } from '../context/expanded';
+import { KEY_SEPARATOR } from '../constants';
 
 const Input = styled(LibInput)`
   &.ant-input-borderless {
@@ -39,7 +40,7 @@ export const EntrieInput = ({ value, variant }: Props) => {
     if (!category) return;
     const parentCategory = allCategories.find((cat) => cat.id === category.parentCategoryId);
     if (parentCategory) {
-      addKey(`${parentCategory.id}-${category.id}`);
+      addKey(`${parentCategory.id}${KEY_SEPARATOR}${category.id}`);
       addKey(`${parentCategory.id}`);
     } else {
       addKey(`${category.id}`);

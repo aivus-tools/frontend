@@ -1,7 +1,7 @@
 'use client';
 
 import { HeaderKey, OfferData, UnitType } from '@/types/estimation.interface';
-import { CLIENTS_HEADERS, HEADERS } from '../../constants';
+import { CLIENTS_HEADERS, HEADERS, KEY_SEPARATOR } from '../../constants';
 import { useRowHover } from '../../context/hover';
 import SettingsIcon from '@/icons/settings-icon.svg';
 import AddIcon from '@/icons/add-icon.svg';
@@ -37,13 +37,13 @@ const HideElement = ({
 
 export function Entries({ data }: { data: OfferData[] }) {
   const dispatch = useAppDispatch();
-  const handleRemove = (id: number) => {
+  const handleRemove = (id: string) => {
     dispatch(removeOfferRow(id));
   };
-  const handleChange = (id: number, key: keyof OfferData) => (data: ValueOf<OfferData> | null) => {
+  const handleChange = (id: string, key: keyof OfferData) => (data: ValueOf<OfferData> | null) => {
     dispatch(changeOfferRow({ id, [key]: data }));
   };
-  const handleChangeUnit = (id: number, unitType: UnitType) => (newUnitValue: number) => {
+  const handleChangeUnit = (id: string, unitType: UnitType) => (newUnitValue: number) => {
     const offer = data.find((it) => it.id === id);
     if (!offer) {
       return;
@@ -57,7 +57,7 @@ export function Entries({ data }: { data: OfferData[] }) {
     handleChange(id, 'units')(newUnits);
   };
 
-  const handleRemoveUnit = (id: number, unitType: UnitType) => {
+  const handleRemoveUnit = (id: string, unitType: UnitType) => {
     const offer = data.find((it) => it.id === id);
     if (!offer) {
       return;
@@ -66,7 +66,7 @@ export function Entries({ data }: { data: OfferData[] }) {
     handleChange(id, 'units')(newUnits);
   };
 
-  const handleChangeUnitValue = (id: number, unitValue: number) => (count: number | null) => {
+  const handleChangeUnitValue = (id: string, unitValue: number) => (count: number | null) => {
     const offer = data.find((it) => it.id === id);
     if (!offer || !count) {
       return;
@@ -84,7 +84,7 @@ export function Entries({ data }: { data: OfferData[] }) {
   };
 
   const { getRowProps, hoveredRow, focusedRow } = useRowHover();
-  const checkActive = (id: number) => hoveredRow === id || focusedRow === id;
+  const checkActive = (id: string) => hoveredRow === id || focusedRow === id;
 
   const showSidebar = (offer: OfferData): void => {
     dispatch(openSidebar());
@@ -191,7 +191,7 @@ export function Entries({ data }: { data: OfferData[] }) {
 
             if (key === 'quantity') {
               return (
-                <EstimationItem key={`${offer.id}-${key}`} style={itemStyle} {...rowProps}>
+                <EstimationItem key={`${offer.id}${KEY_SEPARATOR}${key}`} style={itemStyle} {...rowProps}>
                   <Flex key={offer.id} align='center' vertical style={{ maxWidth: '100%', gap: '5px' }}>
                     {offer.units &&
                       offer.units
@@ -217,7 +217,7 @@ export function Entries({ data }: { data: OfferData[] }) {
 
             if (key === 'cost') {
               return (
-                <EstimationItem key={`${offer.id}-${key}`} style={itemStyle} {...rowProps}>
+                <EstimationItem key={`${offer.id}${KEY_SEPARATOR}${key}`} style={itemStyle} {...rowProps}>
                   {formatCurrency(offer.cost)}
                 </EstimationItem>
               );
@@ -226,7 +226,7 @@ export function Entries({ data }: { data: OfferData[] }) {
             const priceKey = offer.showTax ? 'taxPrice' : 'price';
 
             return (
-              <EstimationItem key={`${offer.id}-${key}`} style={itemStyle} {...rowProps}>
+              <EstimationItem key={`${offer.id}${KEY_SEPARATOR}${key}`} style={itemStyle} {...rowProps}>
                 <InputNumberRight
                   style={{ flex: 1 }}
                   variant={isActive ? 'outlined' : 'borderless'}
@@ -254,7 +254,7 @@ export function Entries({ data }: { data: OfferData[] }) {
             }
             if (key === 'surcharge') {
               return (
-                <EstimationItem key={`${key}-${offer.id}`} style={itemStyle} {...rowProps}>
+                <EstimationItem key={`${key}${KEY_SEPARATOR}${offer.id}`} style={itemStyle} {...rowProps}>
                   <InputNumberRight
                     variant={isActive ? 'outlined' : 'borderless'}
                     onChange={handleChange(offer.id, key)}
@@ -267,7 +267,7 @@ export function Entries({ data }: { data: OfferData[] }) {
             }
 
             return (
-              <EstimationItem key={`${key}-${offer.id}`} style={itemStyle} {...rowProps}>
+              <EstimationItem key={`${key}${KEY_SEPARATOR}${offer.id}`} style={itemStyle} {...rowProps}>
                 {formatCurrency(offer[key])}
               </EstimationItem>
             );

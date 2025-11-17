@@ -1,58 +1,72 @@
-export const CATEGORIES = [
+import { Category } from '@/types/categories.interface';
+
+export const CATEGORIES: Category[] = [
   {
-    id: 1,
+    id: '1',
     name: 'Креативная разработка',
+    level: 1,
   },
   {
-    id: 2,
+    id: '2',
     name: '1. Пре-продакшн',
+    level: 1,
   },
   {
-    id: 3,
+    id: '3',
     name: '2. Продакшн',
+    level: 1,
   },
   {
-    id: 4,
+    id: '4',
     name: '1.  Оборудование',
-    parentCategoryId: 3,
+    level: 2,
+    parentCategoryId: '3',
   },
   {
-    id: 5,
+    id: '5',
     name: '2.  Гонорары',
-    parentCategoryId: 3,
+    level: 2,
+    parentCategoryId: '3',
   },
   {
-    id: 6,
+    id: '6',
     name: '3. Дополнительные расходы и экспедиция',
-    parentCategoryId: 3,
+    level: 2,
+    parentCategoryId: '3',
   },
   {
-    id: 7,
+    id: '7',
     name: '3. Пост-продакшн и графика',
+    level: 1,
   },
   {
-    id: 8,
+    id: '8',
     name: 'Гонорары',
-    parentCategoryId: 7,
+    level: 2,
+    parentCategoryId: '7',
   },
   {
-    id: 9,
+    id: '9',
     name: 'Монтаж',
-    parentCategoryId: 7,
+    level: 2,
+    parentCategoryId: '7',
   },
   {
-    id: 10,
+    id: '10',
     name: 'Графика и анимация',
-    parentCategoryId: 7,
+    level: 2,
+    parentCategoryId: '7',
   },
   {
-    id: 11,
+    id: '11',
     name: 'Звук и музыка',
-    parentCategoryId: 7,
+    level: 2,
+    parentCategoryId: '7',
   },
   {
-    id: 12,
+    id: '12',
     name: 'Разное',
-    parentCategoryId: 7,
+    level: 2,
+    parentCategoryId: '7',
   },
 ];
