@@ -10,8 +10,6 @@ import { resetPassword } from '@/services/server/authService';
 
 type ResetState = 'idle' | 'pending' | 'success' | 'error';
 
-const RESET_DELAY_MS = 1500;
-
 const ResetPasswordPage = () => {
   const searchParams = useSearchParams();
   const [form] = Form.useForm();

@@ -2,7 +2,6 @@
 
 import { UnforeseenExpenses } from './UnforeseenExpenses';
 import { GrandTotal } from './GrandTotal';
-import { CostPerVideo } from './CostPerVideo';
 import { SubtotalAllSections } from './SubtotalAllSections';
 
 export const Summary = () => {
