@@ -47,7 +47,9 @@ export const Total = ({ text, clientTotal }: Props) => {
         align='center'
         justify='center'
         style={{ backgroundColor: 'var(--bg-blue-important)', borderRadius: '0 0 0 6px' }}
-      />
+      >
+        <div />
+      </Flex>
       <Flex
         align='center'
         justify='space-between'

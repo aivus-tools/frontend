@@ -47,7 +47,9 @@ export const SubTotal = ({ clientTotal }: Props) => {
         align='center'
         justify='center'
         style={{ backgroundColor: 'var(--bg-blue-subtotal)', borderRadius: '0 0 0 6px' }}
-      />
+      >
+        <div />
+      </Flex>
       <div style={{ backgroundColor: 'var(--bg-blue-subtotal)' }} />
       <LabelSubTotal style={{ gridColumn: 'span 3' }}>{t('SUBTOTAL_OF_LOCATIONS')}</LabelSubTotal>
       <SubTotalSum>{displayTotal}</SubTotalSum>
