@@ -6,7 +6,7 @@ import { createHmacSHA256 } from './lib/hmac';
 import { AppRoute } from '@/constants/appRoute';
 
 const changePathname = (pathname: string) => pathname.replace(/^\/service\//, '/api/v1/');
-const MOCK_ENDPOINTS = ['/api/v1/briefs'];
+const MOCK_ENDPOINTS: string[] = []; // Removed briefs from mock
 const userGroups = new Set<string | undefined>([GROUPS.client, GROUPS.vendor]);
 const HMAC_SECRET = process.env.HMAC_SECRET;
 

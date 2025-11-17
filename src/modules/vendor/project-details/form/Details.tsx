@@ -13,14 +13,15 @@ import { useMutateBrief } from '@/hooks/useMutateBrief';
 import { Details as DetailsType } from '@/types/brief.interface';
 import { useBrief } from '@/hooks/useBrief';
 import { GuidanceProvider } from '@/context/GuidanceProvider';
-import { useAppDispatch } from '@/store/hooks';
-import { setMode } from '@/store/slices/project';
+import { useAppDispatch, useAppSelector } from '@/store/hooks';
+import { setMode, selectProjectId } from '@/store/slices/project';
 import { initialValues } from './initialValues';
 import { t } from '@/lib/i18n';
 import { AppRoute } from '@/constants/appRoute';
 
 export default function Details() {
   const dispatch = useAppDispatch();
+  const storedProjectId = useAppSelector(selectProjectId);
   const { create, update, isLoading: isMutating } = useMutateBrief();
   const { data: brief, isLoading } = useBrief();
   const [form] = Form.useForm<DetailsType>();
@@ -42,26 +43,33 @@ export default function Details() {
         if (brief) {
           // Update existing brief
           await update({ ...brief, details });
-          // TODO: Get projectId from brief or store
-          projectId = brief.id; // Temporary: using briefId as projectId
+          // Get projectId from Redux store (already set by useSetProject hook)
+          projectId = storedProjectId || undefined;
         } else {
           // Create new brief + project + offer
           const data = await create(details);
-          projectId = (data as { projectId?: string })?.projectId || data?.id;
+          projectId = (data as { projectId?: string })?.projectId;
+          
+          if (!projectId) {
+            throw new Error('Project ID not returned from create');
+          }
         }
+        
         messageApi.success(t('DETAILS_SAVED_SUCCESSFULLY'));
+        
         if (projectId) {
+          // Set mode to view and navigate
           dispatch(setMode('view'));
           router.push(AppRoute.DASHBOARD_PROJECT_DETAILS(projectId));
         } else {
           messageApi.error(t('ERROR_SAVING_DETAILS'));
         }
       } catch (error) {
-        console.error(error);
+        console.error('Error saving brief:', error);
         messageApi.error((error as { data?: { message?: string } })?.data?.message || t('ERROR_SAVING_DETAILS'));
       }
     },
-    [brief, create, dispatch, messageApi, router, update]
+    [brief, create, dispatch, messageApi, router, storedProjectId, update]
   );
 
   return (

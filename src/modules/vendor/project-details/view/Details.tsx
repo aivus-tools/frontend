@@ -46,12 +46,18 @@ const ItalicComment = styled(Typography.Text)`
 `;
 
 function formatUrl(url: string): string {
+  // Check if url is empty or not a valid URL
+  if (!url || typeof url !== 'string' || url.trim() === '') {
+    return '';
+  }
+  
   try {
     const parsedUrl = new URL(url);
     return parsedUrl.hostname + parsedUrl.pathname;
   } catch (error) {
-    console.error(error);
-    return '';
+    // If URL parsing fails, return the original string
+    console.warn('Invalid URL:', url, error);
+    return url;
   }
 }
 
@@ -154,16 +160,18 @@ export default function Details() {
                   <Item label={t('IRS_EIN')} value={details.irsEin} />
                 </Col>
               </Row>
-              {details.managers.map((manager, index) => (
-                <Row align='middle' style={{ marginTop: index === 0 ? 20 : 8 }} key={index}>
-                  <Col span={12}>
-                    <Item label={index === 0 ? t('CLIENTS_MANAGERS') : undefined} value={manager.manager} />
-                  </Col>
-                  <Col span={12}>
-                    <Item label={index === 0 ? t('MANAGER_POSITION') : undefined} value={manager.position} />
-                  </Col>
-                </Row>
-              ))}
+              {details.managers
+                .filter((manager) => manager.manager || manager.position)
+                .map((manager, index) => (
+                  <Row align='middle' style={{ marginTop: index === 0 ? 20 : 8 }} key={index}>
+                    <Col span={12}>
+                      <Item label={index === 0 ? t('CLIENTS_MANAGERS') : undefined} value={manager.manager} />
+                    </Col>
+                    <Col span={12}>
+                      <Item label={index === 0 ? t('MANAGER_POSITION') : undefined} value={manager.position} />
+                    </Col>
+                  </Row>
+                ))}
               <Row align='middle' style={{ marginTop: 20 }}>
                 <Col span={12}>
                   <Item label={t('BRAND_NAME')} value={details.brandName} />
@@ -179,23 +187,25 @@ export default function Details() {
                   <Item label={t('PROJECT_DESCRIPTION')} value={details.projectDescription} />
                 </Col>
               </Row>
-              {details.referenceVideos.map((video, index) => (
-                <Row align='middle' style={{ marginTop: index === 0 ? 20 : 8 }} key={index}>
-                  <Col span={12}>
-                    <Item
-                      label={index === 0 ? t('REFERENCE_VIDEOS') : undefined}
-                      value={
-                        <Typography.Link href={video.url} target='_blank' rel='noreferrer'>
-                          {formatUrl(video.url)}
-                        </Typography.Link>
-                      }
-                    />
-                  </Col>
-                  <Col span={12}>
-                    <ItalicComment>{video.comment}</ItalicComment>
-                  </Col>
-                </Row>
-              ))}
+              {details.referenceVideos
+                .filter((video) => video.url && video.url.trim() !== '')
+                .map((video, index) => (
+                  <Row align='middle' style={{ marginTop: index === 0 ? 20 : 8 }} key={index}>
+                    <Col span={12}>
+                      <Item
+                        label={index === 0 ? t('REFERENCE_VIDEOS') : undefined}
+                        value={
+                          <Typography.Link href={video.url} target='_blank' rel='noreferrer'>
+                            {formatUrl(video.url)}
+                          </Typography.Link>
+                        }
+                      />
+                    </Col>
+                    <Col span={12}>
+                      <ItalicComment>{video.comment}</ItalicComment>
+                    </Col>
+                  </Row>
+                ))}
             </Content>
           </Section>
           <Section>
@@ -254,22 +264,24 @@ export default function Details() {
                   />
                 </Col>
               </Row>
-              {details.cuts.map((cut, index) => (
-                <Row
-                  key={cut.comment + cut.number + cut.length + cut.timeUnit}
-                  align='middle'
-                  style={{ marginTop: index === 0 ? 20 : 4 }}
-                >
-                  <Col span={8}>
-                    <Text>{`${cut.number} ${t('VIDEO')}`} </Text>
-                    <CrossIcon />
-                    <Text style={{ marginLeft: '4px' }}>{formatTimeUnit(cut.length, cut.timeUnit)}</Text>
-                  </Col>
-                  <Col span={16}>
-                    <ItalicComment>{cut.comment}</ItalicComment>
-                  </Col>
-                </Row>
-              ))}
+              {details.cuts
+                .filter((cut) => cut.number || cut.length || cut.timeUnit)
+                .map((cut, index) => (
+                  <Row
+                    key={cut.comment + cut.number + cut.length + cut.timeUnit}
+                    align='middle'
+                    style={{ marginTop: index === 0 ? 20 : 4 }}
+                  >
+                    <Col span={8}>
+                      <Text>{`${cut.number} ${t('VIDEO')}`} </Text>
+                      <CrossIcon />
+                      <Text style={{ marginLeft: '4px' }}>{formatTimeUnit(cut.length, cut.timeUnit)}</Text>
+                    </Col>
+                    <Col span={16}>
+                      <ItalicComment>{cut.comment}</ItalicComment>
+                    </Col>
+                  </Row>
+                ))}
               <Row align='middle' style={{ marginTop: 20 }}>
                 <Col span={24}>
                   <Item

@@ -61,5 +61,68 @@
     "uuid": "5fde4f66-4254-44f5-95ee-b8f9c63da164",
     "createdAt": "2025-11-15T12:49:53.562Z",
     "updatedAt": null
+  },
+  {
+    "status": "DRAFT",
+    "details": {
+      "crmId": "32",
+      "estimationTemplate": "",
+      "projectName": "32",
+      "description": "3",
+      "collaborators": [
+        ""
+      ],
+      "clientName": "",
+      "irsEin": "",
+      "brandName": "",
+      "managers": [
+        {
+          "manager": "32",
+          "position": ""
+        }
+      ],
+      "projectDescription": "",
+      "referenceVideos": [
+        {
+          "url": "",
+          "comment": ""
+        }
+      ],
+      "visibleForVendors": false,
+      "budget": 23,
+      "distributionAndAdPlacements": "32",
+      "territory": [
+        "US",
+        "CA"
+      ],
+      "term": {
+        "length": "",
+        "unit": ""
+      },
+      "mainVideoDuration": {
+        "number": "",
+        "length": "",
+        "timeUnit": "",
+        "comment": ""
+      },
+      "cuts": [
+        {
+          "timeUnit": "",
+          "number": "",
+          "length": "",
+          "comment": ""
+        }
+      ],
+      "shootingDays": {
+        "number": "",
+        "length": "",
+        "comment": ""
+      }
+    },
+    "clientId": null,
+    "id": "54159b17-125d-463c-a8bf-8fae5e2ab506",
+    "uuid": "5e0d9f0d-01bf-466e-a1e4-a64bac71102f",
+    "createdAt": "2025-11-17T05:32:48.485Z",
+    "updatedAt": null
   }
 ]
