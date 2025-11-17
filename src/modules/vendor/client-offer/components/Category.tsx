@@ -8,7 +8,7 @@ import { Title } from './Title';
 import { SubCategory } from './SubCategory';
 import { useAppSelector } from '@/store/hooks';
 import { selectOffersByCategoryId, selectSubcategoryById, selectTotalSumByCategoryId } from '@/store/slices/offer/selectors';
-import { useCallback, useMemo } from 'react';
+import { useCallback } from 'react';
 import { RootState } from '@/store/store';
 
 export function Category({ category }: { category: TypeCategory }) {

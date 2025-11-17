@@ -148,3 +148,52 @@ export async function resendConfirmation(email: string): Promise<{ message: stri
     throw error;
   }
 }
+
+/**
+ * Request password reset email.
+ * @returns Promise<{ message: string }>
+ */
+export async function forgotPassword(email: string): Promise<{ message: string }> {
+  try {
+    const response = await fetch(ApiRoute.FORGOT_PASSWORD, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ email }),
+    });
+    if (!response.ok) {
+      const data = await response.json().catch(() => ({}));
+      throw new Error(data?.error || `Failed to fetch ${ApiRoute.FORGOT_PASSWORD}: ${response.statusText}`);
+    }
+    return await response.json();
+  } catch (error) {
+    logger.error('Error requesting password reset:', error);
+    throw error;
+  }
+}
+
+/**
+ * Reset password with token.
+ * @returns Promise<{ message: string }>
+ */
+export async function resetPassword(token: string, password: string): Promise<{ message: string }> {
+  try {
+    const encodedToken = encodeURIComponent(token);
+    const response = await fetch(`${ApiRoute.RESET_PASSWORD}?token=${encodedToken}`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ password }),
+    });
+    if (!response.ok) {
+      const data = await response.json().catch(() => ({}));
+      throw new Error(data?.error || `Failed to fetch ${ApiRoute.RESET_PASSWORD}: ${response.statusText}`);
+    }
+    return await response.json();
+  } catch (error) {
+    logger.error('Error resetting password:', error);
+    throw error;
+  }
+}

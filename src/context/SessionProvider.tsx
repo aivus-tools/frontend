@@ -6,11 +6,15 @@ import { SessionProvider as NextSessionProvider, useSession } from 'next-auth/re
 import { PropsWithChildren, useEffect } from 'react';
 import { usePathname } from 'next/navigation';
 
+// Публичные пути, где не нужно вызывать logout при unauthenticated
+const PUBLIC_PATHS = ['/auth/confirm-email', '/auth/reset-password', '/auth/forgot-password', '/external'];
+
 const SessionGuard = ({ children }: PropsWithChildren) => {
   const session = useSession();
   const pathname = usePathname();
   useEffect(() => {
-    if (session.status === 'unauthenticated' && !pathname.startsWith('/external')) {
+    const isPublicPath = PUBLIC_PATHS.some((path) => pathname.startsWith(path));
+    if (session.status === 'unauthenticated' && !isPublicPath) {
       logout();
     }
   }, [pathname, session.status]);

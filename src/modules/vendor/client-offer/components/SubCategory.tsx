@@ -7,7 +7,7 @@ import { SubTitle } from '@/modules/vendor/estimation/componnets/Title/SubTitle'
 import { SubTotal } from './SubTotal';
 import { selectOffersByCategoryId, selectTotalSumByCategoryId } from '@/store/slices/offer/selectors';
 import { RootState } from '@/store/store';
-import { useCallback, useMemo } from 'react';
+import { useCallback } from 'react';
 import { useAppSelector } from '@/store/hooks';
 import { KEY_SEPARATOR } from '@/modules/vendor/estimation/constants';
 
