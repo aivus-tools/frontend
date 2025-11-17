@@ -49,14 +49,14 @@ export default function Details() {
           // Create new brief + project + offer
           const data = await create(details);
           projectId = (data as { projectId?: string })?.projectId;
-          
+
           if (!projectId) {
             throw new Error('Project ID not returned from create');
           }
         }
-        
+
         messageApi.success(t('DETAILS_SAVED_SUCCESSFULLY'));
-        
+
         if (projectId) {
           // Set mode to view and navigate
           dispatch(setMode('view'));

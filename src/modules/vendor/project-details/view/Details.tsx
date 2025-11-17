@@ -50,7 +50,7 @@ function formatUrl(url: string): string {
   if (!url || typeof url !== 'string' || url.trim() === '') {
     return '';
   }
-  
+
   try {
     const parsedUrl = new URL(url);
     return parsedUrl.hostname + parsedUrl.pathname;
