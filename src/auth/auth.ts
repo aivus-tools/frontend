@@ -8,92 +8,125 @@ import { updateUserSession } from '@/services/server/userService';
 import { AppRoute } from '@/constants/appRoute';
 import type { Groups } from '@/types/user.interface.';
 
+// Получение переменных окружения для Google OAuth
+const googleClientId = process.env.AUTH_GOOGLE_ID;
+const googleClientSecret = process.env.AUTH_GOOGLE_SECRET;
+
+// Создаем массив провайдеров
+const providers = [];
+
+// Добавляем Google провайдер
+if (googleClientId && googleClientSecret) {
+  providers.push(
+    Google({
+      clientId: googleClientId,
+      clientSecret: googleClientSecret,
+    })
+  );
+} else {
+  providers.push(Google());
+}
+
+// Добавляем Credentials провайдер
+providers.push(
+  Credentials({
+    credentials: {
+      email: {},
+      password: {},
+    },
+    authorize: async (credentials) => {
+      try {
+        const user = await login({ ...credentials, authType: AUTH_TYPES.credentials });
+
+        return {
+          id: `${user.id}`,
+          name: user.name,
+          email: user.email,
+          group: user.group,
+          image: null,
+        };
+      } catch (error) {
+        logger.error('authorize error', error);
+        return null;
+      }
+    },
+  })
+);
+
 export const { handlers, signIn, signOut, auth } = NextAuth({
   debug: Boolean(process.env.DEBUG),
-  providers: [
-    Google,
-    Credentials({
-      credentials: {
-        email: {},
-        password: {},
-      },
-      authorize: async (credentials) => {
-        try {
-          const user = await login({ ...credentials, authType: AUTH_TYPES.credentials });
-
-          return {
-            id: `${user.id}`,
-            name: user.name,
-            email: user.email,
-            group: user.group,
-            image: null,
-          };
-        } catch (error) {
-          logger.error('authorize error', error);
-          return null;
-        }
-      },
-    }),
-  ],
+  providers,
+  pages: {
+    signIn: '/auth',
+    error: '/auth',
+  },
   callbacks: {
     async signIn(all) {
       const { account, user } = all;
       if (account?.provider === 'google') {
         try {
           const { name, email } = user;
-          const result = await checkEmail({ email: email as string });
-          if (result.exists) {
-            if (result.authType === AUTH_TYPES.credentials) {
-              return Promise.resolve('/auth?type=' + AUTH_TYPES.credentials);
-            }
+          if (!email) {
+            logger.error('Google signIn: No email from Google', user);
+            return false;
+          }
 
+          logger.info('Google signIn: checking email', { email });
+          const result = await checkEmail({ email: email as string });
+          logger.info('Google signIn: checkEmail result', result);
+          
+          if (result.exists) {
+            // Пользователь существует - логиним его через Google
+            logger.info('Google signIn: user exists, logging in');
             const aivusUser = await login({ email: email, password: '', authType: AUTH_TYPES.google });
+            logger.info('Google signIn: login result', aivusUser);
             user.group = aivusUser.group;
             user.id = `${aivusUser.id}`;
-
-            return Promise.resolve(true);
+            user.vendorId = aivusUser.vendorId;
+            return true;
           }
-          if (!result.exists) {
-            if (name && email) {
-              const aivusUser = await register({ name, email, authType: AUTH_TYPES.google, password: '' });
-              user.group = aivusUser.group ?? GROUPS.unconfirmed;
-              user.id = `${aivusUser.id}`;
-              return Promise.resolve(true);
-            } else {
-              logger.error('No name and email', user);
-              return Promise.resolve(AppRoute.AUTH);
-            }
+          
+          // Пользователь не существует - регистрируем его
+          if (name && email) {
+            logger.info('Google signIn: user does not exist, registering', { name, email });
+            const aivusUser = await register({ name, email, authType: AUTH_TYPES.google, password: '' });
+            logger.info('Google signIn: register result', aivusUser);
+            user.group = aivusUser.group ?? GROUPS.confirmed;
+            user.id = `${aivusUser.id}`;
+            user.vendorId = aivusUser.vendorId;
+            return true;
           }
-          return Promise.resolve(true);
+          
+          logger.error('Google signIn: No name and email from Google', user);
+          return false;
         } catch (error) {
-          logger.error('signIn error', error);
-          return Promise.resolve(AppRoute.AUTH);
+          logger.error('Google signIn error', error);
+          return false;
         }
       }
-      return Promise.resolve(true);
+      return true;
     },
     async jwt({ token, user, trigger }) {
-      logger.info('jwt callback', { token, user, trigger });
+      // При первом входе (когда есть user) сохраняем данные в токен
       if (user) {
         token.group = user.group;
         token.id = user.id;
         token.vendorId = user.vendorId;
       }
 
-      // // Обновляем токен из API только при явном вызове update()
-      // if (trigger === 'update') {
-      try {
-        const aivusUser = await updateUserSession({
-          userId: token.id as string,
-          userGroup: (token.group as string) || GROUPS.unconfirmed,
-        });
-        token.group = aivusUser.group;
-        token.vendorId = aivusUser.vendorId;
-        logger.info('JWT token updated from API', { group: aivusUser.group, vendorId: aivusUser.vendorId });
-      } catch (error) {
-        logger.warn('Failed to update JWT from API, keeping existing token data', error);
+      // Обновляем токен из API только при явном вызове update()
+      if (token.id && trigger === 'update') {
+        try {
+          const aivusUser = await updateUserSession({
+            userId: token.id as string,
+            userGroup: (token.group as string) || GROUPS.unconfirmed,
+          });
+          token.group = aivusUser.group;
+          token.vendorId = aivusUser.vendorId;
+        } catch (error) {
+          logger.warn('Failed to update JWT from API, keeping existing token data', error);
+        }
       }
-      // }
 
       return token;
     },
