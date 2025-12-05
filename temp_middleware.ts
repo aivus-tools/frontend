@@ -139,6 +139,7 @@ export default auth(async (req) => {
   }
 
   if (pathname.startsWith('/app') && (!id || !group)) {
+    logger.info('redirecting to /auth (no user in /app)');
     const response = NextResponse.redirect(new URL(AppRoute.AUTH, req.url));
     response.headers.set('Content-Security-Policy', CSP);
     return response;
@@ -148,6 +149,7 @@ export default auth(async (req) => {
   if (pathname.startsWith('/app') && id && group) {
     // Если пользователь UNCONFIRMED, может быть только на /app/confirm
     if (group === GROUPS.unconfirmed && !pathname.startsWith(AppRoute.CONFIRM)) {
+      logger.info('redirecting to /app/confirm (unconfirmed user)');
       const response = NextResponse.redirect(new URL(AppRoute.CONFIRM, req.url));
       response.headers.set('Content-Security-Policy', CSP);
       return response;
@@ -155,6 +157,7 @@ export default auth(async (req) => {
 
     // Если пользователь CONFIRMED, может быть только на /app/group
     if (group === GROUPS.confirmed && !pathname.startsWith(AppRoute.GROUP)) {
+      logger.info('redirecting to /app/group (confirmed user)');
       const response = NextResponse.redirect(new URL(AppRoute.GROUP, req.url));
       response.headers.set('Content-Security-Policy', CSP);
       return response;
@@ -163,6 +166,7 @@ export default auth(async (req) => {
     // Если пользователь CLIENT/VENDOR, НЕ может быть на /app/confirm или /app/group
     if (userGroups.has(group)) {
       if (pathname.startsWith(AppRoute.CONFIRM) || pathname.startsWith(AppRoute.GROUP)) {
+        logger.info('redirecting to /app/dashboard (client/vendor on wrong page)');
         const response = NextResponse.redirect(new URL(AppRoute.DASHBOARD, req.url));
         response.headers.set('Content-Security-Policy', CSP);
         return response;
