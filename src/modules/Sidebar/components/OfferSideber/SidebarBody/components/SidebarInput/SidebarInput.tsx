@@ -37,9 +37,9 @@ interface Props {
   bottomLabel?: string;
   labelPositon?: 'top' | 'left';
   accent?: true;
-  options?: { label: string; value: number }[];
+  options?: { label: string; value: number | string }[];
   disabled?: boolean;
-  onChange?: (value: number | null, options?: Props['options'] | NonNullable<Props['options']>[number]) => void;
+  onChange?: (value: any, options?: Props['options'] | NonNullable<Props['options']>[number]) => void;
   icon?: string;
   action?: {
     icon: React.ElementType;
@@ -58,7 +58,7 @@ export const SidebarInput: React.FC<Props> = (props) => {
 
     return (
       <Select
-        value={Number(props.value)}
+        value={props.value}
         options={props.options}
         onChange={props.onChange}
         style={{ width: props.width }}

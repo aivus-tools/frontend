@@ -12,13 +12,13 @@ export const menuItemToOfferData = (item: MenuItem): OfferData => {
     [UnitType.TIME]: temporalUnits.map((unit) => ({
       label: unit.name,
       type: UnitType.TIME,
-      value: parseInt(unit.id, 10) || 0,
+      value: unit.id,
       count: 1,
     })),
     [UnitType.QUANTITY]: quantityUnits.map((unit) => ({
       label: unit.name,
       type: UnitType.QUANTITY,
-      value: parseInt(unit.id, 10) || 0,
+      value: unit.id,
       count: 1,
     })),
   };
@@ -34,6 +34,7 @@ export const menuItemToOfferData = (item: MenuItem): OfferData => {
     surcharge: 0,
     clientPrice: 0,
     clientCost: 0,
+    isLinkedSurcharge: true,
     marketRange: '',
     taxRate: 0,
     taxPrice: 0,

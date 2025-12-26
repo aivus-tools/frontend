@@ -9,7 +9,7 @@ export const useLoadData = (external?: boolean) => {
   const entriesQuery = categoriesApi.useGetEntriesQuery(undefined, { skip: external });
   // Changed from getOffersByBriefId to getOffersByProjectId
   offersApi.useGetOffersByProjectIdQuery(projectId!, {
-    skip: !projectId || !!external,
+    skip: !projectId || projectId === 'new-brief' || !!external,
   });
 
   return categoriesQuery.isLoading || entriesQuery.isLoading;

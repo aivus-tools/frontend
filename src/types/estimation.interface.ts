@@ -9,14 +9,14 @@ export enum UnitType {
 export interface TimeUnit {
   type: UnitType.TIME;
   label: string;
-  value: number;
+  value: string;
   count: number;
 }
 
 export interface QuantityUnit {
   type: UnitType.QUANTITY;
   label: string;
-  value: number;
+  value: string;
   count: number;
 }
 
@@ -32,6 +32,7 @@ export interface OfferData {
   showTax: boolean;
   cost: number;
   surcharge: number;
+  isLinkedSurcharge: boolean;
   clientPrice: number;
   clientCost: number;
   marketRange: string;

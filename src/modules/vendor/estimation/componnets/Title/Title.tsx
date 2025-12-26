@@ -5,7 +5,7 @@ import { useExpandedKeys } from '../../context/expanded';
 import { useCallback } from 'react';
 import { Flex } from 'antd';
 import { RowLine } from '../RowLine';
-import { LinkButton } from '../Title/LinkButtons';
+import { LinkButton } from '../LinkButtons/LinkButtons';
 import { ArrowButton } from '../Title/ArrowButton';
 import { SectionTitle, SectionTitleSumHeader, SectionTitleText } from '../Title/styled';
 import { selectCategorySurcharge } from '@/store/slices/offer/selectors';

@@ -18,6 +18,7 @@ import { ValueOf } from 'next/dist/shared/lib/constants';
 import { formatCurrency } from '@/lib/utils';
 import { t } from '@/lib/i18n';
 import { openSidebar, setSidebarInfo } from '@/store/slices/sidebar';
+import { LinkButton } from '../LinkButtons/LinkButtons';
 
 const timeUnitFirst = (a: OfferData['units'][number], b: OfferData['units'][number]) => {
   return a?.type === UnitType.TIME && b?.type === UnitType.QUANTITY ? -1 : 1;
@@ -43,7 +44,15 @@ export function Entries({ data }: { data: OfferData[] }) {
   const handleChange = (id: string, key: keyof OfferData) => (data: ValueOf<OfferData> | null) => {
     dispatch(changeOfferRow({ id, [key]: data }));
   };
-  const handleChangeUnit = (id: string, unitType: UnitType) => (newUnitValue: number) => {
+
+  const handleToggleLink = (id: string) => () => {
+    const offer = data.find((it) => it.id === id);
+    if (!offer) {
+      return;
+    }
+    dispatch(changeOfferRow({ id, isLinkedSurcharge: !offer.isLinkedSurcharge }));
+  };
+  const handleChangeUnit = (id: string, unitType: UnitType) => (newUnitValue: string) => {
     const offer = data.find((it) => it.id === id);
     if (!offer) {
       return;
@@ -66,7 +75,7 @@ export function Entries({ data }: { data: OfferData[] }) {
     handleChange(id, 'units')(newUnits);
   };
 
-  const handleChangeUnitValue = (id: string, unitValue: number) => (count: number | null) => {
+  const handleChangeUnitValue = (id: string, unitValue: string) => (count: number | null) => {
     const offer = data.find((it) => it.id === id);
     if (!offer || !count) {
       return;
@@ -246,7 +255,13 @@ export function Entries({ data }: { data: OfferData[] }) {
               return null;
             }
             if (key === 'link') {
-              return <EstimationItem key={key} {...rowProps} />;
+              return (
+                <EstimationItem key={key} {...rowProps}>
+                  <Flex align='center' justify='center'>
+                    <LinkButton link={offer.isLinkedSurcharge} onClickAction={handleToggleLink(offer.id)} />
+                  </Flex>
+                </EstimationItem>
+              );
             }
 
             if (key === 'marketRange') {

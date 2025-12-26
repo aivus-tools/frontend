@@ -14,7 +14,7 @@ interface Props {
 
 interface Option {
   label: string;
-  value: number;
+  value: string | number;
 }
 
 export const SidebarQuantity: React.FC<Props> = ({ offer, handleChange }) => {
@@ -30,13 +30,13 @@ export const SidebarQuantity: React.FC<Props> = ({ offer, handleChange }) => {
   const [options2Name] = unitTypes.filter((name) => name !== unit1.type);
 
   if (!options2Name) {
-    return;
+    return null;
   }
 
   const options2 = offer.options[options2Name]?.map(({ label, value }) => ({ label, value }));
 
   const handleChangeUnitLabel = (
-    _: number | null,
+    _: string | null,
     options: Option | Option[] | undefined,
     unit: OfferData['units'][number]
   ) => {
@@ -51,7 +51,7 @@ export const SidebarQuantity: React.FC<Props> = ({ offer, handleChange }) => {
       return;
     }
 
-    const newUnit = { ...unit, ...options };
+    const newUnit = { ...unit, ...options, value: String(options.value) } as OfferData['units'][number];
 
     if (!newUnit) {
       return;

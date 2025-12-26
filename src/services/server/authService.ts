@@ -12,6 +12,7 @@ export async function login(credentials: Credentials): Promise<{
   name: string;
   email: string;
   group: Groups;
+  vendorId?: string;
 }> {
   try {
     const response = await fetch(ApiRoute.LOGIN, {
@@ -49,6 +50,7 @@ export async function register({
   message: string;
   group?: Groups;
   id: string;
+  vendorId?: string;
 }> {
   try {
     logger.info('Registering user:', { name, email, authType, password });

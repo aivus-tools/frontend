@@ -23,8 +23,6 @@ if (googleClientId && googleClientSecret) {
       clientSecret: googleClientSecret,
     })
   );
-} else {
-  providers.push(Google());
 }
 
 // Добавляем Credentials провайдер
@@ -43,6 +41,7 @@ providers.push(
           name: user.name,
           email: user.email,
           group: user.group,
+          vendorId: user.vendorId,
           image: null,
         };
       } catch (error) {
@@ -74,7 +73,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
           logger.info('Google signIn: checking email', { email });
           const result = await checkEmail({ email: email as string });
           logger.info('Google signIn: checkEmail result', result);
-          
+
           if (result.exists) {
             // Пользователь существует - логиним его через Google
             logger.info('Google signIn: user exists, logging in');
@@ -85,7 +84,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
             user.vendorId = aivusUser.vendorId;
             return true;
           }
-          
+
           // Пользователь не существует - регистрируем его
           if (name && email) {
             logger.info('Google signIn: user does not exist, registering', { name, email });
@@ -96,7 +95,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
             user.vendorId = aivusUser.vendorId;
             return true;
           }
-          
+
           logger.error('Google signIn: No name and email from Google', user);
           return false;
         } catch (error) {
