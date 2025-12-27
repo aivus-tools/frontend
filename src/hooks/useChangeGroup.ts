@@ -14,7 +14,12 @@ export const useChangeGroup = () => {
           userId: session.data.user.id,
           newGroup,
         }).unwrap();
-        await session.update();
+        await session.update({
+          user: {
+            ...session.data.user,
+            group: newGroup,
+          },
+        });
         window.location.href = AppRoute.DASHBOARD;
       }
     },

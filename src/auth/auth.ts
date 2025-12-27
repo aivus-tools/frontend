@@ -105,7 +105,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
       }
       return true;
     },
-    async jwt({ token, user, trigger }) {
+    async jwt({ token, user, trigger, session }) {
       // При первом входе (когда есть user) сохраняем данные в токен
       if (user) {
         token.group = user.group;
@@ -113,7 +113,15 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
         token.vendorId = user.vendorId;
       }
 
-      // Обновляем токен из API только при явном вызове update()
+      // Если в update() передали данные - используем их сразу (приоритетно)
+      if (trigger === 'update' && session?.user) {
+        if (session.user.group) token.group = session.user.group;
+        if (session.user.vendorId) token.vendorId = session.user.vendorId;
+        if (session.user.name) token.name = session.user.name;
+        return token;
+      }
+
+      // Иначе обновляем токен из API только при явном вызове update()
       if (token.id && trigger === 'update') {
         try {
           const aivusUser = await updateUserSession({
