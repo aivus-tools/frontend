@@ -10,16 +10,23 @@ export const useChangeGroup = () => {
   return {
     change: async (newGroup: Omit<Groups, 'UNCONFIRMED' | 'CONFIRMED'>) => {
       if (session.data?.user?.id) {
-        await changeGroup({
+        const result = await changeGroup({
           userId: session.data.user.id,
           newGroup,
         }).unwrap();
+
         await session.update({
           user: {
             ...session.data.user,
-            group: newGroup,
+            group: result.group,
+            vendorId: result.vendorId,
+            clientId: result.clientId,
           },
         });
+
+        // Ждем обновления кук
+        await new Promise((resolve) => setTimeout(resolve, 1000));
+
         window.location.href = AppRoute.DASHBOARD;
       }
     },

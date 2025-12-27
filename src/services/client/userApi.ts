@@ -1,5 +1,5 @@
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
-import { Groups } from '@/types/user.interface.';
+import { Groups, User } from '@/types/user.interface.';
 import { ApiRoute } from '@/constants/apiRoute';
 
 type ChangeGroup = {
@@ -11,7 +11,7 @@ export const userApi = createApi({
   reducerPath: 'userApi',
   baseQuery: fetchBaseQuery(),
   endpoints: (builder) => ({
-    changeGroup: builder.mutation<ChangeGroup, ChangeGroup>({
+    changeGroup: builder.mutation<Partial<User>, ChangeGroup>({
       query: ({ userId, newGroup }) => ({
         url: ApiRoute.USER_CHANGE_GROUP(userId),
         method: 'PATCH',

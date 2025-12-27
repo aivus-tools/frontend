@@ -111,12 +111,14 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
         token.group = user.group;
         token.id = user.id;
         token.vendorId = user.vendorId;
+        token.clientId = user.clientId;
       }
 
       // Если в update() передали данные - используем их сразу (приоритетно)
       if (trigger === 'update' && session?.user) {
         if (session.user.group) token.group = session.user.group;
         if (session.user.vendorId) token.vendorId = session.user.vendorId;
+        if (session.user.clientId) token.clientId = session.user.clientId;
         if (session.user.name) token.name = session.user.name;
         return token;
       }
@@ -130,6 +132,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
           });
           token.group = aivusUser.group;
           token.vendorId = aivusUser.vendorId;
+          token.clientId = aivusUser.clientId;
         } catch (error) {
           logger.warn('Failed to update JWT from API, keeping existing token data', error);
         }
@@ -140,8 +143,9 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
     async session({ session, token }) {
       // Просто копируем данные из токена в сессию
       session.user.group = token.group as Groups;
-      session.user.id = token.id as string;
+      session.user.id = (token.id as string) || (token.sub as string);
       session.user.vendorId = token.vendorId as string | undefined;
+      session.user.clientId = token.clientId as string | undefined;
       return session;
     },
     authorized: async ({ auth }) => {
