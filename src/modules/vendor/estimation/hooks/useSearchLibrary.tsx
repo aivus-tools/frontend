@@ -23,7 +23,7 @@ export const useSearchLibrary = () => {
   const categoriesQuery = categoriesApi.useGetCategoriesQuery(undefined, {
     skip,
   });
-  const entriesQuery = categoriesApi.useGetEntriesQuery(undefined, {
+  const entriesQuery = categoriesApi.useGetEntriesFullQuery(undefined, {
     skip,
   });
 

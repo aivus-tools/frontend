@@ -6,7 +6,7 @@ export const useLoadData = (external?: boolean) => {
   const projectId = useAppSelector((state) => state.project.projectId);
 
   const categoriesQuery = categoriesApi.useGetCategoriesQuery(undefined, { skip: external });
-  const entriesQuery = categoriesApi.useGetEntriesQuery(undefined, { skip: external });
+  const entriesQuery = categoriesApi.useGetEntriesFullQuery(undefined, { skip: external });
   // Changed from getOffersByBriefId to getOffersByProjectId
   offersApi.useGetOffersByProjectIdQuery(projectId!, {
     skip: !projectId || projectId === 'new-brief' || !!external,

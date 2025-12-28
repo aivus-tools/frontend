@@ -10,13 +10,13 @@ export const menuItemToOfferData = (item: MenuItem): OfferData => {
 
   const options: OfferData['options'] = {
     [UnitType.TIME]: temporalUnits.map((unit) => ({
-      label: unit.name,
+      label: `${unit.name} (${unit.symbol})`,
       type: UnitType.TIME,
       value: unit.id,
       count: 1,
     })),
     [UnitType.QUANTITY]: quantityUnits.map((unit) => ({
-      label: unit.name,
+      label: `${unit.name} (${unit.symbol})`,
       type: UnitType.QUANTITY,
       value: unit.id,
       count: 1,
