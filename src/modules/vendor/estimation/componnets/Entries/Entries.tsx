@@ -7,7 +7,7 @@ import SettingsIcon from '@/icons/settings-icon.svg';
 import AddIcon from '@/icons/add-icon.svg';
 import RemoveIcon from '@/icons/minus.svg';
 import DeleteIcon from '@/icons/delete.svg';
-import { EstimationItem, IconButton, InputNumberRight, SelectWrapper } from '../../styled';
+import { EstimationItem, IconButton, InputNumberRight, SelectWrapper, UnitSelect, IconPlaceholder } from '../../styled';
 import { RowLine } from '../../componnets/RowLine';
 import { Flex, Select, Tooltip } from 'antd';
 import { EntrieInput } from '../../componnets/EntrieInput';
@@ -153,16 +153,22 @@ export function Entries({ data }: { data: OfferData[] }) {
             if (key === 'units') {
               return (
                 <EstimationItem key={`actions-${key}`} {...rowProps} style={{ justifyContent: 'center' }}>
-                  <SelectWrapper vertical $hovered={isActive}>
+                  <UnitSelect vertical $hovered={isActive}>
                     {offer.units &&
-                      offer.units.toSorted(timeUnitFirst).map(
-                        (unit) =>
-                          unit && (
-                            <Flex gap={5} key={unit.value} align='center'>
-                              {unit.type === UnitType.TIME &&
-                                offer.units.length === 1 &&
-                                offer.options[UnitType.QUANTITY].length > 0 && (
-                                  <HideElement width={12} isVisible={isActive}>
+                      offer.units.toSorted(timeUnitFirst).map((unit, index) => {
+                        if (!unit) return null;
+
+                        const isTime = unit.type === UnitType.TIME;
+                        const isQuantity = unit.type === UnitType.QUANTITY;
+                        const hasQuantities = offer.options[UnitType.QUANTITY].length > 0;
+                        const unitsCount = offer.units.filter(Boolean).length;
+
+                        return (
+                          <Flex gap={5} key={unit.value} align='center'>
+                            <IconPlaceholder>
+                              {isActive && (
+                                <>
+                                  {isTime && unitsCount === 1 && hasQuantities && (
                                     <IconButton
                                       onClick={() =>
                                         handleChangeUnit(
@@ -173,27 +179,27 @@ export function Entries({ data }: { data: OfferData[] }) {
                                     >
                                       <AddIcon color={'var(--gray-light)'} />
                                     </IconButton>
-                                  </HideElement>
-                                )}
-                              {unit.type === UnitType.QUANTITY && offer.units.length === 2 && (
-                                <HideElement width={12} isVisible={isActive}>
-                                  <IconButton onClick={() => handleRemoveUnit(offer.id, UnitType.QUANTITY)}>
-                                    <RemoveIcon color={'var(--gray-light)'} />
-                                  </IconButton>
-                                </HideElement>
+                                  )}
+                                  {isQuantity && unitsCount === 2 && (
+                                    <IconButton onClick={() => handleRemoveUnit(offer.id, UnitType.QUANTITY)}>
+                                      <RemoveIcon color={'var(--gray-light)'} />
+                                    </IconButton>
+                                  )}
+                                </>
                               )}
-                              <Select
-                                style={{ flex: 1 }}
-                                placeholder='Select unit'
-                                variant={isActive ? 'outlined' : 'borderless'}
-                                value={unit.value}
-                                onChange={handleChangeUnit(offer.id, unit.type)}
-                                options={offer.options[unit.type].map(({ label, value }) => ({ label, value }))}
-                              />
-                            </Flex>
-                          )
-                      )}
-                  </SelectWrapper>
+                            </IconPlaceholder>
+                            <Select
+                              style={{ flex: 1 }}
+                              placeholder='Select unit'
+                              variant={isActive ? 'outlined' : 'borderless'}
+                              value={unit.value}
+                              onChange={handleChangeUnit(offer.id, unit.type)}
+                              options={offer.options[unit.type].map(({ label, value }) => ({ label, value }))}
+                            />
+                          </Flex>
+                        );
+                      })}
+                  </UnitSelect>
                 </EstimationItem>
               );
             }

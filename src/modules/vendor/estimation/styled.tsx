@@ -51,13 +51,25 @@ export const DropdownButton = styled.div`
   cursor: pointer;
 `;
 
-export const SelectWrapper = styled(Flex)<{ $hovered?: boolean }>`
+export const SelectWrapper = styled(Flex) <{ $hovered?: boolean }>`
   gap: 5px;
   width: 100%;
 
   span.ant-select-arrow {
     ${({ $hovered }) => ($hovered ? '' : 'color: transparent;')};
   }
+`;
+export const UnitSelect = styled(SelectWrapper)`
+  .ant-select-selection-item {
+    text-align: left;
+  }
+`;
+
+export const IconPlaceholder = styled.div`
+  width: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 `;
 
 export const IconButton = styled.div`
