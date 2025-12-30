@@ -202,7 +202,7 @@ export const RU_LOCALES = {
   STATUS_REVIEWING: 'На рассмотрении',
   STATUS_RFP: 'ЗАПРОС',
   SUBTOTAL_FOR_ALL_SECTIONS: 'Промежуточный итог всех разделов',
-  SUBTOTAL_OF_LOCATIONS: 'Промежуточный итог локаций:',
+  SUBTOTAL_OF_LOCATIONS: (name: string) => `Промежуточный итог ${name}:`,
   SURCHARGE: 'Наценка',
   TAXES_AND_FEES: 'Налоги и сборы',
   TAXPAYER_ID: 'Идентификационный номер налогоплательщика',

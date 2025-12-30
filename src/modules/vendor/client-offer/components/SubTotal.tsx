@@ -35,11 +35,12 @@ const EmptyBlockSubTotalSum = styled.div`
 interface Props {
   clientTotal: number | string;
   subCategoryId?: string;
+  name?: string;
 }
 
-export const SubTotal = ({ clientTotal }: Props) => {
+export const SubTotal = ({ clientTotal, name = '' }: Props) => {
   const displayTotal = typeof clientTotal === 'number' ? formatCurrency(clientTotal) : clientTotal;
-  
+
   return (
     <>
       {/* Matches Estimation SubTotal layout: 13 columns total */}
@@ -51,7 +52,7 @@ export const SubTotal = ({ clientTotal }: Props) => {
         <div />
       </Flex>
       <div style={{ backgroundColor: 'var(--bg-blue-subtotal)' }} />
-      <LabelSubTotal style={{ gridColumn: 'span 3' }}>{t('SUBTOTAL_OF_LOCATIONS')}</LabelSubTotal>
+      <LabelSubTotal style={{ gridColumn: 'span 3' }}>{t('SUBTOTAL_OF_LOCATIONS', name.toLowerCase())}</LabelSubTotal>
       <SubTotalSum>{displayTotal}</SubTotalSum>
       <EmptyBlockSubTotalSum style={{ borderRadius: '0 0 6px 0' }} />
       <div />

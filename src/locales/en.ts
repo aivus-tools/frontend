@@ -201,7 +201,7 @@ export const EN_LOCALES = {
   STATUS_REVIEWING: 'Reviewing',
   STATUS_RFP: 'RFP',
   SUBTOTAL_FOR_ALL_SECTIONS: 'Subtotal for All Sections',
-  SUBTOTAL_OF_LOCATIONS: 'Subtotal of Locations:',
+  SUBTOTAL_OF_LOCATIONS: (name: string) => `Subtotal of ${name}:`,
   SURCHARGE: 'Surcharge',
   TAXPAYER_ID: 'Taxpayer Id',
   TAXES_AND_FEES: 'Taxes & Fees',

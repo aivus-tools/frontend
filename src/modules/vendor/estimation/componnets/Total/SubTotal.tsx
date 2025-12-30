@@ -49,9 +49,10 @@ interface Props {
   value: string;
   clientValue: string;
   subCategoryId?: string;
+  name?: string;
 }
 
-export const SubTotal = ({ value, clientValue, subCategoryId }: Props) => {
+export const SubTotal = ({ value, clientValue, subCategoryId, name = '' }: Props) => {
   const handleSelect = useSelectOffer();
   const handleFilter = useMemo(() => filterOptionsById(subCategoryId), [subCategoryId]);
 
@@ -80,7 +81,7 @@ export const SubTotal = ({ value, clientValue, subCategoryId }: Props) => {
           )}
         />
       </Label>
-      <LabelSubTotal style={{ gridColumn: 'span 3' }}>{t('SUBTOTAL_OF_LOCATIONS')}</LabelSubTotal>
+      <LabelSubTotal style={{ gridColumn: 'span 3' }}>{t('SUBTOTAL_OF_LOCATIONS', name.toLowerCase())}</LabelSubTotal>
       <SubTotalSum>{value}</SubTotalSum>
       <EmptyBlockSubTotalSum style={{ borderRadius: ' 0 0 6px 0' }} />
       <div />
