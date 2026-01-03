@@ -1,8 +1,16 @@
 import { MenuItem } from '../hooks/useSearchLibrary';
 import { OfferData, UnitType } from '@/types/estimation.interface';
 import { KEY_SEPARATOR } from '../constants';
+import { UnitOption } from '@/types/entries.interface';
 
 const generateStringId = () => Math.floor(Math.random() * 1000000).toString();
+
+const getUnitLabel = (unit: UnitOption) => {
+  if (['Flat', 'Each'].includes(unit.name)) {
+    return unit.name;
+  }
+  return `${unit.name} (s)`;
+};
 
 export const menuItemToOfferData = (item: MenuItem): OfferData => {
   const temporalUnits = item.units?.temporal || [];
@@ -10,13 +18,13 @@ export const menuItemToOfferData = (item: MenuItem): OfferData => {
 
   const options: OfferData['options'] = {
     [UnitType.TIME]: temporalUnits.map((unit) => ({
-      label: `${unit.name} (${unit.symbol})`,
+      label: getUnitLabel(unit),
       type: UnitType.TIME,
       value: unit.id,
       count: 1,
     })),
     [UnitType.QUANTITY]: quantityUnits.map((unit) => ({
-      label: `${unit.name} (${unit.symbol})`,
+      label: getUnitLabel(unit),
       type: UnitType.QUANTITY,
       value: unit.id,
       count: 1,
