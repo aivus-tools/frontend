@@ -238,19 +238,30 @@ export function Entries({ data }: { data: OfferData[] }) {
               );
             }
 
-            const priceKey = offer.showTax ? 'taxPrice' : 'price';
+            if (key === 'price') {
+              return (
+                <EstimationItem key={`${offer.id}${KEY_SEPARATOR}${key}`} style={itemStyle} {...rowProps}>
+                  <Flex vertical align='flex-end' style={{ width: '100%' }}>
+                    <InputNumberRight
+                      style={{ flex: 1 }}
+                      variant={isActive ? 'outlined' : 'borderless'}
+                      onChange={handleChange(offer.id, key)}
+                      value={offer.price}
+                      controls={false}
+                      {...itemProps}
+                    />
+                    {offer.showTax && (
+                      <div style={{ fontSize: '10px', color: 'var(--gray-light)', textAlign: 'right', marginTop: '-4px' }}>
+                        {formatCurrency(offer.taxPrice)} (TAX incl)
+                      </div>
+                    )}
+                  </Flex>
+                </EstimationItem>
+              );
+            }
 
             return (
-              <EstimationItem key={`${offer.id}${KEY_SEPARATOR}${key}`} style={itemStyle} {...rowProps}>
-                <InputNumberRight
-                  style={{ flex: 1 }}
-                  variant={isActive ? 'outlined' : 'borderless'}
-                  onChange={handleChange(offer.id, key)}
-                  value={offer[priceKey]}
-                  controls={false}
-                  {...itemProps}
-                />
-              </EstimationItem>
+              <EstimationItem key={`${offer.id}${KEY_SEPARATOR}${key}`} style={itemStyle} {...rowProps} />
             );
           })}
           <div />

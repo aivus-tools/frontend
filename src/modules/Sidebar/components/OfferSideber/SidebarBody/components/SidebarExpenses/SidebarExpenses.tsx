@@ -33,13 +33,13 @@ export const SidebarExpenses: React.FC<Props> = ({ costWithTax, offer, handleCha
           width={150}
           icon='$'
           onChange={handleChangeUnit('price')}
-          // extraField={{
-          //   type: 'single btn',
-          //   width: 30,
-          //   value: '←$',
-          //   disabled: true,
-          //   onClick: () => {},
-          // }}
+        // extraField={{
+        //   type: 'single btn',
+        //   width: 30,
+        //   value: '←$',
+        //   disabled: true,
+        //   onClick: () => {},
+        // }}
         />
 
         <SidebarInput
@@ -53,7 +53,7 @@ export const SidebarExpenses: React.FC<Props> = ({ costWithTax, offer, handleCha
         />
       </div>
 
-      <div className={cn(styles.block, styles.fees)}>
+      {/* <div className={cn(styles.block, styles.fees)}> 
         <div className={styles.feesSwitch}>
           <Switch size='small' checked={offer.showTax} onClick={handleTaxSwitch} />
 
@@ -82,13 +82,13 @@ export const SidebarExpenses: React.FC<Props> = ({ costWithTax, offer, handleCha
             icon='$'
             disabled={!offer.showTax}
             onChange={handleChangeUnit('taxPrice')}
-            // extraField={{
-            //   type: 'double btn',
-            //   width: [13, 13],
-            //   value: ['↑', '↓'],
-            //   disabled: [true, true],
-            //   onClick: [() => {}, () => {}],
-            // }}
+          // extraField={{
+          //   type: 'double btn',
+          //   width: [13, 13],
+          //   value: ['↑', '↓'],
+          //   disabled: [true, true],
+          //   onClick: [() => {}, () => {}],
+          // }}
           />
 
           <SidebarInput
@@ -100,7 +100,7 @@ export const SidebarExpenses: React.FC<Props> = ({ costWithTax, offer, handleCha
             disabled={true}
           />
         </div>
-      )}
+      )} */}
     </div>
   );
 };

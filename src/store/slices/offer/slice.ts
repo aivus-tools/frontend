@@ -148,31 +148,32 @@ export const offerSlice = createSlice({
 
       const updatedParameter = Object.keys(newOfferData).filter((key): key is keyof OfferData => key in newOffer);
 
-      if (updatedParameter.includes('showTax') && updatedParameter.length === 1) {
-        state.offerDetails.offers[index] = newOffer;
 
-        return;
-      }
+      const unitMultiplier = newOffer.units?.reduce((acc, unit) => acc * (unit?.count ?? 1), 1) ?? 1;
+      const category = state.dictionary.category.find((cat) => cat.id === newOffer.categoryId);
+      const rootCategoryId = category?.parentCategoryId ?? category?.id;
+      const { surcharge: catSurcharge = 0 } = state.offerDetails.categorySurcharge[rootCategoryId ?? ''] ?? {};
 
       if (updatedParameter.includes('taxPrice') && updatedParameter.length === 1) {
         newOffer.taxRate = (newOffer.taxPrice / newOffer.price - 1) * 100;
+        const currentTaxPrice = newOffer.showTax ? round(newOffer.price * (1 + newOffer.taxRate / 100)) : newOffer.price;
+        newOffer.cost = round(currentTaxPrice * unitMultiplier);
+        const markup = newOffer.isLinkedSurcharge ? catSurcharge : newOffer.surcharge;
+        newOffer.clientPrice = round(currentTaxPrice * (1 + markup / 100));
+        newOffer.clientCost = round(newOffer.clientPrice * unitMultiplier);
         state.offerDetails.offers[index] = newOffer;
 
         return;
       }
 
       if (updatedParameter.includes('clientPrice') && updatedParameter.length === 1) {
-        newOffer.surcharge = ((newOffer.clientPrice - newOffer.price) * 100) / newOffer.cost;
+        const currentTaxPrice = newOffer.showTax ? round(newOffer.price * (1 + newOffer.taxRate / 100)) : newOffer.price;
+        newOffer.surcharge = (newOffer.clientPrice / currentTaxPrice - 1) * 100;
+        newOffer.clientCost = round(newOffer.clientPrice * unitMultiplier);
         state.offerDetails.offers[index] = newOffer;
 
         return;
       }
-
-      const unitMultiplier = newOffer.units?.reduce((acc, unit) => acc * (unit?.count ?? 1), 1) ?? 1;
-      const { price = 0 } = newOffer;
-      const category = state.dictionary.category.find((cat) => cat.id === newOffer.categoryId);
-      const rootCategoryId = category?.parentCategoryId ?? category?.id;
-      const { surcharge = 0 } = state.offerDetails.categorySurcharge[rootCategoryId ?? ''] ?? {};
 
       if (rootCategoryId !== undefined) {
         if (updatedParameter.includes('surcharge')) {
@@ -185,11 +186,12 @@ export const offerSlice = createSlice({
         }
       }
 
-      newOffer.cost = price * unitMultiplier;
-      newOffer.taxPrice = round(newOffer.price * (1 + newOffer.taxRate / 100));
-      const markup = newOffer.isLinkedSurcharge ? surcharge : newOffer.surcharge;
+      const taxPrice = newOffer.showTax ? round(newOffer.price * (1 + newOffer.taxRate / 100)) : newOffer.price;
+      newOffer.taxPrice = round(newOffer.price * (1 + newOffer.taxRate / 100)); // Store actual taxPrice regardless of toggle
+      newOffer.cost = round(taxPrice * unitMultiplier);
+      const markup = newOffer.isLinkedSurcharge ? catSurcharge : newOffer.surcharge;
       newOffer.surcharge = markup;
-      newOffer.clientPrice = round(newOffer.taxPrice * (1 + markup / 100));
+      newOffer.clientPrice = round(taxPrice * (1 + markup / 100));
       newOffer.clientCost = round(newOffer.clientPrice * unitMultiplier);
 
       state.offerDetails.offers[index] = newOffer;
@@ -215,10 +217,14 @@ export const offerSlice = createSlice({
           });
           state.offerDetails.offers.forEach((offer) => {
             const unitMultiplier = offer.units?.reduce((acc, unit) => acc * (unit?.count ?? 1), 1) ?? 1;
-            const { price = 0 } = offer;
+            const { price = 0, taxRate = 0, showTax } = offer;
+            const taxPrice = showTax ? round(price * (1 + taxRate / 100)) : price;
+
             offer.surcharge = newSurcharge;
-            offer.clientPrice = price + applyPercentage(offer.price, newSurcharge);
-            offer.clientCost = offer.clientPrice * unitMultiplier;
+            offer.taxPrice = round(price * (1 + taxRate / 100));
+            offer.cost = round(taxPrice * unitMultiplier);
+            offer.clientPrice = round(taxPrice * (1 + newSurcharge / 100));
+            offer.clientCost = round(offer.clientPrice * unitMultiplier);
             offer.isLinkedSurcharge = true;
           });
         }
@@ -251,11 +257,15 @@ export const offerSlice = createSlice({
 
           if (newData.linked || offer.isLinkedSurcharge) {
             const unitMultiplier = offer.units?.reduce((acc, unit) => acc * (unit?.count ?? 1), 1) ?? 1;
-            const { price = 0 } = offer;
+            const { price = 0, taxRate = 0, showTax } = offer;
             const { surcharge = 0 } = newCategorySurcharge;
+            const taxPrice = showTax ? round(price * (1 + taxRate / 100)) : price;
+
             offer.surcharge = surcharge;
-            offer.clientPrice = price + applyPercentage(offer.price, surcharge);
-            offer.clientCost = offer.clientPrice * unitMultiplier;
+            offer.taxPrice = round(price * (1 + taxRate / 100));
+            offer.cost = round(taxPrice * unitMultiplier);
+            offer.clientPrice = round(taxPrice * (1 + surcharge / 100));
+            offer.clientCost = round(offer.clientPrice * unitMultiplier);
           }
         }
       });
