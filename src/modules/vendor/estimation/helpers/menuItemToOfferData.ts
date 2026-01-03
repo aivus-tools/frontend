@@ -33,19 +33,28 @@ export const menuItemToOfferData = (item: MenuItem, globalDefaultUnit?: UnitOpti
     })),
   };
 
-  const defaultUnit =
+  let defaultUnit =
     options[UnitType.TIME].find((u) => u.isDefault) ??
     options[UnitType.QUANTITY].find((u) => u.isDefault) ??
     options[UnitType.TIME][0] ??
-    options[UnitType.QUANTITY][0] ??
-    (globalDefaultUnit
-      ? {
-        label: getUnitLabel(globalDefaultUnit),
-        type: globalDefaultUnit.dimension === 'TIME' ? UnitType.TIME : UnitType.QUANTITY, // Simplified
-        value: globalDefaultUnit.id,
-        count: 1,
-      }
-      : undefined);
+    options[UnitType.QUANTITY][0];
+
+  if (!defaultUnit && globalDefaultUnit) {
+    const type = globalDefaultUnit.dimension === 'TEMPORAL' ? UnitType.TIME : UnitType.QUANTITY;
+    defaultUnit = {
+      label: getUnitLabel(globalDefaultUnit),
+      type,
+      value: globalDefaultUnit.id,
+      count: 1,
+    } as any; // Cast to avoid complex union type issues in this helper
+
+    // Ensure it's in options so the Select can show the label
+    if (type === UnitType.TIME) {
+      options[UnitType.TIME].push(defaultUnit as TimeUnit);
+    } else {
+      options[UnitType.QUANTITY].push(defaultUnit as QuantityUnit);
+    }
+  }
 
   return {
     id: generateStringId(),
