@@ -1,5 +1,5 @@
 import { MenuItem } from '../hooks/useSearchLibrary';
-import { OfferData, UnitType } from '@/types/estimation.interface';
+import { OfferData, UnitType, TimeUnit, QuantityUnit } from '@/types/estimation.interface';
 import { KEY_SEPARATOR } from '../constants';
 import { UnitOption } from '@/types/entries.interface';
 
@@ -12,7 +12,7 @@ const getUnitLabel = (unit: UnitOption) => {
   return `${unit.name} (s)`;
 };
 
-export const menuItemToOfferData = (item: MenuItem): OfferData => {
+export const menuItemToOfferData = (item: MenuItem, globalDefaultUnit?: UnitOption): OfferData => {
   const temporalUnits = item.units?.temporal || [];
   const quantityUnits = item.units?.quantity || [];
 
@@ -22,14 +22,30 @@ export const menuItemToOfferData = (item: MenuItem): OfferData => {
       type: UnitType.TIME,
       value: unit.id,
       count: 1,
+      isDefault: unit.isDefault,
     })),
     [UnitType.QUANTITY]: quantityUnits.map((unit) => ({
       label: getUnitLabel(unit),
       type: UnitType.QUANTITY,
       value: unit.id,
       count: 1,
+      isDefault: unit.isDefault,
     })),
   };
+
+  const defaultUnit =
+    options[UnitType.TIME].find((u) => u.isDefault) ??
+    options[UnitType.QUANTITY].find((u) => u.isDefault) ??
+    options[UnitType.TIME][0] ??
+    options[UnitType.QUANTITY][0] ??
+    (globalDefaultUnit
+      ? {
+        label: getUnitLabel(globalDefaultUnit),
+        type: globalDefaultUnit.dimension === 'TIME' ? UnitType.TIME : UnitType.QUANTITY, // Simplified
+        value: globalDefaultUnit.id,
+        count: 1,
+      }
+      : undefined);
 
   return {
     id: generateStringId(),
@@ -37,7 +53,7 @@ export const menuItemToOfferData = (item: MenuItem): OfferData => {
     categoryId: item.key.split(KEY_SEPARATOR)[0],
     item: item.name,
     price: 0,
-    units: [options[UnitType.TIME][0] ?? options[UnitType.QUANTITY][0]],
+    units: [defaultUnit].filter(Boolean) as (TimeUnit | QuantityUnit)[],
     cost: 0,
     surcharge: 0,
     clientPrice: 0,

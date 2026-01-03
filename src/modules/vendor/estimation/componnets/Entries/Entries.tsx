@@ -160,6 +160,7 @@ export function Entries({ data }: { data: OfferData[] }) {
 
                         const isTime = unit.type === UnitType.TIME;
                         const isQuantity = unit.type === UnitType.QUANTITY;
+                        const hasTime = offer.options[UnitType.TIME].length > 0;
                         const hasQuantities = offer.options[UnitType.QUANTITY].length > 0;
                         const unitsCount = offer.units.filter(Boolean).length;
 
@@ -175,6 +176,18 @@ export function Entries({ data }: { data: OfferData[] }) {
                                           offer.id,
                                           UnitType.QUANTITY
                                         )(offer.options[UnitType.QUANTITY][0].value)
+                                      }
+                                    >
+                                      <AddIcon color={'var(--gray-light)'} />
+                                    </IconButton>
+                                  )}
+                                  {isQuantity && unitsCount === 1 && hasTime && (
+                                    <IconButton
+                                      onClick={() =>
+                                        handleChangeUnit(
+                                          offer.id,
+                                          UnitType.TIME
+                                        )(offer.options[UnitType.TIME][0].value)
                                       }
                                     >
                                       <AddIcon color={'var(--gray-light)'} />

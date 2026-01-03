@@ -42,6 +42,7 @@ export const ApiRoute = {
   RATES: '/service/rates',
   RATES_FORK: '/service/rates/fork',
   REGISTER: `${BASE_URL}/auth/register`,
+  UNIT_LIST: '/service/units',
   USER_CHANGE_GROUP: (userId: string | number) => `/service/users/${userId}/change-group`,
   USER_INFO: `${BASE_URL}/users/me`,
 } as const;

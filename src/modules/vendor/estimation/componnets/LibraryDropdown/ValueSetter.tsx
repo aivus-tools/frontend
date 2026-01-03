@@ -4,23 +4,31 @@ import { MenuItem } from '../../hooks/useSearchLibrary';
 import { OfferData } from '@/types/estimation.interface';
 import { menuItemToOfferData } from '../../helpers/menuItemToOfferData';
 import { Key } from '@/constants/key';
+import { UnitOption } from '@/types/entries.interface';
 
 interface Props {
   onSelect: (item: OfferData) => void;
   isTyping: boolean;
   items: MenuItem[];
+  globalDefaultUnit?: UnitOption;
 }
 
-export const ValueSetter = ({ isTyping, items, children, onSelect }: PropsWithChildren<Props>) => {
+export const ValueSetter = ({
+  isTyping,
+  items,
+  children,
+  onSelect,
+  globalDefaultUnit,
+}: PropsWithChildren<Props>) => {
   const { activeKey, changeActiveKey } = useSearchActiveKey();
 
   const handleSelect = useCallback(() => {
     const item = items.find((it) => it.key === activeKey);
 
     if (item) {
-      onSelect(menuItemToOfferData(item));
+      onSelect(menuItemToOfferData(item, globalDefaultUnit));
     }
-  }, [activeKey, items, onSelect]);
+  }, [activeKey, items, onSelect, globalDefaultUnit]);
 
   const handleEnter = useCallback(
     (e: KeyboardEvent) => {

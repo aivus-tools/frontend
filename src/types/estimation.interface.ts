@@ -11,6 +11,7 @@ export interface TimeUnit {
   label: string;
   value: string;
   count: number;
+  isDefault?: boolean;
 }
 
 export interface QuantityUnit {
@@ -18,6 +19,7 @@ export interface QuantityUnit {
   label: string;
   value: string;
   count: number;
+  isDefault?: boolean;
 }
 
 export interface OfferData {

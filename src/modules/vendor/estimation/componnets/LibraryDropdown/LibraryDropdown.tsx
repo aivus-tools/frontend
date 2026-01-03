@@ -32,7 +32,7 @@ export const LibraryDropdown = ({ value, componentAction, onSelect, filterOption
   const [isTyping, setIsTyping] = useState(false);
   const [searchValue, setSearchValue] = useState('');
 
-  const library = useSearchLibrary();
+  const { items: library, globalDefaultUnit } = useSearchLibrary();
   const items = useMemo(() => {
     if (!library) return [];
     const result = library.filter((it) => it.value.toLowerCase().includes(searchValue.toLowerCase()));
@@ -77,10 +77,10 @@ export const LibraryDropdown = ({ value, componentAction, onSelect, filterOption
     ({ key }) => {
       const selectedItem = items.find((item) => item.key === key);
       if (selectedItem) {
-        handleSelect(menuItemToOfferData(selectedItem));
+        handleSelect(menuItemToOfferData(selectedItem, globalDefaultUnit));
       }
     },
-    [items, handleSelect]
+    [items, handleSelect, globalDefaultUnit]
   );
 
   const itemsForDropdown = items.map((item) => ({
@@ -91,7 +91,7 @@ export const LibraryDropdown = ({ value, componentAction, onSelect, filterOption
 
   return (
     <SearchProvider activeKey={items[0]?.key}>
-      <ValueSetter isTyping={isTyping} onSelect={handleSelect} items={items}>
+      <ValueSetter isTyping={isTyping} onSelect={handleSelect} items={items} globalDefaultUnit={globalDefaultUnit}>
         <Dropdown
           menu={{ items: itemsForDropdown, onClick: handleClick }}
           onOpenChange={(open) => {

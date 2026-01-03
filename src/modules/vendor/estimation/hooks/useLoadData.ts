@@ -7,10 +7,11 @@ export const useLoadData = (external?: boolean) => {
 
   const categoriesQuery = categoriesApi.useGetCategoriesQuery(undefined, { skip: external });
   const entriesQuery = categoriesApi.useGetEntriesFullQuery(undefined, { skip: external });
+  const unitsQuery = categoriesApi.useGetUnitsQuery(undefined, { skip: external });
   // Changed from getOffersByBriefId to getOffersByProjectId
   offersApi.useGetOffersByProjectIdQuery(projectId!, {
     skip: !projectId || projectId === 'new-brief' || !!external,
   });
 
-  return categoriesQuery.isLoading || entriesQuery.isLoading;
+  return categoriesQuery.isLoading || entriesQuery.isLoading || unitsQuery.isLoading;
 };
