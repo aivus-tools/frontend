@@ -1,14 +1,13 @@
 'use client';
 
 import React, { useState } from 'react';
-import { Typography } from 'antd';
+import { Typography , Flex } from 'antd';
 import { formatCurrency } from '@/lib/utils';
 import { t } from '@/lib/i18n';
 import { useGuidance } from '@/context/GuidanceProvider';
 import { categoriesApi } from '@/services/client/categoriesApi';
 import { EstimationItem, RowWrapper, ItemDescription } from './styled';
 import { UnitsDisplay, QuantityDisplay } from './DisplayComponents';
-import { Flex } from 'antd';
 import { RightSquareOutlined } from '@ant-design/icons';
 
 interface Props {
