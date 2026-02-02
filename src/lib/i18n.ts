@@ -16,7 +16,11 @@ export function t(key: MsgKey, parameter?: string): string {
     return value ?? key;
   }
 
-  return value(parameter ?? '');
+  if (typeof value === 'function') {
+    return value(parameter ?? '');
+  }
+
+  return (key as string) ?? '';
 }
 
 function isElement(node: DOMNode): node is Element {

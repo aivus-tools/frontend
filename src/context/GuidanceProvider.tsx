@@ -4,9 +4,15 @@ import { GuidanceDictionary } from './guidance-dictionary';
 type GuidanceDictionaryType = typeof GuidanceDictionary;
 type GuidanceDictionaryKeys = keyof GuidanceDictionaryType;
 
+interface GuidanceItem {
+  label: string;
+  description: string | ReactNode;
+}
+
 interface GuidanceContextType {
   handleFocus: (name: GuidanceDictionaryKeys) => () => void;
-  focusedField: { label: string; description: string | ReactNode } | null;
+  setCustomGuidance: (guidance: GuidanceItem | null) => void;
+  focusedField: GuidanceItem | null;
 }
 
 const GuidanceContext = createContext<GuidanceContextType | undefined>(undefined);
@@ -17,18 +23,20 @@ interface FocusProviderProps {
 
 export const GuidanceProvider: React.FC<FocusProviderProps> = ({ children }) => {
   const [focusedField, setFocusedField] = useState<GuidanceDictionaryKeys | null>(null);
+  const [customGuidance, setCustomGuidance] = useState<GuidanceItem | null>(null);
 
   const handleFocus = useCallback(
     (name: GuidanceDictionaryKeys) => () => {
+      setCustomGuidance(null);
       setFocusedField(name);
     },
     []
   );
 
+  const currentGuidance = customGuidance || (focusedField ? GuidanceDictionary[focusedField] : null);
+
   return (
-    <GuidanceContext.Provider
-      value={{ handleFocus, focusedField: focusedField ? GuidanceDictionary[focusedField] : null }}
-    >
+    <GuidanceContext.Provider value={{ handleFocus, setCustomGuidance, focusedField: currentGuidance }}>
       {children}
     </GuidanceContext.Provider>
   );

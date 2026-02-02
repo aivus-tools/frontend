@@ -4,6 +4,7 @@ export const EN_LOCALES = {
   ADD_FREELANCERS: 'Or add freelancers and external producers.',
   ADD_INTERNAL_MANAGERS: 'Add internal managers.',
   ADD_ITEM: 'add item',
+  AGENCY_SERVICE: 'Agency service',
   ADD_LINKS_TO_RELEVANT_VIDEOS: 'Add links to relevant videos.',
   ADD_UNIT: 'Add unit',
   ADD_UP_TO_5_ADDITIONAL_FILES:
