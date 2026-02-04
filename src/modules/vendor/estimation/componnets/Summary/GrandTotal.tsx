@@ -6,6 +6,7 @@ import { Flex } from 'antd';
 import { useAppSelector } from '@/store/hooks';
 import { t } from '@/lib/i18n';
 import { selectGrandTotal } from '@/store/slices/offer/selectors';
+import { GrandTotalRowWrapper } from '../../styled';
 
 const Label = styled.div`
   display: flex;
@@ -36,7 +37,7 @@ const EmptyBlockTotalSum = styled.div`
 export const GrandTotal = () => {
   const { total, clientTotal } = useAppSelector(selectGrandTotal);
   return (
-    <>
+    <GrandTotalRowWrapper>
       <EmptyBlockTotalSum style={{ borderRadius: '6px 0 0 6px' }}>
         <Flex align='center' justify='center' style={{ height: '100%' }}>
           <SettingsIcon />
@@ -51,10 +52,10 @@ export const GrandTotal = () => {
       <div />
       <Flex
         justify='flex-end'
-        style={{ gridColumn: 'span 5', paddingRight: '16px', backgroundColor: 'var(--bg-blue-important)' }}
+        style={{ gridColumn: 'span 5', paddingRight: '16px', backgroundColor: 'var(--bg-blue-important)', borderRadius: '6px' }}
       >
         <TotalSum>{`$ ${clientTotal}`}</TotalSum>
       </Flex>
-    </>
+    </GrandTotalRowWrapper>
   );
 };

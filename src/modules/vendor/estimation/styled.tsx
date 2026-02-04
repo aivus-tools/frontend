@@ -32,6 +32,53 @@ export const Line = styled.div`
   border-bottom: 0.5px dashed var(--gray);
 `;
 
+export const CategorySection = styled.div`
+  grid-column: span 13;
+  display: grid;
+  grid-template-columns: subgrid;
+  position: relative;
+  z-index: 1;
+  margin-top: 20px;
+  margin-bottom: -10px;
+
+  &:nth-child(odd) {
+    z-index: 2;
+  }
+
+  &:first-of-type {
+    margin-top: 0;
+  }
+
+  /* Vendor block shadow (columns 1-7) */
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: calc(38px + 100% * 0.85);
+    max-width: 270px;
+    height: 100%;
+    box-shadow: 0px 5px 16.5px -11px rgba(0, 0, 0, 0.25);
+    border-radius: 6px;
+    pointer-events: none;
+    z-index: -1;
+  }
+
+  /* Client block shadow (columns 9-13) */
+  &::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 270px;
+    height: 100%;
+    box-shadow: 0px 5px 16.5px -11px rgba(0, 0, 0, 0.25);
+    border-radius: 6px;
+    pointer-events: none;
+    z-index: -1;
+  }
+`;
+
 export const EstimationItem = styled.div<{ $hovered?: boolean; $focused?: boolean }>`
   text-align: center;
   background-color: ${({ $hovered }) => ($hovered ? 'var(--bg-blue-subsection)' : 'var(--white)')};
@@ -85,6 +132,57 @@ export const InputNumberStyled = styled(InputNumber)`
     text-align: right;
     padding: 4px;
   }
+`;
+
+// Summary row wrappers with shadows and overlapping
+export const SummaryRowWrapper = styled.div`
+  grid-column: span 13;
+  display: grid;
+  grid-template-columns: subgrid;
+  position: relative;
+  margin-top: 20px;
+  margin-bottom: -8px;
+  z-index: 3;
+
+  /* Vendor block shadow */
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: calc(38px + 100% * 0.55);
+    max-width: 270px;
+    height: 100%;
+    box-shadow: 0px 5px 16.5px -11px rgba(0, 0, 0, 0.25);
+    border-radius: 6px;
+    pointer-events: none;
+    z-index: -1;
+  }
+
+  /* Client block shadow */
+  &::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 270px;
+    height: 100%;
+    box-shadow: 0px 5px 16.5px -11px rgba(0, 0, 0, 0.25);
+    border-radius: 6px;
+    pointer-events: none;
+    z-index: -1;
+  }
+`;
+
+export const UnforeseenRowWrapper = styled(SummaryRowWrapper)`
+  z-index: 2;
+  min-height: 50px;
+  margin-top: 0;
+`;
+
+export const GrandTotalRowWrapper = styled(SummaryRowWrapper)`
+  z-index: 1;
+  margin-top: 0;
 `;
 
 export const InputNumberRight = ((props: ComponentProps<typeof InputNumber> = {}) => {

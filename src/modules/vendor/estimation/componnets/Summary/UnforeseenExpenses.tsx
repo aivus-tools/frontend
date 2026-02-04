@@ -5,7 +5,7 @@ import { Flex } from 'antd';
 import EyeCrossed from '@/icons/eye-crossed.svg';
 import Eye from '@/icons/eye.svg';
 import { percentFormat, percentParser } from '../../helpers/format';
-import { InputNumberRight } from '../../styled';
+import { InputNumberRight, UnforeseenRowWrapper } from '../../styled';
 import { useAppDispatch, useAppSelector } from '@/store/hooks';
 import { changeUnforeseenExpenses } from '@/store/slices/offer/slice';
 import { selectUnforeseenExpenses } from '@/store/slices/offer/selectors';
@@ -59,7 +59,7 @@ export const UnforeseenExpenses = () => {
   };
 
   return (
-    <>
+    <UnforeseenRowWrapper>
       <EmptyBlockTotalSum style={{ borderRadius: '6px 0 0 6px' }}>
         <Flex align='center' justify='center' style={{ height: '100%', cursor: 'pointer' }} onClick={handleVisible}>
           {isVisible ? <Eye /> : <EyeCrossed />}
@@ -84,7 +84,7 @@ export const UnforeseenExpenses = () => {
       <Flex
         justify='space-between'
         align='center'
-        style={{ gridColumn: 'span 5', paddingRight: '16px', backgroundColor: 'var(--white)' }}
+        style={{ gridColumn: 'span 5', paddingRight: '16px', backgroundColor: 'var(--white)', borderRadius: '6px' }}
       >
         <Flex justify='space-between' align='center' gap={4}>
           <Flex align='center' justify='center' style={{ height: '100%' }}>
@@ -104,6 +104,6 @@ export const UnforeseenExpenses = () => {
         </Flex>
         <TotalSum>{`$ ${clientTotal}`}</TotalSum>
       </Flex>
-    </>
+    </UnforeseenRowWrapper>
   );
 };

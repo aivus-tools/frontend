@@ -24,7 +24,7 @@ export const AddButton = ({ hasData = false }: AddButtonProps) => {
   const handleSelect = useSelectOffer();
 
   return (
-    <Wrapper>
+    <Wrapper style={{ marginTop: '30px' }}>
       <ArrowIcon />
       <LibraryDropdown
         onSelect={handleSelect}

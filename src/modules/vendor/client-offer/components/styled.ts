@@ -296,6 +296,7 @@ export const AgencyServiceRow = styled.div`
   margin-bottom: -6px;
   position: relative;
   z-index: 2;
+  min-height: 50px;
 `;
 
 export const GrandTotalRow = styled.div`

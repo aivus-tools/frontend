@@ -6,6 +6,7 @@ import { Flex } from 'antd';
 import { useAppSelector } from '@/store/hooks';
 import { selectTotalSum, selectClientTotalSum } from '@/store/slices/offer/selectors';
 import { t } from '@/lib/i18n';
+import { SummaryRowWrapper } from '../../styled';
 
 const Label = styled.div`
   display: flex;
@@ -39,7 +40,7 @@ export const SubtotalAllSections = () => {
   const { formatted: totalClient } = useAppSelector(selectClientTotalSum);
 
   return (
-    <>
+    <SummaryRowWrapper>
       <EmptyBlockTotalSum style={{ borderRadius: '6px 0 0 6px' }}>
         <Flex align='center' justify='center' style={{ height: '100%' }}>
           <SettingsIcon />
@@ -54,10 +55,10 @@ export const SubtotalAllSections = () => {
       <div />
       <Flex
         justify='flex-end'
-        style={{ gridColumn: 'span 5', paddingRight: '16px', backgroundColor: 'var(--bg-green)' }}
+        style={{ gridColumn: 'span 5', paddingRight: '16px', backgroundColor: 'var(--bg-green)', borderRadius: '6px' }}
       >
         <TotalSum>{`$ ${totalClient}`}</TotalSum>
       </Flex>
-    </>
+    </SummaryRowWrapper>
   );
 };

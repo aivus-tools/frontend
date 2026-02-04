@@ -14,6 +14,7 @@ import {
 } from '@/store/slices/offer/selectors';
 import { useCallback } from 'react';
 import { RootState } from '@/store/store';
+import { CategorySection } from '../styled';
 
 export function Category({ category }: { category: TypeCategory }) {
   const { keys } = useExpandedKeys();
@@ -31,7 +32,7 @@ export function Category({ category }: { category: TypeCategory }) {
   );
 
   return (
-    <>
+    <CategorySection>
       <Title category={category} itemKey={key} value={`$ ${total}`} clientValue={`$ ${clientTotal}`} />
       {isOpen && (
         <>
@@ -42,7 +43,6 @@ export function Category({ category }: { category: TypeCategory }) {
           <Total text={category.name} value={`$ ${total}`} clientValue={`$ ${clientTotal}`} categoryId={category.id} />
         </>
       )}
-      <div style={{ gridColumn: 'span 13', padding: '15px' }} />
-    </>
+    </CategorySection>
   );
 }
