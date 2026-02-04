@@ -31,18 +31,23 @@ export const Title = ({ category, itemKey, value }: Props) => {
                     <div style={{ backgroundColor: 'var(--bg-blue-subsection)' }} />
                     <div style={{ backgroundColor: 'var(--bg-blue-subsection)' }} />
                     <div style={{ backgroundColor: 'var(--bg-blue-subsection)' }} />
-                    <SectionTitleSumHeader style={{ backgroundColor: 'var(--bg-blue-subsection)', justifyContent: 'flex-end', borderRadius: '0 6px 6px 0', paddingRight: 10 }}>
+                    <SectionTitleSumHeader style={{ backgroundColor: 'var(--bg-blue-subsection)', justifyContent: 'flex-end', paddingRight: 10 }}>
                         {value}
                     </SectionTitleSumHeader>
+                    <div style={{ backgroundColor: 'var(--bg-blue-subsection)', borderRadius: '0 6px 6px 0' }} />
                 </>
             )}
             {isOpen && (
-                <SectionTitle style={{ borderRadius: '0 6px 0 0' }} />
+                <>
+                    <SectionTitle />
+                    <SectionTitle style={{ borderRadius: '0 6px 0 0' }} />
+                </>
             )}
             {isOpen && (
                 <>
                     <div style={{ backgroundColor: 'var(--bg-blue-subsection)' }} />
                     <RowLine $dark />
+                    <div style={{ backgroundColor: '#fff' }} />
                 </>
             )}
         </>

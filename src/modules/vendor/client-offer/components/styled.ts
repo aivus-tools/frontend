@@ -43,7 +43,7 @@ export const Content = styled.div`
 
 export const Table = styled.div`
   display: grid;
-  grid-template-columns: 38px 1fr 90px 90px 90px 120px;
+  grid-template-columns: 38px 1fr 90px 90px 90px 120px 32px;
   grid-auto-flow: row;
   width: 100%;
 `;
@@ -98,7 +98,7 @@ export const RowWrapper = styled.div<{ $hovered?: boolean; $isEven?: boolean; $b
 `;
 
 export const Spacer = styled.div`
-  grid-column: span 6;
+  grid-column: span 7;
   height: 15px;
   background-color: transparent !important;
 `;
@@ -127,6 +127,15 @@ export const ItemDescription = styled.div`
   line-height: 14px;
   color: #99A1B7;
   margin-top: 2px;
+`;
+
+export const ActionCell = styled.div<{ $hovered?: boolean }>`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 8px 8px 8px 0;
+  background-color: ${({ $hovered }) => ($hovered ? 'var(--bg-blue-subsection)' : '#fff')};
+  min-height: 42px;
 `;
 
 // Row line that starts at the text position (not full width)
@@ -240,7 +249,7 @@ export const SubTotalRow = styled.div`
 
 // Category Total row
 export const CategoryTotalRow = styled.div`
-  grid-column: span 6;
+  grid-column: span 7;
   display: flex;
   padding: 20px 8px 14px 8px;
   justify-content: flex-end;
@@ -253,7 +262,7 @@ export const CategoryTotalRow = styled.div`
 
 // Summary rows - Subtotal for All Sections
 export const SummaryRow = styled.div`
-  grid-column: span 6;
+  grid-column: span 7;
   display: flex;
   padding: 16px 40px 16px 16px;
   justify-content: space-between;
@@ -268,7 +277,7 @@ export const SummaryRow = styled.div`
 `;
 
 export const AgencyServiceRow = styled.div`
-  grid-column: span 6;
+  grid-column: span 7;
   display: flex;
   padding: 12px 40px 12px 14px;
   justify-content: space-between;
@@ -282,7 +291,7 @@ export const AgencyServiceRow = styled.div`
 `;
 
 export const GrandTotalRow = styled.div`
-  grid-column: span 6;
+  grid-column: span 7;
   display: flex;
   padding: 16px 40px 16px 16px;
   justify-content: space-between;
@@ -296,7 +305,7 @@ export const GrandTotalRow = styled.div`
 `;
 
 export const CostPerVideoRow = styled.div`
-  grid-column: span 6;
+  grid-column: span 7;
   display: flex;
   padding: 10px 40px 4px 14px;
   justify-content: space-between;

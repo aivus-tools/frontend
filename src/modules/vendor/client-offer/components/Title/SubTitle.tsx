@@ -34,15 +34,20 @@ export const SubTitle = ({ text, itemKey, value }: Props) => {
                     <SectionSubTitleSumHeader style={{ backgroundColor: '#fff', paddingRight: 10 }}>
                         {value}
                     </SectionSubTitleSumHeader>
+                    <div style={{ backgroundColor: '#fff' }} />
                 </>
             )}
             {isOpen && (
-                <div style={{ backgroundColor: '#fff' }} />
+                <>
+                    <div style={{ backgroundColor: '#fff' }} />
+                    <div style={{ backgroundColor: '#fff' }} />
+                </>
             )}
             {isOpen && (
                 <>
                     <div style={{ backgroundColor: '#fff' }} />
                     <RowLine />
+                    <div style={{ backgroundColor: '#fff' }} />
                 </>
             )}
         </>

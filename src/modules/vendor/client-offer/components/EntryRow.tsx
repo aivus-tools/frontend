@@ -6,9 +6,9 @@ import { formatCurrency } from '@/lib/utils';
 import { t } from '@/lib/i18n';
 import { useGuidance } from '@/context/GuidanceProvider';
 import { categoriesApi } from '@/services/client/categoriesApi';
-import { EstimationItem, RowWrapper, ItemDescription } from './styled';
+import { EstimationItem, RowWrapper, ItemDescription, ActionCell } from './styled';
 import { UnitsDisplay, QuantityDisplay } from './DisplayComponents';
-import { RightSquareOutlined } from '@ant-design/icons';
+import ArrowSquareRightIcon from '@/icons/arrow-square-right.svg';
 
 interface Props {
     offer: any;
@@ -58,10 +58,12 @@ export const EntryRow = ({ offer, isEven }: Props) => {
             <EstimationItem $hovered={isActive || isHovered} style={{ justifyContent: 'center' }}>
                 <QuantityDisplay units={offer.units} />
             </EstimationItem>
-            <EstimationItem $hovered={isActive || isHovered} style={{ paddingRight: 10, gap: 8 }}>
+            <EstimationItem $hovered={isActive || isHovered}>
                 {`$ ${formatCurrency(offer.clientCost)}`}
-                {isActive && <RightSquareOutlined style={{ color: 'var(--blue)', fontSize: 16 }} />}
             </EstimationItem>
+            <ActionCell $hovered={isActive || isHovered}>
+                {isActive && <ArrowSquareRightIcon style={{ color: '#99A1B7', width: 16, height: 16 }} />}
+            </ActionCell>
         </RowWrapper>
     );
 };

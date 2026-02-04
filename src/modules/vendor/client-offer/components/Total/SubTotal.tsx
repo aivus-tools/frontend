@@ -23,6 +23,7 @@ export const SubTotal = ({ name, value }: Props) => {
             <div>
                 <TotalSum style={{ fontSize: 14, padding: '12px 10px 12px 0', color: 'var(--blue)' }}>{value}</TotalSum>
             </div>
+            <div />
         </SubTotalRow>
     );
 };

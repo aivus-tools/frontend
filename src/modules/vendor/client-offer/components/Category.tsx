@@ -43,7 +43,7 @@ export function Category({ category }: { category: TypeCategory }) {
                     <Total text={category.name} value={`$ ${clientTotal}`} />
                 </>
             )}
-            <div style={{ gridColumn: 'span 6', padding: '15px' }} />
+            <div style={{ gridColumn: 'span 7', padding: '15px' }} />
         </>
     );
 }
