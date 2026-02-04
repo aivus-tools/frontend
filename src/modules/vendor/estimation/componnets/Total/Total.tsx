@@ -101,7 +101,7 @@ export const Total = ({ text, value, clientValue, categoryId }: Props) => {
           />
         </Flex>
         <Flex>
-          <Label>
+          <Label style={{ marginRight: '16px' }}>
             {text} {t('TOTAL')}:
           </Label>
           <TotalSum>{value}</TotalSum>

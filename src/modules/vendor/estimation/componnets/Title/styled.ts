@@ -24,7 +24,6 @@ export const SectionTitleSumHeader = styled.div`
   background-color: var(--white);
   display: flex;
   align-items: center;
-
   color: var(--blue);
 `;
 

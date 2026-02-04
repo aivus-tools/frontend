@@ -12,7 +12,7 @@ export const Wrapper = styled.div`
 `;
 export const Table = styled.div`
   display: grid;
-  grid-template-columns: 38px 1fr 90px 160px 50px 90px 40px 50px 30px 65px 80px 75px 20px;
+  grid-template-columns: 38px 1fr 90px 160px 50px 105px 40px 50px 30px 65px 80px 75px 20px;
   grid-template-rows: auto auto;
   grid-auto-flow: row;
 

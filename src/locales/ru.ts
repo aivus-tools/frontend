@@ -227,6 +227,7 @@ export const RU_LOCALES = {
   URL_ONLY: 'только URL',
   VIDEO: 'видео',
   VERSION_NAME: 'Название версии',
+  VENDORS_DESCRIPTION: 'Описание поставщика',
   VISIBLE_FOR_VENDORS: 'Видимо для поставщиков',
   WATERMARK: 'Водяной знак',
   WHAT_IS_THIS_USED_FOR: 'Для чего это используется?',

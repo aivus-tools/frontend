@@ -3,7 +3,6 @@
 import React, { useState } from 'react';
 import { Typography, Flex } from 'antd';
 import { formatCurrency } from '@/lib/utils';
-import { t } from '@/lib/i18n';
 import { useGuidance } from '@/context/GuidanceProvider';
 import { categoriesApi } from '@/services/client/categoriesApi';
 import { EstimationItem, RowWrapper, ItemDescription, ActionCell } from './styled';
@@ -27,7 +26,8 @@ export const EntryRow = ({ offer, isEven }: Props) => {
     const handleClick = () => {
         setCustomGuidance({
             label: offer.item,
-            description: entry?.description || t('DESCRIPTION'),
+            shortDescription: entry?.shortDescription || '',
+            description: entry?.description || '',
         });
     };
 
@@ -44,8 +44,8 @@ export const EntryRow = ({ offer, isEven }: Props) => {
             <EstimationItem $hovered={isActive || isHovered} style={{ justifyContent: 'flex-start', textAlign: 'left', alignItems: 'flex-start' }}>
                 <Flex vertical>
                     <Typography.Text style={{ fontWeight: 600 }}>{offer.item}</Typography.Text>
-                    {entry?.description && (
-                        <ItemDescription>{entry.description}</ItemDescription>
+                    {entry?.shortDescription && (
+                        <ItemDescription>{entry.shortDescription}</ItemDescription>
                     )}
                 </Flex>
             </EstimationItem>

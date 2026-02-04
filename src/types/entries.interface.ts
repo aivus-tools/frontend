@@ -1,6 +1,7 @@
 export interface Entry {
   id: string;
   name: string;
+  shortDescription?: string;
   description?: string;
   categoryId: string;
   units?: {

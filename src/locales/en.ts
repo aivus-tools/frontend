@@ -226,6 +226,7 @@ export const EN_LOCALES = {
   URL_ONLY: 'url only',
   VIDEO: 'video',
   VERSION_NAME: 'Version’s name',
+  VENDORS_DESCRIPTION: "Vendor's description",
   VISIBLE_FOR_VENDORS: 'Visible for vendors',
   WATERMARK: 'Watermark',
   WHAT_IS_THIS_USED_FOR: 'What is this used for?',

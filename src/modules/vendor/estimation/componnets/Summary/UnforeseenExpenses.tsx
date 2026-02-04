@@ -99,6 +99,7 @@ export const UnforeseenExpenses = () => {
             value={clientPercent}
             formatter={percentFormat}
             parser={percentParser}
+            style={{ maxWidth: "70px" }}
           />
         </Flex>
         <TotalSum>{`$ ${clientTotal}`}</TotalSum>

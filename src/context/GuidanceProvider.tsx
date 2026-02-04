@@ -6,6 +6,7 @@ type GuidanceDictionaryKeys = keyof GuidanceDictionaryType;
 
 interface GuidanceItem {
   label: string;
+  shortDescription?: string;
   description: string | ReactNode;
 }
 
