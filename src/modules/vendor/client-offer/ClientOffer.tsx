@@ -3,13 +3,27 @@
 import React from 'react';
 import { GuidanceProvider } from '@/context/GuidanceProvider';
 import { useAppSelector } from '@/store/hooks';
-import { selectOfferDetails } from '@/store/slices/offer/selectors';
+import { selectOfferDetails, selectOfferMetaData } from '@/store/slices/offer/selectors';
+import { selectProjectId } from '@/store/slices/project';
+import { useGetOffersByProjectIdQuery } from '@/services/client/offersApi';
 import { ClientOfferTable } from './ClientOfferTable';
 import { Guidance } from './components/Guidance';
 import { Wrapper, Column } from './components/styled';
 
 export function ClientOffer() {
+  const projectId = useAppSelector(selectProjectId);
   const offerDetails = useAppSelector(selectOfferDetails);
+  const metaData = useAppSelector(selectOfferMetaData);
+
+  const hasOfferData = metaData !== null || offerDetails.offers.length > 0;
+
+  const { isLoading } = useGetOffersByProjectIdQuery(projectId!, {
+    skip: !projectId || projectId === 'new-brief' || hasOfferData,
+  });
+
+  if (isLoading) {
+    return <div>Loading...</div>;
+  }
 
   return (
     <GuidanceProvider>
