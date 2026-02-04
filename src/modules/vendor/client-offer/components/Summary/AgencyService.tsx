@@ -2,8 +2,8 @@
 
 import React from 'react';
 import { useAppSelector } from '@/store/hooks';
-import { selectClientTotalSum, selectOverallSurcharge } from '@/store/slices/offer/selectors';
-import { applyPercentage, formatCurrency } from '@/lib/utils';
+import { selectClientTotalSum, selectTotalSum } from '@/store/slices/offer/selectors';
+import { formatCurrency } from '@/lib/utils';
 import { t } from '@/lib/i18n';
 import { AgencyServiceRow } from '../styled';
 import { styled } from 'styled-components';
@@ -12,37 +12,65 @@ const AgencyLabel = styled.span`
     font-weight: 500;
     font-size: 13px;
     line-height: 16px;
-    color: var(--main);
+    color: #4B5675;
 `;
 
-const AgencyPercent = styled.span`
+const RightSection = styled.div`
+    display: flex;
+    align-items: center;
+    gap: 60px;
+`;
+
+const PercentWrapper = styled.div`
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    width: 65px;
+`;
+
+const PercentValue = styled.span`
+    font-weight: 500;
     font-size: 13px;
     color: #99A1B7;
-    margin-left: 16px;
+`;
+
+const PercentSign = styled.span`
+    font-weight: 500;
+    font-size: 10px;
+    color: #99A1B7;
+    margin-left: 3px;
+    margin-top: 2px;
 `;
 
 const AgencyValue = styled.span`
-    font-weight: 500;
+    font-weight: 600;
     font-size: 13px;
     line-height: 16px;
-    color: var(--main);
+    color: #4B5675;
 `;
 
 export const AgencyService = () => {
+    const { value: vendorTotal } = useAppSelector(selectTotalSum);
     const { value: clientTotal } = useAppSelector(selectClientTotalSum);
-    const { surcharge } = useAppSelector(selectOverallSurcharge);
 
-    if (!surcharge || surcharge === 0) return null;
+    const agencyServiceAmount = clientTotal - vendorTotal;
 
-    const agencyServiceAmount = applyPercentage(clientTotal, surcharge);
+    if (agencyServiceAmount <= 0) return null;
+
+    const surchargePercent = vendorTotal > 0
+        ? Math.round(((clientTotal / vendorTotal) - 1) * 100 * 10) / 10
+        : 0;
 
     return (
         <AgencyServiceRow>
-            <div style={{ display: 'flex', alignItems: 'center' }}>
-                <AgencyLabel>{t('AGENCY_SERVICE')}</AgencyLabel>
-                <AgencyPercent>{surcharge} %</AgencyPercent>
-            </div>
-            <AgencyValue>{`$ ${formatCurrency(agencyServiceAmount)}`}</AgencyValue>
+            <AgencyLabel>{t('AGENCY_SERVICE')}</AgencyLabel>
+            <RightSection>
+                <PercentWrapper>
+                    <PercentValue>{surchargePercent}</PercentValue>
+                    <PercentSign>%</PercentSign>
+                </PercentWrapper>
+                <AgencyValue>{`$ ${formatCurrency(agencyServiceAmount)}`}</AgencyValue>
+            </RightSection>
         </AgencyServiceRow>
     );
 };

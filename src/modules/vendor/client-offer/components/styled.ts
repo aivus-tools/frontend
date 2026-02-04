@@ -287,10 +287,9 @@ export const CostPerVideoRow = styled.div`
 export const AgencyServiceRow = styled.div`
   grid-column: span 6;
   display: flex;
-  padding: 8px 40px 8px 8px;
-  justify-content: flex-end;
+  padding: 8px 40px 8px 14px;
+  justify-content: space-between;
   align-items: center;
-  gap: 20px;
   background: #fff;
   margin-top: 8px;
 `;

@@ -7,6 +7,10 @@ import {
   addOfferRow,
   changeOfferRow,
   removeOfferRow,
+  changeCategorySurcharge,
+  changeOverallSurcharge,
+  changeUnforeseenExpenses,
+  changeShowCostPerVideo,
   setMetaData,
   setOfferDetails,
 } from './slice';
@@ -31,7 +35,15 @@ export const offerListener = (startListening: AppStartListening) => {
   });
 
   startListening({
-    matcher: isAnyOf(addOfferRow, removeOfferRow, changeOfferRow),
+    matcher: isAnyOf(
+      addOfferRow,
+      removeOfferRow,
+      changeOfferRow,
+      changeCategorySurcharge,
+      changeOverallSurcharge,
+      changeUnforeseenExpenses,
+      changeShowCostPerVideo
+    ),
     effect: async (_, { dispatch, getState }) => {
       const state = getState();
       const projectId = selectProjectId(state);
