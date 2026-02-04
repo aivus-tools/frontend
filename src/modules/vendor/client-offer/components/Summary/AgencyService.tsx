@@ -18,14 +18,21 @@ const AgencyLabel = styled.span`
 const RightSection = styled.div`
     display: flex;
     align-items: center;
-    gap: 60px;
 `;
 
 const PercentWrapper = styled.div`
     display: flex;
     align-items: center;
+    justify-content: center;
+    width: 90px;
+`;
+
+const ValueWrapper = styled.div`
+    display: flex;
+    align-items: center;
     justify-content: flex-end;
-    width: 65px;
+    width: 110px;
+    padding-right: 2px;
 `;
 
 const PercentValue = styled.span`
@@ -69,7 +76,9 @@ export const AgencyService = () => {
                     <PercentValue>{surchargePercent}</PercentValue>
                     <PercentSign>%</PercentSign>
                 </PercentWrapper>
-                <AgencyValue>{`$ ${formatCurrency(agencyServiceAmount)}`}</AgencyValue>
+                <ValueWrapper>
+                    <AgencyValue>{`$ ${formatCurrency(agencyServiceAmount)}`}</AgencyValue>
+                </ValueWrapper>
             </RightSection>
         </AgencyServiceRow>
     );

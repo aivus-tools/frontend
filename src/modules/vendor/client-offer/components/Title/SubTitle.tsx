@@ -31,7 +31,7 @@ export const SubTitle = ({ text, itemKey, value }: Props) => {
                     <div style={{ backgroundColor: '#fff' }} />
                     <div style={{ backgroundColor: '#fff' }} />
                     <div style={{ backgroundColor: '#fff' }} />
-                    <SectionSubTitleSumHeader style={{ backgroundColor: '#fff', paddingRight: 10 }}>
+                    <SectionSubTitleSumHeader style={{ backgroundColor: '#fff', paddingRight: 2 }}>
                         {value}
                     </SectionSubTitleSumHeader>
                     <div style={{ backgroundColor: '#fff' }} />

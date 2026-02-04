@@ -43,7 +43,7 @@ export const Content = styled.div`
 
 export const Table = styled.div`
   display: grid;
-  grid-template-columns: 38px 1fr 90px 90px 90px 120px 32px;
+  grid-template-columns: 38px 1fr 90px 90px 90px 110px 40px;
   grid-auto-flow: row;
   width: 100%;
 `;
@@ -151,6 +151,14 @@ export const RowLineStart = styled.div`
   background: #fff;
 `;
 
+// Entry row line (from column 2 to column 6, excluding action column)
+export const EntryRowLine = styled.div`
+  grid-column: 2 / 7;
+  border-bottom: 1px dashed var(--gray-light, #E1E3EA);
+  height: 0;
+  background: transparent;
+`;
+
 export const Label = styled.div`
   font-weight: 600;
   font-size: 14px;
@@ -251,7 +259,7 @@ export const SubTotalRow = styled.div`
 export const CategoryTotalRow = styled.div`
   grid-column: span 7;
   display: flex;
-  padding: 20px 8px 14px 8px;
+  padding: 20px 40px 14px 8px;
   justify-content: flex-end;
   align-items: center;
   gap: 20px;
