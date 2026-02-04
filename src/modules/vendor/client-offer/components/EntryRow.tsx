@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
-import { Typography , Flex } from 'antd';
+import { Typography, Flex } from 'antd';
 import { formatCurrency } from '@/lib/utils';
 import { t } from '@/lib/i18n';
 import { useGuidance } from '@/context/GuidanceProvider';
@@ -40,9 +40,7 @@ export const EntryRow = ({ offer, isEven }: Props) => {
             onClick={handleClick}
             style={{ cursor: 'pointer' }}
         >
-            <EstimationItem $hovered={isActive || isHovered} style={{ justifyContent: 'center' }}>
-                {isActive && <RightSquareOutlined style={{ color: 'var(--blue)', fontSize: 16 }} />}
-            </EstimationItem>
+            <EstimationItem $hovered={isActive || isHovered} style={{ justifyContent: 'center' }} />
             <EstimationItem $hovered={isActive || isHovered} style={{ justifyContent: 'flex-start', textAlign: 'left', alignItems: 'flex-start' }}>
                 <Flex vertical>
                     <Typography.Text style={{ fontWeight: 600 }}>{offer.item}</Typography.Text>
@@ -60,8 +58,9 @@ export const EntryRow = ({ offer, isEven }: Props) => {
             <EstimationItem $hovered={isActive || isHovered} style={{ justifyContent: 'center' }}>
                 <QuantityDisplay units={offer.units} />
             </EstimationItem>
-            <EstimationItem $hovered={isActive || isHovered} style={{ paddingRight: 10 }}>
+            <EstimationItem $hovered={isActive || isHovered} style={{ paddingRight: 10, gap: 8 }}>
                 {`$ ${formatCurrency(offer.clientCost)}`}
+                {isActive && <RightSquareOutlined style={{ color: 'var(--blue)', fontSize: 16 }} />}
             </EstimationItem>
         </RowWrapper>
     );

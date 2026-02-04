@@ -40,26 +40,26 @@ const Wrapper = styled.div`
 `;
 
 export const Guidance = () => {
-    const { observedRef, width } = useComponentSize();
-    const { focusedField } = useGuidance();
+  const { observedRef, width } = useComponentSize();
+  const { focusedField } = useGuidance();
 
-    return (
-        <Wrapper ref={observedRef}>
-            <Section style={{ position: 'fixed', width: width }}>
-                <Header>{t('GUIDANCE')}</Header>
-                <Content>
-                    {focusedField ? (
-                        <>
-                            <ItemTitle>{focusedField.label}</ItemTitle>
-                            <BorderDashedLine />
-                            <SectionLabel>{t('WHAT_IS_THIS_USED_FOR')}</SectionLabel>
-                            <Description>{focusedField.description}</Description>
-                        </>
-                    ) : (
-                        <Typography.Text type='secondary'>{t('CLICK_ON_FIELD_FOR_GUIDANCE')}</Typography.Text>
-                    )}
-                </Content>
-            </Section>
-        </Wrapper>
-    );
+  return (
+    <Wrapper ref={observedRef}>
+      <Section style={{ position: 'fixed', width: width }}>
+        <Header style={{ marginTop: 25 }}>{t('GUIDANCE')}</Header>
+        <Content style={{ marginTop: 5 }}>
+          {focusedField ? (
+            <>
+              <ItemTitle>{focusedField.label}</ItemTitle>
+              <BorderDashedLine />
+              <SectionLabel>{t('WHAT_IS_THIS_USED_FOR')}</SectionLabel>
+              <Description>{focusedField.description}</Description>
+            </>
+          ) : (
+            <Typography.Text type='secondary'>{t('CLICK_ON_FIELD_FOR_GUIDANCE')}</Typography.Text>
+          )}
+        </Content>
+      </Section>
+    </Wrapper>
+  );
 };

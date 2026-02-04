@@ -43,7 +43,7 @@ export const Content = styled.div`
 
 export const Table = styled.div`
   display: grid;
-  grid-template-columns: 38px 1fr 90px 90px 90px 100px;
+  grid-template-columns: 38px 1fr 90px 90px 90px 120px;
   grid-auto-flow: row;
   width: 100%;
 `;
@@ -66,7 +66,7 @@ export const HeaderCell = styled.div<{ $align?: 'left' | 'center' | 'right' }>`
   align-items: center;
   justify-content: ${({ $align }) =>
     $align === 'left' ? 'flex-start' :
-    $align === 'right' ? 'flex-end' : 'center'};
+      $align === 'right' ? 'flex-end' : 'center'};
   padding-right: ${({ $align }) => $align === 'right' ? '10px' : '0'};
 `;
 
@@ -242,7 +242,7 @@ export const SubTotalRow = styled.div`
 export const CategoryTotalRow = styled.div`
   grid-column: span 6;
   display: flex;
-  padding: 20px 40px 14px 8px;
+  padding: 20px 8px 14px 8px;
   justify-content: flex-end;
   align-items: center;
   gap: 20px;
@@ -251,16 +251,16 @@ export const CategoryTotalRow = styled.div`
   box-shadow: 0px 5px 16.5px -11px rgba(0, 0, 0, 0.25);
 `;
 
-// Summary rows
+// Summary rows - Subtotal for All Sections
 export const SummaryRow = styled.div`
   grid-column: span 6;
   display: flex;
-  padding: 16px 40px 16px 8px;
-  justify-content: flex-end;
+  padding: 16px 40px 16px 16px;
+  justify-content: space-between;
   align-items: center;
-  gap: 20px;
-  background: #F1F1F2;
+  background: var(--bg-blue-important, #E1F5FF);
   border-radius: 6px;
+  box-shadow: 0 5px 16.5px -11px rgba(0, 0, 0, 0.25);
   margin-top: 15px;
 `;
 
@@ -272,7 +272,7 @@ export const GrandTotalRow = styled.div`
   align-items: center;
   background: var(--bg-green, #F4FBDB);
   border-radius: 6px;
-  margin-top: 8px;
+  margin-top: 0;
 `;
 
 export const CostPerVideoRow = styled.div`

@@ -17,7 +17,7 @@ export const SubTotal = ({ name, value }: Props) => {
             <div />
             <Flex style={{ gridColumn: 'span 4', paddingRight: 20 }} justify='flex-end' align='center'>
                 <Label style={{ fontSize: 12, padding: '12px 0', textTransform: 'none', color: 'var(--gray)' }}>
-                    {t('SUBTOTAL_OF_LOCATIONS', name)}:
+                    {t('SUBTOTAL_OF_LOCATIONS', name)}
                 </Label>
             </Flex>
             <div>

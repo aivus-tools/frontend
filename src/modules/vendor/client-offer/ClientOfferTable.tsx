@@ -53,7 +53,7 @@ export const ClientOfferTable = ({ offers }: Props) => {
                         <HeaderCell $align='right'>{t('PRICE')}</HeaderCell>
                         <HeaderCell $align='right'>{t('UNITS')}</HeaderCell>
                         <HeaderCell $align='center'>{t('QUANTITY')}</HeaderCell>
-                        <HeaderCell $align='right'>{t('COST')}</HeaderCell>
+                        <HeaderCell $align='center'>{t('COST')}</HeaderCell>
                     </TableHeader>
 
                     {topCategories.map((category) => (

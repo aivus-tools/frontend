@@ -10,7 +10,6 @@ export const Summary = () => {
     return (
         <>
             <SubtotalAllSections />
-            <AgencyService />
             <GrandTotal />
             <CostPerVideo />
         </>
