@@ -13,14 +13,14 @@ const CostLabel = styled.span`
     font-weight: 500;
     font-size: 13px;
     line-height: 16px;
-    color: var(--gray);
+    color: #99A1B7;
 `;
 
 const CostValue = styled.span`
-    font-weight: 500;
+    font-weight: 600;
     font-size: 13px;
     line-height: 16px;
-    color: var(--gray);
+    color: #99A1B7;
 `;
 
 export const CostPerVideo = () => {

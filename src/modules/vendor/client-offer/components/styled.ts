@@ -260,36 +260,53 @@ export const SummaryRow = styled.div`
   align-items: center;
   background: var(--bg-blue-important, #E1F5FF);
   border-radius: 6px;
-  box-shadow: 0 5px 16.5px -11px rgba(0, 0, 0, 0.25);
+  box-shadow: 0 4px 8px -2px rgba(0, 0, 0, 0.15);
   margin-top: 15px;
-`;
-
-export const GrandTotalRow = styled.div`
-  grid-column: span 6;
-  display: flex;
-  padding: 16px 40px 16px 8px;
-  justify-content: space-between;
-  align-items: center;
-  background: var(--bg-green, #F4FBDB);
-  border-radius: 6px;
-  margin-top: 0;
-`;
-
-export const CostPerVideoRow = styled.div`
-  grid-column: span 6;
-  display: flex;
-  padding: 8px 40px 8px 8px;
-  justify-content: space-between;
-  align-items: center;
-  margin-top: 8px;
+  margin-bottom: -6px;
+  position: relative;
+  z-index: 3;
 `;
 
 export const AgencyServiceRow = styled.div`
   grid-column: span 6;
   display: flex;
-  padding: 8px 40px 8px 14px;
+  padding: 12px 40px 12px 14px;
   justify-content: space-between;
   align-items: center;
   background: #fff;
-  margin-top: 8px;
+  border-radius: 6px;
+  box-shadow: 0 4px 8px -2px rgba(0, 0, 0, 0.1);
+  margin-bottom: -6px;
+  position: relative;
+  z-index: 2;
+`;
+
+export const GrandTotalRow = styled.div`
+  grid-column: span 6;
+  display: flex;
+  padding: 16px 40px 16px 16px;
+  justify-content: space-between;
+  align-items: center;
+  background: var(--bg-green, #F4FBDB);
+  border-radius: 6px;
+  box-shadow: 0px 5px 16.5px -11px rgba(0, 0, 0, 0.25);
+  margin-bottom: -6px;
+  position: relative;
+  z-index: 1;
+`;
+
+export const CostPerVideoRow = styled.div`
+  grid-column: span 6;
+  display: flex;
+  padding: 10px 40px 4px 14px;
+  justify-content: space-between;
+  align-items: center;
+  background: #fff;
+  border-radius: 6px;
+  box-shadow: 0px 5px 16.5px -11px rgba(0, 0, 0, 0.25);
+  margin-left: 14px;
+  margin-right: 14px;
+  width: calc(100% - 28px);
+  position: relative;
+  z-index: 0;
 `;
