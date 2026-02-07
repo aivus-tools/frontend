@@ -54,20 +54,20 @@ const nextConfig = {
       "default-src 'self'",
       "script-src 'self' 'unsafe-eval' 'unsafe-inline'",
       "style-src 'self' 'unsafe-inline'",
-      "img-src 'self' data: https:",
+      "img-src 'self' data: blob: https:",
       "font-src 'self' data:",
-      "connect-src 'self' http://localhost:8000",
+      "connect-src 'self' data: http://localhost:8000",
       "frame-ancestors 'self' https://www.vilkaservice.com https://app.aivus.co",
     ].join('; ');
-    
+
     // CSP для production без unsafe-eval (более строгий)
     const cspProduction = [
       "default-src 'self'",
       "script-src 'self' 'unsafe-inline'",
       "style-src 'self' 'unsafe-inline'",
-      "img-src 'self' data: https:",
+      "img-src 'self' data: blob: https:",
       "font-src 'self' data:",
-      "connect-src 'self' https://api.aivus.co",
+      "connect-src 'self' data: https://api.aivus.co",
       "frame-ancestors 'self' https://www.vilkaservice.com https://app.aivus.co",
     ].join('; ');
     

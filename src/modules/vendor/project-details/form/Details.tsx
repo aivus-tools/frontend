@@ -24,6 +24,7 @@ export default function Details() {
   const dispatch = useAppDispatch();
   const storedProjectId = useAppSelector(selectProjectId);
   const { create, update, isLoading: isMutating } = useMutateProject();
+  const [uploadThumbnail] = projectsApi.useUploadThumbnailMutation();
   const { data: brief, isLoading } = useBrief();
   const { data: existingProject } = projectsApi.useGetProjectByIdQuery(storedProjectId || '', {
     skip: !storedProjectId,
@@ -83,7 +84,6 @@ export default function Details() {
 
   const handleSubmit = useCallback(
     async (formData: ProjectFormData) => {
-      console.log('formData', formData);
       try {
         let projectId: string | undefined;
 
@@ -101,6 +101,16 @@ export default function Details() {
           }
         }
 
+        // Upload thumbnail if a file was selected
+        const thumbnailFile = form.getFieldValue('previewImage') as File | null;
+        if (thumbnailFile && projectId) {
+          try {
+            await uploadThumbnail({ projectId, file: thumbnailFile }).unwrap();
+          } catch (err) {
+            console.error('Error uploading thumbnail:', err);
+          }
+        }
+
         messageApi.success(t('DETAILS_SAVED_SUCCESSFULLY'));
 
         if (projectId) {
@@ -115,7 +125,7 @@ export default function Details() {
         messageApi.error((error as { data?: { message?: string } })?.data?.message || t('ERROR_SAVING_DETAILS'));
       }
     },
-    [create, dispatch, existingProject, messageApi, router, storedProjectId, update]
+    [create, dispatch, existingProject, form, messageApi, router, storedProjectId, update, uploadThumbnail]
   );
 
   return (
@@ -148,7 +158,7 @@ export default function Details() {
             <Section>
               <Header>{t('INITIAL_PARAMETERS')}</Header>
               <Content>
-                <InitialParameters />
+                <InitialParameters thumbnailUrl={existingProject?.thumbnailUrl} />
               </Content>
             </Section>
             <Section>

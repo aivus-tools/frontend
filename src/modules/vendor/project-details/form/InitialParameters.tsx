@@ -9,10 +9,17 @@ import { useGuidance } from '@/context/GuidanceProvider';
 import RemoveIcon from '@/icons/minus.svg';
 import { AntdListWrapper, IconButton } from '../common/styled';
 import { t } from '@/lib/i18n';
+import { useAppSelector } from '@/store/hooks';
+import { selectIsNewBrief } from '@/store/slices/project';
 
 const { TextArea } = Input;
 
-export const InitialParameters: React.FC = () => {
+interface InitialParametersProps {
+  thumbnailUrl?: string | null;
+}
+
+export const InitialParameters: React.FC<InitialParametersProps> = ({ thumbnailUrl }) => {
+  const isNewProject = useAppSelector(selectIsNewBrief);
   const addPersonEmptyRow = useRef<() => void>(() => {});
   const { handleFocus } = useGuidance();
   const form = Form.useFormInstance<ProjectFormData & { options?: { collaborators?: Person[] } }>();
@@ -37,7 +44,7 @@ export const InitialParameters: React.FC = () => {
       {modal}
       <Flex gap={30} style={{ width: '100%' }}>
         <Form.Item name='previewImage' valuePropName='image' style={{ width: 'auto' }}>
-          <Uploader />
+          <Uploader thumbnailUrl={thumbnailUrl} />
         </Form.Item>
         <Flex gap={20} flex={1}>
           <Form.Item
@@ -77,54 +84,56 @@ export const InitialParameters: React.FC = () => {
           autoSize={{ minRows: 2, maxRows: 2 }}
         />
       </Form.Item>
-      <Row gutter={20}>
-        <Col span={12}>
-          <AntdListWrapper>
-            <Form.List name='collaborators'>
-              {(fields, { add, remove }) => {
-                addPersonEmptyRow.current = () => {
-                  add({ name: '', email: '', role: 'internal_user' });
-                };
-                return (
-                  <Form.Item label={<LabelWithAdd text={t('COLLABORATORS')} onClick={() => showModal()} />}>
-                    {fields.map((field, index) => (
-                      <Flex gap={20} key={field.key}>
-                        <Form.Item noStyle name={[field.name, 'email']}>
-                          <Select
-                            placeholder={t('SELECT_PERSON')}
-                            onFocus={handleFocus('collaborators')}
-                            options={internalOptions}
-                          />
-                        </Form.Item>
-                        {fields.length > 1 && fields.length - 1 !== index && (
-                          <Form.Item noStyle>
-                            <IconButton
-                              onClick={() => {
-                                if (fields.length > 1) remove(field.name);
-                              }}
-                            >
-                              <RemoveIcon color={'var(--gray-light)'} />
-                            </IconButton>
+      {!isNewProject && (
+        <Row gutter={20}>
+          <Col span={12}>
+            <AntdListWrapper>
+              <Form.List name='collaborators'>
+                {(fields, { add, remove }) => {
+                  addPersonEmptyRow.current = () => {
+                    add({ name: '', email: '', role: 'internal_user' });
+                  };
+                  return (
+                    <Form.Item label={<LabelWithAdd text={t('COLLABORATORS')} onClick={() => showModal()} />}>
+                      {fields.map((field, index) => (
+                        <Flex gap={20} key={field.key}>
+                          <Form.Item noStyle name={[field.name, 'email']}>
+                            <Select
+                              placeholder={t('SELECT_PERSON')}
+                              onFocus={handleFocus('collaborators')}
+                              options={internalOptions}
+                            />
                           </Form.Item>
-                        )}
-                      </Flex>
-                    ))}
-                  </Form.Item>
-                );
-              }}
-            </Form.List>
-          </AntdListWrapper>
-        </Col>
-        <Col span={12}>
-          <Typography.Text>
-            <b>{t('ADD_INTERNAL_MANAGERS')}</b> {t('INTERNAL_MANAGERS_DESCRIPTION')}
-          </Typography.Text>
-          <br />
-          <Typography.Text>
-            <b>{t('ADD_FREELANCERS')}</b> {t('FREELANCERS_DESCRIPTION')}
-          </Typography.Text>
-        </Col>
-      </Row>
+                          {fields.length > 1 && fields.length - 1 !== index && (
+                            <Form.Item noStyle>
+                              <IconButton
+                                onClick={() => {
+                                  if (fields.length > 1) remove(field.name);
+                                }}
+                              >
+                                <RemoveIcon color={'var(--gray-light)'} />
+                              </IconButton>
+                            </Form.Item>
+                          )}
+                        </Flex>
+                      ))}
+                    </Form.Item>
+                  );
+                }}
+              </Form.List>
+            </AntdListWrapper>
+          </Col>
+          <Col span={12}>
+            <Typography.Text>
+              <b>{t('ADD_INTERNAL_MANAGERS')}</b> {t('INTERNAL_MANAGERS_DESCRIPTION')}
+            </Typography.Text>
+            <br />
+            <Typography.Text>
+              <b>{t('ADD_FREELANCERS')}</b> {t('FREELANCERS_DESCRIPTION')}
+            </Typography.Text>
+          </Col>
+        </Row>
+      )}
     </>
   );
 };

@@ -3,7 +3,7 @@ import { ReactNode } from 'react';
 
 import { GuidanceAndControls } from '../common/GuidanceAndControls';
 import { Wrapper, Section, Header, Column, Content } from '../common/styled';
-import { Col, Flex, Row, Typography } from 'antd';
+import { Col, Flex, Image, Row, Typography } from 'antd';
 import { GuidanceProvider } from '@/context/GuidanceProvider';
 import Spinner from '@/components/Spinner';
 import HouseIcon from '@/icons/house.svg';
@@ -37,6 +37,14 @@ const TextEmpty = styled(Typography.Text)`
   color: #d9d9d9 !important;
 `;
 
+const Thumbnail = styled.div`
+  width: 104px;
+  height: 104px;
+  border-radius: 8px;
+  overflow: hidden;
+  flex-shrink: 0;
+`;
+
 const Item = ({ label, value }: Props) => (
   <Flex gap={4} justify='center' vertical>
     {label && <Label>{label}</Label>}
@@ -65,14 +73,24 @@ export default function Details() {
           <Section>
             <Header>{t('INITIAL_PARAMETERS')}</Header>
             <Content style={{ minWidth: '584px' }}>
-              <Row align='middle'>
-                <Col span={12}>
-                  <Flex gap={20} align='center'>
-                    <HouseIcon />
-                    <Item label={t('CRM_ID_LINK')} value={project.crmId} />
-                  </Flex>
-                </Col>
-              </Row>
+              <Flex gap={30} align='start'>
+                {project.thumbnailUrl ? (
+                  <Thumbnail>
+                    <Image
+                      src={project.thumbnailUrl}
+                      alt={t('THUMBNAIL')}
+                      width={104}
+                      height={104}
+                      style={{ objectFit: 'cover' }}
+                    />
+                  </Thumbnail>
+                ) : (
+                  <HouseIcon />
+                )}
+                <Flex gap={20} align='center' style={{ flex: 1 }}>
+                  <Item label={t('CRM_ID_LINK')} value={project.crmId} />
+                </Flex>
+              </Flex>
               <Row align='middle' style={{ marginTop: 20 }}>
                 <Col span={24}>
                   <Item label={t('PROJECT_NAME')} value={project.name} />

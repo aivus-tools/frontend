@@ -59,6 +59,7 @@ export interface NewProject {
   crmId?: string;
   description?: string;
   clientId?: string | null;
+  clientName?: string;
   irsEin?: string;
   brandName?: string;
   collaborators?: NewProjectCollaborator[];

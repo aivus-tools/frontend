@@ -25,6 +25,9 @@ export interface ProjectFormData {
     name: string;
     position?: string;
   }>;
+
+  // Thumbnail (File object from Uploader, not sent in JSON payload)
+  previewImage?: File | null;
 }
 
 export const useMutateProject = () => {
@@ -53,11 +56,12 @@ export const useMutateProject = () => {
         crmId: formData.crmId || '',
         description: formData.description || '',
         clientId: formData.clientId || null,
+        clientName: formData.clientName || '',
         irsEin: formData.irsEin || '',
         brandName: formData.brandName || '',
-        collaborators: formData.collaborators?.filter((c) => c.name).map((c) => ({
+        collaborators: formData.collaborators?.filter((c) => c.name || c.email).map((c) => ({
           userId: c.userId || null,
-          name: c.name,
+          name: c.name || c.email || '',
           email: c.email || '',
           role: c.role || 'internal_user',
         })) || [],
@@ -109,6 +113,9 @@ export const useMutateProject = () => {
       if (formData.clientId !== undefined) {
         updatePayload.clientId = formData.clientId;
       }
+      if (formData.clientName !== undefined) {
+        updatePayload.clientName = formData.clientName;
+      }
       if (formData.irsEin !== undefined) {
         updatePayload.irsEin = formData.irsEin;
       }
@@ -116,9 +123,9 @@ export const useMutateProject = () => {
         updatePayload.brandName = formData.brandName;
       }
       if (formData.collaborators !== undefined) {
-        updatePayload.collaborators = formData.collaborators.filter((c) => c.name).map((c) => ({
+        updatePayload.collaborators = formData.collaborators.filter((c) => c.name || c.email).map((c) => ({
           userId: c.userId || null,
-          name: c.name,
+          name: c.name || c.email || '',
           email: c.email || '',
           role: c.role || 'internal_user',
         }));

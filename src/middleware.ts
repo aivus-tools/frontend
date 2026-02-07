@@ -20,8 +20,8 @@ const isPublicAuthPath = (pathname: string): boolean => {
 // CSP для development с unsafe-eval
 const isDevelopment = process.env.NODE_ENV === 'development';
 const CSP = isDevelopment
-  ? "default-src 'self'; script-src 'self' 'unsafe-eval' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data: https:; font-src 'self' data:; connect-src 'self' http://localhost:8000; frame-ancestors 'self' https://www.vilkaservice.com https://app.aivus.co"
-  : "default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data: https:; font-src 'self' data:; connect-src 'self' https://api.aivus.co; frame-ancestors 'self' https://www.vilkaservice.com https://app.aivus.co";
+  ? "default-src 'self'; script-src 'self' 'unsafe-eval' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https:; font-src 'self' data:; connect-src 'self' data: http://localhost:8000; frame-ancestors 'self' https://www.vilkaservice.com https://app.aivus.co"
+  : "default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https:; font-src 'self' data:; connect-src 'self' data: https://api.aivus.co; frame-ancestors 'self' https://www.vilkaservice.com https://app.aivus.co";
 
 export default auth(async (req) => {
   if (req.nextUrl.pathname.startsWith('/external')) {
