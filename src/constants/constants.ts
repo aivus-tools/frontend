@@ -62,18 +62,18 @@ export const VENDOR_PROJECT_TABS = [
     key: VENDOR_PROJECT_TAB_KEYS.OFFER,
     label: t('CLIENTS_OFFER'),
   },
-  {
-    key: VENDOR_PROJECT_TAB_KEYS.TIMING,
-    label: t('TIMING'),
-  },
-  {
-    key: VENDOR_PROJECT_TAB_KEYS.PRESENTATION,
-    label: t('PRESENTATION'),
-  },
-  {
-    key: VENDOR_PROJECT_TAB_KEYS.ANALYSIS,
-    label: t('ANALYSIS'),
-  },
+  // {
+  //   key: VENDOR_PROJECT_TAB_KEYS.TIMING,
+  //   label: t('TIMING'),
+  // },
+  // {
+  //   key: VENDOR_PROJECT_TAB_KEYS.PRESENTATION,
+  //   label: t('PRESENTATION'),
+  // },
+  // {
+  //   key: VENDOR_PROJECT_TAB_KEYS.ANALYSIS,
+  //   label: t('ANALYSIS'),
+  // },
 ];
 
 export const NEW_BRIEF_SLUG = 'new-brief';
