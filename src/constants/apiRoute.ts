@@ -38,6 +38,7 @@ export const ApiRoute = {
   OFFER_LIST: `/service/offers`,
   PROJECT: (id: string | number) => `/service/projects/${id}`,
   PROJECT_LIST: `/service/projects`,
+  PROJECT_THUMBNAIL: (id: string | number) => `/service/projects/${id}/thumbnail`,
   RATE: (id: string | number) => `/service/rates/${id}`,
   RATES: '/service/rates',
   RATES_FORK: '/service/rates/fork',

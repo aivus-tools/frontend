@@ -1,6 +1,35 @@
-import { Details } from '@/types/brief.interface';
+import { ProjectFormData } from '@/hooks/useMutateProject';
 
-export const initialValues: Details = {
+// Initial values for Project form (new structure without Brief fields)
+export const initialValues: ProjectFormData = {
+  // Initial Parameters
+  crmId: '',
+  projectName: '',
+  description: '',
+  collaborators: [
+    {
+      name: '',
+      email: '',
+      role: 'internal_user',
+    },
+  ],
+
+  // Client
+  clientId: null,
+  clientName: '',
+  irsEin: '',
+  brandName: '',
+  managers: [
+    {
+      name: '',
+      position: '',
+    },
+  ],
+};
+
+// Keep old Details type values for backwards compatibility (Brief form)
+// This will be used when Brief form is reactivated for Client usage
+export const briefInitialValues = {
   brandName: '',
   projectDescription: '',
   estimationTemplate: '',

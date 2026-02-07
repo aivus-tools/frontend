@@ -53,7 +53,7 @@ export const Client: React.FC = () => {
                 <Row key={field.key}>
                   <Col span={14}>
                     <Flex gap={10} style={{ marginRight: '20px' }}>
-                      <Form.Item name={[field.name, 'manager']} label={managerLabel} extra={extra} style={{ flex: 1 }}>
+                      <Form.Item name={[field.name, 'name']} label={managerLabel} extra={extra} style={{ flex: 1 }}>
                         <Input placeholder='' onFocus={handleFocus('manager')} />
                       </Form.Item>
                       <Form.Item label={isFirst ? ' ' : null}>

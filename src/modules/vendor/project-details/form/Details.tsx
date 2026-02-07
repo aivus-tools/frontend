@@ -4,13 +4,13 @@ import { useRouter } from 'next/navigation';
 
 import { InitialParameters } from './InitialParameters';
 import { Client } from './Client';
-import { Brief } from './Brief';
-import { Specifications } from './Specifications';
+// Brief and Specifications are commented out - will be used by Client later
+// import { Brief } from './Brief';
+// import { Specifications } from './Specifications';
 import { GuidanceAndControls } from '../common/GuidanceAndControls';
 import { Wrapper, Section, Header, Column, Content } from '../common/styled';
 import { Form, message } from 'antd';
-import { useMutateBrief } from '@/hooks/useMutateBrief';
-import { Details as DetailsType } from '@/types/brief.interface';
+import { useMutateProject, ProjectFormData } from '@/hooks/useMutateProject';
 import { useBrief } from '@/hooks/useBrief';
 import { GuidanceProvider } from '@/context/GuidanceProvider';
 import { useAppDispatch, useAppSelector } from '@/store/hooks';
@@ -18,37 +18,83 @@ import { setMode, selectProjectId } from '@/store/slices/project';
 import { initialValues } from './initialValues';
 import { t } from '@/lib/i18n';
 import { AppRoute } from '@/constants/appRoute';
+import { projectsApi } from '@/services/client/projectsApi';
 
 export default function Details() {
   const dispatch = useAppDispatch();
   const storedProjectId = useAppSelector(selectProjectId);
-  const { create, update, isLoading: isMutating } = useMutateBrief();
+  const { create, update, isLoading: isMutating } = useMutateProject();
   const { data: brief, isLoading } = useBrief();
-  const [form] = Form.useForm<DetailsType>();
+  const { data: existingProject } = projectsApi.useGetProjectByIdQuery(storedProjectId || '', {
+    skip: !storedProjectId,
+  });
+  const [form] = Form.useForm<ProjectFormData>();
   const [messageApi, context] = message.useMessage();
   const router = useRouter();
 
+  // Set form values from existing project or brief
   useEffect(() => {
     form.setFieldsValue(initialValues);
-    if (!isLoading && brief && typeof brief.details === 'object') {
-      form.setFieldsValue(brief.details);
+
+    // If we have an existing project, populate form from it
+    if (existingProject) {
+      form.setFieldsValue({
+        crmId: existingProject.crmId || '',
+        projectName: existingProject.name || '',
+        description: existingProject.description || '',
+        clientId: existingProject.clientId || null,
+        clientName: existingProject.clientName || '',
+        irsEin: existingProject.irsEin || '',
+        brandName: existingProject.brandName || '',
+        collaborators: existingProject.collaborators?.map((c) => ({
+          userId: c.userId || null,
+          name: c.name,
+          email: c.email,
+          role: c.role,
+        })) || [{ name: '', email: '', role: 'internal_user' as const }],
+        managers: existingProject.clientManagers?.map((m) => ({
+          name: m.name,
+          position: m.position,
+        })) || [{ name: '', position: '' }],
+      });
+    } else if (!isLoading && brief && typeof brief.details === 'object') {
+      // Fallback to brief details for backwards compatibility
+      const details = brief.details;
+      form.setFieldsValue({
+        crmId: details.crmId || '',
+        projectName: details.projectName || '',
+        description: details.description || '',
+        clientName: details.clientName || '',
+        irsEin: details.irsEin || '',
+        brandName: details.brandName || '',
+        // Map old format { manager, position } to new { name, position }
+        managers: details.managers?.map((m: { manager?: string; name?: string; position?: string }) => ({
+          name: m.manager || m.name || '',
+          position: m.position || '',
+        })) || [{ name: '', position: '' }],
+        collaborators: details.collaborators?.map((c: string) => ({
+          name: c,
+          email: '',
+          role: 'internal_user' as const,
+        })) || [{ name: '', email: '', role: 'internal_user' as const }],
+      });
     }
-  }, [brief, form, isLoading]);
+  }, [brief, existingProject, form, isLoading]);
 
   const handleSubmit = useCallback(
-    async (details: DetailsType) => {
-      console.log('details', details);
+    async (formData: ProjectFormData) => {
+      console.log('formData', formData);
       try {
         let projectId: string | undefined;
-        if (brief) {
-          // Update existing brief
-          await update({ ...brief, details });
-          // Get projectId from Redux store (already set by useSetProject hook)
-          projectId = storedProjectId || undefined;
+
+        if (storedProjectId && existingProject) {
+          // Update existing project
+          await update(storedProjectId, formData);
+          projectId = storedProjectId;
         } else {
-          // Create new brief + project + offer
-          const data = await create(details);
-          projectId = (data as { projectId?: string })?.projectId;
+          // Create new project + offer (without Brief!)
+          const data = await create(formData);
+          projectId = data.projectId;
 
           if (!projectId) {
             throw new Error('Project ID not returned from create');
@@ -65,17 +111,17 @@ export default function Details() {
           messageApi.error(t('ERROR_SAVING_DETAILS'));
         }
       } catch (error) {
-        console.error('Error saving brief:', error);
+        console.error('Error saving project:', error);
         messageApi.error((error as { data?: { message?: string } })?.data?.message || t('ERROR_SAVING_DETAILS'));
       }
     },
-    [brief, create, dispatch, messageApi, router, storedProjectId, update]
+    [create, dispatch, existingProject, messageApi, router, storedProjectId, update]
   );
 
   return (
     <GuidanceProvider>
       {context}
-      <Form<DetailsType>
+      <Form<ProjectFormData>
         form={form}
         layout='vertical'
         disabled={isMutating}
@@ -84,10 +130,15 @@ export default function Details() {
         onFinish={handleSubmit}
         scrollToFirstError
         clearOnDestroy
-        onValuesChange={(changedValues, { collaborators }) => {
-          if (changedValues.collaborators) {
-            if (collaborators?.every((person) => !!person)) {
-              form.setFieldsValue({ collaborators: [...collaborators, ''] });
+        onValuesChange={(changedValues, allValues) => {
+          // Auto-add empty collaborator row when last one is filled
+          if (changedValues.collaborators && allValues.collaborators) {
+            const collaborators = allValues.collaborators;
+            // Check if all collaborators have email filled (email is set via Select)
+            if (collaborators.every((person) => person && (person.name || person.email))) {
+              form.setFieldsValue({
+                collaborators: [...collaborators, { name: '', email: '', role: 'internal_user' as const }],
+              });
             }
           }
         }}
@@ -106,6 +157,7 @@ export default function Details() {
                 <Client />
               </Content>
             </Section>
+            {/* Brief and Specifications sections commented out - will be used by Client later
             <Section>
               <Header>{t('THE_CLIENTS_BRIEF')}</Header>
               <Content>
@@ -118,6 +170,7 @@ export default function Details() {
                 <Specifications />
               </Content>
             </Section>
+            */}
           </Column>
           <Column style={{ flex: '1 1 30%', justifyContent: 'space-between' }}>
             <GuidanceAndControls />

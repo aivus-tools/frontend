@@ -38,6 +38,18 @@ export const projectsApi = createApi({
       }),
       invalidatesTags: ['Project'],
     }),
+    uploadThumbnail: builder.mutation<{ thumbnailUrl: string }, { projectId: string; file: File }>({
+      query: ({ projectId, file }) => {
+        const formData = new FormData();
+        formData.append('thumbnail', file);
+        return {
+          url: ApiRoute.PROJECT_THUMBNAIL(projectId),
+          method: 'POST',
+          body: formData,
+        };
+      },
+      invalidatesTags: ['Project'],
+    }),
   }),
 });
 
@@ -47,4 +59,5 @@ export const {
   useGetProjectByIdQuery,
   useUpdateProjectMutation,
   useDeleteProjectMutation,
+  useUploadThumbnailMutation,
 } = projectsApi;

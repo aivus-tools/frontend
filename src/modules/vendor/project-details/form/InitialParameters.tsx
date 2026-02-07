@@ -3,7 +3,8 @@ import { Form, Input, Select, Flex, Row, Col, Typography } from 'antd';
 import { Uploader } from './Uploader';
 import { LabelWithAdd } from './LabelWithAdd';
 import { usePersonModal } from '../hooks/usePersonModal';
-import { Details, Person } from '@/types/brief.interface';
+import { Person } from '@/types/brief.interface';
+import { ProjectFormData } from '@/hooks/useMutateProject';
 import { useGuidance } from '@/context/GuidanceProvider';
 import RemoveIcon from '@/icons/minus.svg';
 import { AntdListWrapper, IconButton } from '../common/styled';
@@ -14,7 +15,7 @@ const { TextArea } = Input;
 export const InitialParameters: React.FC = () => {
   const addPersonEmptyRow = useRef<() => void>(() => {});
   const { handleFocus } = useGuidance();
-  const form = Form.useFormInstance<Details>();
+  const form = Form.useFormInstance<ProjectFormData & { options?: { collaborators?: Person[] } }>();
   const addPerson = (user: Person) => {
     const currentValues: Person[] = form.getFieldValue(['options', 'collaborators']) ?? [];
     form.setFieldValue(['options', 'collaborators'], [...currentValues, user]);
@@ -29,7 +30,7 @@ export const InitialParameters: React.FC = () => {
       label: `${person.firstName} ${person.surname}`,
       value: person.email,
     }))
-    .filter((option) => !collaborators.some((collaborator) => collaborator === option.value));
+    .filter((option) => !collaborators?.some((collaborator) => collaborator?.email === option.value));
 
   return (
     <>
@@ -82,13 +83,13 @@ export const InitialParameters: React.FC = () => {
             <Form.List name='collaborators'>
               {(fields, { add, remove }) => {
                 addPersonEmptyRow.current = () => {
-                  add();
+                  add({ name: '', email: '', role: 'internal_user' });
                 };
                 return (
                   <Form.Item label={<LabelWithAdd text={t('COLLABORATORS')} onClick={() => showModal()} />}>
                     {fields.map((field, index) => (
                       <Flex gap={20} key={field.key}>
-                        <Form.Item noStyle name={field.name}>
+                        <Form.Item noStyle name={[field.name, 'email']}>
                           <Select
                             placeholder={t('SELECT_PERSON')}
                             onFocus={handleFocus('collaborators')}
