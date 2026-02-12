@@ -6,13 +6,7 @@ export const initialValues: ProjectFormData = {
   crmId: '',
   projectName: '',
   description: '',
-  collaborators: [
-    {
-      name: '',
-      email: '',
-      role: 'internal_user',
-    },
-  ],
+  collaborators: [],
 
   // Client
   clientId: null,

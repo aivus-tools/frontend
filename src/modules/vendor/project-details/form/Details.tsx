@@ -52,7 +52,7 @@ export default function Details() {
           name: c.name,
           email: c.email,
           role: c.role,
-        })) || [{ name: '', email: '', role: 'internal_user' as const }],
+        })) || [],
         managers: existingProject.clientManagers?.map((m) => ({
           name: m.name,
           position: m.position,
@@ -77,7 +77,7 @@ export default function Details() {
           name: c,
           email: '',
           role: 'internal_user' as const,
-        })) || [{ name: '', email: '', role: 'internal_user' as const }],
+        })) || [],
       });
     }
   }, [brief, existingProject, form, isLoading]);
@@ -140,18 +140,6 @@ export default function Details() {
         onFinish={handleSubmit}
         scrollToFirstError
         clearOnDestroy
-        onValuesChange={(changedValues, allValues) => {
-          // Auto-add empty collaborator row when last one is filled
-          if (changedValues.collaborators && allValues.collaborators) {
-            const collaborators = allValues.collaborators;
-            // Check if all collaborators have email filled (email is set via Select)
-            if (collaborators.every((person) => person && (person.name || person.email))) {
-              form.setFieldsValue({
-                collaborators: [...collaborators, { name: '', email: '', role: 'internal_user' as const }],
-              });
-            }
-          }
-        }}
       >
         <Wrapper>
           <Column style={{ flex: '1 1 70%' }}>

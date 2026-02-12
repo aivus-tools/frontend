@@ -1,4 +1,4 @@
-import React, { useRef } from 'react';
+import React from 'react';
 import { Form, Input, Select, Flex, Row, Col, Typography } from 'antd';
 import { Uploader } from './Uploader';
 import { LabelWithAdd } from './LabelWithAdd';
@@ -7,7 +7,7 @@ import { Person } from '@/types/brief.interface';
 import { ProjectFormData } from '@/hooks/useMutateProject';
 import { useGuidance } from '@/context/GuidanceProvider';
 import RemoveIcon from '@/icons/minus.svg';
-import { AntdListWrapper, IconButton } from '../common/styled';
+import { IconButton } from '../common/styled';
 import { t } from '@/lib/i18n';
 import { useAppSelector } from '@/store/hooks';
 import { selectIsNewBrief } from '@/store/slices/project';
@@ -20,24 +20,24 @@ interface InitialParametersProps {
 
 export const InitialParameters: React.FC<InitialParametersProps> = ({ thumbnailUrl }) => {
   const isNewProject = useAppSelector(selectIsNewBrief);
-  const addPersonEmptyRow = useRef<() => void>(() => {});
   const { handleFocus } = useGuidance();
-  const form = Form.useFormInstance<ProjectFormData & { options?: { collaborators?: Person[] } }>();
+  const form = Form.useFormInstance<ProjectFormData>();
+
   const addPerson = (user: Person) => {
-    const currentValues: Person[] = form.getFieldValue(['options', 'collaborators']) ?? [];
-    form.setFieldValue(['options', 'collaborators'], [...currentValues, user]);
+    const currentCollaborators = form.getFieldValue('collaborators') || [];
+    form.setFieldsValue({
+      collaborators: [
+        ...currentCollaborators,
+        {
+          name: `${user.firstName} ${user.surname}`.trim(),
+          email: user.email,
+          role: user.role || 'internal_user',
+        },
+      ],
+    });
   };
 
   const { showModal, modal } = usePersonModal(addPerson);
-  const options = Form.useWatch('options', form);
-  const collaborators = Form.useWatch('collaborators', form);
-
-  const internalOptions = options?.collaborators
-    ?.map((person: Person) => ({
-      label: `${person.firstName} ${person.surname}`,
-      value: person.email,
-    }))
-    .filter((option) => !collaborators?.some((collaborator) => collaborator?.email === option.value));
 
   return (
     <>
@@ -87,41 +87,32 @@ export const InitialParameters: React.FC<InitialParametersProps> = ({ thumbnailU
       {!isNewProject && (
         <Row gutter={20}>
           <Col span={12}>
-            <AntdListWrapper>
-              <Form.List name='collaborators'>
-                {(fields, { add, remove }) => {
-                  addPersonEmptyRow.current = () => {
-                    add({ name: '', email: '', role: 'internal_user' });
-                  };
-                  return (
-                    <Form.Item label={<LabelWithAdd text={t('COLLABORATORS')} onClick={() => showModal()} />}>
-                      {fields.map((field, index) => (
-                        <Flex gap={20} key={field.key}>
-                          <Form.Item noStyle name={[field.name, 'email']}>
-                            <Select
-                              placeholder={t('SELECT_PERSON')}
-                              onFocus={handleFocus('collaborators')}
-                              options={internalOptions}
-                            />
-                          </Form.Item>
-                          {fields.length > 1 && fields.length - 1 !== index && (
-                            <Form.Item noStyle>
-                              <IconButton
-                                onClick={() => {
-                                  if (fields.length > 1) remove(field.name);
-                                }}
-                              >
-                                <RemoveIcon color={'var(--gray-light)'} />
-                              </IconButton>
-                            </Form.Item>
-                          )}
-                        </Flex>
-                      ))}
-                    </Form.Item>
-                  );
-                }}
-              </Form.List>
-            </AntdListWrapper>
+            <Form.List name='collaborators'>
+              {(fields, { remove }) => (
+                <Form.Item label={<LabelWithAdd text={t('COLLABORATORS')} onClick={() => showModal()} />}>
+                  {fields.length === 0 && (
+                    <Typography.Text type='secondary'>{t('EMPTY')}</Typography.Text>
+                  )}
+                  {fields.map((field) => {
+                    const collaborators = form.getFieldValue('collaborators') || [];
+                    const collaborator = collaborators[field.name];
+                    const displayName = collaborator?.name || collaborator?.email || '';
+                    const displayEmail = collaborator?.email && collaborator?.name ? ` (${collaborator.email})` : '';
+
+                    return (
+                      <Flex gap={12} key={field.key} align='center' style={{ marginBottom: 8 }}>
+                        <Typography.Text style={{ flex: 1 }}>
+                          {displayName}{displayEmail}
+                        </Typography.Text>
+                        <IconButton onClick={() => remove(field.name)}>
+                          <RemoveIcon color={'var(--gray-light)'} />
+                        </IconButton>
+                      </Flex>
+                    );
+                  })}
+                </Form.Item>
+              )}
+            </Form.List>
           </Col>
           <Col span={12}>
             <Typography.Text>
