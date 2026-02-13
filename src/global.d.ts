@@ -1,5 +1,5 @@
 import type { User as NextUser , DefaultSession } from 'next-auth';
-import { Groups } from '@/types/user.interface.';
+import { Groups } from '@/types/user.interface';
 
 declare module 'next-auth' {
   interface User extends NextUser {

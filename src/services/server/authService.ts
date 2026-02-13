@@ -1,6 +1,6 @@
 import logger from '@/lib/logger';
 import { ApiRoute } from '@/constants/apiRoute';
-import { AuthType, Groups } from '@/types/user.interface.';
+import { AuthType, Groups } from '@/types/user.interface';
 
 type Credentials = Partial<Record<'email' | 'password', unknown>> & { authType: AuthType };
 /**

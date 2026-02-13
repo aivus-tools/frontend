@@ -31,20 +31,15 @@ export const useCreateProjectFlow = () => {
       clientId: null, // No client yet for vendor-initiated flow
     }).unwrap();
 
-    // Step 2: Create default team (for now, just use a placeholder)
-    // TODO: Implement proper team creation/selection
-    const teamId = 'default-team-id'; // This should come from vendor or be created
-
-    // Step 3: Create Project
+    // Step 2: Create Project
     const project = await createProject({
       name: details.projectName || 'New Project',
       vendorId,
       briefId: brief.id,
-      teamId,
       status: 'DRAFT',
     }).unwrap();
 
-    // Step 4: Create Offer
+    // Step 3: Create Offer
     const offer = await createOffer({
       projectName: details.projectName || 'New Project',
       projectId: project.id,

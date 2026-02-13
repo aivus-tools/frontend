@@ -5,8 +5,7 @@ import { checkEmail, login, register } from '@/services/server/authService';
 import logger from '@/lib/logger';
 import { AUTH_TYPES, GROUPS } from '@/constants/constants';
 import { updateUserSession } from '@/services/server/userService';
-import { AppRoute } from '@/constants/appRoute';
-import type { Groups } from '@/types/user.interface.';
+import type { Groups } from '@/types/user.interface';
 
 // Получение переменных окружения для Google OAuth
 const googleClientId = process.env.AUTH_GOOGLE_ID;

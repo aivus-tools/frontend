@@ -1,3 +1,5 @@
+import { BriefList } from './_components/BriefList/BriefList';
+
 export default function Page() {
-  return <h1>Hello Next.js!</h1>;
+  return <BriefList />;
 }

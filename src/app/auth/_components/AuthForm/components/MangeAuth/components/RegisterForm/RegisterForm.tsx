@@ -7,7 +7,7 @@ import styles from './styles.module.css';
 import { useState } from 'react';
 import { CALLBACK_URL } from '@/constants/apiRoute';
 import { AUTH_TYPES } from '@/constants/constants';
-import { AuthType } from '@/types/user.interface.';
+import { AuthType } from '@/types/user.interface';
 import { AppRoute } from '@/constants/appRoute';
 
 export interface ResponseData {

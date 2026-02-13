@@ -46,4 +46,30 @@ export const ApiRoute = {
   UNIT_LIST: '/service/units',
   USER_CHANGE_GROUP: (userId: string | number) => `/service/users/${userId}/change-group`,
   USER_INFO: `${BASE_URL}/users/me`,
+  // Shares
+  SHARE_LIST: '/service/shares',
+  SHARE_BY_TOKEN: (token: string) => `/service/shares/${token}`,
+  // Offer actions
+  OFFER_COPY: (id: string | number) => `/service/offers/${id}/copy`,
+  OFFER_STATUS: (id: string | number) => `/service/offers/${id}/status`,
+  // Templates
+  TEMPLATE_LIST: '/service/templates',
+  TEMPLATE: (id: string | number) => `/service/templates/${id}`,
+  TEMPLATE_APPLY: (id: string | number) => `/service/templates/${id}/apply`,
+  // Rates lookup
+  RATES_LOOKUP: '/service/rates/lookup',
+  // AI Chat (Brief creation)
+  BRIEF_CHAT: '/service/client/briefs/chat',
+  BRIEF_CHAT_ANALYZE: '/service/client/briefs/chat/analyze',
+  // Comparison
+  BRIEF_COMPARISON: (briefId: string) => `/service/client/briefs/${briefId}/comparison`,
+  BRIEF_COMPARISON_ANALYZE: (briefId: string) => `/service/client/briefs/${briefId}/comparison/analyze`,
+  // XLSX Upload
+  XLSX_UPLOAD: '/service/client/xlsx-upload',
+  // Profile
+  USER_PROFILE: '/service/users/profile',
+  USER_PROFILE_AVATAR: '/service/users/profile/avatar',
+  // Settings
+  USER_SETTINGS: '/service/users/settings',
+  CHANGE_PASSWORD: '/service/users/change-password',
 } as const;

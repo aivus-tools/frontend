@@ -2,7 +2,7 @@
 
 import React from 'react';
 import { styled } from 'styled-components';
-import { Typography, Flex } from 'antd';
+import { Typography } from 'antd';
 import { formatCurrency } from '@/lib/utils';
 import { t } from '@/lib/i18n';
 

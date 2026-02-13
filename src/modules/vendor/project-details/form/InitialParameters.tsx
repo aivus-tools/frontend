@@ -11,6 +11,7 @@ import { IconButton } from '../common/styled';
 import { t } from '@/lib/i18n';
 import { useAppSelector } from '@/store/hooks';
 import { selectIsNewBrief } from '@/store/slices/project';
+import { useGetTemplatesQuery } from '@/services/client/templatesApi';
 
 const { TextArea } = Input;
 
@@ -22,6 +23,12 @@ export const InitialParameters: React.FC<InitialParametersProps> = ({ thumbnailU
   const isNewProject = useAppSelector(selectIsNewBrief);
   const { handleFocus } = useGuidance();
   const form = Form.useFormInstance<ProjectFormData>();
+  const { data: templates = [] } = useGetTemplatesQuery();
+
+  const templateOptions = templates.map((tmpl) => ({
+    label: tmpl.name,
+    value: tmpl.id,
+  }));
 
   const addPerson = (user: Person) => {
     const currentCollaborators = form.getFieldValue('collaborators') || [];
@@ -59,13 +66,19 @@ export const InitialParameters: React.FC<InitialParametersProps> = ({ thumbnailU
           </Form.Item>
           <Form.Item
             name='estimationTemplate'
-            label={t('CHOOSE_ESTIMATION_TEMPLATE')}
-            extra={t('SELECT_TEMPLATE')}
+            label={t('CHOOSE_TEMPLATE')}
+            extra={t('SELECT_TEMPLATE_HINT')}
             style={{
               flex: 1,
             }}
           >
-            <Select placeholder={t('SELECT_OPTION')} onFocus={handleFocus('estimationTemplate')} disabled />
+            <Select
+              placeholder={t('SELECT_OPTION')}
+              onFocus={handleFocus('estimationTemplate')}
+              options={templateOptions}
+              allowClear
+              notFoundContent={t('NO_TEMPLATES')}
+            />
           </Form.Item>
         </Flex>
       </Flex>

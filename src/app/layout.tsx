@@ -2,7 +2,7 @@ import type { Metadata } from 'next';
 import Script from 'next/script';
 import { AntdRegistry } from '@ant-design/nextjs-registry';
 import { ConfigProvider } from 'antd';
-import StyledComponentsRegistry from '@/app/_componnets/StyledComponentsRegistry';
+import StyledComponentsRegistry from '@/app/_components/StyledComponentsRegistry';
 import { Montserrat } from 'next/font/google';
 import SessionProvider from '@/context/SessionProvider';
 import './globals.css';

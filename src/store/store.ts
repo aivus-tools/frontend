@@ -7,6 +7,12 @@ import { ratesApi } from '@/services/client/ratesApi';
 import { offersApi } from '@/services/client/offersApi';
 import { projectsApi } from '@/services/client/projectsApi';
 import { userApi } from '@/services/client/userApi';
+import { sharesApi } from '@/services/client/sharesApi';
+import { templatesApi } from '@/services/client/templatesApi';
+import { chatApi } from '@/services/client/chatApi';
+import { comparisonApi } from '@/services/client/comparisonApi';
+import { xlsxApi } from '@/services/client/xlsxApi';
+import { profileApi } from '@/services/client/profileApi';
 import { listenerMiddleware } from '@/lib/listenerMiddleware';
 
 export const makeStore = () => {
@@ -20,6 +26,12 @@ export const makeStore = () => {
         ratesApi.middleware,
         offersApi.middleware,
         projectsApi.middleware,
+        sharesApi.middleware,
+        templatesApi.middleware,
+        chatApi.middleware,
+        comparisonApi.middleware,
+        xlsxApi.middleware,
+        profileApi.middleware,
         listenerMiddleware.middleware
       ),
   });

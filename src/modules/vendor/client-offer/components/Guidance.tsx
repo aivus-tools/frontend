@@ -23,10 +23,6 @@ const ShortDescription = styled.div`
   margin-top: 5px;
 `;
 
-const ShortDescriptionLabel = styled.span`
-  font-weight: 700;
-`;
-
 const SectionTitle = styled.div`
   font-size: 14px;
   font-weight: 600;

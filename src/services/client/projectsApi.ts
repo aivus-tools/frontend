@@ -1,4 +1,4 @@
-import { Project, NewProject } from '@/types/project.interface.';
+import { Project, NewProject } from '@/types/project.interface';
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
 import { ApiRoute } from '@/constants/apiRoute';
 

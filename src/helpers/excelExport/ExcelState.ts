@@ -171,7 +171,7 @@ export class ExcelState {
     }
 
     cell.value = new Date(Date.UTC(y, m, d));
-    cell.numFmt = '[$-419]dd mmmm yyyy "г."';
+    cell.numFmt = 'mmmm dd, yyyy';
     cell.font = { name: FONT_NAME, size: 12, color: FONT_COLOR };
     cell.alignment = { horizontal: 'left', vertical: 'middle' };
   }

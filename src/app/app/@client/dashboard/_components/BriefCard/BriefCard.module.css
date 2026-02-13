@@ -1,0 +1,104 @@
+.card {
+  margin: 10px 0;
+  overflow: hidden;
+  cursor: pointer;
+  border-radius: 6px;
+  box-shadow: 0 5px 16.5px -11px rgb(0 0 0 / 25%);
+  transition: box-shadow 0.2s ease;
+}
+
+.card:hover {
+  box-shadow: rgb(149 157 165 / 20%) 0 8px 24px;
+}
+
+.row {
+  display: grid;
+  grid-template-columns: 1.5fr 1.2fr 100px 100px 120px 130px 120px;
+  column-gap: 20px;
+  align-items: center;
+  width: 100%;
+  padding: 20px 22px;
+}
+
+.projectCell {
+  position: relative;
+  padding-left: 20px;
+}
+
+.accent {
+  position: absolute;
+  top: -2px;
+  left: -5px;
+  width: 4px;
+  height: 52px;
+  border-radius: 2px;
+}
+
+.projectName {
+  font-family: Montserrat, sans-serif;
+  font-size: 14px;
+  font-weight: 700;
+  color: #4b5675;
+  text-transform: uppercase;
+}
+
+.assignee {
+  margin-top: 6px;
+  font-family: Montserrat, sans-serif;
+  font-size: 10px;
+  font-weight: 500;
+  color: #99a1b7;
+}
+
+.activityCell {
+  overflow: hidden;
+}
+
+.activityText {
+  overflow: hidden;
+  font-family: Montserrat, sans-serif;
+  font-size: 12px;
+  font-weight: 500;
+  color: #4b5675;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.statusCell {
+  display: flex;
+  justify-content: center;
+}
+
+.proposalsCell {
+  display: flex;
+  justify-content: center;
+}
+
+.proposalCount {
+  font-family: Montserrat, sans-serif;
+  font-size: 14px;
+  font-weight: 600;
+  color: #4b5675;
+}
+
+.offerCell {
+  text-align: right;
+}
+
+.offerValue {
+  font-family: Montserrat, sans-serif;
+  font-size: 13px;
+  font-weight: 600;
+  color: #4b5675;
+}
+
+.dateCell {
+  text-align: left;
+}
+
+.dateValue {
+  font-family: Montserrat, sans-serif;
+  font-size: 13px;
+  font-weight: 500;
+  color: #4b5675;
+}

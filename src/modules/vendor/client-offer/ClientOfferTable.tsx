@@ -14,9 +14,10 @@ import { Empty } from 'antd';
 import { KEY_SEPARATOR } from '../estimation/constants';
 
 interface Props {
-    offers: OfferData[];
+    offers?: OfferData[];
 }
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 export const ClientOfferTable = ({ offers }: Props) => {
     const { categories } = useAppSelector(selectOfferDetails);
 

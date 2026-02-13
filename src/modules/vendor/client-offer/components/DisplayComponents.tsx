@@ -24,6 +24,7 @@ const QuantityValue = styled.div`
 `;
 
 interface UnitProps {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     units: any[];
 }
 

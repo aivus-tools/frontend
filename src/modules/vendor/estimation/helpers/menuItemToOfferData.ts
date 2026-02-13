@@ -46,6 +46,7 @@ export const menuItemToOfferData = (item: MenuItem, globalDefaultUnit?: UnitOpti
       type,
       value: globalDefaultUnit.id,
       count: 1,
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } as any; // Cast to avoid complex union type issues in this helper
 
     // Ensure it's in options so the Select can show the label

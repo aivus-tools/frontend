@@ -15,9 +15,15 @@ export const AppRoute = {
   FORGOT_PASSWORD: '/auth/forgot-password',
   GROUP: '/app/group',
   HOME: '/',
+  PUBLIC_OFFER: (token: string) => `/public/${token}`,
   RATES: '/app/rates',
   RESET_PASSWORD: '/auth/reset-password',
   TEMPLATES: '/app/templates',
+  CREATE_BRIEF: '/app/brief/create',
+  BRIEF_DETAIL: (briefId: string) => `/app/dashboard/${briefId}`,
+  BRIEF_COMPARISON: (briefId: string) => `/app/dashboard/${briefId}/comparison`,
+  PROFILE: '/app/profile',
+  SETTINGS: '/app/settings',
 } as const;
 
 export type AppRouteValue = (typeof AppRoute)[keyof typeof AppRoute];

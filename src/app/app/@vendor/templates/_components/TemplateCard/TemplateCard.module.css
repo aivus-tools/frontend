@@ -1,0 +1,150 @@
+.card {
+  position: relative;
+  margin: 10px 0;
+  overflow: hidden;
+  background: #fff;
+  border-radius: 6px;
+  box-shadow: 0 5px 16.5px -11px rgb(0 0 0 / 25%);
+  transition: box-shadow 0.2s ease;
+}
+
+.card:hover {
+  box-shadow: rgb(149 157 165 / 20%) 0 8px 24px;
+}
+
+.row {
+  display: grid;
+  grid-template-columns: 1.5fr 1fr 100px 120px 100px 120px 120px;
+  column-gap: 20px;
+  align-items: center;
+  width: 100%;
+  padding: 20px 22px;
+}
+
+.projectCell {
+  position: relative;
+  padding-left: 20px;
+}
+
+.accent {
+  position: absolute;
+  top: -2px;
+  left: -5px;
+  width: 4px;
+  height: 52px;
+  border-radius: 2px;
+}
+
+.projectName {
+  font-family: Montserrat, sans-serif;
+  font-size: 14px;
+  font-weight: 700;
+  color: #4b5675;
+  text-transform: uppercase;
+}
+
+.sourceOffer {
+  margin-top: 6px;
+  font-family: Montserrat, sans-serif;
+  font-size: 10px;
+  font-weight: 500;
+  color: #99a1b7;
+}
+
+.descriptionCell {
+  overflow: hidden;
+}
+
+.description {
+  display: block;
+  overflow: hidden;
+  font-family: Montserrat, sans-serif;
+  font-size: 12px;
+  font-weight: 500;
+  color: #99a1b7;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.categoryCell {
+  display: flex;
+  justify-content: center;
+}
+
+.categoryBadge {
+  display: inline-flex;
+  align-items: center;
+  height: 24px;
+  padding: 0 10px;
+  font-family: Montserrat, sans-serif;
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: capitalize;
+  border-radius: 3px;
+}
+
+.costCell {
+  text-align: right;
+}
+
+.costValue {
+  font-family: Montserrat, sans-serif;
+  font-size: 13px;
+  font-weight: 600;
+  color: #4b5675;
+}
+
+.profitCell {
+  text-align: right;
+}
+
+.profitValue {
+  font-family: Montserrat, sans-serif;
+  font-size: 13px;
+  font-weight: 600;
+  color: #28f;
+}
+
+.dateCell {
+  text-align: left;
+}
+
+.dateValue {
+  font-family: Montserrat, sans-serif;
+  font-size: 13px;
+  font-weight: 500;
+  color: #4b5675;
+}
+
+.actions {
+  position: absolute;
+  top: 50%;
+  right: 16px;
+  opacity: 0;
+  transition: opacity 0.15s ease;
+  transform: translateY(-50%);
+}
+
+.card:hover .actions {
+  opacity: 1;
+}
+
+.deleteBtn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  font-size: 14px;
+  color: #99a1b7;
+  cursor: pointer;
+  background: transparent;
+  border: 0;
+  border-radius: 4px;
+  transition: color 0.15s ease, background 0.15s ease;
+}
+
+.deleteBtn:hover {
+  color: #d63c22;
+  background: #fff0f0;
+}

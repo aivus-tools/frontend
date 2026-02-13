@@ -19,12 +19,14 @@ import { initialValues } from './initialValues';
 import { t } from '@/lib/i18n';
 import { AppRoute } from '@/constants/appRoute';
 import { projectsApi } from '@/services/client/projectsApi';
+import { useApplyTemplateMutation } from '@/services/client/templatesApi';
 
 export default function Details() {
   const dispatch = useAppDispatch();
   const storedProjectId = useAppSelector(selectProjectId);
   const { create, update, isLoading: isMutating } = useMutateProject();
   const [uploadThumbnail] = projectsApi.useUploadThumbnailMutation();
+  const [applyTemplate] = useApplyTemplateMutation();
   const { data: brief, isLoading } = useBrief();
   const { data: existingProject } = projectsApi.useGetProjectByIdQuery(storedProjectId || '', {
     skip: !storedProjectId,
@@ -101,6 +103,16 @@ export default function Details() {
           }
         }
 
+        // Apply template if selected (only for new projects)
+        const templateId = form.getFieldValue('estimationTemplate') as string | undefined;
+        if (templateId && !storedProjectId) {
+          try {
+            await applyTemplate(templateId).unwrap();
+          } catch (err) {
+            console.error('Error applying template:', err);
+          }
+        }
+
         // Upload thumbnail if a file was selected
         const thumbnailFile = form.getFieldValue('previewImage') as File | null;
         if (thumbnailFile && projectId) {
@@ -125,7 +137,7 @@ export default function Details() {
         messageApi.error((error as { data?: { message?: string } })?.data?.message || t('ERROR_SAVING_DETAILS'));
       }
     },
-    [create, dispatch, existingProject, form, messageApi, router, storedProjectId, update, uploadThumbnail]
+    [applyTemplate, create, dispatch, existingProject, form, messageApi, router, storedProjectId, update, uploadThumbnail]
   );
 
   return (

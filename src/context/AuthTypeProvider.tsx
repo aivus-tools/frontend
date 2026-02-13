@@ -1,7 +1,7 @@
 'use client';
 import React, { useCallback, createContext, useContext, useState, PropsWithChildren, useEffect } from 'react';
 import { useSearchParams } from 'next/navigation';
-import { AuthType } from '@/types/user.interface.';
+import { AuthType } from '@/types/user.interface';
 
 const AuthTypeContext = createContext<{ authType: AuthType | null; setAuthType: (authType: AuthType) => void }>({
   authType: null,

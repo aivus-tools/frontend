@@ -7,7 +7,6 @@ import Spinner from '@/components/Spinner';
 import { t } from '@/lib/i18n';
 import { AppRoute } from '@/constants/appRoute';
 import { useSession } from 'next-auth/react';
-import { useOnceAsync } from '@/hooks/useOnce';
 
 const CONFIRM_DELAY_MS = 1500;
 

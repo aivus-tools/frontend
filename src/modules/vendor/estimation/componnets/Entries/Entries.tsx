@@ -7,7 +7,7 @@ import SettingsIcon from '@/icons/settings-icon.svg';
 import AddIcon from '@/icons/add-icon.svg';
 import RemoveIcon from '@/icons/minus.svg';
 import DeleteIcon from '@/icons/delete.svg';
-import { EstimationItem, IconButton, InputNumberRight, SelectWrapper, UnitSelect, IconPlaceholder } from '../../styled';
+import { EstimationItem, IconButton, InputNumberRight, UnitSelect, IconPlaceholder } from '../../styled';
 import { RowLine } from '../../componnets/RowLine';
 import { Flex, Select, Tooltip } from 'antd';
 import { EntrieInput } from '../../componnets/EntrieInput';
@@ -22,18 +22,6 @@ import { LinkButton } from '../LinkButtons/LinkButtons';
 
 const timeUnitFirst = (a: OfferData['units'][number], b: OfferData['units'][number]) => {
   return a?.type === UnitType.TIME && b?.type === UnitType.QUANTITY ? -1 : 1;
-};
-
-const HideElement = ({
-  children,
-  isVisible,
-  width,
-}: {
-  children?: React.ReactNode;
-  isVisible: boolean;
-  width: number;
-}) => {
-  return isVisible ? children : <div style={{ width }} />;
 };
 
 export function Entries({ data }: { data: OfferData[] }) {
@@ -155,7 +143,7 @@ export function Entries({ data }: { data: OfferData[] }) {
                 <EstimationItem key={`actions-${key}`} {...rowProps} style={{ justifyContent: 'center' }}>
                   <UnitSelect vertical $hovered={isActive}>
                     {offer.units &&
-                      offer.units.toSorted(timeUnitFirst).map((unit, index) => {
+                      offer.units.toSorted(timeUnitFirst).map((unit) => {
                         if (!unit) return null;
 
                         const isTime = unit.type === UnitType.TIME;

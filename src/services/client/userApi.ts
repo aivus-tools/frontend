@@ -1,5 +1,5 @@
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
-import { Groups, User } from '@/types/user.interface.';
+import { Groups, User } from '@/types/user.interface';
 import { ApiRoute } from '@/constants/apiRoute';
 
 type ChangeGroup = {

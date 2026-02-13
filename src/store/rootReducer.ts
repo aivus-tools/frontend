@@ -9,6 +9,12 @@ import { userApi } from '@/services/client/userApi';
 import { vendorSlice } from './slices/vendor';
 import { ratesApi } from '@/services/client/ratesApi';
 import { sidebarSlice } from './slices/sidebar';
+import { sharesApi } from '@/services/client/sharesApi';
+import { templatesApi } from '@/services/client/templatesApi';
+import { chatApi } from '@/services/client/chatApi';
+import { comparisonApi } from '@/services/client/comparisonApi';
+import { xlsxApi } from '@/services/client/xlsxApi';
+import { profileApi } from '@/services/client/profileApi';
 
 export const rootReducer = combineReducers({
   [projectSlice.reducerPath]: projectSlice.reducer,
@@ -21,4 +27,10 @@ export const rootReducer = combineReducers({
   [offersApi.reducerPath]: offersApi.reducer,
   [projectsApi.reducerPath]: projectsApi.reducer,
   [userApi.reducerPath]: userApi.reducer,
+  [sharesApi.reducerPath]: sharesApi.reducer,
+  [templatesApi.reducerPath]: templatesApi.reducer,
+  [chatApi.reducerPath]: chatApi.reducer,
+  [comparisonApi.reducerPath]: comparisonApi.reducer,
+  [xlsxApi.reducerPath]: xlsxApi.reducer,
+  [profileApi.reducerPath]: profileApi.reducer,
 });

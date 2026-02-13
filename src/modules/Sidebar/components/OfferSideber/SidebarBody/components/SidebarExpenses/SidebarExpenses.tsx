@@ -4,8 +4,6 @@ import { SidebarInput } from '../SidebarInput/SidebarInput';
 import { t } from '@/lib/i18n';
 import { OfferData } from '@/types/estimation.interface';
 import { ValueOf } from 'next/dist/shared/lib/constants';
-import { Switch } from 'antd';
-import cn from 'classnames';
 
 interface Props {
   costWithTax: number;
@@ -13,15 +11,11 @@ interface Props {
   handleChange: (id: string, key: keyof OfferData) => (data: ValueOf<OfferData> | null) => void;
 }
 
-export const SidebarExpenses: React.FC<Props> = ({ costWithTax, offer, handleChange }) => {
+export const SidebarExpenses: React.FC<Props> = ({ offer, handleChange }) => {
   const handleChangeUnit =
     (field: 'price' | 'cost' | 'taxRate' | 'taxPrice' | 'showTax') => (newValue: number | null | boolean) => {
       handleChange(offer.id, field)(newValue);
     };
-
-  const handleTaxSwitch = (value: boolean) => {
-    handleChangeUnit('showTax')(value);
-  };
 
   return (
     <div className={styles.content}>

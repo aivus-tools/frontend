@@ -7,13 +7,15 @@ import { useRouter } from 'next/navigation';
 import styles from './project-list.module.css';
 import React, { useEffect, useMemo } from 'react';
 import { THeadItem } from '@/components/THeadItem/THeadItem';
-import { ProjectItem } from '@/components/ProjectItem/ProjectItem';
 import { useProjects } from '@/hooks/useProjects';
-import { Project, ProjectListItem } from '@/types/project.interface.';
+import { Project, ProjectListItem } from '@/types/project.interface';
+import { Offer } from '@/types/offer.interface';
 import { format } from 'date-fns';
 import { formatPrice } from '@/helpers/helper';
 import Spinner from '@/components/Spinner';
 import { AppRoute } from '@/constants/appRoute';
+import { useGetAllOffersQuery } from '@/services/client/offersApi';
+import { ProjectOfferCard } from '@/modules/vendor/dashboard/ProjectOfferCard/ProjectOfferCard';
 
 const mapProjectsToListItems = (projects: Project[]): ProjectListItem[] => {
   if (!projects || !Array.isArray(projects)) {
@@ -41,8 +43,22 @@ export const ProjectList = () => {
   const router = useRouter();
 
   const { data: projects = [], isLoading } = useProjects();
+  const { data: allOffers = [] } = useGetAllOffersQuery();
 
   const data = useMemo(() => mapProjectsToListItems(projects), [projects]);
+
+  // Group offers by project ID
+  const offersByProject = useMemo(() => {
+    const map: Record<string, Offer[]> = {};
+    allOffers.forEach((offer) => {
+      const pid = offer.projectId;
+      if (pid) {
+        if (!map[pid]) map[pid] = [];
+        map[pid].push(offer);
+      }
+    });
+    return map;
+  }, [allOffers]);
 
   useEffect(() => {
     data.forEach((item: ProjectListItem) => {
@@ -69,10 +85,10 @@ export const ProjectList = () => {
       </div>
       <div className={cn(styles.content)}>
         {data.map((item: ProjectListItem) => (
-          <ProjectItem
-            className={cn(styles.projectItem)}
+          <ProjectOfferCard
             key={`project_${item.id}`}
             item={item}
+            offers={offersByProject[item.id] || []}
             onClick={() => router.push(AppRoute.DASHBOARD_PROJECT_DETAILS(item.id))}
           />
         ))}

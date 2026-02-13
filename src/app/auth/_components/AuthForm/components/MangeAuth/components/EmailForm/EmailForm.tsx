@@ -4,7 +4,7 @@ import { Button, Form, Input, message, Tooltip } from 'antd';
 import { t } from '@/lib/i18n';
 import { useState } from 'react';
 import { Steps } from '@/types/auth.interface';
-import { AuthType } from '@/types/user.interface.';
+import { AuthType } from '@/types/user.interface';
 import { AUTH_TYPES } from '@/constants/constants';
 import { useAuthType } from '@/context/AuthTypeProvider';
 

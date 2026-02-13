@@ -1,4 +1,4 @@
-import { applyPercentage, round } from '@/lib/utils';
+import { round } from '@/lib/utils';
 import { Category, OfferData, Entry } from '@/types/estimation.interface';
 import { createSlice } from '@reduxjs/toolkit';
 

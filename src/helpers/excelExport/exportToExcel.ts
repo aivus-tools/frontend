@@ -125,7 +125,7 @@ const isCategoryWithSubcategories = (
   v: CategoryWithSubcategories | CategoryWithoutSubcategories
 ): v is CategoryWithSubcategories => Array.isArray(v.data);
 
-export async function exportToExcel(data: CategoriesExportData, fileName: string, date?: Dayjs, watermark?: string) {
+export async function exportToExcel(data: CategoriesExportData, fileName: string, date?: Dayjs, watermark?: string, offerId?: string) {
   const res = await fetch('/template.xlsx');
   if (!res.ok) {
     throw new Error(`Failed to fetch template.xlsx: ${res.status} ${res.statusText}`);
@@ -148,6 +148,9 @@ export async function exportToExcel(data: CategoriesExportData, fileName: string
   }
   if (watermark) {
     excel.setNamedCell('watermark', watermark);
+  }
+  if (offerId) {
+    excel.setNamedCell('offer_id', offerId);
   }
 
   let nextRow = excel.startCell.row;
@@ -192,7 +195,7 @@ export async function exportToExcel(data: CategoriesExportData, fileName: string
 
         nextRow += 1;
 
-        const totalTitle = 'Итог по разделу';
+        const totalTitle = 'Section Total';
 
         nextRow = addItems(excel, sub?.items ?? [], nextRow, startCol, COLOR.SUB, startRow);
 
@@ -203,7 +206,7 @@ export async function exportToExcel(data: CategoriesExportData, fileName: string
 
         if (j === blockData.length - 1) {
           const totalCell = excel.getCell(nextRow, 5);
-          totalCell.value = `ИТОГО ${currentBlock.category.toUpperCase()}`;
+          totalCell.value = `TOTAL ${currentBlock.category.toUpperCase()}`;
           excel.addFont(totalCell, true);
           totalCell.alignment = RIGHT_MIDDLE;
 
@@ -235,7 +238,7 @@ export async function exportToExcel(data: CategoriesExportData, fileName: string
     } else {
       nextRow = addItems(excel, currentBlock.data.items ?? [], nextRow, startCol, COLOR.TOTAL, startRow);
       const totalCell = excel.getCell(nextRow - 1, 5);
-      totalCell.value = `ИТОГО ${currentBlock.category.toUpperCase()}`;
+      totalCell.value = `TOTAL ${currentBlock.category.toUpperCase()}`;
       totalCell.alignment = RIGHT_MIDDLE;
       excel.addFont(totalCell, true);
       categoryTotals.push(excel.getCell(nextRow - 1, 6).address);
@@ -249,7 +252,7 @@ export async function exportToExcel(data: CategoriesExportData, fileName: string
   nextRow += 1;
 
   const managementTitleCell = excel.getCell(nextRow, 0);
-  managementTitleCell.value = 'Управление проектом';
+  managementTitleCell.value = 'Project Management';
   excel.addBorderToLine(nextRow, 5);
   excel.addFont(managementTitleCell);
 
@@ -259,7 +262,7 @@ export async function exportToExcel(data: CategoriesExportData, fileName: string
   nextRow += 1;
 
   const totalSumBeforeTaxTitleCell = excel.getCell(nextRow, 0);
-  totalSumBeforeTaxTitleCell.value = 'Общая сумма до налогов';
+  totalSumBeforeTaxTitleCell.value = 'Total before tax';
   excel.addBorderToLine(nextRow, 5);
   excel.addColorToCellGroup(nextRow, 6, COLOR.SUB);
   excel.addFont(totalSumBeforeTaxTitleCell, true);
@@ -274,17 +277,17 @@ export async function exportToExcel(data: CategoriesExportData, fileName: string
   nextRow += 2;
 
   const taxTitleCell = excel.getCell(nextRow, 0);
-  taxTitleCell.value = 'Налоги';
+  taxTitleCell.value = 'Taxes';
   excel.addBorderToLine(nextRow, 5);
   excel.addFont(taxTitleCell);
 
   const taxInfoCell1 = excel.getCell(nextRow, 4);
-  taxInfoCell1.value = 'УСН';
+  taxInfoCell1.value = 'Tax';
   excel.addFont(taxInfoCell1);
   taxInfoCell1.alignment = RIGHT_MIDDLE;
 
   const taxInfoCell2 = excel.getCell(nextRow, 5);
-  taxInfoCell2.value = 0.06;
+  taxInfoCell2.value = 0;
   taxInfoCell2.numFmt = '0%';
   excel.addFont(taxInfoCell2);
   taxInfoCell2.alignment = CENTER_MIDDLE;
@@ -299,7 +302,7 @@ export async function exportToExcel(data: CategoriesExportData, fileName: string
   nextRow += 1;
 
   const totalSumTitleCell = excel.getCell(nextRow, 0);
-  totalSumTitleCell.value = 'Общая сумма (Без НДС)';
+  totalSumTitleCell.value = 'Grand Total (excl. tax)';
   excel.addBorderToLine(nextRow, 5);
   excel.addColorToCellGroup(nextRow, 5, COLOR.HEADER);
   excel.addFont(totalSumTitleCell, true);
@@ -315,7 +318,7 @@ export async function exportToExcel(data: CategoriesExportData, fileName: string
   nextRow += 1;
 
   const videoTitleCell = excel.getCell(nextRow, 0);
-  videoTitleCell.value = 'Примерно за один ролик (для справки)';
+  videoTitleCell.value = 'Approximate cost per unit (for reference)';
   excel.addBorderToLine(nextRow, 5);
   excel.addFont(videoTitleCell);
 

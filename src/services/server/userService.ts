@@ -1,6 +1,6 @@
 import logger from '@/lib/logger';
 import { ApiPathname, ApiRoute } from '@/constants/apiRoute';
-import { User } from '@/types/user.interface.';
+import { User } from '@/types/user.interface';
 import { createHmacSHA256 } from '@/lib/hmac';
 
 interface UserSession {

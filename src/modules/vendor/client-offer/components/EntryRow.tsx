@@ -10,6 +10,7 @@ import { UnitsDisplay, QuantityDisplay } from './DisplayComponents';
 import ArrowSquareRightIcon from '@/icons/arrow-square-right.svg';
 
 interface Props {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     offer: any;
     isEven?: boolean;
 }

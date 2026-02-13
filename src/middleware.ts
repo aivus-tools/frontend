@@ -24,7 +24,8 @@ const CSP = isDevelopment
   : "default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https:; font-src 'self' data:; connect-src 'self' data: https://api.aivus.co; frame-ancestors 'self' https://www.vilkaservice.com https://app.aivus.co";
 
 export default auth(async (req) => {
-  if (req.nextUrl.pathname.startsWith('/external')) {
+  if (req.nextUrl.pathname.startsWith('/external') || req.nextUrl.pathname.startsWith('/public')) {
+    // For /public routes, still proxy /service/ calls but skip auth requirements
     const response = NextResponse.next();
     response.headers.set('Content-Security-Policy', CSP);
     return response;

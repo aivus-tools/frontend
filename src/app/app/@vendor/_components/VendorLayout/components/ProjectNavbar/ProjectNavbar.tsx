@@ -11,14 +11,22 @@ import { ExportPopover } from './components/Popover/Popover';
 import styles from './ProjectNavbar.module.css';
 import { exportToExcel } from '@/helpers/excelExport/exportToExcel';
 import { useAppSelector } from '@/store/hooks';
-import { selectCategoriesExportData } from '@/store/slices/offer/selectors';
+import { selectCategoriesExportData, selectOfferMetaData } from '@/store/slices/offer/selectors';
 import { Dayjs } from 'dayjs';
+import { useState } from 'react';
+import { SharePopup } from '@/modules/SharePopup/SharePopup';
+import { SaveTemplateModal } from '@/modules/vendor/SaveTemplateModal/SaveTemplateModal';
+import { useSession } from 'next-auth/react';
 
 export const ProjectNavbar = () => {
   useSetProject();
   useSetVendor();
 
   const categoriesExportData = useAppSelector(selectCategoriesExportData);
+  const offerMetaData = useAppSelector(selectOfferMetaData);
+  const session = useSession();
+  const [shareOpen, setShareOpen] = useState(false);
+  const [saveTemplateOpen, setSaveTemplateOpen] = useState(false);
 
   const [, , tab] = useSelectedLayoutSegments();
 
@@ -34,15 +42,23 @@ export const ProjectNavbar = () => {
     watermark?: string;
   }) => {
     if (format === 'xlsx') {
-      await exportToExcel(categoriesExportData, name, date, watermark);
+      await exportToExcel(categoriesExportData, name, date, watermark, offerMetaData?.id);
     }
   };
+
+  const isEstimation = tab === VENDOR_PROJECT_TAB_KEYS.ESTIMATION;
 
   return (
     <div className={styles.navbar}>
       <ProjectTabs />
 
       <div className={styles.buttons}>
+        {isEstimation && offerMetaData?.id && (
+          <Button onClick={() => setSaveTemplateOpen(true)}>
+            {t('SAVE_AS_TEMPLATE')}
+          </Button>
+        )}
+
         {tab === VENDOR_PROJECT_TAB_KEYS.OFFER && (
           <ExportPopover action={handleExport}>
             <Button className={styles.export} type='primary'>
@@ -52,9 +68,28 @@ export const ProjectNavbar = () => {
         )}
 
         <div className={styles.share}>
-          <Button type='primary'>{t('SHARE')}</Button>
+          <Button type='primary' onClick={() => setShareOpen(true)}>
+            {t('SHARE')}
+          </Button>
         </div>
       </div>
+
+      {offerMetaData?.id && (
+        <>
+          <SharePopup
+            open={shareOpen}
+            onClose={() => setShareOpen(false)}
+            offerId={offerMetaData.id}
+            ownerName={session.data?.user?.name ?? undefined}
+            ownerAvatar={session.data?.user?.image ?? undefined}
+          />
+          <SaveTemplateModal
+            open={saveTemplateOpen}
+            onClose={() => setSaveTemplateOpen(false)}
+            offerId={offerMetaData.id}
+          />
+        </>
+      )}
     </div>
   );
 };

@@ -2,13 +2,14 @@ import { useSession } from 'next-auth/react';
 import { projectsApi } from '@/services/client/projectsApi';
 import { offersApi } from '@/services/client/offersApi';
 import { addMonthsUTC } from '@/helpers/helper';
-import { NewProject, Project } from '@/types/project.interface.';
+import { NewProject, Project } from '@/types/project.interface';
 
 export interface ProjectFormData {
   // Initial Parameters
   crmId?: string;
   projectName: string;
   description?: string;
+  estimationTemplate?: string;
   collaborators?: Array<{
     userId?: string | null;
     name: string;

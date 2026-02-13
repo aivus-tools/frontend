@@ -1,5 +1,5 @@
-import { ProjectStatus } from './project.interface.';
-import { Roles } from './user.interface.';
+import { ProjectStatus } from './project.interface';
+import { Roles } from './user.interface';
 
 export interface Brief {
   id: string;

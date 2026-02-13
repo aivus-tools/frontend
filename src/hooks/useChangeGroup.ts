@@ -1,5 +1,5 @@
 import { useSession } from 'next-auth/react';
-import { Groups } from '@/types/user.interface.';
+import { Groups } from '@/types/user.interface';
 import { useChangeGroupMutation } from '@/services/client/userApi';
 import { AppRoute } from '@/constants/appRoute';
 
