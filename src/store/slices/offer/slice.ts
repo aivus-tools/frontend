@@ -38,6 +38,19 @@ export const offerSlice = createSlice({
   reducers: {
     setOfferDetails: (state, action: PayloadAction<OfferDetails>) => {
       state.offerDetails = action.payload;
+      // Recalculate cost for offers loaded with cost=0 but price>0
+      if (state.offerDetails?.offers) {
+        state.offerDetails.offers.forEach((offer) => {
+          if (offer.price > 0 && offer.cost === 0) {
+            const unitMultiplier = offer.units?.reduce((acc, unit) => acc * (unit?.count ?? 1), 1) ?? 1;
+            const taxPrice = offer.showTax ? round(offer.price * (1 + (offer.taxRate || 0) / 100)) : offer.price;
+            offer.cost = round(taxPrice * unitMultiplier);
+            if (offer.clientPrice > 0 && offer.clientCost === 0) {
+              offer.clientCost = round(offer.clientPrice * unitMultiplier);
+            }
+          }
+        });
+      }
     },
     setMetaData: (state, action: PayloadAction<OfferState['metaData']>) => {
       state.metaData = action.payload;
@@ -108,10 +121,22 @@ export const offerSlice = createSlice({
         tempState.offerDetails.offers = [];
       }
       const categorySurcharge = getCategorySurcharge(category);
-      tempState.offerDetails.offers.push({
+      const newOffer = {
         ...action.payload,
         surcharge: categorySurcharge,
-      });
+      };
+
+      // If offer arrives with price > 0 (e.g. from rate card), calculate cost immediately
+      if (newOffer.price > 0) {
+        const unitMultiplier = newOffer.units?.reduce((acc, unit) => acc * (unit?.count ?? 1), 1) ?? 1;
+        const taxPrice = newOffer.showTax ? round(newOffer.price * (1 + (newOffer.taxRate || 0) / 100)) : newOffer.price;
+        newOffer.taxPrice = round(newOffer.price * (1 + (newOffer.taxRate || 0) / 100));
+        newOffer.cost = round(taxPrice * unitMultiplier);
+        newOffer.clientPrice = round(taxPrice * (1 + categorySurcharge / 100));
+        newOffer.clientCost = round(newOffer.clientPrice * unitMultiplier);
+      }
+
+      tempState.offerDetails.offers.push(newOffer);
 
       // Update the main state
       Object.assign(state, tempState);

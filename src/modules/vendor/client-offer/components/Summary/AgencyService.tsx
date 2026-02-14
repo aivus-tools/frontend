@@ -77,7 +77,7 @@ export const AgencyService = () => {
                     <PercentSign>%</PercentSign>
                 </PercentWrapper>
                 <ValueWrapper>
-                    <AgencyValue>{`$ ${formatCurrency(agencyServiceAmount)}`}</AgencyValue>
+                    <AgencyValue>{formatCurrency(agencyServiceAmount)}</AgencyValue>
                 </ValueWrapper>
             </RightSection>
         </AgencyServiceRow>

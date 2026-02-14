@@ -252,7 +252,7 @@ export async function exportToExcel(data: CategoriesExportData, fileName: string
   nextRow += 1;
 
   const managementTitleCell = excel.getCell(nextRow, 0);
-  managementTitleCell.value = 'Project Management';
+  managementTitleCell.value = 'Production Fee';
   excel.addBorderToLine(nextRow, 5);
   excel.addFont(managementTitleCell);
 
@@ -262,7 +262,7 @@ export async function exportToExcel(data: CategoriesExportData, fileName: string
   nextRow += 1;
 
   const totalSumBeforeTaxTitleCell = excel.getCell(nextRow, 0);
-  totalSumBeforeTaxTitleCell.value = 'Total before tax';
+  totalSumBeforeTaxTitleCell.value = 'Total Before Tax';
   excel.addBorderToLine(nextRow, 5);
   excel.addColorToCellGroup(nextRow, 6, COLOR.SUB);
   excel.addFont(totalSumBeforeTaxTitleCell, true);
@@ -277,17 +277,17 @@ export async function exportToExcel(data: CategoriesExportData, fileName: string
   nextRow += 2;
 
   const taxTitleCell = excel.getCell(nextRow, 0);
-  taxTitleCell.value = 'Taxes';
+  taxTitleCell.value = 'Sales Tax';
   excel.addBorderToLine(nextRow, 5);
   excel.addFont(taxTitleCell);
 
   const taxInfoCell1 = excel.getCell(nextRow, 4);
-  taxInfoCell1.value = 'Tax';
+  taxInfoCell1.value = 'Sales Tax';
   excel.addFont(taxInfoCell1);
   taxInfoCell1.alignment = RIGHT_MIDDLE;
 
   const taxInfoCell2 = excel.getCell(nextRow, 5);
-  taxInfoCell2.value = 0;
+  taxInfoCell2.value = 0.09;
   taxInfoCell2.numFmt = '0%';
   excel.addFont(taxInfoCell2);
   taxInfoCell2.alignment = CENTER_MIDDLE;
@@ -302,7 +302,7 @@ export async function exportToExcel(data: CategoriesExportData, fileName: string
   nextRow += 1;
 
   const totalSumTitleCell = excel.getCell(nextRow, 0);
-  totalSumTitleCell.value = 'Grand Total (excl. tax)';
+  totalSumTitleCell.value = 'GRAND TOTAL';
   excel.addBorderToLine(nextRow, 5);
   excel.addColorToCellGroup(nextRow, 5, COLOR.HEADER);
   excel.addFont(totalSumTitleCell, true);
@@ -318,7 +318,7 @@ export async function exportToExcel(data: CategoriesExportData, fileName: string
   nextRow += 1;
 
   const videoTitleCell = excel.getCell(nextRow, 0);
-  videoTitleCell.value = 'Approximate cost per unit (for reference)';
+  videoTitleCell.value = 'Cost Per Video';
   excel.addBorderToLine(nextRow, 5);
   excel.addFont(videoTitleCell);
 

@@ -1,5 +1,5 @@
 'use client';
-import { Button, message } from 'antd';
+import { Button, message, Tooltip } from 'antd';
 import { t } from '@/lib/i18n';
 import { useSelectedLayoutSegments } from 'next/navigation';
 import { VENDOR_PROJECT_TAB_KEYS } from '@/constants/constants';
@@ -71,9 +71,17 @@ export const ProjectNavbar = () => {
 
         {offerMetaData?.id && (
           <div className={styles.share}>
-            <Button type='primary' onClick={() => setShareOpen(true)}>
-              {t('SHARE')}
-            </Button>
+            <Tooltip
+              title={offerMetaData.status !== 'PUBLISHED' ? t('SHARE_PUBLISH_REQUIRED') : undefined}
+            >
+              <Button
+                type='primary'
+                disabled={offerMetaData.status !== 'PUBLISHED'}
+                onClick={() => setShareOpen(true)}
+              >
+                {t('SHARE')}
+              </Button>
+            </Tooltip>
           </div>
         )}
       </div>

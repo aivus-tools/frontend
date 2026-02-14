@@ -60,7 +60,7 @@ export const EntryRow = ({ offer, isEven }: Props) => {
                 <QuantityDisplay units={offer.units} />
             </EstimationItem>
             <EstimationItem $hovered={isActive || isHovered} style={{ justifyContent: 'flex-end', fontWeight: 600 }}>
-                {`$ ${formatCurrency(offer.clientCost)}`}
+                {formatCurrency(offer.clientCost)}
             </EstimationItem>
             <ActionCell $hovered={isActive || isHovered}>
                 {isActive && <ArrowSquareRightIcon style={{ color: '#99A1B7', width: 16, height: 16 }} />}

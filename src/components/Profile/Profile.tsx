@@ -4,8 +4,6 @@ import { UserOutlined } from '@ant-design/icons';
 import styles from './Profile.module.css';
 import cn from 'classnames';
 import { t } from '@/lib/i18n';
-import MovieIcon from './movie-icon.svg';
-import NotificationIcon from './notification-icon.svg';
 import ArrowIcon from '@/icons/arrow-icon.svg';
 import { Popover } from 'react-tiny-popover';
 import { useState } from 'react';
@@ -33,8 +31,6 @@ export const Profile = ({ className, ...props }: ProfileProps) => {
 
   return (
     <div className={cn(styles.profile, className)} {...props}>
-      <MovieIcon className={cn(styles.icon)} />
-      <NotificationIcon className={cn(styles.icon)} />
       <Popover
         isOpen={isPopoverOpen}
         positions={['bottom']}

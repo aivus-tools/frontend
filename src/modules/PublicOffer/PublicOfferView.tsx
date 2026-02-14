@@ -83,17 +83,21 @@ export const PublicOfferView: React.FC<PublicOfferViewProps> = ({ params }) => {
   }
 
   if (error || !data) {
-    const isDisabled = (error as { status?: number })?.status === 403;
+    const status = (error as { status?: number })?.status;
+    const errorMessage = (error as { data?: { error?: string } })?.data?.error;
+    const isDisabled = status === 403;
+    const isArchived = status === 410 && errorMessage === 'Project is archived';
+
+    const title = isArchived
+      ? t('PROJECT_ARCHIVED_UNAVAILABLE')
+      : isDisabled
+      ? t('SHARING_DISABLED_BY_OWNER')
+      : t('ESTIMATE_NO_LONGER_AVAILABLE');
+
     return (
       <FullPageMessage>
-        <ErrorTitle>
-          {isDisabled ? t('SHARING_DISABLED_BY_OWNER') : t('ESTIMATE_NO_LONGER_AVAILABLE')}
-        </ErrorTitle>
-        <ErrorSubtitle>
-          {isDisabled
-            ? t('SHARING_DISABLED_BY_OWNER')
-            : t('ESTIMATE_NO_LONGER_AVAILABLE')}
-        </ErrorSubtitle>
+        <ErrorTitle>{title}</ErrorTitle>
+        <ErrorSubtitle>{title}</ErrorSubtitle>
       </FullPageMessage>
     );
   }

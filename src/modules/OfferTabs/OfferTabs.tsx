@@ -2,7 +2,7 @@
 
 import React, { useState, useRef } from 'react';
 import { Popconfirm, Popover, Tooltip } from 'antd';
-import { FileAddOutlined, CopyOutlined, CloseOutlined } from '@ant-design/icons';
+import { FileAddOutlined, CopyOutlined, CloseOutlined, SnippetsOutlined } from '@ant-design/icons';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { t } from '@/lib/i18n';
 import { Offer } from '@/types/offer.interface';
@@ -12,7 +12,9 @@ import {
   useCopyOfferMutation,
   useDeleteOfferMutation,
   useUpdateOfferMutation,
+  useUpdateOfferStatusMutation,
 } from '@/services/client/offersApi';
+import { useGetTemplatesQuery, useApplyTemplateMutation } from '@/services/client/templatesApi';
 import { useAppSelector } from '@/store/hooks';
 import { selectProjectId } from '@/store/slices/project';
 import {
@@ -44,16 +46,20 @@ export const OfferTabs: React.FC = () => {
   const [copyOffer] = useCopyOfferMutation();
   const [deleteOffer] = useDeleteOfferMutation();
   const [updateOffer] = useUpdateOfferMutation();
+  const [updateOfferStatus] = useUpdateOfferStatusMutation();
+  const { data: templates = [] } = useGetTemplatesQuery();
+  const [applyTemplate] = useApplyTemplateMutation();
 
   const [renamingId, setRenamingId] = useState<string | null>(null);
+  const [statusPopoverId, setStatusPopoverId] = useState<string | null>(null);
   const [renameValue, setRenameValue] = useState('');
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const renameInputRef = useRef<HTMLInputElement>(null);
 
   const activeOfferId = searchParams.get('offer') || offers[0]?.id;
 
-  // Don't render tabs if 0 or 1 offers
-  if (offers.length <= 1) {
+  // Don't render tabs if no offers yet
+  if (offers.length === 0) {
     return null;
   }
 
@@ -87,6 +93,26 @@ export const OfferTabs: React.FC = () => {
     try {
       const copiedOffer = await copyOffer(offerId).unwrap();
       handleTabClick(copiedOffer.id);
+    } catch {
+      // Error handled by RTK Query
+    }
+  };
+
+  const handleNewFromTemplate = async (templateId: string) => {
+    if (!projectId) return;
+    setDropdownOpen(false);
+    try {
+      const newOffer = await createOffer({
+        projectName: `Offer ${offers.length + 1}`,
+        projectId,
+        status: 'DRAFT',
+        details: {},
+        deadline: new Date().toISOString(),
+        source: 'PLATFORM',
+        isLocked: false,
+      }).unwrap();
+      await applyTemplate(templateId).unwrap();
+      handleTabClick(newOffer.id);
     } catch {
       // Error handled by RTK Query
     }
@@ -126,6 +152,15 @@ export const OfferTabs: React.FC = () => {
     }
   };
 
+  const handleStatusChange = async (offerId: string, newStatus: 'DRAFT' | 'PUBLISHED') => {
+    setStatusPopoverId(null);
+    try {
+      await updateOfferStatus({ id: offerId, status: newStatus }).unwrap();
+    } catch {
+      // Error handled by RTK Query
+    }
+  };
+
   const isMaxOffers = offers.length >= MAX_OFFERS;
 
   return (
@@ -153,9 +188,36 @@ export const OfferTabs: React.FC = () => {
               ) : (
                 <>
                   <span>{offer.projectName}</span>
-                  <StatusBadge $status={offer.status}>
-                    {offer.status === 'PUBLISHED' ? t('STATUS_PUBLISHED') : t('STATUS_DRAFT')}
-                  </StatusBadge>
+                  <Popover
+                    open={statusPopoverId === offer.id}
+                    onOpenChange={(open) => setStatusPopoverId(open ? offer.id : null)}
+                    trigger="click"
+                    placement="bottom"
+                    content={
+                      <DropdownContainer style={{ minWidth: 140 }}>
+                        <DropdownOption
+                          onClick={() => handleStatusChange(offer.id, 'DRAFT')}
+                          style={offer.status === 'DRAFT' ? { background: '#f4fbff' } : undefined}
+                        >
+                          <StatusBadge $status="DRAFT">{t('STATUS_DRAFT')}</StatusBadge>
+                        </DropdownOption>
+                        <DropdownOption
+                          onClick={() => handleStatusChange(offer.id, 'PUBLISHED')}
+                          style={offer.status === 'PUBLISHED' ? { background: '#f4fbff' } : undefined}
+                        >
+                          <StatusBadge $status="PUBLISHED">{t('STATUS_PUBLISHED')}</StatusBadge>
+                        </DropdownOption>
+                      </DropdownContainer>
+                    }
+                  >
+                    <StatusBadge
+                      $status={offer.status}
+                      onClick={(e) => e.stopPropagation()}
+                      style={{ cursor: 'pointer' }}
+                    >
+                      {offer.status === 'PUBLISHED' ? t('STATUS_PUBLISHED') : t('STATUS_DRAFT')}
+                    </StatusBadge>
+                  </Popover>
                 </>
               )}
             </TabComponent>
@@ -194,6 +256,18 @@ export const OfferTabs: React.FC = () => {
                   <DropdownOption key={offer.id} onClick={() => handleCopyFrom(offer.id)}>
                     <CopyOutlined />
                     {t('COPY_FROM', offer.projectName)}
+                  </DropdownOption>
+                ))}
+              </>
+            )}
+            {templates.length > 0 && (
+              <>
+                <DropdownDivider />
+                <DropdownLabel>{t('FROM_TEMPLATE')}</DropdownLabel>
+                {templates.map((tmpl) => (
+                  <DropdownOption key={tmpl.id} onClick={() => handleNewFromTemplate(tmpl.id)}>
+                    <SnippetsOutlined />
+                    {tmpl.name}
                   </DropdownOption>
                 ))}
               </>

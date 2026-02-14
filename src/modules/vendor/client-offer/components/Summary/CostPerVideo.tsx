@@ -38,7 +38,7 @@ export const CostPerVideo = () => {
     return (
         <CostPerVideoRow>
             <CostLabel>{t('COST_PER_VIDEO', String(countOfVideos))}</CostLabel>
-            <CostValue>{`$ ${formatCurrency(costPerVideo)}`}</CostValue>
+            <CostValue>{formatCurrency(costPerVideo)}</CostValue>
         </CostPerVideoRow>
     );
 };

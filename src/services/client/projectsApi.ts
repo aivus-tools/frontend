@@ -50,6 +50,17 @@ export const projectsApi = createApi({
       },
       invalidatesTags: ['Project'],
     }),
+    getArchivedProjects: builder.query<Project[], void>({
+      query: () => ApiRoute.PROJECT_ARCHIVED,
+      providesTags: ['Project'],
+    }),
+    restoreProject: builder.mutation<Project, string>({
+      query: (id) => ({
+        url: ApiRoute.PROJECT_RESTORE(id),
+        method: 'POST',
+      }),
+      invalidatesTags: ['Project'],
+    }),
   }),
 });
 
@@ -60,4 +71,6 @@ export const {
   useUpdateProjectMutation,
   useDeleteProjectMutation,
   useUploadThumbnailMutation,
+  useGetArchivedProjectsQuery,
+  useRestoreProjectMutation,
 } = projectsApi;

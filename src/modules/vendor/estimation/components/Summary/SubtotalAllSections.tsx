@@ -50,14 +50,14 @@ export const SubtotalAllSections = () => {
         <Flex align='center' justify='end'>
           {t('SUBTOTAL_FOR_ALL_SECTIONS')}
         </Flex>
-        <TotalSum>{`$ ${total}`}</TotalSum>
+        <TotalSum>{total}</TotalSum>
       </Label>
       <div />
       <Flex
         justify='flex-end'
         style={{ gridColumn: 'span 5', paddingRight: '16px', backgroundColor: 'var(--bg-green)', borderRadius: '6px' }}
       >
-        <TotalSum>{`$ ${totalClient}`}</TotalSum>
+        <TotalSum>{totalClient}</TotalSum>
       </Flex>
     </SummaryRowWrapper>
   );

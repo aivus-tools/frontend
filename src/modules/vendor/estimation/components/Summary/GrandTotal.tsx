@@ -47,14 +47,14 @@ export const GrandTotal = () => {
         <Flex align='center' justify='end'>
           {t('GRAND_TOTAL')}
         </Flex>
-        <TotalSum>{`$ ${total}`}</TotalSum>
+        <TotalSum>{total}</TotalSum>
       </Label>
       <div />
       <Flex
         justify='flex-end'
         style={{ gridColumn: 'span 5', paddingRight: '16px', backgroundColor: 'var(--bg-blue-important)', borderRadius: '6px' }}
       >
-        <TotalSum>{`$ ${clientTotal}`}</TotalSum>
+        <TotalSum>{clientTotal}</TotalSum>
       </Flex>
     </GrandTotalRowWrapper>
   );

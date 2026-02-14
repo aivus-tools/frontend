@@ -61,7 +61,7 @@ export const CostPerVideo = () => {
           {t('COST_PER_VIDEO', String(countOfVideos))}
         </Flex>
         <Flex align='center'>
-          <TotalSum>{`$ ${formatCurrency(totalValue / countOfVideos)}`}</TotalSum>
+          <TotalSum>{formatCurrency(totalValue / countOfVideos)}</TotalSum>
         </Flex>
       </Label>
       <div />
@@ -70,7 +70,7 @@ export const CostPerVideo = () => {
         align='center'
         style={{ gridColumn: 'span 5', paddingRight: '16px', backgroundColor: 'var(--white)' }}
       >
-        <TotalSum>{`$ ${formatCurrency(clientTotalValue / countOfVideos)}`}</TotalSum>
+        <TotalSum>{formatCurrency(clientTotalValue / countOfVideos)}</TotalSum>
       </Flex>
     </>
   );

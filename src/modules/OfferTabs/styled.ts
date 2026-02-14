@@ -6,7 +6,7 @@ export const TabsContainer = styled.div`
   display: flex;
   align-items: flex-end;
   gap: 0;
-  padding: 0 30px;
+  padding: 0 24px;
   margin-top: 10px;
   border-bottom: 2px solid #e5e5e5;
 `;
@@ -14,9 +14,9 @@ export const TabsContainer = styled.div`
 const tabBase = css`
   display: flex;
   align-items: center;
-  gap: 8px;
-  padding: 10px 16px;
-  border-radius: 6px 6px 0 0;
+  gap: 10px;
+  padding: 10px 18px;
+  border-radius: 8px 8px 0 0;
   cursor: pointer;
   position: relative;
   bottom: -2px;
@@ -25,6 +25,7 @@ const tabBase = css`
   font-family: 'Montserrat', sans-serif;
   white-space: nowrap;
   user-select: none;
+  transition: all 0.15s ease;
 `;
 
 export const ActiveTab = styled.button`
@@ -87,10 +88,11 @@ export const CloseButton = styled.span`
   justify-content: center;
   opacity: 0;
   cursor: pointer;
-  transition: opacity 0.15s;
+  transition: all 0.15s ease;
 
   &:hover {
     color: #d63c22;
+    opacity: 1;
   }
 `;
 
@@ -100,7 +102,7 @@ export const TabWrapper = styled.div`
   align-items: flex-end;
 
   &:hover ${CloseButton} {
-    opacity: 1;
+    opacity: 0.4;
   }
 `;
 
@@ -109,12 +111,14 @@ export const NewOfferTab = styled.button`
   color: #2288ff;
   font-weight: 600;
   font-size: 13px;
-  border: 1px dashed #2288ff;
+  border: 1.5px dashed rgba(34, 136, 255, 0.4);
   border-bottom: none;
   background: transparent;
+  height: 100%;
 
   &:hover {
     background: #f4fbff;
+    border-color: rgba(34, 136, 255, 0.7);
   }
 
   &:disabled {
@@ -123,6 +127,7 @@ export const NewOfferTab = styled.button`
 
     &:hover {
       background: transparent;
+      border-color: rgba(34, 136, 255, 0.4);
     }
   }
 `;

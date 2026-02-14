@@ -25,7 +25,7 @@ export const UnforeseenExpenses = () => {
                 </Label>
             </Flex>
             <div style={{ borderRadius: '0 6px 6px 0' }}>
-                <TotalSum style={{ fontSize: 13 }}>{`$ ${clientTotal}`}</TotalSum>
+                <TotalSum style={{ fontSize: 13 }}>{clientTotal}</TotalSum>
             </div>
         </RowWrapper>
     );

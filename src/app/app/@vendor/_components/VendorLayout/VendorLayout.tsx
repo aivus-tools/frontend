@@ -10,6 +10,7 @@ import { useSelectedLayoutSegments } from 'next/navigation';
 import { ProjectNavbar } from './components/ProjectNavbar/ProjectNavbar';
 import { VendorNavbar } from './components/VendorNavbar/VendorNavbar';
 import { GrandTotalSider } from '@/modules/vendor/sider/GrandTotalSider/GrandTotalSider';
+import { DashboardSidebar } from '@/modules/vendor/dashboard/DashboardSidebar/DashboardSidebar';
 
 const { Header, Content } = Layout;
 
@@ -44,7 +45,7 @@ const VendorLayout = ({ children }: PropsWithChildren) => {
     <Layout hasSider>
       <Sider style={siderStyle} width={250} theme={theme}>
         <Logo theme={theme} />
-        {!isRoot && <GrandTotalSider />}
+        {isRoot ? <DashboardSidebar /> : <GrandTotalSider />}
       </Sider>
       <Layout>
         <HeaderLayout style={{ padding: '0 36px' }}>

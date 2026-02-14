@@ -12,9 +12,11 @@ import { selectIsExternal, selectRootCategories } from '@/store/slices/offer/sel
 import { AddButton } from './components/AddButton';
 import { useLoadData } from './hooks/useLoadData';
 import { useSetExternal } from './hooks/useSetExternal';
+import { useOfferSync } from '@/hooks/useOfferSync';
 
 export function Estimation({ external }: { external?: boolean }) {
   useSetExternal(external);
+  useOfferSync();
   const isExternal = useAppSelector(selectIsExternal);
   const categories = useAppSelector(selectRootCategories);
   const isLoading = useLoadData(external);

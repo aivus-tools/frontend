@@ -9,6 +9,7 @@ import { selectAllCategories } from '@/store/slices/offer/selectors';
 import { addOfferRow, removeOfferRow } from '@/store/slices/offer/slice';
 import { useExpandedKeys } from '../context/expanded';
 import { KEY_SEPARATOR } from '../constants';
+import { useRateLookup } from '@/hooks/useRateLookup';
 
 const Input = styled(LibInput)`
   &.ant-input-borderless {
@@ -32,10 +33,13 @@ export const EntrieInput = ({ value, variant }: Props) => {
   const dispatch = useAppDispatch();
   const allCategories = useAppSelector(selectAllCategories);
   const { addKey } = useExpandedKeys();
+  const lookupPrice = useRateLookup();
 
   const handleSelect = (offer: OfferData) => {
+    const ratePrice = lookupPrice(offer.entryId);
+    const offerWithRate = ratePrice !== null ? { ...offer, price: ratePrice } : offer;
     dispatch(removeOfferRow(value.id));
-    dispatch(addOfferRow(offer));
+    dispatch(addOfferRow(offerWithRate));
     const category = allCategories.find((cat) => cat.id === offer.categoryId);
     if (!category) return;
     const parentCategory = allCategories.find((cat) => cat.id === category.parentCategoryId);

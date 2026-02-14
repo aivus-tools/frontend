@@ -7,6 +7,7 @@ import { useAppSelector } from '@/store/hooks';
 import { selectOfferDetails, selectOfferMetaData } from '@/store/slices/offer/selectors';
 import { selectProjectId } from '@/store/slices/project';
 import { useGetOffersByProjectIdQuery } from '@/services/client/offersApi';
+import { useOfferSync } from '@/hooks/useOfferSync';
 import { ClientOfferTable } from './ClientOfferTable';
 import { Guidance } from './components/Guidance';
 import { Wrapper, Column } from './components/styled';
@@ -16,6 +17,8 @@ export function ClientOffer() {
   const projectId = useAppSelector(selectProjectId);
   const offerDetails = useAppSelector(selectOfferDetails);
   const metaData = useAppSelector(selectOfferMetaData);
+
+  useOfferSync();
 
   useEffect(() => {
     setIsMounted(true);

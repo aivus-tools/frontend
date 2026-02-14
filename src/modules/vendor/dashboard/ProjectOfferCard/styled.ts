@@ -1,108 +1,216 @@
 'use client';
 
 import { styled, css } from 'styled-components';
-import { PROJECT_STATUS } from '@/constants/constants';
+
+const statusAccent = (status?: string) => {
+  switch (status) {
+    case 'RFP':
+      return '#2288FF';
+    case 'REVIEWING':
+      return '#F0A020';
+    case 'ONGOING':
+      return '#52C41A';
+    case 'COMPLETED':
+      return '#52C41A';
+    default:
+      return '#B5B5C3';
+  }
+};
 
 export const CardContainer = styled.div`
-  border-radius: 6px;
-  box-shadow: 0px 5px 16.5px -11px rgba(0, 0, 0, 0.25);
+  background: #ffffff;
+  border-radius: 10px;
   overflow: hidden;
-  margin: 10px 0;
+  margin-bottom: 12px;
   cursor: pointer;
+  transition: box-shadow 0.2s ease, transform 0.15s ease;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.06);
+  border: 1px solid #f1f1f4;
 
   &:hover {
-    box-shadow: rgb(149 157 165 / 20%) 0 8px 24px;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+    transform: translateY(-1px);
   }
 `;
 
-export const ProjectRow = styled.div<{ $status?: string }>`
-  display: grid;
-  grid-template-columns: 1fr 1fr 80px repeat(4, 90px);
-  column-gap: 40px;
+export const CardHeader = styled.div<{ $status?: string }>`
+  display: flex;
   align-items: center;
-  width: 100%;
-  padding: 20px 22px;
-  background-color: ${({ $status }) => {
-    switch ($status) {
-      case PROJECT_STATUS.RFP:
-        return 'var(--bg-blue-subtotal)';
-      case PROJECT_STATUS.REVIEWING:
-        return '#fff';
-      case PROJECT_STATUS.ONGOING:
-      case PROJECT_STATUS.COMPLETED:
-        return 'var(--bg-light-green)';
-      default:
-        return 'var(--bg-gray-page)';
-    }
-  }};
+  gap: 16px;
+  padding: 16px 20px;
+  border-left: 4px solid ${({ $status }) => statusAccent($status)};
 `;
 
-export const OffersSection = styled.div`
-  background: #ffffff;
-  border-top: 1px dashed #e5e5e5;
-  padding: 8px 22px 8px 42px;
+export const ProjectInfo = styled.div`
+  flex: 1;
+  min-width: 0;
 `;
 
-export const OffersLabel = styled.div`
+export const ProjectTitle = styled.div`
   font-family: 'Montserrat', sans-serif;
-  font-weight: 500;
-  font-size: 10px;
-  color: #99a1b7;
+  font-weight: 700;
+  font-size: 14px;
+  color: #1b254b;
   text-transform: uppercase;
-  letter-spacing: 0.5px;
-  margin-bottom: 6px;
-  padding-top: 4px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 `;
 
-export const OfferRow = styled.div`
+export const ProjectMeta = styled.div`
   display: flex;
   align-items: center;
   gap: 12px;
-  padding: 6px 0;
+  margin-top: 4px;
+  font-family: 'Montserrat', sans-serif;
+  font-size: 12px;
+  color: #99a1b7;
+  font-weight: 500;
+`;
+
+export const MetaDot = styled.span`
+  width: 3px;
+  height: 3px;
+  border-radius: 50%;
+  background: #d0d5dd;
+  flex-shrink: 0;
+`;
+
+export const HeaderActions = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-shrink: 0;
+`;
+
+export const OffersTable = styled.div`
+  border-top: 1px solid #f1f1f4;
+`;
+
+export const OfferTableHeader = styled.div`
+  display: grid;
+  grid-template-columns: 1fr 90px 90px 90px;
+  gap: 12px;
+  padding: 8px 20px 6px 40px;
+  font-family: 'Montserrat', sans-serif;
+  font-weight: 600;
+  font-size: 10px;
+  color: #b5b5c3;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+`;
+
+export const OfferRow = styled.div`
+  display: grid;
+  grid-template-columns: 1fr 90px 90px 90px;
+  gap: 12px;
+  padding: 10px 20px 10px 40px;
+  align-items: center;
+  transition: background 0.12s ease;
+  cursor: pointer;
+
+  &:hover {
+    background: #f8f9fb;
+  }
 
   &:not(:last-child) {
-    border-bottom: 1px dashed #f0f0f0;
+    border-bottom: 1px solid #f5f5f8;
   }
 `;
 
-export const OfferName = styled.span`
+export const OfferName = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-width: 0;
+`;
+
+export const OfferNameText = styled.span`
   font-family: 'Montserrat', sans-serif;
   font-weight: 500;
   font-size: 13px;
   color: #4b5675;
-  flex: 1;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 `;
 
 export const OfferStatusBadge = styled.span<{ $status: 'DRAFT' | 'PUBLISHED' }>`
-  height: 18px;
-  padding: 0 6px;
-  border-radius: 3px;
+  height: 20px;
+  padding: 0 8px;
+  border-radius: 4px;
   font-family: 'Montserrat', sans-serif;
   font-weight: 700;
-  font-size: 8px;
+  font-size: 9px;
   text-transform: uppercase;
   display: inline-flex;
   align-items: center;
+  flex-shrink: 0;
+  cursor: pointer;
 
   ${({ $status }) =>
     $status === 'PUBLISHED'
       ? css`
-          background: #f4fbdb;
-          border: 0.6px solid #a5c500;
-          color: #a5c500;
+          background: #f0fcd4;
+          color: #7ead00;
         `
       : css`
-          background: #f9f9f9;
-          border: 0.6px solid #99a1b7;
+          background: #f4f4f7;
           color: #99a1b7;
         `}
 `;
 
-export const OfferCost = styled.span`
+export const OfferValue = styled.div<{ $highlight?: boolean }>`
   font-family: 'Montserrat', sans-serif;
   font-weight: 600;
-  font-size: 12px;
-  color: #4b5675;
-  min-width: 80px;
+  font-size: 13px;
+  color: ${({ $highlight }) => ($highlight ? '#2288FF' : '#4b5675')};
   text-align: right;
+`;
+
+export const StatusDropdown = styled.div`
+  min-width: 120px;
+  background: #ffffff;
+  border-radius: 6px;
+  box-shadow: 0px 5px 16.5px -11px rgba(0, 0, 0, 0.25);
+  padding: 4px 0;
+`;
+
+export const StatusDropdownOption = styled.div`
+  padding: 8px 12px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+
+  &:hover {
+    background: #f4fbff;
+  }
+`;
+
+export const KebabButton = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 30px;
+  height: 30px;
+  border-radius: 6px;
+  cursor: pointer;
+  color: #b5b5c3;
+  font-size: 18px;
+  transition: all 0.15s ease;
+  flex-shrink: 0;
+
+  &:hover {
+    background: #f1f1f4;
+    color: #4b5675;
+  }
+`;
+
+export const EmptyOffers = styled.div`
+  padding: 14px 20px 14px 40px;
+  font-family: 'Montserrat', sans-serif;
+  font-size: 12px;
+  color: #b5b5c3;
+  font-weight: 500;
+  border-top: 1px solid #f1f1f4;
 `;

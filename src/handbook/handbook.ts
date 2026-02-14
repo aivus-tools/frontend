@@ -60,9 +60,6 @@ export const dashboardTHeads: THead[] = [
     className: 'alignRight',
   },
   {
-    text: t('DASHBOARD_DEADLINE'),
-  },
-  {
     text: t('DASHBOARD_CREATED'),
   },
 ];

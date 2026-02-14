@@ -29,7 +29,7 @@ export const GrandTotal = () => {
     return (
         <GrandTotalRow>
             <GrandTotalLabel>{t('GRAND_TOTAL')}</GrandTotalLabel>
-            <GrandTotalValue>{`$ ${clientTotal}`}</GrandTotalValue>
+            <GrandTotalValue>{clientTotal}</GrandTotalValue>
         </GrandTotalRow>
     );
 };

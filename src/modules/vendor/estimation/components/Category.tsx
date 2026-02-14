@@ -33,14 +33,14 @@ export function Category({ category }: { category: TypeCategory }) {
 
   return (
     <CategorySection>
-      <Title category={category} itemKey={key} value={`$ ${total}`} clientValue={`$ ${clientTotal}`} />
+      <Title category={category} itemKey={key} value={total} clientValue={clientTotal} />
       {isOpen && (
         <>
           {subCategories?.map((subCategory) => (
             <SubCategory key={`${key}${subCategory.id}`} subCategory={subCategory} />
           ))}
           <Entries data={offers} />
-          <Total text={category.name} value={`$ ${total}`} clientValue={`$ ${clientTotal}`} categoryId={category.id} />
+          <Total text={category.name} value={total} clientValue={clientTotal} categoryId={category.id} />
         </>
       )}
     </CategorySection>

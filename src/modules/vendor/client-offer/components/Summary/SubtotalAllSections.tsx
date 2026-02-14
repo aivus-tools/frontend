@@ -27,7 +27,7 @@ export const SubtotalAllSections = () => {
     return (
         <SummaryRow>
             <SummaryLabel>{t('SUBTOTAL_FOR_ALL_SECTIONS')}</SummaryLabel>
-            <SummaryValue>{`$ ${totalClient}`}</SummaryValue>
+            <SummaryValue>{totalClient}</SummaryValue>
         </SummaryRow>
     );
 };

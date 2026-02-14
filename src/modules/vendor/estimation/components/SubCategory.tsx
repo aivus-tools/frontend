@@ -25,13 +25,13 @@ export function SubCategory({ subCategory }: { subCategory: Category }) {
 
   return (
     <>
-      <SubTitle text={subCategory.name} itemKey={key} value={`$ ${total}`} clientValue={`$ ${clientTotal}`} />
+      <SubTitle text={subCategory.name} itemKey={key} value={total} clientValue={clientTotal} />
       {isOpen && (
         <>
           <Entries data={offers} />
           <SubTotal
-            value={`$ ${total}`}
-            clientValue={`$ ${clientTotal}`}
+            value={total}
+            clientValue={clientTotal}
             subCategoryId={subCategory.id}
             name={subCategory.name}
           />

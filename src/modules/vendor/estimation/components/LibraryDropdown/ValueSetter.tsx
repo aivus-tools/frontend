@@ -33,6 +33,8 @@ export const ValueSetter = ({
   const handleEnter = useCallback(
     (e: KeyboardEvent) => {
       if (e.key === Key.ENTER) {
+        e.preventDefault();
+        e.stopPropagation();
         handleSelect();
       }
       if (e.key === Key.ARROW_DOWN) {
