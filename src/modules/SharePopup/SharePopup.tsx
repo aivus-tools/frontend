@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { Modal, Input, Button, Switch, Avatar, Popconfirm, Skeleton } from 'antd';
 import { CopyOutlined, CheckOutlined, UserOutlined } from '@ant-design/icons';
 import { t } from '@/lib/i18n';
@@ -61,7 +61,10 @@ export const SharePopup: React.FC<SharePopupProps> = ({ open, onClose, offerId, 
     }
   }, [open, existingShare, isLoadingShare, shareToken, shareError, offerId, createShare]);
 
-  const shareUrl = shareToken ? `${window.location.origin}/public/${shareToken}` : '';
+  const shareUrl = useMemo(
+    () => (shareToken && typeof window !== 'undefined' ? `${window.location.origin}/public/${shareToken}` : ''),
+    [shareToken]
+  );
 
   const handleCopy = useCallback(async () => {
     if (!shareUrl) return;
@@ -158,17 +161,17 @@ export const SharePopup: React.FC<SharePopupProps> = ({ open, onClose, offerId, 
 
       <ToggleRow>
         {isActive ? (
-          <Switch
-            checked={isActive}
-            onChange={(checked) => {
-              if (!checked) {
-                // Will be handled by Popconfirm
-              } else {
-                handleToggle(true);
-              }
-            }}
-            style={{ backgroundColor: isActive ? '#2288FF' : undefined }}
-          />
+          <Popconfirm
+            title={t('DEACTIVATE_SHARE_LINK')}
+            onConfirm={handleToggleOff}
+            okText={t('YES')}
+            cancelText={t('NO')}
+          >
+            <Switch
+              checked={isActive}
+              style={{ backgroundColor: isActive ? '#2288FF' : undefined }}
+            />
+          </Popconfirm>
         ) : (
           <Switch checked={false} onChange={() => handleToggle(true)} />
         )}
@@ -191,7 +194,7 @@ export const SharePopup: React.FC<SharePopupProps> = ({ open, onClose, offerId, 
       <SharedLabel>{t('SHARED_WITH')}</SharedLabel>
       <OwnerRow>
         <Avatar size={27} src={ownerAvatar} icon={!ownerAvatar ? <UserOutlined /> : undefined} />
-        <OwnerName>{ownerName || 'You'}</OwnerName>
+        <OwnerName>{ownerName || t('YOU')}</OwnerName>
         <OwnerBadge>({t('OWNER')})</OwnerBadge>
       </OwnerRow>
 

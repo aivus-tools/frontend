@@ -7,8 +7,9 @@ import { Steps } from '@/types/auth.interface';
 import { AuthType } from '@/types/user.interface';
 import { AUTH_TYPES } from '@/constants/constants';
 import { useAuthType } from '@/context/AuthTypeProvider';
+import logger from '@/lib/logger';
 
-// TODO заменить на checkEmail из src/services/server/authService.ts
+// TODO: Replace with checkEmail from src/services/server/authService.ts
 const checkEmail = async ({
   email,
 }: {
@@ -24,6 +25,8 @@ const checkEmail = async ({
     },
     body: JSON.stringify({ email }),
   });
+
+  if (!response.ok) throw new Error('Check email failed');
 
   return await response.json();
 };
@@ -42,11 +45,12 @@ export const EmailForm = ({ nextAction }: { nextAction: (step: Steps, email: str
       setLoading(true);
       const res = await checkEmail({ email });
       if (res.exists) {
-        if (res.authType === AUTH_TYPES.credentials) {
-          nextAction('signin', email);
-        } else if (res.authType === AUTH_TYPES.google) {
+        if (res.authType === AUTH_TYPES.google) {
           setAuthType(res.authType);
           messageApi.info(t('PLEASE_SIGN_IN_WITH_GOOGLE'));
+        } else {
+          // Default to credentials flow (covers missing authType from backend)
+          nextAction('signin', email);
         }
       } else {
         nextAction('register', email);
@@ -54,7 +58,7 @@ export const EmailForm = ({ nextAction }: { nextAction: (step: Steps, email: str
     } catch (error) {
       setLoading(false);
       messageApi.error(t('UNEXPECTED_ERROR'));
-      console.error('Error checking email:', error);
+      logger.error('Error checking email:', error);
     } finally {
       setLoading(false);
     }

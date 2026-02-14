@@ -104,10 +104,10 @@ export const ComparisonTable: React.FC<ComparisonTableProps> = ({ briefId }) => 
 
   const { vendors, categories, grand_totals } = data;
 
-  // Default: all categories expanded
+  // expandedCategories tracks which categories have been toggled (collapsed)
   const isExpanded = (categoryId: string) => {
     if (expandedCategories.size === 0) return true;
-    return expandedCategories.has(categoryId);
+    return !expandedCategories.has(categoryId);
   };
 
   const renderCategory = (category: ComparisonCategory) => {

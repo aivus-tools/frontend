@@ -1,7 +1,7 @@
 export interface Vendor {
-  id: number;
+  id: string;
   name: string;
-  ownerId: number;
+  ownerId: string;
   createdAt: string;
   updatedAt: string;
 }

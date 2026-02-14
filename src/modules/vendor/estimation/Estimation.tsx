@@ -1,15 +1,15 @@
 'use client';
 
-import { Header } from './componnets/Header';
+import { Header } from './components/Header';
 import { HoverProvider } from './context/hover';
-import { Category } from './componnets/Category';
+import { Category } from './components/Category';
 import { KeysProvider } from './context/expanded';
 import { Wrapper, Table } from './styled';
 import Spinner from '@/components/Spinner';
-import { Summary } from './componnets/Summary/Summary';
+import { Summary } from './components/Summary/Summary';
 import { useAppSelector } from '@/store/hooks';
 import { selectIsExternal, selectRootCategories } from '@/store/slices/offer/selectors';
-import { AddButton } from './componnets/AddButton';
+import { AddButton } from './components/AddButton';
 import { useLoadData } from './hooks/useLoadData';
 import { useSetExternal } from './hooks/useSetExternal';
 

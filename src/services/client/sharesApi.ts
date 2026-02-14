@@ -4,7 +4,7 @@ import { ApiRoute } from '@/constants/apiRoute';
 
 export const sharesApi = createApi({
   reducerPath: 'sharesApi',
-  baseQuery: fetchBaseQuery(),
+  baseQuery: fetchBaseQuery({ baseUrl: '' }),
   tagTypes: ['Share'],
   endpoints: (builder) => ({
     createShare: builder.mutation<Share, CreateSharePayload>({

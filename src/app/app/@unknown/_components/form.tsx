@@ -7,6 +7,7 @@ import { Groups } from '@/types/user.interface';
 
 import styles from './form.module.css';
 import { useChangeGroup } from '@/hooks/useChangeGroup';
+import logger from '@/lib/logger';
 import { useSession } from 'next-auth/react';
 import Spinner from '@/components/Spinner';
 import { t } from '@/lib/i18n';
@@ -21,14 +22,14 @@ export function Form() {
   const { change } = useChangeGroup();
   const [group, setGroup] = useState<Groups | null>(null);
 
-  const trigger = (group: Groups) => async () => {
+  const trigger = (group: Exclude<Groups, 'UNCONFIRMED' | 'CONFIRMED'>) => async () => {
     setLoading(true);
     setGroup(group);
     try {
       await change(group);
     } catch (error) {
       messageApi.error(t('UNEXPECTED_ERROR'));
-      console.error('Failed to change role:', error);
+      logger.error('Failed to change role:', error);
     } finally {
       setLoading(false);
     }

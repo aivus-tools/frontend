@@ -4,29 +4,26 @@ import { ApiRoute } from '@/constants/apiRoute';
 
 type ChangeGroup = {
   userId: string;
-  newGroup: Omit<Groups, 'UNCONFIRMED'>;
+  newGroup: Exclude<Groups, 'UNCONFIRMED'>;
 };
 
 export const userApi = createApi({
   reducerPath: 'userApi',
-  baseQuery: fetchBaseQuery(),
+  baseQuery: fetchBaseQuery({ baseUrl: '' }),
   endpoints: (builder) => ({
     changeGroup: builder.mutation<Partial<User>, ChangeGroup>({
       query: ({ userId, newGroup }) => ({
-        url: ApiRoute.USER_CHANGE_GROUP(userId),
+        url: ApiRoute.CHANGE_ROLE(userId),
         method: 'PATCH',
-        body: { newGroup },
+        body: { group: newGroup },
       }),
     }),
-    confirmEmail: builder.mutation<void, string>({
-      query: (token) => ({
-        url: ApiRoute.CONFIRM_EMAIL(token),
-        method: 'GET',
-      }),
+    confirmEmail: builder.query<void, string>({
+      query: (token) => ApiRoute.CONFIRM_EMAIL(token),
     }),
     resendConfirmation: builder.mutation<{ message: string }, string>({
       query: (email) => ({
-        url: ApiRoute.RESEND_CONFIRMATION_SERVICE,
+        url: ApiRoute.RESEND_CONFIRMATION,
         method: 'POST',
         body: { email },
       }),
@@ -34,4 +31,4 @@ export const userApi = createApi({
   }),
 });
 
-export const { useChangeGroupMutation, useConfirmEmailMutation, useResendConfirmationMutation } = userApi;
+export const { useChangeGroupMutation, useLazyConfirmEmailQuery, useResendConfirmationMutation } = userApi;

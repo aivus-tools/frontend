@@ -1,5 +1,5 @@
 import React, { useMemo, ReactNode } from 'react';
-import { Label } from '@/modules/vendor/estimation/componnets/LibraryDropdown/Label';
+import { Label } from '@/modules/vendor/estimation/components/LibraryDropdown/Label';
 import { categoriesApi } from '@/services/client/categoriesApi';
 import { Entry } from '@/types/entries.interface';
 import { useAppSelector } from '@/store/hooks';

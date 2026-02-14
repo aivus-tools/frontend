@@ -1,5 +1,5 @@
 import { ratesApi } from '@/services/client/ratesApi';
 
-export const useRates = () => {
-  return ratesApi.useGetRatesQuery();
+export const useRateCards = () => {
+  return ratesApi.useGetRateCardsQuery();
 };

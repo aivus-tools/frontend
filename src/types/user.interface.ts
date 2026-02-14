@@ -5,7 +5,7 @@ export type Roles = (typeof ROLES)[keyof typeof ROLES];
 export type AuthType = (typeof AUTH_TYPES)[keyof typeof AUTH_TYPES];
 
 export type User = {
-  id: number;
+  id: string;
   uuid: string;
   email: string;
   name: string;

@@ -4,7 +4,7 @@ import { ApiRoute } from '@/constants/apiRoute';
 
 export const chatApi = createApi({
   reducerPath: 'chatApi',
-  baseQuery: fetchBaseQuery(),
+  baseQuery: fetchBaseQuery({ baseUrl: '' }),
   endpoints: (builder) => ({
     sendMessage: builder.mutation<ChatResponse, { message: string; history: { role: string; content: string }[] }>({
       query: (body) => ({

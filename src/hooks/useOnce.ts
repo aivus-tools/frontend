@@ -1,20 +1,20 @@
 import { useRef, useEffect } from 'react';
 
 /**
- * Hook для выполнения эффекта строго один раз, даже в React Strict Mode.
+ * Hook to execute an effect strictly once, even in React Strict Mode.
  *
- * В отличие от обычного useEffect, этот hook гарантирует однократное выполнение
- * даже при unmount/remount компонента в dev-режиме.
+ * Unlike regular useEffect, this hook guarantees single execution
+ * even during unmount/remount of the component in dev mode.
  *
  * @example
  * ```typescript
  * useOnce(() => {
- *   confirmEmail(token); // Выполнится строго один раз
+ *   confirmEmail(token); // Will execute strictly once
  * }, [token]);
  * ```
  *
- * @param effect - Функция для выполнения
- * @param deps - Зависимости (как в useEffect)
+ * @param effect - Function to execute
+ * @param deps - Dependencies (same as useEffect)
  */
 export function useOnce(effect: () => void | (() => void), deps: React.DependencyList = []) {
   const hasRun = useRef(false);
@@ -34,7 +34,7 @@ export function useOnce(effect: () => void | (() => void), deps: React.Dependenc
 }
 
 /**
- * Hook для выполнения async эффекта строго один раз, даже в React Strict Mode.
+ * Hook to execute an async effect strictly once, even in React Strict Mode.
  *
  * @example
  * ```typescript
@@ -44,8 +44,8 @@ export function useOnce(effect: () => void | (() => void), deps: React.Dependenc
  * }, [token]);
  * ```
  *
- * @param effect - Async функция для выполнения
- * @param deps - Зависимости (как в useEffect)
+ * @param effect - Async function to execute
+ * @param deps - Dependencies (same as useEffect)
  */
 export function useOnceAsync(effect: () => Promise<void>, deps: React.DependencyList = []) {
   const hasRun = useRef(false);

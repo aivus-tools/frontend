@@ -214,7 +214,7 @@ export const PublicOfferView: React.FC<PublicOfferViewProps> = ({ params }) => {
                 fontSize: 13,
                 color: '#99A1B7',
               }}>
-                by {share.vendorName}
+                {t('BY_VENDOR', share.vendorName)}
               </div>
             )}
           </div>
@@ -233,7 +233,7 @@ function ReadOnlyOfferDetails({ details }: { details: Record<string, unknown> })
   if (!details || Object.keys(details).length === 0) {
     return (
       <div style={{ padding: '40px 20px', textAlign: 'center', color: '#99A1B7' }}>
-        No estimate details available.
+        {t('NO_ESTIMATE_DETAILS')}
       </div>
     );
   }
@@ -256,7 +256,7 @@ function ReadOnlyOfferDetails({ details }: { details: Record<string, unknown> })
   if (categories.length === 0) {
     return (
       <div style={{ padding: '40px 20px', textAlign: 'center', color: '#99A1B7' }}>
-        No estimate details available.
+        {t('NO_ESTIMATE_DETAILS')}
       </div>
     );
   }

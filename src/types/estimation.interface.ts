@@ -28,7 +28,7 @@ export interface OfferData {
   categoryId: string;
   item: string;
   price: number;
-  units: Partial<(TimeUnit | QuantityUnit)[]>;
+  units: (TimeUnit | QuantityUnit | undefined)[];
   taxRate: number;
   taxPrice: number;
   showTax: boolean;
@@ -59,7 +59,7 @@ export type { Category } from './categories.interface';
 export type { Entry } from './entries.interface';
 
 export interface EntryVariant {
-  id: number;
+  id: string;
   label: string;
   children?: EntryVariant[];
 }

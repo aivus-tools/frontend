@@ -1,9 +1,10 @@
 import { round } from '@/lib/utils';
 import { Category, OfferData, Entry } from '@/types/estimation.interface';
 import { createSlice } from '@reduxjs/toolkit';
+import logger from '@/lib/logger';
 
 import type { PayloadAction } from '@reduxjs/toolkit';
-import clone from 'lodash.clone';
+import cloneDeep from 'lodash.clonedeep';
 import { OfferDetails, OfferState, UnforeseenExpenses } from '@/types/store.interface';
 import { CATEGORIES } from '@/modules/vendor/estimation/mock/categories';
 import { ENTRIES } from '@/modules/vendor/estimation/mock/entries';
@@ -42,7 +43,7 @@ export const offerSlice = createSlice({
       state.metaData = action.payload;
     },
     addOfferRow: (state, action: PayloadAction<OfferData>) => {
-      const tempState = clone(state);
+      const tempState = cloneDeep(state);
       const { categoryId } = action.payload;
 
       const findCategory = (id: string) =>
@@ -86,7 +87,7 @@ export const offerSlice = createSlice({
 
       const category = findCategory(categoryId);
       if (!category) {
-        console.warn('Category not found', categoryId);
+        logger.warn('Category not found', categoryId);
         return;
       }
 
@@ -95,7 +96,7 @@ export const offerSlice = createSlice({
 
         const parentCategory = findCategory(category.parentCategoryId);
         if (!parentCategory) {
-          console.warn('Parent category not found', category.parentCategoryId);
+          logger.warn('Parent category not found', category.parentCategoryId);
           return;
         }
         addCategoryIfNeeded(parentCategory);
@@ -112,7 +113,7 @@ export const offerSlice = createSlice({
         surcharge: categorySurcharge,
       });
 
-      // Обновляем основной state
+      // Update the main state
       Object.assign(state, tempState);
     },
     removeOfferRow: (state, action: PayloadAction<string>) => {
@@ -155,7 +156,9 @@ export const offerSlice = createSlice({
       const { surcharge: catSurcharge = 0 } = state.offerDetails.categorySurcharge[rootCategoryId ?? ''] ?? {};
 
       if (updatedParameter.includes('taxPrice') && updatedParameter.length === 1) {
-        newOffer.taxRate = (newOffer.taxPrice / newOffer.price - 1) * 100;
+        if (newOffer.price > 0) {
+          newOffer.taxRate = (newOffer.taxPrice / newOffer.price - 1) * 100;
+        }
         const currentTaxPrice = newOffer.showTax ? round(newOffer.price * (1 + newOffer.taxRate / 100)) : newOffer.price;
         newOffer.cost = round(currentTaxPrice * unitMultiplier);
         const markup = newOffer.isLinkedSurcharge ? catSurcharge : newOffer.surcharge;

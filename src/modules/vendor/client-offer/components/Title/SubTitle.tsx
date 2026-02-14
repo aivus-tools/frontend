@@ -4,7 +4,7 @@ import React from 'react';
 import { useExpandedKeys } from '@/modules/vendor/estimation/context/expanded';
 import { Flex } from 'antd';
 import { SectionSubTitle, SectionSubTitleText, SectionSubTitleSumHeader, RowLine } from '../styled';
-import { ArrowButton } from '@/modules/vendor/estimation/componnets/Title/ArrowButton';
+import { ArrowButton } from '@/modules/vendor/estimation/components/Title/ArrowButton';
 
 interface Props {
     text: string;

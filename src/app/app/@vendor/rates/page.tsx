@@ -1,4 +1,4 @@
-import { RateTable } from '@/app/app/@vendor/rates/_components/RateTable/RateTable';
+import { RateTable } from '@/modules/vendor/rates/RateTable';
 
 import styles from './page.module.css';
 

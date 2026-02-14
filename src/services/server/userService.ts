@@ -1,7 +1,9 @@
 import logger from '@/lib/logger';
-import { ApiPathname, ApiRoute } from '@/constants/apiRoute';
+import { ApiPathname } from '@/constants/apiRoute';
 import { User } from '@/types/user.interface';
 import { createHmacSHA256 } from '@/lib/hmac';
+
+const API_URL = process.env.API_URL || 'http://localhost:8000';
 
 interface UserSession {
   userId: string;
@@ -9,7 +11,7 @@ interface UserSession {
 }
 
 /**
- * Получение пользователя.
+ * Fetch user session data.
  * @returns Promise<User>
  */
 export const updateUserSession = async ({ userId, userGroup }: UserSession): Promise<User> => {
@@ -21,13 +23,13 @@ export const updateUserSession = async ({ userId, userGroup }: UserSession): Pro
   requestHeaders.set('x-timestamp', timestamp);
 
   try {
-    // Создаем HMAC подпись
+    // Create HMAC signature
     const method = 'GET';
     const stringToSign = `${method}:${ApiPathname.USER_INFO}:${timestamp}:${userId}:${userGroup}`;
     const signature = await createHmacSHA256(stringToSign);
     requestHeaders.set('x-signature', signature);
 
-    const response = await fetch(ApiRoute.USER_INFO, {
+    const response = await fetch(`${API_URL}${ApiPathname.USER_INFO}`, {
       method: 'GET',
       headers: requestHeaders,
     });

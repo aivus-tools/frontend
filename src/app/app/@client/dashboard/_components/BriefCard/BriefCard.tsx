@@ -7,6 +7,7 @@ import { PrStatus } from '@/components/PrStatus/PrStatus';
 import { formatPrice } from '@/helpers/helper';
 import { format } from 'date-fns';
 import { t } from '@/lib/i18n';
+import { PROJECT_STATUS } from '@/constants/constants';
 
 import styles from './BriefCard.module.css';
 
@@ -16,13 +17,13 @@ interface BriefCardProps {
 
 const getAccentColor = (status?: string): string => {
   switch (status) {
-    case 'RFP':
+    case PROJECT_STATUS.RFP:
       return '#2288FF';
-    case 'Reviewing':
+    case PROJECT_STATUS.REVIEWING:
       return '#FD8258';
-    case 'Ongoing':
+    case PROJECT_STATUS.ONGOING:
       return '#A5C500';
-    case 'Completed':
+    case PROJECT_STATUS.COMPLETED:
       return '#A5C500';
     default:
       return '#99A1B7';
@@ -31,10 +32,10 @@ const getAccentColor = (status?: string): string => {
 
 const getRowBg = (status?: string): string => {
   switch (status) {
-    case 'RFP':
+    case PROJECT_STATUS.RFP:
       return '#F4FBFF';
-    case 'Ongoing':
-    case 'Completed':
+    case PROJECT_STATUS.ONGOING:
+    case PROJECT_STATUS.COMPLETED:
       return '#FCFFF0';
     default:
       return '#FFFFFF';
@@ -44,7 +45,7 @@ const getRowBg = (status?: string): string => {
 export const BriefCard: React.FC<BriefCardProps> = ({ brief }) => {
   const router = useRouter();
 
-  const projectName = brief.details?.projectName || 'Untitled Brief';
+  const projectName = brief.details?.projectName || t('UNTITLED_BRIEF');
   const formattedCreated = brief.createdAt
     ? format(new Date(brief.createdAt), 'MMM dd, yyyy')
     : '';
@@ -88,19 +89,19 @@ export const BriefCard: React.FC<BriefCardProps> = ({ brief }) => {
 
         {/* # of Proposals */}
         <div className={styles.proposalsCell}>
-          <span className={styles.proposalCount}>0</span>
+          <span className={styles.proposalCount}>{t('N_A')}</span>
         </div>
 
         {/* Best Offer */}
         <div className={styles.offerCell}>
           <div className={styles.offerValue}>
-            {brief.details?.budget ? `$ ${formatPrice(brief.details.budget)}` : '--'}
+            {brief.details?.budget ? `$ ${formatPrice(brief.details.budget)}` : t('N_A')}
           </div>
         </div>
 
         {/* Average Offer Cost */}
         <div className={styles.offerCell}>
-          <div className={styles.offerValue}>--</div>
+          <div className={styles.offerValue}>{t('N_A')}</div>
         </div>
 
         {/* Created */}

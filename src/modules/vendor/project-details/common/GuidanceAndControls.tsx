@@ -29,7 +29,7 @@ const Wrapper = styled.div`
 
 export const GuidanceAndControls = () => {
   const { observedRef, width } = useComponentSize();
-  const [form] = Form.useForm();
+  const form = Form.useFormInstance();
   const { focusedField } = useGuidance();
   const mode = useAppSelector(selectMode);
   const dispatch = useAppDispatch();
@@ -48,7 +48,7 @@ export const GuidanceAndControls = () => {
       <Section style={{ position: 'fixed', width: width, bottom: '24px', minWidth: '300px' }}>
         <Content>
           <Flex gap={8} align='center' justify='space-between'>
-            <Typography.Text type='secondary'>{t('SAVED_AT')} 02:14 pm</Typography.Text>
+            <Typography.Text type='secondary'>{t('SAVED_AT')}</Typography.Text>
             <Button type='text' onClick={reset}>
               {t('CANCEL')}
             </Button>

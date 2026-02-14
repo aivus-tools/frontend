@@ -94,13 +94,12 @@ export const OfferTabs: React.FC = () => {
 
   const handleDelete = async (offerId: string) => {
     try {
+      // Compute remaining before the delete to avoid stale cache issues
+      const remaining = offers.filter((o) => o.id !== offerId);
       await deleteOffer(offerId).unwrap();
       // If deleted the active tab, switch to first remaining
-      if (offerId === activeOfferId) {
-        const remaining = offers.filter((o) => o.id !== offerId);
-        if (remaining.length > 0) {
-          handleTabClick(remaining[0].id);
-        }
+      if (offerId === activeOfferId && remaining.length > 0) {
+        handleTabClick(remaining[0].id);
       }
     } catch {
       // Error handled by RTK Query

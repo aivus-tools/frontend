@@ -5,7 +5,7 @@ import type { Category } from '@/types/estimation.interface';
 import { useExpandedKeys } from '@/modules/vendor/estimation/context/expanded';
 import { Flex } from 'antd';
 import { SectionTitle, SectionTitleSumHeader, SectionTitleText, RowLine } from '../styled';
-import { ArrowButton } from '@/modules/vendor/estimation/componnets/Title/ArrowButton';
+import { ArrowButton } from '@/modules/vendor/estimation/components/Title/ArrowButton';
 
 interface Props {
     category: Category;

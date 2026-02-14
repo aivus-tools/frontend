@@ -10,7 +10,7 @@ export const useSetProject = () => {
   const dispatch = useAppDispatch();
 
   useEffect(() => {
-    if (storedProjectId !== projectId) {
+    if (projectId && storedProjectId !== projectId) {
       dispatch(setProjectId(projectId));
     }
   }, [projectId, dispatch, storedProjectId]);

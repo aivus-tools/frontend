@@ -3,7 +3,7 @@ import { OfferData, UnitType, TimeUnit, QuantityUnit } from '@/types/estimation.
 import { KEY_SEPARATOR } from '../constants';
 import { UnitOption } from '@/types/entries.interface';
 
-const generateStringId = () => Math.floor(Math.random() * 1000000).toString();
+const generateStringId = () => crypto.randomUUID();
 
 const getUnitLabel = (unit: UnitOption) => {
   if (['Flat', 'Each'].includes(unit.name)) {

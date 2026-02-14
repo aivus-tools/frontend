@@ -46,43 +46,6 @@ const nextConfig = {
     return config;
   },
   output: 'standalone',
-  async headers() {
-    const isDevelopment = process.env.NODE_ENV === 'development';
-    
-    // CSP для development с unsafe-eval (для Ant Design, styled-components)
-    const cspDevelopment = [
-      "default-src 'self'",
-      "script-src 'self' 'unsafe-eval' 'unsafe-inline'",
-      "style-src 'self' 'unsafe-inline'",
-      "img-src 'self' data: blob: https:",
-      "font-src 'self' data:",
-      "connect-src 'self' data: http://localhost:8000",
-      "frame-ancestors 'self' https://www.vilkaservice.com https://app.aivus.co",
-    ].join('; ');
-
-    // CSP для production без unsafe-eval (более строгий)
-    const cspProduction = [
-      "default-src 'self'",
-      "script-src 'self' 'unsafe-inline'",
-      "style-src 'self' 'unsafe-inline'",
-      "img-src 'self' data: blob: https:",
-      "font-src 'self' data:",
-      "connect-src 'self' data: https://api.aivus.co",
-      "frame-ancestors 'self' https://www.vilkaservice.com https://app.aivus.co",
-    ].join('; ');
-    
-    return [
-      {
-        source: '/(.*)',
-        headers: [
-          {
-            key: 'Content-Security-Policy',
-            value: isDevelopment ? cspDevelopment : cspProduction,
-          },
-        ],
-      },
-    ];
-  },
 };
 
 export default nextConfig;

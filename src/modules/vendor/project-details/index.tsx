@@ -15,14 +15,14 @@ export default function Page() {
   const mode = useAppSelector(selectMode);
   const [isClient, setIsClient] = useState(false);
 
-  // Регистрация локали и установка isClient только на клиенте
+  // Register locale and set isClient only on the client side
   useEffect(() => {
     // eslint-disable-next-line @typescript-eslint/no-require-imports
     i18n.registerLocale(require(`i18n-iso-countries/langs/${locale}.json`));
     setIsClient(true);
   }, []);
 
-  // Пока компонент не смонтирован на клиенте — показываем заглушку (например, <Spinner />)
+  // While component is not mounted on client - show placeholder (e.g., <Spinner />)
   if (!isClient) return <Spinner />;
 
   return mode === 'edit' ? <FormProjectDetails /> : <ViewProjectDetails />;

@@ -68,6 +68,7 @@ export const RU_LOCALES = {
   EMAIL_RESEND_FAILED: 'Не удалось повторно отправить письмо с подтверждением',
   EMAIL_RESENT_SUCCESS: 'Письмо с подтверждением отправлено повторно. Проверьте вашу почту.',
   EMPTY: 'Пусто',
+  N_A: 'Н/Д',
   ENTER_PASSWORD_PLACEHOLDER: 'Введите ваш пароль',
   ERROR_CHECKING_EMAIL: 'Ошибка проверки электронной почты:',
   ERROR_SAVING_DETAILS: 'Произошла ошибка при сохранении деталей',
@@ -197,6 +198,7 @@ export const RU_LOCALES = {
   SPECIFY_BRAND_WITHIN_COMPANY: 'Укажите конкретный бренд в вашей компании, если необходимо.',
   START_TYPING_TO_ADD_ITEM: 'Начните вводить текст здесь, чтобы добавить первый элемент...',
   START_TYPING_TO_ADD_OPTION: 'Начните вводить текст, чтобы добавить позицию в любую категорию',
+  STATUS_CANCELLED: 'Отменено',
   STATUS_COMPLETED: 'Завершено',
   STATUS_DRAFT: 'ЧЕРНОВИК',
   STATUS_ONGOING: 'В процессе',
@@ -234,8 +236,7 @@ export const RU_LOCALES = {
   WORLDWIDE: 'Весь мир',
   YEARS: 'Годы',
   YOUR_EMAIL_ADDRESS: 'Адрес вашей электронной почты',
-  EXPENCES: 'Расходы',
-  OVERALL_MURKUP: 'Общая наценка',
+  OVERALL_MARKUP: 'Общая наценка',
   IF_LINKED_THE_OVERALL: 'Если связано то процент общей надбавки добавляется ко всем позициям в расчёте.',
   IF_UNLINKED_THE_OVERALL: 'Если связь отсутствует, процент общей надбавки добавляется только к связанным позициям.',
   GO_TO_DASHBOARD: 'Перейти в личный кабинет',
@@ -333,6 +334,8 @@ export const RU_LOCALES = {
   CREATE_A_BRIEF: 'Создать бриф',
   CREATE_A_CALCULATION: 'Создать расчет',
   NO_BRIEFS: 'Брифов пока нет. Создайте первый бриф, чтобы начать.',
+  BRIEF_NOT_FOUND: 'Бриф не найден',
+  NO_LINKED_OFFERS: 'Связанных предложений пока нет',
   ACTIVITY: 'Активность',
   NUM_PROPOSALS: 'Кол-во предложений',
   BEST_OFFER: 'Лучшее предложение',
@@ -433,4 +436,18 @@ export const RU_LOCALES = {
   NO_OFFER_FOUND: 'Предложение не найдено в загруженном файле',
   UPLOAD_FAILED: 'Не удалось загрузить файл',
   XLSX_FILES_ONLY: 'Поддерживаются только файлы .xlsx',
+
+  // General
+  COMING_SOON: 'Скоро будет доступно',
+  LOADING: 'Загрузка...',
+  NO_RATE_SELECTED: 'Тариф не выбран',
+  BASE_PRICE_LABEL: 'Базовая цена',
+  TOTAL_PRICE_LABEL: 'Итоговая цена',
+  SELECT_UNIT: 'Выбрать единицу',
+  GENERAL: 'Общее',
+  UNTITLED_BRIEF: 'Бриф без названия',
+
+  // Public Offer - details
+  NO_ESTIMATE_DETAILS: 'Нет доступных деталей сметы.',
+  BY_VENDOR: (name: string) => `от ${name}`,
 };

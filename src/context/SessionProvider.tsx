@@ -6,7 +6,7 @@ import { SessionProvider as NextSessionProvider, useSession } from 'next-auth/re
 import { PropsWithChildren, useEffect } from 'react';
 import { usePathname } from 'next/navigation';
 
-// Публичные пути, где не нужно вызывать logout при unauthenticated
+// Public paths where logout should not be called on unauthenticated status
 const PUBLIC_PATHS = ['/auth/confirm-email', '/auth/reset-password', '/auth/forgot-password', '/external', '/public'];
 
 const SessionGuard = ({ children }: PropsWithChildren) => {

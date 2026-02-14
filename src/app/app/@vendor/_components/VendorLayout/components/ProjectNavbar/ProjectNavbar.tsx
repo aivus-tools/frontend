@@ -1,5 +1,5 @@
 'use client';
-import { Button } from 'antd';
+import { Button, message } from 'antd';
 import { t } from '@/lib/i18n';
 import { useSelectedLayoutSegments } from 'next/navigation';
 import { VENDOR_PROJECT_TAB_KEYS } from '@/constants/constants';
@@ -43,6 +43,8 @@ export const ProjectNavbar = () => {
   }) => {
     if (format === 'xlsx') {
       await exportToExcel(categoriesExportData, name, date, watermark, offerMetaData?.id);
+    } else {
+      message.info(t('COMING_SOON'));
     }
   };
 
@@ -67,11 +69,13 @@ export const ProjectNavbar = () => {
           </ExportPopover>
         )}
 
-        <div className={styles.share}>
-          <Button type='primary' onClick={() => setShareOpen(true)}>
-            {t('SHARE')}
-          </Button>
-        </div>
+        {offerMetaData?.id && (
+          <div className={styles.share}>
+            <Button type='primary' onClick={() => setShareOpen(true)}>
+              {t('SHARE')}
+            </Button>
+          </div>
+        )}
       </div>
 
       {offerMetaData?.id && (

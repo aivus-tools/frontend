@@ -1,6 +1,7 @@
 import { AppStartListening } from '@/store/store';
 import { categoriesApi } from '@/services/client/categoriesApi';
 import { offersApi } from '@/services/client/offersApi';
+import logger from '@/lib/logger';
 import {
   addDictionaryCategory,
   addDictionaryEntry,
@@ -27,7 +28,7 @@ export const offerListener = (startListening: AppStartListening) => {
   });
 
   startListening({
-    matcher: categoriesApi.endpoints.getEntries.matchFulfilled,
+    matcher: categoriesApi.endpoints.getEntriesFull.matchFulfilled,
     effect: async (action, { dispatch }) => {
       const { payload } = action;
       dispatch(addDictionaryEntry(payload.entries));
@@ -50,7 +51,7 @@ export const offerListener = (startListening: AppStartListening) => {
       const isNew = selectIsNewBrief(state);
 
       if (!projectId || isNew) {
-        console.warn('Project ID is not set or is a new brief');
+        logger.warn('Project ID is not set or is a new brief');
         return;
       }
 
@@ -70,8 +71,13 @@ export const offerListener = (startListening: AppStartListening) => {
 
   startListening({
     matcher: offersApi.endpoints.getOffersByProjectId.matchFulfilled,
-    effect: async (action, { dispatch }) => {
-      const offer = action.payload[0];
+    effect: async (action, { dispatch, getState }) => {
+      const state = getState();
+      const currentOfferId = state.offer.metaData?.id;
+      // Load the specific offer matching the current offerId, or fall back to the first offer
+      const offer = (currentOfferId
+        ? action.payload.find((o) => o.id === currentOfferId)
+        : action.payload[0]) ?? action.payload[0];
       if (offer) {
         try {
           const { details, ...metaData } = offer;
@@ -79,7 +85,7 @@ export const offerListener = (startListening: AppStartListening) => {
           // Details is already an object, no need to parse
           dispatch(setOfferDetails(typeof details === 'string' ? JSON.parse(details) : details));
         } catch (error) {
-          console.error('Error parsing offer details:', error);
+          logger.error('Error parsing offer details:', error);
         }
       }
     },

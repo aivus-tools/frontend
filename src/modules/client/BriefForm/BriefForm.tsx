@@ -78,9 +78,14 @@ export const BriefForm: React.FC<BriefFormProps> = ({ initialData }) => {
   };
 
   const handleSave = async () => {
+    let values;
     try {
-      const values = await form.validateFields();
+      values = await form.validateFields();
+    } catch {
+      return;
+    }
 
+    try {
       const details: Details = {
         crmId: values.crmId || '',
         clientName: values.clientName || '',
@@ -305,7 +310,14 @@ export const BriefForm: React.FC<BriefFormProps> = ({ initialData }) => {
             </FieldRow>
 
             <Form.Item name="extraMaterials" label={t('EXTRA_MATERIALS')}>
-              <Upload.Dragger maxCount={5} multiple>
+              <Upload.Dragger
+                maxCount={5}
+                multiple
+                customRequest={({ onSuccess }) => {
+                  message.info('File upload coming soon');
+                  onSuccess?.('ok');
+                }}
+              >
                 <p>
                   <UploadOutlined style={{ fontSize: 24, color: '#99a1b7' }} />
                 </p>

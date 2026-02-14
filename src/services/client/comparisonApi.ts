@@ -4,7 +4,7 @@ import { ApiRoute } from '@/constants/apiRoute';
 
 export const comparisonApi = createApi({
   reducerPath: 'comparisonApi',
-  baseQuery: fetchBaseQuery(),
+  baseQuery: fetchBaseQuery({ baseUrl: '' }),
   tagTypes: ['Comparison'],
   endpoints: (builder) => ({
     getComparison: builder.query<ComparisonData, string>({

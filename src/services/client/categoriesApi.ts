@@ -5,7 +5,7 @@ import { ApiRoute } from '@/constants/apiRoute';
 
 export const categoriesApi = createApi({
   reducerPath: 'categoriesApi',
-  baseQuery: fetchBaseQuery(),
+  baseQuery: fetchBaseQuery({ baseUrl: '' }),
   endpoints: (builder) => ({
     createCategory: builder.mutation<void, { name: string; parentCategoryId: number }>({
       query: (body) => ({

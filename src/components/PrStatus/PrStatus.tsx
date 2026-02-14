@@ -9,7 +9,6 @@ interface Props {
 }
 
 export const PrStatus = ({ status }: Props) => {
-  console.log('status:', status);
   return (
     <div
       className={cn(styles.status, {

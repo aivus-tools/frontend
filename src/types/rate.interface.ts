@@ -1,42 +1,55 @@
-import { Category } from '@/types/categories.interface';
-import { Vendor } from '@/types/vendor.interface';
-
-export const rateOption = ['fixed', 'percentage'] as const;
-
-type Date = string;
-
-export interface Rate {
-  id: number;
-  name: string;
-  description?: string;
-  vendorId: number;
-  entryId?: number;
-  basePrice: number;
-  totalPrice: number;
-  options: string; // JSON строка с массивом опций
-  isCustom: boolean;
-  createdAt: Date;
-  updatedAt: Date;
-  vendor: Vendor;
-  entry?: {
-    id: number;
-    name: string;
-    description?: string;
-    categoryRef: Category;
-  };
+/**
+ * RateCardItem — individual rate item within a rate card.
+ * Matches backend serialize_rate_card_item() output.
+ */
+export interface RateCardItem {
+  id: string;
+  rateCardId: string;
+  entryId: string | null;
+  itemName: string;
+  price: string; // decimal string from backend
+  unitId: string | null;
+  unitLabel: string;
+  createdAt: string;
+  updatedAt: string;
 }
 
-export interface ChangeRate {
+/**
+ * RateCard — a named collection of standard prices for a vendor.
+ * Matches backend serialize_rate_card() output.
+ */
+export interface RateCard {
+  id: string;
+  vendorId: string;
   name: string;
-  basePrice: number;
-  description?: string;
-  entryId?: number;
-  options?: [
-    {
-      name: string;
-      description: string;
-      type: typeof rateOption;
-      value: number;
-    },
-  ];
+  items: RateCardItem[];
+  createdAt: string;
+  updatedAt: string;
+}
+
+/**
+ * Payload for creating/updating rate card items.
+ */
+export interface RateCardItemPayload {
+  entryId?: string | null;
+  itemName: string;
+  price: number | string;
+  unitId?: string | null;
+  unitLabel?: string;
+}
+
+/**
+ * Payload for creating a rate card.
+ */
+export interface CreateRateCardPayload {
+  name: string;
+  items: RateCardItemPayload[];
+}
+
+/**
+ * Payload for updating a rate card.
+ */
+export interface UpdateRateCardPayload {
+  name?: string;
+  items?: RateCardItemPayload[];
 }

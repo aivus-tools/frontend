@@ -19,7 +19,7 @@ const ResetPasswordPage = () => {
 
   const token = useMemo(() => searchParams.get('token'), [searchParams]);
 
-  // Проверка токена (синхронная)
+  // Token validation (synchronous)
   useEffect(() => {
     if (!token) {
       setStatus('error');
@@ -46,7 +46,7 @@ const ResetPasswordPage = () => {
       messageApi.success(t('PASSWORD_RESET_SUCCESS'));
       setStatus('success');
 
-      // После успешного сброса пароля пользователь увидит сообщение и сможет перейти на страницу входа
+      // After successful password reset, the user will see a message and can navigate to the login page
     } catch (error) {
       const errMsg = error instanceof Error ? error.message : t('PASSWORD_RESET_FAILED');
       setErrorMessage(errMsg);

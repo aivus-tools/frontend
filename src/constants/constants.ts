@@ -9,7 +9,7 @@ export const ROLES = {
   ADMIN: 'ADMIN',
   INTERNAL: 'INTERNAL',
   EXTERNAL: 'EXTERNAL',
-};
+} as const;
 
 export const GROUPS = {
   client: 'CLIENT',
@@ -21,7 +21,7 @@ export const GROUPS = {
 export const THEME = {
   dark: 'dark',
   light: 'light',
-};
+} as const;
 
 export const VENDOR_TABS = [
   {
@@ -79,9 +79,22 @@ export const VENDOR_PROJECT_TABS = [
 export const NEW_BRIEF_SLUG = 'new-brief';
 
 export const PROJECT_STATUS = {
-  DRAFT: t('STATUS_DRAFT'),
-  RFP: t('STATUS_RFP'),
-  REVIEWING: t('STATUS_REVIEWING'),
-  ONGOING: t('STATUS_ONGOING'),
-  COMPLETED: t('STATUS_COMPLETED'),
+  DRAFT: 'DRAFT',
+  RFP: 'RFP',
+  REVIEWING: 'REVIEWING',
+  ONGOING: 'ONGOING',
+  COMPLETED: 'COMPLETED',
+  CANCELLED: 'CANCELLED',
 } as const;
+
+export const PROJECT_STATUS_LABEL: Record<string, () => string> = {
+  [PROJECT_STATUS.DRAFT]: () => t('STATUS_DRAFT'),
+  [PROJECT_STATUS.RFP]: () => t('STATUS_RFP'),
+  [PROJECT_STATUS.REVIEWING]: () => t('STATUS_REVIEWING'),
+  [PROJECT_STATUS.ONGOING]: () => t('STATUS_ONGOING'),
+  [PROJECT_STATUS.COMPLETED]: () => t('STATUS_COMPLETED'),
+  [PROJECT_STATUS.CANCELLED]: () => t('STATUS_CANCELLED'),
+};
+
+export const getProjectStatusLabel = (status: string): string =>
+  PROJECT_STATUS_LABEL[status]?.() ?? status;

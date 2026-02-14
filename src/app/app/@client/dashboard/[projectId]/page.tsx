@@ -9,6 +9,8 @@ import { styled } from 'styled-components';
 import { Tag, Empty, Button } from 'antd';
 import { BarChartOutlined } from '@ant-design/icons';
 import { AppRoute } from '@/constants/appRoute';
+import { formatPrice } from '@/helpers/helper';
+import { PROJECT_STATUS } from '@/constants/constants';
 
 const PageWrapper = styled.div`
   padding: 30px;
@@ -86,7 +88,7 @@ export default function Page() {
   if (!brief) {
     return (
       <PageWrapper>
-        <Empty description="Brief not found" />
+        <Empty description={t('BRIEF_NOT_FOUND')} />
       </PageWrapper>
     );
   }
@@ -97,7 +99,7 @@ export default function Page() {
     <PageWrapper>
       <BriefHeader>
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-          <BriefTitle>{details?.projectName || 'Untitled Brief'}</BriefTitle>
+          <BriefTitle>{details?.projectName || t('UNTITLED_BRIEF')}</BriefTitle>
           <Button
             type="primary"
             icon={<BarChartOutlined />}
@@ -108,7 +110,7 @@ export default function Page() {
           </Button>
         </div>
         <BriefStatus>
-          <Tag color={brief.status === 'DRAFT' ? 'default' : 'blue'}>{brief.status}</Tag>
+          <Tag color={brief.status === PROJECT_STATUS.DRAFT ? 'default' : 'blue'}>{brief.status}</Tag>
         </BriefStatus>
       </BriefHeader>
 
@@ -141,7 +143,7 @@ export default function Page() {
         {details?.budget != null && (
           <Field>
             <FieldLabel>{t('CLIENT_BUDGET')}</FieldLabel>
-            <FieldValue>$ {details.budget.toLocaleString()}</FieldValue>
+            <FieldValue>$ {formatPrice(details.budget)}</FieldValue>
           </Field>
         )}
       </Section>
@@ -149,7 +151,7 @@ export default function Page() {
       <OffersSection>
         <Section>
           <SectionTitle>{t('OFFERS')}</SectionTitle>
-          <Empty description="No linked offers yet" />
+          <Empty description={t('NO_LINKED_OFFERS')} />
         </Section>
       </OffersSection>
     </PageWrapper>

@@ -3,7 +3,6 @@
 import React from 'react';
 import { t } from '@/lib/i18n';
 import { PrStatus } from '@/components/PrStatus/PrStatus';
-import { Percent } from '@/components/Percent/Percent';
 import { ProjectListItem } from '@/types/project.interface';
 import { Offer } from '@/types/offer.interface';
 import { PROJECT_STATUS } from '@/constants/constants';
@@ -74,15 +73,15 @@ export const ProjectOfferCard: React.FC<ProjectOfferCardProps> = ({
         </div>
         <div style={{ textAlign: 'right' }}>
           <div style={{ fontWeight: 600, color: 'var(--blue)' }}>$ {item.profit}</div>
-          <Percent style={{ marginTop: 10 }} mark="average" size="s" type="transparent" count={36} />
+          {/* Percent calculated from real data when available */}
         </div>
         <div>
           <div style={{ fontSize: 13 }}>{item.deadline}</div>
-          <div style={{ marginTop: 10, fontSize: 10, color: 'var(--gray)' }}>33d left</div>
+          <div style={{ marginTop: 10, fontSize: 10, color: 'var(--gray)' }}>{item.deadline ? '' : ''}</div>
         </div>
         <div>
           <div style={{ fontSize: 13 }}>{item.createdAt}</div>
-          <div style={{ marginTop: 10, fontSize: 10, color: 'var(--gray)' }}>3d running</div>
+          <div style={{ marginTop: 10, fontSize: 10, color: 'var(--gray)' }}></div>
         </div>
       </ProjectRow>
 

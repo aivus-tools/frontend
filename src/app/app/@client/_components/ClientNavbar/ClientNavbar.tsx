@@ -1,6 +1,6 @@
 'use client';
 
-import { Button } from 'antd';
+import { Button, Tooltip } from 'antd';
 import { useRouter, useSelectedLayoutSegment } from 'next/navigation';
 import { t } from '@/lib/i18n';
 import { styled } from 'styled-components';
@@ -63,11 +63,11 @@ export const ClientNavbar = () => {
         >
           {t('CREATE_A_BRIEF')}
         </Button>
-        <Button type="primary" onClick={() => {
-          // TODO: Navigate to calculation flow
-        }}>
-          {t('CREATE_A_CALCULATION')}
-        </Button>
+        <Tooltip title={t('COMING_SOON')}>
+          <Button type="primary" disabled>
+            {t('CREATE_A_CALCULATION')}
+          </Button>
+        </Tooltip>
       </div>
     </div>
   );

@@ -3,7 +3,7 @@
 import React from 'react';
 import { useAppDispatch, useAppSelector } from '@/store/hooks';
 import { closeSidebar, selectIsSidebarOpen, selectSidebarInfo } from '@/store/slices/sidebar';
-import { OfferSidebar } from '@/modules/Sidebar/components/OfferSideber/OfferSidebar';
+import { OfferSidebar } from '@/modules/Sidebar/components/OfferSidebar/OfferSidebar';
 import { RateSidebar } from '@/modules/Sidebar/components/RateSidebar/RateSidebar';
 
 export const Sidebar = () => {

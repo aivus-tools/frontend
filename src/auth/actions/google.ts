@@ -5,8 +5,8 @@ import { CALLBACK_URL } from '@/constants/apiRoute';
 import { AppRoute } from '@/constants/appRoute';
 
 export async function signInWithGoogle() {
-  // Используем CALLBACK_URL если он установлен, иначе редиректим на главную
-  // Middleware сам перенаправит пользователя в нужное место в зависимости от его группы
+  // Use CALLBACK_URL if set, otherwise redirect to home
+  // Middleware will redirect the user to the correct page based on their group
   const callbackUrl = CALLBACK_URL || AppRoute.HOME;
   await signIn('google', { callbackUrl });
 }

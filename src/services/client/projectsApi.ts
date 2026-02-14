@@ -4,7 +4,7 @@ import { ApiRoute } from '@/constants/apiRoute';
 
 export const projectsApi = createApi({
   reducerPath: 'projectsApi',
-  baseQuery: fetchBaseQuery(),
+  baseQuery: fetchBaseQuery({ baseUrl: '' }),
   tagTypes: ['Project'],
   endpoints: (builder) => ({
     getAllProjects: builder.query<Project[], void>({

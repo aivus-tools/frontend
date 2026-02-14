@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
+import { t } from '@/lib/i18n';
 import { GuidanceProvider } from '@/context/GuidanceProvider';
 import { useAppSelector } from '@/store/hooks';
 import { selectOfferDetails, selectOfferMetaData } from '@/store/slices/offer/selectors';
@@ -32,7 +33,7 @@ export function ClientOffer() {
     <GuidanceProvider>
       <Wrapper>
         {showLoading ? (
-          <div>Loading...</div>
+          <div>{t('LOADING')}</div>
         ) : (
           <>
             <Column style={{ flex: '1 1 70%' }}>

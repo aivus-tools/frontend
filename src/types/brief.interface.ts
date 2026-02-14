@@ -15,7 +15,7 @@ export interface Brief {
 export type NewBrief = Omit<Brief, 'id' | 'uuid' | 'createdAt' | 'updatedAt'>;
 
 export interface Team {
-  userId: number;
+  userId: string;
   role: Roles;
 }
 

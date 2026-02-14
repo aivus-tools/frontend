@@ -2,7 +2,7 @@ import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
 import { ApiRoute } from '@/constants/apiRoute';
 
 export interface UserProfile {
-  id: number;
+  id: string;
   name: string;
   email: string;
   company_name: string;
@@ -34,7 +34,7 @@ export interface ChangePasswordPayload {
 
 export const profileApi = createApi({
   reducerPath: 'profileApi',
-  baseQuery: fetchBaseQuery(),
+  baseQuery: fetchBaseQuery({ baseUrl: '' }),
   tagTypes: ['Profile', 'Settings'],
   endpoints: (builder) => ({
     getProfile: builder.query<UserProfile, void>({

@@ -10,7 +10,7 @@ export interface XlsxUploadResponse {
 
 export const xlsxApi = createApi({
   reducerPath: 'xlsxApi',
-  baseQuery: fetchBaseQuery(),
+  baseQuery: fetchBaseQuery({ baseUrl: '' }),
   endpoints: (builder) => ({
     uploadXlsx: builder.mutation<XlsxUploadResponse, FormData>({
       query: (formData) => ({

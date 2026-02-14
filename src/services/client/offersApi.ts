@@ -4,7 +4,7 @@ import { ApiRoute } from '@/constants/apiRoute';
 
 export const offersApi = createApi({
   reducerPath: 'offersApi',
-  baseQuery: fetchBaseQuery(),
+  baseQuery: fetchBaseQuery({ baseUrl: '' }),
   tagTypes: ['Offer'],
   endpoints: (builder) => ({
     getAllOffers: builder.query<Offer[], void>({

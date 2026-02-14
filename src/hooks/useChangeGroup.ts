@@ -8,7 +8,7 @@ export const useChangeGroup = () => {
   const [changeGroup, options] = useChangeGroupMutation();
 
   return {
-    change: async (newGroup: Omit<Groups, 'UNCONFIRMED' | 'CONFIRMED'>) => {
+    change: async (newGroup: Exclude<Groups, 'UNCONFIRMED' | 'CONFIRMED'>) => {
       if (session.data?.user?.id) {
         const result = await changeGroup({
           userId: session.data.user.id,
@@ -24,7 +24,7 @@ export const useChangeGroup = () => {
           },
         });
 
-        // Ждем обновления кук
+        // Wait for cookie update
         await new Promise((resolve) => setTimeout(resolve, 1000));
 
         window.location.href = AppRoute.DASHBOARD;

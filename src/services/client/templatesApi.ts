@@ -4,7 +4,7 @@ import { ApiRoute } from '@/constants/apiRoute';
 
 export const templatesApi = createApi({
   reducerPath: 'templatesApi',
-  baseQuery: fetchBaseQuery(),
+  baseQuery: fetchBaseQuery({ baseUrl: '' }),
   tagTypes: ['Template'],
   endpoints: (builder) => ({
     getTemplates: builder.query<Template[], void>({

@@ -17,6 +17,7 @@ import { useAppDispatch, useAppSelector } from '@/store/hooks';
 import { setMode, selectProjectId } from '@/store/slices/project';
 import { initialValues } from './initialValues';
 import { t } from '@/lib/i18n';
+import logger from '@/lib/logger';
 import { AppRoute } from '@/constants/appRoute';
 import { projectsApi } from '@/services/client/projectsApi';
 import { useApplyTemplateMutation } from '@/services/client/templatesApi';
@@ -109,7 +110,7 @@ export default function Details() {
           try {
             await applyTemplate(templateId).unwrap();
           } catch (err) {
-            console.error('Error applying template:', err);
+            logger.error('Error applying template:', err);
           }
         }
 
@@ -119,7 +120,7 @@ export default function Details() {
           try {
             await uploadThumbnail({ projectId, file: thumbnailFile }).unwrap();
           } catch (err) {
-            console.error('Error uploading thumbnail:', err);
+            logger.error('Error uploading thumbnail:', err);
           }
         }
 
@@ -133,7 +134,7 @@ export default function Details() {
           messageApi.error(t('ERROR_SAVING_DETAILS'));
         }
       } catch (error) {
-        console.error('Error saving project:', error);
+        logger.error('Error saving project:', error);
         messageApi.error((error as { data?: { message?: string } })?.data?.message || t('ERROR_SAVING_DETAILS'));
       }
     },

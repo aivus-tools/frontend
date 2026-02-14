@@ -23,7 +23,7 @@ const ConfirmEmailPage = () => {
 
   const token = useMemo(() => searchParams.get('token'), [searchParams]);
   useEffect(() => {
-    // Ждём, пока загрузится сессия и будет токен
+    // Wait until session loads and token is available
     if (!token || sessionStatus === 'loading' || hasStartedConfirmation) {
       return;
     }
@@ -48,7 +48,7 @@ const ConfirmEmailPage = () => {
         setStatus('success');
 
         if (session?.user) {
-          // Пользователь залогинен - обновляем сессию свежими данными
+          // User is logged in - update session with fresh data
           await updateSession({
             user: {
               ...session.user,
@@ -56,13 +56,13 @@ const ConfirmEmailPage = () => {
             },
           });
 
-          // Ждём, чтобы NextAuth записал cookie и сессия обновилась в памяти
+          // Wait for NextAuth to write cookie and session to update in memory
           await new Promise((resolve) => setTimeout(resolve, CONFIRM_DELAY_MS));
 
-          // Перенаправляем на выбор роли
+          // Redirect to role selection
           window.location.href = AppRoute.GROUP;
         } else {
-          // Пользователь не залогинен - ждём и редиректим на auth
+          // User is not logged in - wait and redirect to auth
           await new Promise((resolve) => setTimeout(resolve, CONFIRM_DELAY_MS));
           router.replace(AppRoute.AUTH);
         }

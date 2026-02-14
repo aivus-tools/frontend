@@ -1,6 +1,7 @@
 'use client';
 
 import { styled, css } from 'styled-components';
+import { PROJECT_STATUS } from '@/constants/constants';
 
 export const CardContainer = styled.div`
   border-radius: 6px;
@@ -23,12 +24,12 @@ export const ProjectRow = styled.div<{ $status?: string }>`
   padding: 20px 22px;
   background-color: ${({ $status }) => {
     switch ($status) {
-      case 'RFP':
+      case PROJECT_STATUS.RFP:
         return 'var(--bg-blue-subtotal)';
-      case 'Reviewing':
+      case PROJECT_STATUS.REVIEWING:
         return '#fff';
-      case 'Ongoing':
-      case 'Completed':
+      case PROJECT_STATUS.ONGOING:
+      case PROJECT_STATUS.COMPLETED:
         return 'var(--bg-light-green)';
       default:
         return 'var(--bg-gray-page)';

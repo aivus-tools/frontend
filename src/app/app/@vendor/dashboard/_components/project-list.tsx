@@ -11,7 +11,6 @@ import { useProjects } from '@/hooks/useProjects';
 import { Project, ProjectListItem } from '@/types/project.interface';
 import { Offer } from '@/types/offer.interface';
 import { format } from 'date-fns';
-import { formatPrice } from '@/helpers/helper';
 import Spinner from '@/components/Spinner';
 import { AppRoute } from '@/constants/appRoute';
 import { useGetAllOffersQuery } from '@/services/client/offersApi';
@@ -26,14 +25,14 @@ const mapProjectsToListItems = (projects: Project[]): ProjectListItem[] => {
     return {
       id: project.id,
       title: project.name,
-      assignee: '', // TODO: Get from team
-      clientName: '', // TODO: Get from brief.details
-      clientContact: '', // TODO: Get from brief.details
+      assignee: '-',
+      clientName: project.clientName || '-',
+      clientContact: '-',
       status: project.status,
-      cost: formatPrice(0), // TODO: Calculate from offer
-      expenses: formatPrice(0), // TODO: Calculate from offer
-      profit: formatPrice(0), // TODO: Calculate from offer
-      deadline: '', // TODO: Get from offer
+      cost: '-',
+      expenses: '-',
+      profit: '-',
+      deadline: '-',
       createdAt: format(new Date(project.createdAt), 'MM/dd/yyyy'),
     };
   });

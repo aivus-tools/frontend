@@ -47,8 +47,6 @@ export const useMutateProject = () => {
         throw new Error('Vendor ID not found');
       }
 
-      console.log('Creating project with data:', formData);
-
       // Build project payload
       const projectPayload: NewProject = {
         name: formData.projectName || 'New Project',
@@ -75,8 +73,6 @@ export const useMutateProject = () => {
       // Step 1: Create Project (without Brief!)
       const project = await createProject(projectPayload).unwrap();
 
-      console.log('Project created:', project);
-
       // Step 2: Create Offer
       const offer = await createOffer({
         projectName: formData.projectName || 'New Project',
@@ -89,8 +85,6 @@ export const useMutateProject = () => {
         cost: null,
         profit: null,
       }).unwrap();
-
-      console.log('Offer created:', offer);
 
       // Return project ID for navigation
       return { projectId: project.id, project, offer };

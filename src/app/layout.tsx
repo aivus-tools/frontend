@@ -51,7 +51,7 @@ export default async function RootLayout({
         {`
           function resizeIframe() {
             const height = document.body.scrollHeight;
-            parent.postMessage({ type: 'resize', height: height }, '*');
+            parent.postMessage({ type: 'resize', height: height }, window.location.origin);
           }
 
           window.addEventListener('load', resizeIframe);

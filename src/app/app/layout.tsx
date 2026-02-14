@@ -1,4 +1,5 @@
-import { auth, signOut } from '@/auth/auth';
+import { auth } from '@/auth/auth';
+import { redirect } from 'next/navigation';
 import { ReduxStore } from '@/context/ReduxProvider';
 import { GROUPS } from '@/constants/constants';
 import React from 'react';
@@ -27,7 +28,7 @@ export default async function Layout({
       case GROUPS.unconfirmed:
         return unknown;
       default: {
-        signOut();
+        redirect('/auth');
         return null;
       }
     }
