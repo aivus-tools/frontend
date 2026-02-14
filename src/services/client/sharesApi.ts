@@ -21,7 +21,7 @@ export const sharesApi = createApi({
     }),
     updateShare: builder.mutation<Share, UpdateSharePayload>({
       query: ({ token, ...body }) => ({
-        url: ApiRoute.SHARE_BY_TOKEN(token),
+        url: `${ApiRoute.SHARE_BY_TOKEN(token)}/manage`,
         method: 'PATCH',
         body,
       }),

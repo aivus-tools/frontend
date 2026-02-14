@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
-import { Modal, Input, Button, message } from 'antd';
+import { Modal, Input, Button, App } from 'antd';
 import { t } from '@/lib/i18n';
 import { useCreateTemplateMutation } from '@/services/client/templatesApi';
 
@@ -16,6 +16,7 @@ export const SaveTemplateModal: React.FC<SaveTemplateModalProps> = ({
   onClose,
   offerId,
 }) => {
+  const { message } = App.useApp();
   const [name, setName] = useState('');
   const [createTemplate, { isLoading }] = useCreateTemplateMutation();
 

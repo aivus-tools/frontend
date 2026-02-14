@@ -5,7 +5,6 @@ import { Dropdown, Modal, Popover } from 'antd';
 import { useRouter } from 'next/navigation';
 import { MoreOutlined } from '@ant-design/icons';
 import { t } from '@/lib/i18n';
-import { PrStatus } from '@/components/PrStatus/PrStatus';
 import { ProjectListItem } from '@/types/project.interface';
 import { Offer } from '@/types/offer.interface';
 import { AppRoute } from '@/constants/appRoute';
@@ -54,7 +53,7 @@ export const ProjectOfferCard: React.FC<ProjectOfferCardProps> = ({
   const [deleteProject] = useDeleteProjectMutation();
   const [restoreProject] = useRestoreProjectMutation();
 
-  const handleStatusChange = async (e: React.MouseEvent, offerId: string, newStatus: 'DRAFT' | 'PUBLISHED') => {
+  const handleStatusChange = async (e: React.MouseEvent, offerId: string, newStatus: 'DRAFT' | 'PUBLISHED' | 'ARCHIVED') => {
     e.stopPropagation();
     setStatusPopoverId(null);
     try {
@@ -87,8 +86,8 @@ export const ProjectOfferCard: React.FC<ProjectOfferCardProps> = ({
   };
 
   return (
-    <CardContainer className={className} onClick={onClick}>
-      <CardHeader $status={item.status}>
+    <CardContainer className={className} onClick={onClick} $status={item.status}>
+      <CardHeader>
         <ProjectInfo>
           <ProjectTitle>{item.title}</ProjectTitle>
           <ProjectMeta>
@@ -98,8 +97,6 @@ export const ProjectOfferCard: React.FC<ProjectOfferCardProps> = ({
                 <MetaDot />
               </>
             )}
-            <PrStatus status={item.status} />
-            <MetaDot />
             <span>{item.createdAt}</span>
           </ProjectMeta>
         </ProjectInfo>
@@ -149,6 +146,9 @@ export const ProjectOfferCard: React.FC<ProjectOfferCardProps> = ({
                       <StatusDropdownOption onClick={(e) => handleStatusChange(e, offer.id, 'PUBLISHED')}>
                         <OfferStatusBadge $status="PUBLISHED">{t('STATUS_PUBLISHED')}</OfferStatusBadge>
                       </StatusDropdownOption>
+                      <StatusDropdownOption onClick={(e) => handleStatusChange(e, offer.id, 'ARCHIVED')}>
+                        <OfferStatusBadge $status="ARCHIVED">{t('STATUS_ARCHIVED')}</OfferStatusBadge>
+                      </StatusDropdownOption>
                     </StatusDropdown>
                   }
                 >
@@ -156,7 +156,7 @@ export const ProjectOfferCard: React.FC<ProjectOfferCardProps> = ({
                     $status={offer.status}
                     onClick={(e) => e.stopPropagation()}
                   >
-                    {offer.status === 'PUBLISHED' ? t('STATUS_PUBLISHED') : t('STATUS_DRAFT')}
+                    {offer.status === 'PUBLISHED' ? t('STATUS_PUBLISHED') : offer.status === 'ARCHIVED' ? t('STATUS_ARCHIVED') : t('STATUS_DRAFT')}
                   </OfferStatusBadge>
                 </Popover>
               </div>

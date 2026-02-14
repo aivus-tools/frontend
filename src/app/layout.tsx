@@ -13,6 +13,7 @@ import path from 'path';
 import theme from '@/lib/themeConfig';
 import React from 'react';
 import { locale } from '@/lib/i18n';
+import { AntdAppProvider } from '@/app/_components/AntdAppProvider';
 
 const montserrat = Montserrat({
   subsets: ['latin'],
@@ -42,7 +43,9 @@ export default async function RootLayout({
         <StyledComponentsRegistry>
           <AntdRegistry>
             <ConfigProvider theme={theme}>
-              <SessionProvider session={session}>{children}</SessionProvider>
+              <AntdAppProvider>
+                <SessionProvider session={session}>{children}</SessionProvider>
+              </AntdAppProvider>
             </ConfigProvider>
           </AntdRegistry>
         </StyledComponentsRegistry>

@@ -68,13 +68,16 @@ export const ProjectList = () => {
 
   const data = useMemo(() => mapProjectsToListItems(projects), [projects]);
 
-  // Apply status filter on active projects
+  // Apply status filter on active projects (by offer status)
   const filteredData = useMemo(() => {
     if (statusFilter && !isArchiveView) {
-      return data.filter((p) => p.status === statusFilter);
+      return data.filter((p) => {
+        const projectOffers = offersByProject[p.id] || [];
+        return projectOffers.some((o) => o.status === statusFilter);
+      });
     }
     return data;
-  }, [data, statusFilter, isArchiveView]);
+  }, [data, statusFilter, isArchiveView, offersByProject]);
 
   useEffect(() => {
     filteredData.forEach((item: ProjectListItem) => {

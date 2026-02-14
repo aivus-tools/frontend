@@ -17,7 +17,7 @@ const statusAccent = (status?: string) => {
   }
 };
 
-export const CardContainer = styled.div`
+export const CardContainer = styled.div<{ $status?: string }>`
   background: #ffffff;
   border-radius: 10px;
   overflow: hidden;
@@ -26,6 +26,7 @@ export const CardContainer = styled.div`
   transition: box-shadow 0.2s ease, transform 0.15s ease;
   box-shadow: 0 1px 4px rgba(0, 0, 0, 0.06);
   border: 1px solid #f1f1f4;
+  border-left: 4px solid ${({ $status }) => statusAccent($status)};
 
   &:hover {
     box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
@@ -33,12 +34,11 @@ export const CardContainer = styled.div`
   }
 `;
 
-export const CardHeader = styled.div<{ $status?: string }>`
+export const CardHeader = styled.div`
   display: flex;
   align-items: center;
   gap: 16px;
   padding: 16px 20px;
-  border-left: 4px solid ${({ $status }) => statusAccent($status)};
 `;
 
 export const ProjectInfo = styled.div`
@@ -135,7 +135,7 @@ export const OfferNameText = styled.span`
   text-overflow: ellipsis;
 `;
 
-export const OfferStatusBadge = styled.span<{ $status: 'DRAFT' | 'PUBLISHED' }>`
+export const OfferStatusBadge = styled.span<{ $status: string }>`
   height: 20px;
   padding: 0 8px;
   border-radius: 4px;
@@ -154,10 +154,15 @@ export const OfferStatusBadge = styled.span<{ $status: 'DRAFT' | 'PUBLISHED' }>`
           background: #f0fcd4;
           color: #7ead00;
         `
-      : css`
-          background: #f4f4f7;
-          color: #99a1b7;
-        `}
+      : $status === 'ARCHIVED'
+        ? css`
+            background: #fff2e8;
+            color: #d46b08;
+          `
+        : css`
+            background: #f4f4f7;
+            color: #99a1b7;
+          `}
 `;
 
 export const OfferValue = styled.div<{ $highlight?: boolean }>`

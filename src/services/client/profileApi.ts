@@ -5,14 +5,14 @@ export interface UserProfile {
   id: string;
   name: string;
   email: string;
-  company_name: string;
+  company: string;
   position: string;
   avatar_url: string | null;
 }
 
 export interface UpdateProfilePayload {
   name: string;
-  company_name: string;
+  company: string;
   position: string;
 }
 

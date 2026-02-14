@@ -2,15 +2,10 @@
 
 import React, { useCallback } from 'react';
 import { useSearchParams, useRouter } from 'next/navigation';
-import { SearchOutlined, FilterOutlined, ClockCircleOutlined, StarOutlined, InboxOutlined } from '@ant-design/icons';
+import { ClockCircleOutlined, InboxOutlined } from '@ant-design/icons';
 import { t } from '@/lib/i18n';
-import { PROJECT_STATUS } from '@/constants/constants';
 import {
   SidebarContainer,
-  SearchBar,
-  SearchInput,
-  SearchIcon,
-  FilterIcon,
   Separator,
   SectionLabel,
   SidebarItem,
@@ -18,10 +13,9 @@ import {
 } from './styled';
 
 const STATUS_FILTERS = [
-  { key: PROJECT_STATUS.DRAFT, label: () => t('DRAFTS') },
-  { key: PROJECT_STATUS.RFP, label: () => t('STATUS_RFP') },
-  { key: PROJECT_STATUS.REVIEWING, label: () => t('REVIEWING') },
-  { key: PROJECT_STATUS.ONGOING, label: () => t('ONGOING') },
+  { key: 'DRAFT', label: () => t('STATUS_DRAFT') },
+  { key: 'PUBLISHED', label: () => t('STATUS_PUBLISHED') },
+  { key: 'ARCHIVED', label: () => t('STATUS_ARCHIVED') },
 ] as const;
 
 export const DashboardSidebar: React.FC = () => {
@@ -47,30 +41,12 @@ export const DashboardSidebar: React.FC = () => {
 
   return (
     <SidebarContainer>
-      {/* Search bar (placeholder - non-functional for MVP) */}
-      <SearchBar>
-        <SearchIcon>
-          <SearchOutlined />
-        </SearchIcon>
-        <SearchInput placeholder={t('SEARCH')} disabled />
-        <FilterIcon>
-          <FilterOutlined />
-        </FilterIcon>
-      </SearchBar>
-
       {/* Quick access items */}
       <SidebarItem $active={isAllProjects} onClick={() => navigateTo()}>
         <ItemIcon>
           <ClockCircleOutlined />
         </ItemIcon>
         {t('RECENTLY_VIEWED')}
-      </SidebarItem>
-
-      <SidebarItem onClick={() => navigateTo()}>
-        <ItemIcon>
-          <StarOutlined />
-        </ItemIcon>
-        {t('FAVORITES')}
       </SidebarItem>
 
       <SidebarItem $active={isArchiveView} onClick={() => navigateTo({ view: 'archive' })}>

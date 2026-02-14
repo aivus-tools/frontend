@@ -48,6 +48,7 @@ export const ApiRoute = {
   // Shares
   SHARE_LIST: '/service/shares',
   SHARE_BY_TOKEN: (token: string) => `/service/shares/${token}`,
+  SHARE_MANAGE: (token: string) => `/service/shares/${token}/manage`,
   // Offer actions
   OFFER_COPY: (id: string | number) => `/service/offers/${id}/copy`,
   OFFER_STATUS: (id: string | number) => `/service/offers/${id}/status`,

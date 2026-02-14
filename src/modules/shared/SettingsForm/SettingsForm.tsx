@@ -1,8 +1,8 @@
 'use client';
 
 import React, { useEffect } from 'react';
-import { Form, Input, Button, Switch, Select, Checkbox, message, Spin } from 'antd';
-import { t } from '@/lib/i18n';
+import { Form, Input, Button, Switch, Select, Checkbox, App, Spin } from 'antd';
+import { t, locale } from '@/lib/i18n';
 import {
   useGetSettingsQuery,
   useUpdateSettingsMutation,
@@ -26,6 +26,7 @@ interface PasswordFormValues {
 }
 
 export const SettingsForm = () => {
+  const { message } = App.useApp();
   const [passwordForm] = Form.useForm<PasswordFormValues>();
   const [settingsForm] = Form.useForm();
 
@@ -62,6 +63,11 @@ export const SettingsForm = () => {
       const values = settingsForm.getFieldsValue();
       await updateSettings(values).unwrap();
       message.success(t('SETTINGS_SAVED'));
+      // Apply language change
+      if (values.language && values.language !== locale) {
+        document.cookie = `locale=${values.language};path=/;max-age=31536000`;
+        window.location.reload();
+      }
     } catch {
       message.error(t('SETTINGS_SAVE_FAILED'));
     }

@@ -39,16 +39,6 @@ export function Section({
         <div className={styles.sectionTitle}>
           <span className={styles.sectionTitleText}>{section.category.name}</span>
         </div>
-        <div className={styles.sectionActions}>
-          <button
-            className={styles.addBtn}
-            onClick={(e) => {
-              e.stopPropagation();
-            }}
-          >
-            + {t('ADD_SUBSECTION')}
-          </button>
-        </div>
       </div>
 
       {/* Section body */}
@@ -81,12 +71,6 @@ export function Section({
             />
           ))}
 
-          {/* Add item button */}
-          <div className={styles.addItemRow}>
-            <button className={styles.addBtn}>
-              + {t('ADD_RATE_ITEM')}
-            </button>
-          </div>
         </div>
       )}
     </div>
@@ -141,12 +125,6 @@ function SubSection({
             />
           ))}
 
-          {/* Add item for this subsection */}
-          <div className={styles.addItemRow}>
-            <button className={styles.addBtn}>
-              + {t('ADD_RATE_ITEM')}
-            </button>
-          </div>
         </>
       )}
     </div>

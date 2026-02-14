@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useEffect, useRef } from 'react';
-import { Form, Input, Button, message, Spin } from 'antd';
+import { Form, Input, Button, App, Spin } from 'antd';
 import { CameraOutlined, UserOutlined } from '@ant-design/icons';
 import { t } from '@/lib/i18n';
 import {
@@ -23,11 +23,12 @@ import {
 
 interface ProfileFormValues {
   name: string;
-  company_name: string;
+  company: string;
   position: string;
 }
 
 export const ProfileForm = () => {
+  const { message } = App.useApp();
   const [form] = Form.useForm<ProfileFormValues>();
   const fileInputRef = useRef<HTMLInputElement>(null);
 
@@ -39,7 +40,7 @@ export const ProfileForm = () => {
     if (profile) {
       form.setFieldsValue({
         name: profile.name,
-        company_name: profile.company_name,
+        company: profile.company,
         position: profile.position,
       });
     }
@@ -127,7 +128,7 @@ export const ProfileForm = () => {
 
         <FormSection>
           <FieldLabel>{t('COMPANY_NAME')}</FieldLabel>
-          <Form.Item name="company_name">
+          <Form.Item name="company">
             <Input placeholder={t('COMPANY_NAME')} size="large" />
           </Form.Item>
         </FormSection>

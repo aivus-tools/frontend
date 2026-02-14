@@ -1,5 +1,5 @@
 'use client';
-import { Button, message, Tooltip } from 'antd';
+import { Button, App, Tooltip } from 'antd';
 import { t } from '@/lib/i18n';
 import { useSelectedLayoutSegments } from 'next/navigation';
 import { VENDOR_PROJECT_TAB_KEYS } from '@/constants/constants';
@@ -12,13 +12,14 @@ import styles from './ProjectNavbar.module.css';
 import { exportToExcel } from '@/helpers/excelExport/exportToExcel';
 import { useAppSelector } from '@/store/hooks';
 import { selectCategoriesExportData, selectOfferMetaData } from '@/store/slices/offer/selectors';
-import { Dayjs } from 'dayjs';
+import dayjs, { Dayjs } from 'dayjs';
 import { useState } from 'react';
 import { SharePopup } from '@/modules/SharePopup/SharePopup';
 import { SaveTemplateModal } from '@/modules/vendor/SaveTemplateModal/SaveTemplateModal';
 import { useSession } from 'next-auth/react';
 
 export const ProjectNavbar = () => {
+  const { message } = App.useApp();
   useSetProject();
   useSetVendor();
 
@@ -62,7 +63,10 @@ export const ProjectNavbar = () => {
         )}
 
         {tab === VENDOR_PROJECT_TAB_KEYS.OFFER && (
-          <ExportPopover action={handleExport}>
+          <ExportPopover
+            action={handleExport}
+            defaultName={offerMetaData?.projectName ? `${offerMetaData.projectName} ${dayjs().format('MM-DD-YYYY')}` : ''}
+          >
             <Button className={styles.export} type='primary'>
               {t('EXPORT')}
             </Button>

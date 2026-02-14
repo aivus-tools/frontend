@@ -210,6 +210,7 @@ export const EN_LOCALES = {
   START_TYPING_TO_ADD_OPTION: 'Start typing here to add option for any category',
   STATUS_CANCELLED: 'Cancelled',
   STATUS_COMPLETED: 'Completed',
+  STATUS_ARCHIVED: 'Archived',
   STATUS_DRAFT: 'DRAFT',
   STATUS_ONGOING: 'Ongoing',
   STATUS_REVIEWING: 'Reviewing',

@@ -8,7 +8,7 @@ export interface Offer {
   projectName: string;
   parentOfferId?: string | null;
   projectId?: string | null;
-  status: 'DRAFT' | 'PUBLISHED';
+  status: 'DRAFT' | 'PUBLISHED' | 'ARCHIVED';
   cost?: number | null;
   profit?: number | null;
   details: OfferDetails | Record<string, unknown>; // JSON object (OfferDetails)

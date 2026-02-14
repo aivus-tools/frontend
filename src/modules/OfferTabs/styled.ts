@@ -52,7 +52,7 @@ export const InactiveTab = styled.button`
   }
 `;
 
-export const StatusBadge = styled.span<{ $status: 'DRAFT' | 'PUBLISHED' }>`
+export const StatusBadge = styled.span<{ $status: string }>`
   height: 18px;
   padding: 0 6px;
   border-radius: 3px;
@@ -70,11 +70,17 @@ export const StatusBadge = styled.span<{ $status: 'DRAFT' | 'PUBLISHED' }>`
           border: 0.6px solid #a5c500;
           color: #a5c500;
         `
-      : css`
-          background: #f9f9f9;
-          border: 0.6px solid #99a1b7;
-          color: #99a1b7;
-        `}
+      : $status === 'ARCHIVED'
+        ? css`
+            background: #fff2e8;
+            border: 0.6px solid #d46b08;
+            color: #d46b08;
+          `
+        : css`
+            background: #f9f9f9;
+            border: 0.6px solid #99a1b7;
+            color: #99a1b7;
+          `}
 `;
 
 export const CloseButton = styled.span`

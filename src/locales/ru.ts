@@ -211,6 +211,7 @@ export const RU_LOCALES = {
   START_TYPING_TO_ADD_OPTION: 'Начните вводить текст, чтобы добавить позицию в любую категорию',
   STATUS_CANCELLED: 'Отменено',
   STATUS_COMPLETED: 'Завершено',
+  STATUS_ARCHIVED: 'Архивирован',
   STATUS_DRAFT: 'ЧЕРНОВИК',
   STATUS_ONGOING: 'В процессе',
   STATUS_REVIEWING: 'На рассмотрении',
