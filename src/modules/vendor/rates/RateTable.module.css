@@ -13,8 +13,8 @@
   align-items: center;
   padding: 8px 26px 8px 20px;
   font-family: Montserrat, sans-serif;
-  font-weight: 500;
   font-size: 10px;
+  font-weight: 500;
   line-height: 12px;
   color: #99a1b7;
 }
@@ -33,11 +33,11 @@
 
 /* ========== Section card (white card with shadow) ========== */
 .sectionCard {
-  background: #fff;
-  border-radius: 6px;
-  box-shadow: 0px 5px 16.5px -11px rgba(0, 0, 0, 0.25);
   margin-top: 12px;
   overflow: hidden;
+  background: #fff;
+  border-radius: 6px;
+  box-shadow: 0 5px 16.5px -11px rgb(0 0 0 / 25%);
 }
 
 .sectionCard:first-of-type {
@@ -57,17 +57,17 @@
 
 .sectionTitle {
   display: flex;
-  align-items: center;
-  gap: 6px;
   flex: 1;
+  gap: 6px;
+  align-items: center;
 }
 
 .sectionTitleText {
   font-family: Montserrat, sans-serif;
-  font-weight: 700;
   font-size: 14px;
+  font-weight: 700;
   line-height: 17px;
-  color: #2288ff;
+  color: #28f;
   text-transform: uppercase;
 }
 
@@ -88,31 +88,31 @@
 
 .subSectionHeader {
   display: flex;
-  align-items: center;
   gap: 4px;
+  align-items: center;
   height: 40px;
   padding: 0 20px 0 14px;
-  background-color: #f6f9ff;
   cursor: pointer;
   user-select: none;
+  background-color: #f6f9ff;
 }
 
 .subSectionTitleText {
   font-family: Montserrat, sans-serif;
-  font-weight: 500;
   font-size: 13px;
+  font-weight: 500;
   line-height: 16px;
-  color: #2288ff;
+  color: #28f;
 }
 
 /* ========== Arrow ========== */
 .arrow {
   display: flex;
+  flex-shrink: 0;
   align-items: center;
   justify-content: center;
   width: 20px;
   height: 20px;
-  flex-shrink: 0;
   transition: transform 0.2s ease;
 }
 
@@ -135,7 +135,7 @@
   grid-template-columns: 1fr 100px 35px 100px 30px;
   align-items: center;
   min-height: 36px;
-  padding: 0 20px 0 20px;
+  padding: 0 20px;
   border-bottom: 0.5px dashed #e8e8e8;
   transition: background-color 0.15s ease;
 }
@@ -145,16 +145,16 @@
 }
 
 .itemRow:last-child {
-  border-bottom: none;
+  border-bottom: 0;
 }
 
 .itemName {
   display: flex;
-  align-items: center;
   gap: 4px;
+  align-items: center;
   font-family: Montserrat, sans-serif;
-  font-weight: 500;
   font-size: 13px;
+  font-weight: 500;
   line-height: 16px;
   color: #4b5675;
 }
@@ -175,11 +175,12 @@
   text-align: right;
 }
 
+/* stylelint-disable-next-line selector-class-pattern */
 .priceInput :global(.ant-input-number-input) {
-  text-align: right;
   padding: 2px 4px;
   font-family: Montserrat, sans-serif;
   font-size: 13px;
+  text-align: right;
 }
 
 /* ========== Per text ========== */
@@ -202,12 +203,14 @@
   width: 100%;
 }
 
+/* stylelint-disable-next-line selector-class-pattern */
 .unitSelect :global(.ant-select-selector) {
   padding: 0 4px !important;
   font-family: Montserrat, sans-serif;
   font-size: 13px;
 }
 
+/* stylelint-disable-next-line selector-class-pattern */
 .unitSelect :global(.ant-select-selection-item) {
   text-align: left;
 }
@@ -231,11 +234,11 @@
   justify-content: center;
   width: 24px;
   height: 24px;
-  cursor: pointer;
+  padding: 0;
   color: #99a1b7;
+  cursor: pointer;
   background: none;
   border: 0;
-  padding: 0;
   border-radius: 4px;
   transition: all 0.15s ease;
 }
@@ -268,15 +271,15 @@
 }
 
 .addBtn:hover {
-  color: #2288ff;
+  color: #28f;
 }
 
 /* ========== Empty state ========== */
 .emptyState {
   display: flex;
   flex-direction: column;
+  gap: 16px;
   align-items: center;
   justify-content: center;
   padding: 60px 20px;
-  gap: 16px;
 }

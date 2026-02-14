@@ -25,7 +25,7 @@ export function EntryRow({ catalogEntry, units, onPriceChange, onUnitChange, onR
 
   // Current unit: from rate card item, or entry default
   const currentUnitId = rateItem?.unitId || getDefaultUnitId(entry);
-  const currentUnitLabel = rateItem?.unitLabel || getDefaultUnitLabel(entry, units);
+  const currentUnitLabel = rateItem?.unitLabel || getDefaultUnitLabel(entry);
 
   const handlePriceChange = (val: number | null) => {
     if (val === null) return;
@@ -106,7 +106,7 @@ function getDefaultUnitId(entry: CatalogEntry['entry']): string | null {
   return defaultUnit?.id || allUnits[0]?.id || null;
 }
 
-function getDefaultUnitLabel(entry: CatalogEntry['entry'], allUnits: UnitOption[]): string | null {
+function getDefaultUnitLabel(entry: CatalogEntry['entry']): string | null {
   if (entry.units) {
     const entryUnits = [...(entry.units.quantity || []), ...(entry.units.temporal || [])];
     const defaultUnit = entryUnits.find((u) => u.isDefault);

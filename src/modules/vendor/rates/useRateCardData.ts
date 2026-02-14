@@ -35,8 +35,8 @@ export function useRateCardData() {
   const [createRateCard] = useCreateRateCardMutation();
 
   const rateCard: RateCard | undefined = rateCards[0];
-  const entries: Entry[] = entriesData?.entries || [];
-  const units: UnitOption[] = unitsData?.units || [];
+  const entries: Entry[] = useMemo(() => entriesData?.entries || [], [entriesData]);
+  const units: UnitOption[] = useMemo(() => unitsData?.units || [], [unitsData]);
 
   // Map entryId → RateCardItem for quick lookup
   const rateItemsByEntryId = useMemo(() => {
