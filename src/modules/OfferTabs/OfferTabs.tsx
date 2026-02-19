@@ -13,9 +13,8 @@ import {
   useDeleteOfferMutation,
   useUpdateOfferMutation,
   useUpdateOfferStatusMutation,
-} from '@/services/client/offersApi';
+ offersApi } from '@/services/client/offersApi';
 import { useGetTemplatesQuery, useApplyTemplateMutation } from '@/services/client/templatesApi';
-import { offersApi } from '@/services/client/offersApi';
 import { useAppDispatch, useAppSelector } from '@/store/hooks';
 import { selectProjectId } from '@/store/slices/project';
 import {
