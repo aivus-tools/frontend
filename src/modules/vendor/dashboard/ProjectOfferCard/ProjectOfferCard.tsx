@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
-import { Dropdown, Modal, Popover } from 'antd';
+import { App, Dropdown, Popover } from 'antd';
 import { useRouter } from 'next/navigation';
 import { MoreOutlined } from '@ant-design/icons';
 import { t } from '@/lib/i18n';
@@ -48,6 +48,7 @@ export const ProjectOfferCard: React.FC<ProjectOfferCardProps> = ({
   className,
 }) => {
   const router = useRouter();
+  const { modal } = App.useApp();
   const [statusPopoverId, setStatusPopoverId] = useState<string | null>(null);
   const [updateOfferStatus] = useUpdateOfferStatusMutation();
   const [deleteProject] = useDeleteProjectMutation();
@@ -70,7 +71,7 @@ export const ProjectOfferCard: React.FC<ProjectOfferCardProps> = ({
   const handleMenuClick = ({ key, domEvent }: { key: string; domEvent: React.MouseEvent | React.KeyboardEvent }) => {
     domEvent.stopPropagation();
     if (key === 'archive') {
-      Modal.confirm({
+      modal.confirm({
         title: t('ARCHIVE_PROJECT'),
         content: t('ARCHIVE_PROJECT_CONFIRM'),
         okText: t('ARCHIVE'),

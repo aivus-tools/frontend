@@ -11,6 +11,7 @@ import { format } from 'date-fns';
 import Spinner from '@/components/Spinner';
 import { AppRoute } from '@/constants/appRoute';
 import { useGetAllOffersQuery } from '@/services/client/offersApi';
+import { useGetArchivedProjectsQuery } from '@/services/client/projectsApi';
 import { ProjectOfferCard } from '@/modules/vendor/dashboard/ProjectOfferCard/ProjectOfferCard';
 import { t } from '@/lib/i18n';
 import { InboxOutlined } from '@ant-design/icons';
@@ -44,42 +45,27 @@ export const ProjectList = () => {
   const isArchiveView = view === 'archive';
 
   const { data: activeProjects = [], isLoading: isLoadingActive } = useProjects();
+  const { data: archivedProjects = [], isLoading: isLoadingArchived } = useGetArchivedProjectsQuery();
   const { data: allOffers = [] } = useGetAllOffersQuery();
 
-  const isLoading = isLoadingActive;
+  const isLoading = isArchiveView ? isLoadingArchived : isLoadingActive;
 
-  // Group offers by project ID
   const offersByProject = useMemo(() => {
     const map: Record<string, Offer[]> = {};
     allOffers.forEach((offer) => {
       const pid = offer.projectId;
       if (pid) {
-        if (!map[pid]) map[pid] = [];
+        if (!map[pid]) { map[pid] = []; }
         map[pid].push(offer);
       }
     });
     return map;
   }, [allOffers]);
 
-  const archiveProjects = useMemo(() => {
-    return activeProjects.filter((p) => {
-      const offers = offersByProject[p.id] || [];
-      return offers.length > 0 && offers.every((o) => o.status === 'ARCHIVED');
-    });
-  }, [activeProjects, offersByProject]);
-
-  const nonArchiveProjects = useMemo(() => {
-    return activeProjects.filter((p) => {
-      const offers = offersByProject[p.id] || [];
-      return offers.length === 0 || offers.some((o) => o.status !== 'ARCHIVED');
-    });
-  }, [activeProjects, offersByProject]);
-
-  const projects = isArchiveView ? archiveProjects : nonArchiveProjects;
+  const projects = isArchiveView ? archivedProjects : activeProjects;
 
   const data = useMemo(() => mapProjectsToListItems(projects), [projects]);
 
-  // Apply status filter on active projects (by offer status)
   const filteredData = useMemo(() => {
     if (statusFilter && !isArchiveView) {
       return data.filter((p) => {
@@ -124,15 +110,21 @@ export const ProjectList = () => {
   return (
     <main className={cn(styles.dashboard)}>
       <div className={cn(styles.content)}>
-        {filteredData.map((item: ProjectListItem) => (
-          <ProjectOfferCard
-            key={`project_${item.id}`}
-            item={item}
-            offers={offersByProject[item.id] || []}
-            isArchived={isArchiveView}
-            onClick={() => router.push(AppRoute.DASHBOARD_PROJECT_ESTIMATION(item.id))}
-          />
-        ))}
+        {filteredData.map((item: ProjectListItem) => {
+          const projectOffers = offersByProject[item.id] || [];
+          const visibleOffers = statusFilter && !isArchiveView
+            ? projectOffers.filter((o) => o.status === statusFilter)
+            : projectOffers;
+          return (
+            <ProjectOfferCard
+              key={`project_${item.id}`}
+              item={item}
+              offers={visibleOffers}
+              isArchived={isArchiveView}
+              onClick={() => router.push(AppRoute.DASHBOARD_PROJECT_ESTIMATION(item.id))}
+            />
+          );
+        })}
       </div>
     </main>
   );

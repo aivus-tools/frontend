@@ -5,6 +5,7 @@ export const RU_LOCALES = {
   ADD_INTERNAL_MANAGERS: 'Добавьте внутренних менеджеров.',
   ADD_ITEM: 'добавить элемент',
   AGENCY_SERVICE: 'Услуги агентства',
+  ALL: 'Все',
   ADD_LINKS_TO_RELEVANT_VIDEOS: 'Добавьте ссылки на релевантные видео.',
   ADD_UNIT: 'Добавить блок',
   ADD_UP_TO_5_ADDITIONAL_FILES:

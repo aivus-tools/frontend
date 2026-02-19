@@ -61,6 +61,13 @@ export const DashboardSidebar: React.FC = () => {
       {/* Status filters */}
       <SectionLabel>{t('BY_STATUS')}</SectionLabel>
 
+      <SidebarItem
+        $active={isAllProjects}
+        onClick={() => navigateTo()}
+      >
+        {t('ALL')}
+      </SidebarItem>
+
       {STATUS_FILTERS.map(({ key, label }) => (
         <SidebarItem
           key={key}

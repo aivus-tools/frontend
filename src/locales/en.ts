@@ -5,6 +5,7 @@ export const EN_LOCALES = {
   ADD_INTERNAL_MANAGERS: 'Add internal managers.',
   ADD_ITEM: 'add item',
   AGENCY_SERVICE: 'Agency service',
+  ALL: 'All',
   ADD_LINKS_TO_RELEVANT_VIDEOS: 'Add links to relevant videos.',
   ADD_UNIT: 'Add unit',
   ADD_UP_TO_5_ADDITIONAL_FILES:
