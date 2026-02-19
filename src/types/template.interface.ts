@@ -1,3 +1,4 @@
+import { Offer } from './offer.interface';
 import { OfferDetails } from './store.interface';
 
 export interface Template {
@@ -22,7 +23,4 @@ export interface NewTemplate {
   description?: string;
 }
 
-export interface ApplyTemplateResponse {
-  offerId: string;
-  details: OfferDetails | Record<string, unknown>;
-}
+export type ApplyTemplateResponse = Offer;

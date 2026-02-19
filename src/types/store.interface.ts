@@ -32,6 +32,7 @@ export interface OfferState {
     entry: Entry[];
   };
   external: boolean;
+  templateId: string | null;
 }
 
 export interface ExportItem {

@@ -28,7 +28,27 @@ export const userApi = createApi({
         body: { email },
       }),
     }),
+    forgotPassword: builder.mutation<{ message: string }, string>({
+      query: (email) => ({
+        url: ApiRoute.FORGOT_PASSWORD,
+        method: 'POST',
+        body: { email },
+      }),
+    }),
+    resetPassword: builder.mutation<{ message: string }, { token: string; password: string }>({
+      query: ({ token, password }) => ({
+        url: `${ApiRoute.RESET_PASSWORD}?token=${encodeURIComponent(token)}`,
+        method: 'POST',
+        body: { password },
+      }),
+    }),
   }),
 });
 
-export const { useChangeGroupMutation, useLazyConfirmEmailQuery, useResendConfirmationMutation } = userApi;
+export const {
+  useChangeGroupMutation,
+  useLazyConfirmEmailQuery,
+  useResendConfirmationMutation,
+  useForgotPasswordMutation,
+  useResetPasswordMutation,
+} = userApi;

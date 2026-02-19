@@ -11,7 +11,6 @@ import { format } from 'date-fns';
 import Spinner from '@/components/Spinner';
 import { AppRoute } from '@/constants/appRoute';
 import { useGetAllOffersQuery } from '@/services/client/offersApi';
-import { useGetArchivedProjectsQuery } from '@/services/client/projectsApi';
 import { ProjectOfferCard } from '@/modules/vendor/dashboard/ProjectOfferCard/ProjectOfferCard';
 import { t } from '@/lib/i18n';
 import { InboxOutlined } from '@ant-design/icons';
@@ -45,13 +44,9 @@ export const ProjectList = () => {
   const isArchiveView = view === 'archive';
 
   const { data: activeProjects = [], isLoading: isLoadingActive } = useProjects();
-  const { data: archivedProjects = [], isLoading: isLoadingArchived } = useGetArchivedProjectsQuery(undefined, {
-    skip: !isArchiveView,
-  });
   const { data: allOffers = [] } = useGetAllOffersQuery();
 
-  const projects = isArchiveView ? archivedProjects : activeProjects;
-  const isLoading = isArchiveView ? isLoadingArchived : isLoadingActive;
+  const isLoading = isLoadingActive;
 
   // Group offers by project ID
   const offersByProject = useMemo(() => {
@@ -65,6 +60,22 @@ export const ProjectList = () => {
     });
     return map;
   }, [allOffers]);
+
+  const archiveProjects = useMemo(() => {
+    return activeProjects.filter((p) => {
+      const offers = offersByProject[p.id] || [];
+      return offers.length > 0 && offers.every((o) => o.status === 'ARCHIVED');
+    });
+  }, [activeProjects, offersByProject]);
+
+  const nonArchiveProjects = useMemo(() => {
+    return activeProjects.filter((p) => {
+      const offers = offersByProject[p.id] || [];
+      return offers.length === 0 || offers.some((o) => o.status !== 'ARCHIVED');
+    });
+  }, [activeProjects, offersByProject]);
+
+  const projects = isArchiveView ? archiveProjects : nonArchiveProjects;
 
   const data = useMemo(() => mapProjectsToListItems(projects), [projects]);
 

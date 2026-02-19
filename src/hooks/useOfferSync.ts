@@ -4,7 +4,7 @@ import { useEffect } from 'react';
 import { useSearchParams } from 'next/navigation';
 import { useAppDispatch, useAppSelector } from '@/store/hooks';
 import { selectProjectId } from '@/store/slices/project';
-import { selectOfferMetaData } from '@/store/slices/offer/selectors';
+import { selectOfferMetaData, selectTemplateId } from '@/store/slices/offer/selectors';
 import { setMetaData, setOfferDetails } from '@/store/slices/offer/slice';
 import { useGetOffersByProjectIdQuery } from '@/services/client/offersApi';
 import logger from '@/lib/logger';
@@ -42,12 +42,15 @@ export function useOfferSync() {
   const dispatch = useAppDispatch();
   const projectId = useAppSelector(selectProjectId);
   const currentOfferId = useAppSelector(selectOfferMetaData)?.id;
+  const templateId = useAppSelector(selectTemplateId);
 
   const { data: offers = [] } = useGetOffersByProjectIdQuery(projectId!, {
-    skip: !projectId || projectId === 'new-brief',
+    skip: !projectId || projectId === 'new-brief' || !!templateId,
   });
 
   useEffect(() => {
+    // Skip offer sync when in template edit mode
+    if (templateId) return;
     if (!projectId || offers.length === 0) return;
 
     const urlOfferId = searchParams.get('offer');
@@ -75,5 +78,5 @@ export function useOfferSync() {
     } catch (error) {
       logger.error('Error syncing offer from URL:', error);
     }
-  }, [searchParams, offers, currentOfferId, projectId, dispatch]);
+  }, [searchParams, offers, currentOfferId, projectId, templateId, dispatch]);
 }

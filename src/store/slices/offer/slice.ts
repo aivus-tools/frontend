@@ -30,6 +30,7 @@ const initialState: OfferState = {
     entry: [],
   },
   external: false,
+  templateId: null,
 };
 
 export const offerSlice = createSlice({
@@ -320,6 +321,9 @@ export const offerSlice = createSlice({
         state.dictionary.entry = ENTRIES;
       }
     },
+    setTemplateId: (state, action: PayloadAction<string | null>) => {
+      state.templateId = action.payload;
+    },
   },
 });
 
@@ -336,4 +340,5 @@ export const {
   changeShowCostPerVideo,
   setExternal,
   changeOverallSurcharge,
+  setTemplateId,
 } = offerSlice.actions;

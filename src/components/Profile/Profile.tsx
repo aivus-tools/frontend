@@ -13,12 +13,14 @@ import { Avatar } from 'antd';
 import { useSession } from 'next-auth/react';
 import { ProfileImage } from './ProfileImage';
 import { AppRoute } from '@/constants/appRoute';
+import { useGetProfileQuery } from '@/services/client/profileApi';
 
 export const Profile = ({ className, ...props }: ProfileProps) => {
   const [isPopoverOpen, setIsPopoverOpen] = useState(false);
   const router = useRouter();
+  const { data: profileData } = useGetProfileQuery();
   const session = useSession();
-  const image = session?.data?.user?.image;
+  const image = profileData?.avatar_url || session?.data?.user?.image;
 
   const logoutHandle = () => {
     logout();

@@ -50,11 +50,15 @@ export const PublicOfferView: React.FC<PublicOfferViewProps> = ({ params }) => {
   // Determine viewer role
   const getViewerRole = useCallback((): 'guest' | 'vendor-author' | 'vendor-other' | 'client' => {
     if (!isAuthenticated) return 'guest';
-    if (data?.viewerRole) return data.viewerRole;
     if (userGroup === GROUPS.client) return 'client';
-    if (userGroup === GROUPS.vendor) return 'vendor-other';
+    if (userGroup === GROUPS.vendor) {
+      // Check if this vendor owns the offer
+      const userId = session?.data?.user?.vendorId;
+      if (userId && data?.vendor?.id === userId) return 'vendor-author';
+      return 'vendor-other';
+    }
     return 'guest';
-  }, [isAuthenticated, data?.viewerRole, userGroup]);
+  }, [isAuthenticated, userGroup, session?.data?.user?.vendorId, data?.vendor?.id]);
 
   const handleSignUp = useCallback(() => {
     router.push(`${AppRoute.AUTH}?redirect=/public/${token}`);
@@ -103,7 +107,7 @@ export const PublicOfferView: React.FC<PublicOfferViewProps> = ({ params }) => {
   }
 
   const viewerRole = getViewerRole();
-  const { share, offer } = data;
+  const { offer, vendor } = data;
 
   return (
     <PageContainer>
@@ -125,7 +129,7 @@ export const PublicOfferView: React.FC<PublicOfferViewProps> = ({ params }) => {
       {/* Vendor-other Info Bar */}
       {viewerRole === 'vendor-other' && (
         <InfoBar>
-          <InfoBarText>{t('SHARED_ESTIMATE_FROM', share.vendorName || '')}</InfoBarText>
+          <InfoBarText>{t('SHARED_ESTIMATE_FROM', vendor?.name || '')}</InfoBarText>
         </InfoBar>
       )}
 
@@ -159,7 +163,7 @@ export const PublicOfferView: React.FC<PublicOfferViewProps> = ({ params }) => {
         {viewerRole === 'vendor-author' && (
           <AuthorBanner>
             <AuthorBannerText>{t('THIS_IS_YOUR_ESTIMATE')}</AuthorBannerText>
-            <EditLink href={share.projectId ? AppRoute.DASHBOARD_PROJECT_ESTIMATION(share.projectId) : '#'}>
+            <EditLink href={offer.projectId ? AppRoute.DASHBOARD_PROJECT_ESTIMATION(offer.projectId) : '#'}>
               {t('EDIT_IN_DASHBOARD')}
             </EditLink>
           </AuthorBanner>
@@ -211,14 +215,14 @@ export const PublicOfferView: React.FC<PublicOfferViewProps> = ({ params }) => {
             }}>
               {offer.projectName}
             </h2>
-            {share.vendorName && (
+            {vendor?.name && (
               <div style={{
                 fontFamily: "'Montserrat', sans-serif",
                 fontWeight: 500,
                 fontSize: 13,
                 color: '#99A1B7',
               }}>
-                {t('BY_VENDOR', share.vendorName)}
+                {t('BY_VENDOR', vendor.name)}
               </div>
             )}
           </div>

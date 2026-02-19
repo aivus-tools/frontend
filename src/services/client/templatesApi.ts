@@ -5,7 +5,7 @@ import { ApiRoute } from '@/constants/apiRoute';
 export const templatesApi = createApi({
   reducerPath: 'templatesApi',
   baseQuery: fetchBaseQuery({ baseUrl: '' }),
-  tagTypes: ['Template'],
+  tagTypes: ['Template', 'Offer'],
   endpoints: (builder) => ({
     getTemplates: builder.query<Template[], void>({
       query: () => ApiRoute.TEMPLATE_LIST,
@@ -30,11 +30,24 @@ export const templatesApi = createApi({
       }),
       invalidatesTags: ['Template'],
     }),
-    applyTemplate: builder.mutation<ApplyTemplateResponse, string>({
-      query: (id) => ({
-        url: ApiRoute.TEMPLATE_APPLY(id),
-        method: 'POST',
+    updateTemplate: builder.mutation<
+      Template,
+      { id: string; body: Partial<{ name: string; description: string; details: unknown; metadata: unknown }> }
+    >({
+      query: ({ id, body }) => ({
+        url: ApiRoute.TEMPLATE(id),
+        method: 'PATCH',
+        body,
       }),
+      invalidatesTags: ['Template'],
+    }),
+    applyTemplate: builder.mutation<ApplyTemplateResponse, { templateId: string; projectId: string }>({
+      query: ({ templateId, projectId }) => ({
+        url: ApiRoute.TEMPLATE_APPLY(templateId),
+        method: 'POST',
+        body: { projectId },
+      }),
+      invalidatesTags: ['Offer'],
     }),
   }),
 });
@@ -44,5 +57,6 @@ export const {
   useGetTemplateQuery,
   useCreateTemplateMutation,
   useDeleteTemplateMutation,
+  useUpdateTemplateMutation,
   useApplyTemplateMutation,
 } = templatesApi;

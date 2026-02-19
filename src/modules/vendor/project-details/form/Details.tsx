@@ -21,6 +21,7 @@ import logger from '@/lib/logger';
 import { AppRoute } from '@/constants/appRoute';
 import { projectsApi } from '@/services/client/projectsApi';
 import { useApplyTemplateMutation } from '@/services/client/templatesApi';
+import { offersApi } from '@/services/client/offersApi';
 
 export default function Details() {
   const dispatch = useAppDispatch();
@@ -106,9 +107,10 @@ export default function Details() {
 
         // Apply template if selected (only for new projects)
         const templateId = form.getFieldValue('estimationTemplate') as string | undefined;
-        if (templateId && !storedProjectId) {
+        if (templateId && !storedProjectId && projectId) {
           try {
-            await applyTemplate(templateId).unwrap();
+            await applyTemplate({ templateId, projectId }).unwrap();
+            dispatch(offersApi.util.invalidateTags(['Offer']));
           } catch (err) {
             logger.error('Error applying template:', err);
           }

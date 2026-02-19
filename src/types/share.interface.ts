@@ -22,13 +22,16 @@ export interface UpdateSharePayload {
 }
 
 export interface PublicOfferData {
-  share: Share;
+  id: string;
+  token: string;
+  isActive: boolean;
   offer: {
     id: string;
     projectName: string;
+    description?: string;
     details: Record<string, unknown>;
-    cost?: number | null;
     status: string;
+    projectId?: string;
   };
-  viewerRole: 'guest' | 'vendor-author' | 'vendor-other' | 'client';
+  vendor: { id: string; name: string } | null;
 }

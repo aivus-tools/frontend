@@ -1,6 +1,7 @@
 import { AppStartListening } from '@/store/store';
 import { categoriesApi } from '@/services/client/categoriesApi';
 import { offersApi } from '@/services/client/offersApi';
+import { templatesApi } from '@/services/client/templatesApi';
 import logger from '@/lib/logger';
 import {
   addDictionaryCategory,
@@ -47,6 +48,19 @@ export const offerListener = (startListening: AppStartListening) => {
     ),
     effect: async (_, { dispatch, getState }) => {
       const state = getState();
+      const templateId = state.offer.templateId;
+
+      // Template mode: save to template API instead of offer API
+      if (templateId) {
+        dispatch(
+          templatesApi.endpoints.updateTemplate.initiate({
+            id: templateId,
+            body: { details: state.offer.offerDetails },
+          })
+        );
+        return;
+      }
+
       const projectId = selectProjectId(state);
       const isNew = selectIsNewBrief(state);
 

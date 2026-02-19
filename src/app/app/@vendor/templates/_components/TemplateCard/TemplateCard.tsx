@@ -1,6 +1,7 @@
 'use client';
 
 import React from 'react';
+import { useRouter } from 'next/navigation';
 import { Popconfirm } from 'antd';
 import { DeleteOutlined } from '@ant-design/icons';
 import { t } from '@/lib/i18n';
@@ -49,6 +50,12 @@ const getAccentColor = (category?: string | null): string => {
 };
 
 export const TemplateCard: React.FC<TemplateCardProps> = ({ template, onDelete }) => {
+  const router = useRouter();
+
+  const handleCardClick = () => {
+    router.push(`/app/templates/${template.id}`);
+  };
+
   const formattedCreated = template.createdAt
     ? format(new Date(template.createdAt), 'MMM dd, yyyy')
     : '';
@@ -57,7 +64,7 @@ export const TemplateCard: React.FC<TemplateCardProps> = ({ template, onDelete }
     : formattedCreated;
 
   return (
-    <div className={styles.card}>
+    <div className={styles.card} onClick={handleCardClick} style={{ cursor: 'pointer' }}>
       <div className={styles.row}>
         {/* Project name + source */}
         <div className={styles.projectCell}>
@@ -119,7 +126,7 @@ export const TemplateCard: React.FC<TemplateCardProps> = ({ template, onDelete }
         </div>
       </div>
 
-      <div className={styles.actions}>
+      <div className={styles.actions} onClick={(e) => e.stopPropagation()}>
         <Popconfirm
           title={t('DELETE_TEMPLATE_CONFIRM')}
           onConfirm={() => onDelete(template.id)}

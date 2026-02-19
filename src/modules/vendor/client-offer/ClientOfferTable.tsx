@@ -19,7 +19,9 @@ interface Props {
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 export const ClientOfferTable = ({ offers }: Props) => {
-    const { categories } = useAppSelector(selectOfferDetails);
+    const offerDetails = useAppSelector(selectOfferDetails);
+    const categories = offerDetails?.categories ?? [];
+    const subCategories = offerDetails?.subCategories ?? [];
 
     const topCategories = useMemo(() =>
         categories.filter(cat => !cat.parentCategoryId),
@@ -28,11 +30,11 @@ export const ClientOfferTable = ({ offers }: Props) => {
 
     const initialKeys = useMemo(() => {
         const catKeys = categories.map(cat => cat.id.toString());
-        const subCatKeys = categories
+        const subCatKeys = subCategories
             .filter(cat => cat.parentCategoryId)
             .map(cat => `${cat.parentCategoryId}${KEY_SEPARATOR}${cat.id}`);
         return [...catKeys, ...subCatKeys];
-    }, [categories]);
+    }, [categories, subCategories]);
 
     if (categories.length === 0) {
         return (

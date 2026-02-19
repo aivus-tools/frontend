@@ -15,7 +15,8 @@ import {
   useUpdateOfferStatusMutation,
 } from '@/services/client/offersApi';
 import { useGetTemplatesQuery, useApplyTemplateMutation } from '@/services/client/templatesApi';
-import { useAppSelector } from '@/store/hooks';
+import { offersApi } from '@/services/client/offersApi';
+import { useAppDispatch, useAppSelector } from '@/store/hooks';
 import { selectProjectId } from '@/store/slices/project';
 import {
   TabsContainer,
@@ -37,6 +38,7 @@ const MAX_OFFERS = 10;
 export const OfferTabs: React.FC = () => {
   const router = useRouter();
   const searchParams = useSearchParams();
+  const dispatch = useAppDispatch();
   const projectId = useAppSelector(selectProjectId);
 
   const { data: offers = [] } = useGetOffersByProjectIdQuery(projectId!, {
@@ -102,16 +104,9 @@ export const OfferTabs: React.FC = () => {
     if (!projectId) return;
     setDropdownOpen(false);
     try {
-      const newOffer = await createOffer({
-        projectName: `Offer ${offers.length + 1}`,
-        projectId,
-        status: 'DRAFT',
-        details: {},
-        deadline: new Date().toISOString(),
-        source: 'PLATFORM',
-        isLocked: false,
-      }).unwrap();
-      await applyTemplate(templateId).unwrap();
+      const newOffer = await applyTemplate({ templateId, projectId }).unwrap();
+      // Cross-invalidate offersApi since templatesApi can't do it via tags
+      dispatch(offersApi.util.invalidateTags(['Offer']));
       handleTabClick(newOffer.id);
     } catch {
       // Error handled by RTK Query

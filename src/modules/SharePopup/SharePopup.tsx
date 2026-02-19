@@ -48,7 +48,8 @@ export const SharePopup: React.FC<SharePopupProps> = ({ open, onClose, offerId, 
 
   // Auto-create share when modal opens and no existing share
   useEffect(() => {
-    if (open && !existingShare && !isLoadingShare && !shareToken && !shareError) {
+    const is404 = shareError && 'status' in shareError && shareError.status === 404;
+    if (open && !existingShare && !isLoadingShare && !shareToken && (!shareError || is404)) {
       createShare({ offerId })
         .unwrap()
         .then((share) => {
@@ -60,6 +61,16 @@ export const SharePopup: React.FC<SharePopupProps> = ({ open, onClose, offerId, 
         });
     }
   }, [open, existingShare, isLoadingShare, shareToken, shareError, offerId, createShare]);
+
+  // Reset state when modal closes
+  useEffect(() => {
+    if (!open) {
+      setShareToken(null);
+      setIsActive(true);
+      setHasError(false);
+      setCopied(false);
+    }
+  }, [open]);
 
   const shareUrl = useMemo(
     () => (shareToken && typeof window !== 'undefined' ? `${window.location.origin}/public/${shareToken}` : ''),
@@ -86,10 +97,15 @@ export const SharePopup: React.FC<SharePopupProps> = ({ open, onClose, offerId, 
   }, [shareUrl]);
 
   const handleToggle = useCallback(
-    (checked: boolean) => {
+    async (checked: boolean) => {
       if (!shareToken) return;
       setIsActive(checked);
-      updateShare({ token: shareToken, isActive: checked });
+      try {
+        await updateShare({ token: shareToken, isActive: checked }).unwrap();
+      } catch {
+        // Revert on failure
+        setIsActive(!checked);
+      }
     },
     [shareToken, updateShare]
   );
