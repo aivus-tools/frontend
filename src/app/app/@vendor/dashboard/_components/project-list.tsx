@@ -15,6 +15,8 @@ import { useGetArchivedProjectsQuery } from '@/services/client/projectsApi';
 import { ProjectOfferCard } from '@/modules/vendor/dashboard/ProjectOfferCard/ProjectOfferCard';
 import { t } from '@/lib/i18n';
 import { InboxOutlined } from '@ant-design/icons';
+import { Button } from 'antd';
+import { NEW_BRIEF_SLUG } from '@/constants/constants';
 
 const mapProjectsToListItems = (projects: Project[]): ProjectListItem[] => {
   if (!projects || !Array.isArray(projects)) {
@@ -86,8 +88,8 @@ export const ProjectList = () => {
     return <Spinner />;
   }
 
-  // Empty state for archive view
-  if (isArchiveView && filteredData.length === 0) {
+  if (filteredData.length === 0) {
+    const isArchive = isArchiveView;
     return (
       <main className={cn(styles.dashboard)}>
         <div
@@ -101,7 +103,18 @@ export const ProjectList = () => {
           }}
         >
           <InboxOutlined style={{ fontSize: 48, marginBottom: 16, opacity: 0.4 }} />
-          <div style={{ fontSize: 16, fontWeight: 500 }}>{t('NO_ARCHIVED_PROJECTS')}</div>
+          <div style={{ fontSize: 16, fontWeight: 500 }}>
+            {isArchive ? t('NO_ARCHIVED_PROJECTS') : t('NO_PROJECTS_YET')}
+          </div>
+          {!isArchive && (
+            <Button
+              type='primary'
+              style={{ marginTop: 24 }}
+              onClick={() => router.push(AppRoute.DASHBOARD_PROJECT_DETAILS(NEW_BRIEF_SLUG))}
+            >
+              {t('CREATE_FIRST_ESTIMATION')}
+            </Button>
+          )}
         </div>
       </main>
     );

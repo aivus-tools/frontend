@@ -75,6 +75,7 @@ export const Uploader: React.FC<UploaderProps> = ({ onChange, thumbnailUrl }) =>
 
   return (
     <Upload
+      accept='image/*'
       beforeUpload={() => false}
       listType='picture-card'
       fileList={fileList}

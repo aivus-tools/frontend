@@ -38,7 +38,13 @@ export const offerSlice = createSlice({
   initialState,
   reducers: {
     setOfferDetails: (state, action: PayloadAction<OfferDetails>) => {
-      state.offerDetails = action.payload;
+      state.offerDetails = {
+        ...action.payload,
+        offers: action.payload.offers || [],
+        categories: action.payload.categories || [],
+        subCategories: action.payload.subCategories || [],
+        categorySurcharge: action.payload.categorySurcharge || {},
+      };
       // Recalculate cost for offers loaded with cost=0 but price>0
       if (state.offerDetails?.offers) {
         state.offerDetails.offers.forEach((offer) => {

@@ -14,8 +14,6 @@ import styles from './TemplateList.module.css';
 
 const templateTHeads = [
   { text: t('PROJECT'), showIcon: true },
-  { text: t('DESCRIPTION') },
-  { text: t('CATEGORY') },
   { text: t('DASHBOARD_COST_EXPENSES'), className: 'alignRight' },
   { text: t('DASHBOARD_PROFIT'), className: 'alignRight' },
   { text: t('UPDATED') },

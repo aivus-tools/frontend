@@ -30,9 +30,9 @@ const tabBase = css`
 
 export const ActiveTab = styled.button`
   ${tabBase}
-  background: #ffffff;
+  background: #f1f1f4;
   border: 2px solid #e5e5e5;
-  border-bottom: 2px solid #ffffff;
+  border-bottom: 2px solid #f1f1f4;
   font-weight: 600;
   font-size: 13px;
   color: #2288ff;
@@ -40,9 +40,9 @@ export const ActiveTab = styled.button`
 
 export const InactiveTab = styled.button`
   ${tabBase}
-  background: #f9f9f9;
+  background: #ffffff;
   border: 1px solid transparent;
-  border-bottom: none;
+  border-bottom: 2px solid #e5e5e5;
   font-weight: 500;
   font-size: 13px;
   color: #4b5675;
@@ -83,12 +83,12 @@ export const StatusBadge = styled.span<{ $status: string }>`
           `}
 `;
 
-export const CloseButton = styled.span`
-  width: 14px;
-  height: 14px;
-  border-radius: 50%;
+export const MoreButton = styled.span`
+  width: 20px;
+  height: 20px;
+  border-radius: 4px;
   color: #99a1b7;
-  font-size: 10px;
+  font-size: 14px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -97,7 +97,8 @@ export const CloseButton = styled.span`
   transition: all 0.15s ease;
 
   &:hover {
-    color: #d63c22;
+    color: #4b5675;
+    background: rgba(0, 0, 0, 0.06);
     opacity: 1;
   }
 `;
@@ -107,13 +108,14 @@ export const TabWrapper = styled.div`
   display: flex;
   align-items: flex-end;
 
-  &:hover ${CloseButton} {
-    opacity: 0.4;
+  &:hover ${MoreButton} {
+    opacity: 0.6;
   }
 `;
 
 export const NewOfferTab = styled.button`
   ${tabBase}
+  margin-left: 12px;
   color: #2288ff;
   font-weight: 600;
   font-size: 13px;

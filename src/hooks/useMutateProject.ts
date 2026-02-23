@@ -73,20 +73,22 @@ export const useMutateProject = () => {
       // Step 1: Create Project (without Brief!)
       const project = await createProject(projectPayload).unwrap();
 
-      // Step 2: Create Offer
-      const offer = await createOffer({
-        projectName: formData.projectName || 'New Project',
-        projectId: project.id,
-        status: 'DRAFT',
-        details: {},
-        deadline: addMonthsUTC(new Date(), 2).toISOString(),
-        source: 'PLATFORM',
-        isLocked: false,
-        cost: null,
-        profit: null,
-      }).unwrap();
+      // Step 2: Create Offer (skip if template selected - template_apply creates its own)
+      let offer = null;
+      if (!formData.estimationTemplate) {
+        offer = await createOffer({
+          projectName: formData.projectName || 'New Project',
+          projectId: project.id,
+          status: 'DRAFT',
+          details: {},
+          deadline: addMonthsUTC(new Date(), 2).toISOString(),
+          source: 'PLATFORM',
+          isLocked: false,
+          cost: null,
+          profit: null,
+        }).unwrap();
+      }
 
-      // Return project ID for navigation
       return { projectId: project.id, project, offer };
     },
 

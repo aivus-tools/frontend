@@ -1,8 +1,8 @@
 'use client';
 
 import React, { useState, useRef } from 'react';
-import { Popconfirm, Popover, Tooltip } from 'antd';
-import { FileAddOutlined, CopyOutlined, CloseOutlined, SnippetsOutlined } from '@ant-design/icons';
+import { Popover, Tooltip } from 'antd';
+import { FileAddOutlined, CopyOutlined, EllipsisOutlined, DeleteOutlined, SnippetsOutlined } from '@ant-design/icons';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { t } from '@/lib/i18n';
 import { Offer } from '@/types/offer.interface';
@@ -22,7 +22,7 @@ import {
   ActiveTab,
   InactiveTab,
   StatusBadge,
-  CloseButton,
+  MoreButton,
   TabWrapper,
   NewOfferTab,
   RenameInput,
@@ -53,6 +53,7 @@ export const OfferTabs: React.FC = () => {
 
   const [renamingId, setRenamingId] = useState<string | null>(null);
   const [statusPopoverId, setStatusPopoverId] = useState<string | null>(null);
+  const [menuOpenId, setMenuOpenId] = useState<string | null>(null);
   const [renameValue, setRenameValue] = useState('');
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const renameInputRef = useRef<HTMLInputElement>(null);
@@ -212,21 +213,35 @@ export const OfferTabs: React.FC = () => {
                       {offer.status === 'PUBLISHED' ? t('STATUS_PUBLISHED') : t('STATUS_DRAFT')}
                     </StatusBadge>
                   </Popover>
+                  {offers.length > 1 && (
+                    <Popover
+                      open={menuOpenId === offer.id}
+                      onOpenChange={(open) => setMenuOpenId(open ? offer.id : null)}
+                      trigger="click"
+                      placement="bottomRight"
+                      content={
+                        <DropdownContainer style={{ minWidth: 140 }}>
+                          <DropdownOption
+                            onClick={() => {
+                              setMenuOpenId(null);
+                              handleDelete(offer.id);
+                            }}
+                            style={{ color: '#d63c22' }}
+                          >
+                            <DeleteOutlined />
+                            {t('DELETE')}
+                          </DropdownOption>
+                        </DropdownContainer>
+                      }
+                    >
+                      <MoreButton onClick={(e) => e.stopPropagation()}>
+                        <EllipsisOutlined />
+                      </MoreButton>
+                    </Popover>
+                  )}
                 </>
               )}
             </TabComponent>
-            {!isActive && offers.length > 1 && (
-              <Popconfirm
-                title={t('DELETE_OFFER_CONFIRM')}
-                onConfirm={() => handleDelete(offer.id)}
-                okText={t('YES')}
-                cancelText={t('NO')}
-              >
-                <CloseButton onClick={(e) => e.stopPropagation()}>
-                  <CloseOutlined />
-                </CloseButton>
-              </Popconfirm>
-            )}
           </TabWrapper>
         );
       })}

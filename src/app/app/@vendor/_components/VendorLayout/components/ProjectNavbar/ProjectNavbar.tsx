@@ -1,5 +1,5 @@
 'use client';
-import { Button, App, Tooltip } from 'antd';
+import { Button, App, Tooltip, Input } from 'antd';
 import { t } from '@/lib/i18n';
 import { useSelectedLayoutSegments } from 'next/navigation';
 import { VENDOR_PROJECT_TAB_KEYS } from '@/constants/constants';
@@ -10,26 +10,53 @@ import { ExportPopover } from './components/Popover/Popover';
 
 import styles from './ProjectNavbar.module.css';
 import { exportToExcel } from '@/helpers/excelExport/exportToExcel';
-import { useAppSelector } from '@/store/hooks';
-import { selectCategoriesExportData, selectOfferMetaData } from '@/store/slices/offer/selectors';
+import { useAppDispatch, useAppSelector } from '@/store/hooks';
+import { selectCategoriesExportData, selectOfferDetails, selectOfferMetaData, selectTemplateId } from '@/store/slices/offer/selectors';
+import { setMetaData } from '@/store/slices/offer/slice';
 import dayjs, { Dayjs } from 'dayjs';
-import { useState } from 'react';
+import { useCallback, useRef, useState } from 'react';
 import { SharePopup } from '@/modules/SharePopup/SharePopup';
 import { SaveTemplateModal } from '@/modules/vendor/SaveTemplateModal/SaveTemplateModal';
 import { useSession } from 'next-auth/react';
+import { useUpdateTemplateMutation } from '@/services/client/templatesApi';
 
 export const ProjectNavbar = () => {
   const { message } = App.useApp();
   useSetProject();
   useSetVendor();
 
+  const dispatch = useAppDispatch();
   const categoriesExportData = useAppSelector(selectCategoriesExportData);
+  const offerDetails = useAppSelector(selectOfferDetails);
   const offerMetaData = useAppSelector(selectOfferMetaData);
+  const templateId = useAppSelector(selectTemplateId);
   const session = useSession();
   const [shareOpen, setShareOpen] = useState(false);
   const [saveTemplateOpen, setSaveTemplateOpen] = useState(false);
+  const [updateTemplate] = useUpdateTemplateMutation();
+  const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  const isTemplateMode = templateId != null;
 
   const [, , tab] = useSelectedLayoutSegments();
+
+  const handleTemplateNameChange = useCallback(
+    (e: React.ChangeEvent<HTMLInputElement>) => {
+      const name = e.target.value;
+      if (offerMetaData) {
+        dispatch(setMetaData({ ...offerMetaData, projectName: name }));
+      }
+      if (templateId) {
+        if (debounceRef.current) {
+          clearTimeout(debounceRef.current);
+        }
+        debounceRef.current = setTimeout(() => {
+          updateTemplate({ id: templateId, body: { name } });
+        }, 800);
+      }
+    },
+    [dispatch, offerMetaData, templateId, updateTemplate]
+  );
 
   const handleExport = async ({
     format,
@@ -43,7 +70,7 @@ export const ProjectNavbar = () => {
     watermark?: string;
   }) => {
     if (format === 'xlsx') {
-      await exportToExcel(categoriesExportData, name, date, watermark, offerMetaData?.id);
+      await exportToExcel(categoriesExportData, name, date, watermark, offerMetaData?.id, offerDetails.overallSurcharge);
     } else {
       message.info(t('COMING_SOON'));
     }
@@ -53,16 +80,26 @@ export const ProjectNavbar = () => {
 
   return (
     <div className={styles.navbar}>
-      <ProjectTabs />
+      {isTemplateMode ? (
+        <Input
+          value={offerMetaData?.projectName ?? ''}
+          onChange={handleTemplateNameChange}
+          placeholder={t('TEMPLATE_NAME_PLACEHOLDER')}
+          variant='borderless'
+          style={{ fontSize: 16, fontWeight: 600, maxWidth: 400 }}
+        />
+      ) : (
+        <ProjectTabs />
+      )}
 
       <div className={styles.buttons}>
-        {isEstimation && offerMetaData?.id && (
+        {!isTemplateMode && isEstimation && offerMetaData?.id && (
           <Button onClick={() => setSaveTemplateOpen(true)}>
             {t('SAVE_AS_TEMPLATE')}
           </Button>
         )}
 
-        {tab === VENDOR_PROJECT_TAB_KEYS.OFFER && (
+        {!isTemplateMode && tab === VENDOR_PROJECT_TAB_KEYS.OFFER && (
           <ExportPopover
             action={handleExport}
             defaultName={offerMetaData?.projectName ? `${offerMetaData.projectName} ${dayjs().format('MM-DD-YYYY')}` : ''}
@@ -73,7 +110,7 @@ export const ProjectNavbar = () => {
           </ExportPopover>
         )}
 
-        {offerMetaData?.id && (
+        {!isTemplateMode && offerMetaData?.id && (
           <div className={styles.share}>
             <Tooltip
               title={offerMetaData.status !== 'PUBLISHED' ? t('SHARE_PUBLISH_REQUIRED') : undefined}
@@ -90,7 +127,7 @@ export const ProjectNavbar = () => {
         )}
       </div>
 
-      {offerMetaData?.id && (
+      {!isTemplateMode && offerMetaData?.id && (
         <>
           <SharePopup
             open={shareOpen}

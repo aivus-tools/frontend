@@ -127,6 +127,8 @@ export const RU_LOCALES = {
   NEW_ESTIMATION: 'Новая смета',
   NEXT: 'Далее',
   NO_ARCHIVED_PROJECTS: 'Нет архивных проектов',
+  NO_PROJECTS_YET: 'Проектов пока нет',
+  CREATE_FIRST_ESTIMATION: 'Создайте первую смету',
   NO_OFFERS_YET: 'Нет предложений',
   OFFER: 'Предложение',
   NUMBER: 'Число',

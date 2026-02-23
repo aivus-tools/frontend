@@ -13,8 +13,6 @@ import {
   changeOverallSurcharge,
   changeUnforeseenExpenses,
   changeShowCostPerVideo,
-  setMetaData,
-  setOfferDetails,
 } from './slice';
 import { isAnyOf } from '@reduxjs/toolkit';
 import { selectIsNewBrief, selectProjectId } from '../project';
@@ -83,25 +81,4 @@ export const offerListener = (startListening: AppStartListening) => {
     },
   });
 
-  startListening({
-    matcher: offersApi.endpoints.getOffersByProjectId.matchFulfilled,
-    effect: async (action, { dispatch, getState }) => {
-      const state = getState();
-      const currentOfferId = state.offer.metaData?.id;
-      // Load the specific offer matching the current offerId, or fall back to the first offer
-      const offer = (currentOfferId
-        ? action.payload.find((o) => o.id === currentOfferId)
-        : action.payload[0]) ?? action.payload[0];
-      if (offer) {
-        try {
-          const { details, ...metaData } = offer;
-          dispatch(setMetaData(metaData));
-          // Details is already an object, no need to parse
-          dispatch(setOfferDetails(typeof details === 'string' ? JSON.parse(details) : details));
-        } catch (error) {
-          logger.error('Error parsing offer details:', error);
-        }
-      }
-    },
-  });
 };

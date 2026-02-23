@@ -16,28 +16,6 @@ interface TemplateCardProps {
   onDelete: (id: string) => void;
 }
 
-const getCategoryColor = (category?: string | null): string => {
-  switch (category?.toLowerCase()) {
-    case 'video':
-      return 'var(--bg-blue-subtotal, #F4FBFF)';
-    case 'event':
-      return 'var(--bg-green, #F4FBDB)';
-    default:
-      return 'var(--bg-gray-page, #F9F9F9)';
-  }
-};
-
-const getCategoryBorderColor = (category?: string | null): string => {
-  switch (category?.toLowerCase()) {
-    case 'video':
-      return '#2288FF';
-    case 'event':
-      return '#A5C500';
-    default:
-      return '#99A1B7';
-  }
-};
-
 const getAccentColor = (category?: string | null): string => {
   switch (category?.toLowerCase()) {
     case 'video':
@@ -78,27 +56,6 @@ export const TemplateCard: React.FC<TemplateCardProps> = ({ template, onDelete }
               {template.sourceOfferName || t('TEMPLATE')}
             </div>
           </div>
-        </div>
-
-        {/* Description */}
-        <div className={styles.descriptionCell}>
-          <span className={styles.description}>{template.description || ''}</span>
-        </div>
-
-        {/* Category badge */}
-        <div className={styles.categoryCell}>
-          {template.category && (
-            <span
-              className={styles.categoryBadge}
-              style={{
-                backgroundColor: getCategoryColor(template.category),
-                border: `0.6px solid ${getCategoryBorderColor(template.category)}`,
-                color: getCategoryBorderColor(template.category),
-              }}
-            >
-              {template.category}
-            </span>
-          )}
         </div>
 
         {/* Cost/Expenses */}

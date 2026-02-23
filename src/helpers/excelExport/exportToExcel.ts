@@ -41,10 +41,10 @@ function addItems(
     nameCell.value = item.name;
     excel.addFont(nameCell);
 
-    const clientPriceCell = excel.getCell(nextRow, 1);
-    clientPriceCell.value = item.clientPrice ?? defaultValue;
-    excel.addFont(clientPriceCell);
-    excel.addNumberFormat(clientPriceCell);
+    const priceCell = excel.getCell(nextRow, 1);
+    priceCell.value = item.price ?? defaultValue;
+    excel.addFont(priceCell);
+    excel.addNumberFormat(priceCell);
 
     const [unit1, unit2] = item.units ?? [];
     const unit1Name = unit1?.key ?? defaultValue;
@@ -71,12 +71,12 @@ function addItems(
     unit2ValCell.alignment = CENTER_MIDDLE;
 
     // Insert the formula into the next cell: IF(ISNUMBER(price),price,0) * IF(ISNUMBER(u1),u1,1) * IF(ISNUMBER(u2),u2,1)
-    const clientPriceCellAddress = clientPriceCell.address;
+    const priceCellAddress = priceCell.address;
     const unit1ValAddress = unit1ValCell.address;
     const unit2ValAddress = unit2ValCell.address;
 
     const itemSumFormula =
-      `IF(ISNUMBER(${clientPriceCellAddress}),${clientPriceCellAddress},0)` +
+      `IF(ISNUMBER(${priceCellAddress}),${priceCellAddress},0)` +
       `*IF(ISNUMBER(${unit1ValAddress}),${unit1ValAddress},1)` +
       `*IF(ISNUMBER(${unit2ValAddress}),${unit2ValAddress},1)`;
 
@@ -125,7 +125,7 @@ const isCategoryWithSubcategories = (
   v: CategoryWithSubcategories | CategoryWithoutSubcategories
 ): v is CategoryWithSubcategories => Array.isArray(v.data);
 
-export async function exportToExcel(data: CategoriesExportData, fileName: string, date?: Dayjs, watermark?: string, offerId?: string) {
+export async function exportToExcel(data: CategoriesExportData, fileName: string, date?: Dayjs, watermark?: string, offerId?: string, agencyFeePercent?: number) {
   const res = await fetch('/template.xlsx');
   if (!res.ok) {
     throw new Error(`Failed to fetch template.xlsx: ${res.status} ${res.statusText}`);
@@ -141,7 +141,7 @@ export async function exportToExcel(data: CategoriesExportData, fileName: string
     throw new Error(`Failed to fetch template.xlsx: ${res.status} ${res.statusText}`);
   }
 
-  const { col: startCol, row: startRow, sheet } = excel.startCell;
+  const { col: startCol, row: startRow } = excel.startCell;
 
   if (date) {
     excel.writeNamedDate('date', date);
@@ -177,6 +177,7 @@ export async function exportToExcel(data: CategoriesExportData, fileName: string
       const headerTotalCell = excel.getCell(nextRow - 1, 6);
 
       const blockData = currentBlock.data;
+      const subcategoryTotalAddresses: string[] = [];
 
       for (let j = 0; j < blockData.length; j++) {
         const sub = blockData.at(j);
@@ -195,12 +196,12 @@ export async function exportToExcel(data: CategoriesExportData, fileName: string
 
         nextRow += 1;
 
-        const totalTitle = 'Section Total';
-
         nextRow = addItems(excel, sub?.items ?? [], nextRow, startCol, COLOR.SUB, startRow);
 
+        subcategoryTotalAddresses.push(excel.getCell(nextRow - 1, 6).address);
+
         const subTotalCell = excel.getCell(nextRow - 1, 5);
-        subTotalCell.value = `${totalTitle} ${currentBlock.category.toUpperCase()} | ${subcategory}`;
+        subTotalCell.value = `Section Total ${currentBlock.category.toUpperCase()} | ${subcategory}`;
         excel.addFont(subTotalCell, true);
         subTotalCell.alignment = RIGHT_MIDDLE;
 
@@ -216,12 +217,8 @@ export async function exportToExcel(data: CategoriesExportData, fileName: string
           const categoryResultCell = excel.getCell(nextRow, 6);
           categoryResultCell.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: COLOR.TOTAL } };
 
-          const col5Letter = sheet.getColumn(startCol + 5).letter;
-          const col6Letter = sheet.getColumn(startCol + 6).letter;
           categoryResultCell.value = {
-            formula:
-              `SUMIF($${col5Letter}:$${col5Letter},` +
-              `"${totalTitle} "&${categoryTitleCell.address}&"*",$${col6Letter}:$${col6Letter})`,
+            formula: `SUM(${subcategoryTotalAddresses.join(',')})`,
           };
           excel.addFont(categoryResultCell, true);
           excel.addNumberFormat(categoryResultCell);
@@ -251,13 +248,45 @@ export async function exportToExcel(data: CategoriesExportData, fileName: string
 
   nextRow += 1;
 
-  const managementTitleCell = excel.getCell(nextRow, 0);
-  managementTitleCell.value = 'Production Fee';
+  const subtotalTitleCell = excel.getCell(nextRow, 0);
+  subtotalTitleCell.value = 'Subtotal for All Sections';
   excel.addBorderToLine(nextRow, 5);
-  excel.addFont(managementTitleCell);
+  excel.addColorToCellGroup(nextRow, 6, COLOR.SUB);
+  excel.addFont(subtotalTitleCell, true);
 
-  const managementValueCell = excel.getCell(nextRow, 6);
-  excel.addBorderToCell(managementValueCell);
+  const subtotalValueCell = excel.getCell(nextRow, 6);
+  excel.addBorderToCell(subtotalValueCell);
+  excel.addFont(subtotalValueCell, true);
+  subtotalValueCell.value = { formula: `SUM(${categoryTotals.join(',')})` };
+  subtotalValueCell.alignment = RIGHT_MIDDLE;
+  excel.addNumberFormat(subtotalValueCell);
+
+  nextRow += 1;
+
+  const feePercent = agencyFeePercent ?? 0;
+
+  const agencyFeeTitleCell = excel.getCell(nextRow, 0);
+  agencyFeeTitleCell.value = 'Agency Fee';
+  excel.addBorderToLine(nextRow, 5);
+  excel.addFont(agencyFeeTitleCell);
+
+  const agencyFeePercentCell = excel.getCell(nextRow, 4);
+  agencyFeePercentCell.value = 'Agency Fee';
+  excel.addFont(agencyFeePercentCell);
+  agencyFeePercentCell.alignment = RIGHT_MIDDLE;
+
+  const agencyFeeRateCell = excel.getCell(nextRow, 5);
+  agencyFeeRateCell.value = feePercent / 100;
+  agencyFeeRateCell.numFmt = '0%';
+  excel.addFont(agencyFeeRateCell);
+  agencyFeeRateCell.alignment = CENTER_MIDDLE;
+
+  const agencyFeeValueCell = excel.getCell(nextRow, 6);
+  agencyFeeValueCell.alignment = RIGHT_MIDDLE;
+  excel.addBorderToCell(agencyFeeValueCell);
+  excel.addNumberFormat(agencyFeeValueCell);
+  excel.addFont(agencyFeeValueCell);
+  agencyFeeValueCell.value = { formula: `${agencyFeeRateCell.address}*${subtotalValueCell.address}` };
 
   nextRow += 1;
 
@@ -270,7 +299,7 @@ export async function exportToExcel(data: CategoriesExportData, fileName: string
   const totalSumBeforeTaxValueCell = excel.getCell(nextRow, 6);
   excel.addBorderToCell(totalSumBeforeTaxValueCell);
   excel.addFont(totalSumBeforeTaxValueCell, true);
-  totalSumBeforeTaxValueCell.value = { formula: `SUM(${categoryTotals.join(',')}, ${managementValueCell.address})` };
+  totalSumBeforeTaxValueCell.value = { formula: `${subtotalValueCell.address}+${agencyFeeValueCell.address}` };
   totalSumBeforeTaxValueCell.alignment = RIGHT_MIDDLE;
   excel.addNumberFormat(totalSumBeforeTaxValueCell);
 

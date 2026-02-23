@@ -82,7 +82,7 @@ export const RegisterForm = ({ email, prevStepAction }: { email: string; prevSte
         const data = await response.json().catch(() => null);
         if (data?.error) {
           const errors = Array.isArray(data.error) ? data.error : [data.error];
-          errors.forEach((msg: unknown) => messageApi.error(String(msg)));
+          form.setFields([{ name: 'password', errors: errors.map(String) }]);
         } else {
           messageApi.error(t('FAILED_TO_REGISTER'));
         }

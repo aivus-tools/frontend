@@ -83,7 +83,7 @@ export const selectGrandTotal = createSelector(
 export const selectTotalSumByCategoryId = createSelector(
   [selectOfferDetails, (_, categoryId) => categoryId],
   (offerDetails, categoryId) => {
-    if (!offerDetails?.offers || !offerDetails?.subCategories) {
+    if (!offerDetails?.offers) {
       return {
         total: formatCurrency(0),
         clientTotal: formatCurrency(0),
@@ -101,7 +101,7 @@ export const selectTotalSumByCategoryId = createSelector(
         { sum: 0, clientSum: 0 }
       );
 
-    const filteredSubCategories = offerDetails.subCategories
+    const filteredSubCategories = (offerDetails.subCategories || [])
       .filter((category) => category.parentCategoryId === categoryId)
       .map(({ id }) => id);
 
@@ -176,7 +176,7 @@ export const selectCategoriesExportData = createSelector(
             .filter((offer) => offer.categoryId === subCategory.id)
             .map((offer) => ({
               name: offer.item,
-              clientPrice: offer.clientPrice,
+              price: offer.taxPrice,
               units: prepareUnits(offer.units),
             }));
 
@@ -196,7 +196,7 @@ export const selectCategoriesExportData = createSelector(
         .filter((offer) => offer.categoryId === category.id)
         .map((offer) => ({
           name: offer.item,
-          clientPrice: offer.clientPrice,
+          price: offer.taxPrice,
           units: prepareUnits(offer.units),
         }));
 

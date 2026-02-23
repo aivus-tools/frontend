@@ -1,6 +1,6 @@
 'use client';
 
-import React, { use, useCallback, useState } from 'react';
+import React, { use, useCallback, useEffect, useState } from 'react';
 import { Button, Select, Skeleton, message } from 'antd';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
@@ -9,6 +9,11 @@ import { t } from '@/lib/i18n';
 import { AppRoute } from '@/constants/appRoute';
 import { GROUPS } from '@/constants/constants';
 import { useGetShareByTokenQuery } from '@/services/client/sharesApi';
+import { useAppDispatch } from '@/store/hooks';
+import { setOfferDetails } from '@/store/slices/offer/slice';
+import { OfferDetails } from '@/types/store.interface';
+import { ClientOfferTable } from '@/modules/vendor/client-offer/ClientOfferTable';
+import { GuidanceProvider } from '@/context/GuidanceProvider';
 import LogoIcon from '@/icons/aivus-logo.svg';
 import {
   PageContainer,
@@ -40,9 +45,16 @@ export const PublicOfferView: React.FC<PublicOfferViewProps> = ({ params }) => {
   const { token } = use(params);
   const router = useRouter();
   const session = useSession();
+  const dispatch = useAppDispatch();
   const { data, isLoading, error } = useGetShareByTokenQuery(token);
   const [addedBriefId, setAddedBriefId] = useState<string | null>(null);
   const [selectedBriefId, setSelectedBriefId] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (data?.offer?.details) {
+      dispatch(setOfferDetails(data.offer.details as unknown as OfferDetails));
+    }
+  }, [data, dispatch]);
 
   const userGroup = session?.data?.user?.group;
   const isAuthenticated = session?.status === 'authenticated';
@@ -227,97 +239,11 @@ export const PublicOfferView: React.FC<PublicOfferViewProps> = ({ params }) => {
             )}
           </div>
 
-          {/* Offer details would be rendered here using the offer data */}
-          {/* For now, render a read-only representation of the offer details */}
-          <ReadOnlyOfferDetails details={offer.details} />
+          <GuidanceProvider>
+            <ClientOfferTable />
+          </GuidanceProvider>
         </OfferTableWrapper>
       </MainContent>
     </PageContainer>
   );
 };
-
-/** Minimal read-only offer details renderer for public page */
-function ReadOnlyOfferDetails({ details }: { details: Record<string, unknown> }) {
-  if (!details || Object.keys(details).length === 0) {
-    return (
-      <div style={{ padding: '40px 20px', textAlign: 'center', color: '#99A1B7' }}>
-        {t('NO_ESTIMATE_DETAILS')}
-      </div>
-    );
-  }
-
-  // Cast to typed details if available
-  const offerDetails = details as {
-    categories?: Array<{ id: string; name: string; parentCategoryId?: string | null }>;
-    offers?: Array<{
-      id: string;
-      item: string;
-      clientPrice: number;
-      clientCost: number;
-      categoryId: string;
-      units?: Array<{ label: string; count: number } | null>;
-    }>;
-  };
-
-  const categories = offerDetails.categories?.filter((c) => !c.parentCategoryId) || [];
-
-  if (categories.length === 0) {
-    return (
-      <div style={{ padding: '40px 20px', textAlign: 'center', color: '#99A1B7' }}>
-        {t('NO_ESTIMATE_DETAILS')}
-      </div>
-    );
-  }
-
-  return (
-    <div>
-      {categories.map((category) => {
-        const items = offerDetails.offers?.filter((o) => o.categoryId === category.id) || [];
-        return (
-          <div key={category.id} style={{ marginBottom: 24 }}>
-            <div
-              style={{
-                fontWeight: 700,
-                fontSize: 14,
-                color: '#2288FF',
-                textTransform: 'uppercase',
-                padding: '12px 0',
-                borderBottom: '1px dashed #D9D9D9',
-              }}
-            >
-              {category.name}
-            </div>
-            {items.map((item) => (
-              <div
-                key={item.id}
-                style={{
-                  display: 'grid',
-                  gridTemplateColumns: '1fr 100px 100px 100px',
-                  padding: '10px 0',
-                  borderBottom: '1px dashed #E1E3EA',
-                  fontSize: 13,
-                  fontWeight: 500,
-                  color: '#4B5675',
-                }}
-              >
-                <div>{item.item}</div>
-                <div style={{ textAlign: 'right' }}>
-                  ${item.clientPrice?.toFixed(2) || '0.00'}
-                </div>
-                <div style={{ textAlign: 'center' }}>
-                  {item.units
-                    ?.filter(Boolean)
-                    .map((u) => `${u!.count} ${u!.label}`)
-                    .join(', ') || '-'}
-                </div>
-                <div style={{ textAlign: 'right', fontWeight: 600 }}>
-                  ${item.clientCost?.toFixed(2) || '0.00'}
-                </div>
-              </div>
-            ))}
-          </div>
-        );
-      })}
-    </div>
-  );
-}

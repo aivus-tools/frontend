@@ -10,21 +10,23 @@ const Tab = styled.button<{ $isActive: boolean }>`
   line-height: normal;
   padding: 8px 12px;
   border: none;
-  background: none;
   cursor: pointer;
   display: flex;
   font-size: 16px;
   font-weight: 600;
   color: var(--main);
-  border-radius: 6px;
+  border-radius: 6px 6px 0 0;
   white-space: nowrap;
 
   ${({ $isActive }) =>
-    $isActive &&
-    `
-		color: var(--blue);
-    background-color: var(--beige);
-	`}
+    $isActive
+      ? `
+    background-color: var(--bg-gray-page);
+  `
+      : `
+    background: #fff;
+    border-bottom: 2px solid var(--gray-light);
+  `}
 `;
 
 interface Props {

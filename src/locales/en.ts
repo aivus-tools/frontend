@@ -126,6 +126,8 @@ export const EN_LOCALES = {
   NEW_ESTIMATION: 'New Estimation',
   NEXT: 'Next',
   NO_ARCHIVED_PROJECTS: 'No archived projects',
+  NO_PROJECTS_YET: 'No projects yet',
+  CREATE_FIRST_ESTIMATION: 'Create your first estimation',
   NO_OFFERS_YET: 'No offers yet',
   OFFER: 'Offer',
   NUMBER: 'Number',

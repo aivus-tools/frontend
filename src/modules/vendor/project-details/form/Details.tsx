@@ -107,7 +107,8 @@ export default function Details() {
 
         // Apply template if selected (only for new projects)
         const templateId = form.getFieldValue('estimationTemplate') as string | undefined;
-        if (templateId && !storedProjectId && projectId) {
+        const isTemplateApplied = !!(templateId && !existingProject && projectId);
+        if (isTemplateApplied) {
           try {
             await applyTemplate({ templateId, projectId }).unwrap();
             dispatch(offersApi.util.invalidateTags(['Offer']));
@@ -129,9 +130,12 @@ export default function Details() {
         messageApi.success(t('DETAILS_SAVED_SUCCESSFULLY'));
 
         if (projectId) {
-          // Set mode to view and navigate
           dispatch(setMode('view'));
-          router.push(AppRoute.DASHBOARD_PROJECT_DETAILS(projectId));
+          if (isTemplateApplied) {
+            router.push(AppRoute.DASHBOARD_PROJECT_ESTIMATION(projectId));
+          } else {
+            router.push(AppRoute.DASHBOARD_PROJECT_DETAILS(projectId));
+          }
         } else {
           messageApi.error(t('ERROR_SAVING_DETAILS'));
         }
