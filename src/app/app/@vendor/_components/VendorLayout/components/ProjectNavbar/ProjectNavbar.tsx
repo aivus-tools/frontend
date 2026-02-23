@@ -70,7 +70,9 @@ export const ProjectNavbar = () => {
     watermark?: string;
   }) => {
     if (format === 'xlsx') {
-      await exportToExcel(categoriesExportData, name, date, watermark, offerMetaData?.id, offerDetails.overallSurcharge);
+      const uf = offerDetails.unforeseenExpenses;
+      const agencyFeePercent = uf?.isVisible ? (uf?.clientPercent ?? 0) : 0;
+      await exportToExcel(categoriesExportData, name, date, watermark, offerMetaData?.id, agencyFeePercent);
     } else {
       message.info(t('COMING_SOON'));
     }

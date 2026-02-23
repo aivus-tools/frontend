@@ -2,7 +2,7 @@
 
 import React from 'react';
 import { useAppSelector } from '@/store/hooks';
-import { selectClientTotalSum, selectTotalSum } from '@/store/slices/offer/selectors';
+import { selectClientTotalSum, selectGrandTotal } from '@/store/slices/offer/selectors';
 import { formatCurrency } from '@/lib/utils';
 import { t } from '@/lib/i18n';
 import { AgencyServiceRow } from '../styled';
@@ -56,16 +56,18 @@ const AgencyValue = styled.span`
     color: #4B5675;
 `;
 
-export const AgencyService = () => {
-    const { value: vendorTotal } = useAppSelector(selectTotalSum);
-    const { value: clientTotal } = useAppSelector(selectClientTotalSum);
+export const AgencyService: React.FC = () => {
+    const { value: subtotal } = useAppSelector(selectClientTotalSum);
+    const { clientTotalValue: grandTotal } = useAppSelector(selectGrandTotal);
 
-    const agencyServiceAmount = clientTotal - vendorTotal;
+    const agencyServiceAmount = grandTotal - subtotal;
 
-    if (agencyServiceAmount <= 0) return null;
+    if (agencyServiceAmount <= 0) {
+        return null;
+    }
 
-    const surchargePercent = vendorTotal > 0
-        ? Math.round(((clientTotal / vendorTotal) - 1) * 100 * 10) / 10
+    const surchargePercent = grandTotal > 0
+        ? Math.round((agencyServiceAmount / grandTotal) * 100 * 10) / 10
         : 0;
 
     return (

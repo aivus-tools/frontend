@@ -17,6 +17,8 @@ import {
 import { useGetTemplatesQuery, useApplyTemplateMutation } from '@/services/client/templatesApi';
 import { useAppDispatch, useAppSelector } from '@/store/hooks';
 import { selectProjectId } from '@/store/slices/project';
+import { selectOfferMetaData } from '@/store/slices/offer/selectors';
+import { setMetaData } from '@/store/slices/offer/slice';
 import {
   TabsContainer,
   ActiveTab,
@@ -39,6 +41,7 @@ export const OfferTabs: React.FC = () => {
   const searchParams = useSearchParams();
   const dispatch = useAppDispatch();
   const projectId = useAppSelector(selectProjectId);
+  const offerMetaData = useAppSelector(selectOfferMetaData);
 
   const { data: offers = [] } = useGetOffersByProjectIdQuery(projectId!, {
     skip: !projectId || projectId === 'new-brief',
@@ -151,6 +154,9 @@ export const OfferTabs: React.FC = () => {
     setStatusPopoverId(null);
     try {
       await updateOfferStatus({ id: offerId, status: newStatus }).unwrap();
+      if (offerId === activeOfferId && offerMetaData) {
+        dispatch(setMetaData({ ...offerMetaData, status: newStatus }));
+      }
     } catch {
       // Error handled by RTK Query
     }

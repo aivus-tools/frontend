@@ -263,8 +263,6 @@ export async function exportToExcel(data: CategoriesExportData, fileName: string
 
   nextRow += 1;
 
-  const feePercent = agencyFeePercent ?? 0;
-
   const agencyFeeTitleCell = excel.getCell(nextRow, 0);
   agencyFeeTitleCell.value = 'Agency Fee';
   excel.addBorderToLine(nextRow, 5);
@@ -276,57 +274,7 @@ export async function exportToExcel(data: CategoriesExportData, fileName: string
   agencyFeePercentCell.alignment = RIGHT_MIDDLE;
 
   const agencyFeeRateCell = excel.getCell(nextRow, 5);
-  agencyFeeRateCell.value = feePercent / 100;
-  agencyFeeRateCell.numFmt = '0%';
-  excel.addFont(agencyFeeRateCell);
-  agencyFeeRateCell.alignment = CENTER_MIDDLE;
-
   const agencyFeeValueCell = excel.getCell(nextRow, 6);
-  agencyFeeValueCell.alignment = RIGHT_MIDDLE;
-  excel.addBorderToCell(agencyFeeValueCell);
-  excel.addNumberFormat(agencyFeeValueCell);
-  excel.addFont(agencyFeeValueCell);
-  agencyFeeValueCell.value = { formula: `${agencyFeeRateCell.address}*${subtotalValueCell.address}` };
-
-  nextRow += 1;
-
-  const totalSumBeforeTaxTitleCell = excel.getCell(nextRow, 0);
-  totalSumBeforeTaxTitleCell.value = 'Total Before Tax';
-  excel.addBorderToLine(nextRow, 5);
-  excel.addColorToCellGroup(nextRow, 6, COLOR.SUB);
-  excel.addFont(totalSumBeforeTaxTitleCell, true);
-
-  const totalSumBeforeTaxValueCell = excel.getCell(nextRow, 6);
-  excel.addBorderToCell(totalSumBeforeTaxValueCell);
-  excel.addFont(totalSumBeforeTaxValueCell, true);
-  totalSumBeforeTaxValueCell.value = { formula: `${subtotalValueCell.address}+${agencyFeeValueCell.address}` };
-  totalSumBeforeTaxValueCell.alignment = RIGHT_MIDDLE;
-  excel.addNumberFormat(totalSumBeforeTaxValueCell);
-
-  nextRow += 2;
-
-  const taxTitleCell = excel.getCell(nextRow, 0);
-  taxTitleCell.value = 'Sales Tax';
-  excel.addBorderToLine(nextRow, 5);
-  excel.addFont(taxTitleCell);
-
-  const taxInfoCell1 = excel.getCell(nextRow, 4);
-  taxInfoCell1.value = 'Sales Tax';
-  excel.addFont(taxInfoCell1);
-  taxInfoCell1.alignment = RIGHT_MIDDLE;
-
-  const taxInfoCell2 = excel.getCell(nextRow, 5);
-  taxInfoCell2.value = 0.09;
-  taxInfoCell2.numFmt = '0%';
-  excel.addFont(taxInfoCell2);
-  taxInfoCell2.alignment = CENTER_MIDDLE;
-
-  const taxValueCell = excel.getCell(nextRow, 6);
-  taxValueCell.alignment = RIGHT_MIDDLE;
-  excel.addBorderToCell(taxValueCell);
-  excel.addNumberFormat(taxValueCell);
-  excel.addFont(taxValueCell);
-  taxValueCell.value = { formula: `${taxInfoCell2.address} * ${totalSumBeforeTaxValueCell.address}` };
 
   nextRow += 1;
 
@@ -336,13 +284,25 @@ export async function exportToExcel(data: CategoriesExportData, fileName: string
   excel.addColorToCellGroup(nextRow, 5, COLOR.HEADER);
   excel.addFont(totalSumTitleCell, true);
 
+  const feeMultiplier = 1 + (agencyFeePercent ?? 0) / 100;
   const totalSumValueCell = excel.getCell(nextRow, 6);
+  totalSumValueCell.value = { formula: `${subtotalValueCell.address}*${feeMultiplier}` };
   excel.addBorderToCell(totalSumValueCell);
   excel.addFont(totalSumValueCell, true);
-  totalSumValueCell.value = { formula: `${taxValueCell.address} + ${totalSumBeforeTaxValueCell.address}` };
   totalSumValueCell.alignment = RIGHT_MIDDLE;
   excel.addNumberFormat(totalSumValueCell);
   totalSumValueCell.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: COLOR.TOTAL } };
+
+  agencyFeeValueCell.value = { formula: `${totalSumValueCell.address}-${subtotalValueCell.address}` };
+  agencyFeeValueCell.alignment = RIGHT_MIDDLE;
+  excel.addBorderToCell(agencyFeeValueCell);
+  excel.addNumberFormat(agencyFeeValueCell);
+  excel.addFont(agencyFeeValueCell);
+
+  agencyFeeRateCell.value = { formula: `IFERROR(${agencyFeeValueCell.address}/${totalSumValueCell.address},0)` };
+  agencyFeeRateCell.numFmt = '0%';
+  excel.addFont(agencyFeeRateCell);
+  agencyFeeRateCell.alignment = CENTER_MIDDLE;
 
   nextRow += 1;
 

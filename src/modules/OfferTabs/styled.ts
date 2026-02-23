@@ -5,7 +5,7 @@ import { styled, css } from 'styled-components';
 export const TabsContainer = styled.div`
   display: flex;
   align-items: flex-end;
-  gap: 0;
+  gap: 12px;
   padding: 0 24px;
   margin-top: 10px;
   border-bottom: 2px solid #e5e5e5;
@@ -115,7 +115,6 @@ export const TabWrapper = styled.div`
 
 export const NewOfferTab = styled.button`
   ${tabBase}
-  margin-left: 12px;
   color: #2288ff;
   font-weight: 600;
   font-size: 13px;
