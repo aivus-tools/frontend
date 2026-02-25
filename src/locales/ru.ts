@@ -295,6 +295,7 @@ export const RU_LOCALES = {
   ESTIMATE_NO_LONGER_AVAILABLE: 'Эта смета больше недоступна',
   SHARING_DISABLED_BY_OWNER: 'Владелец отключил общий доступ к этой смете',
   ESTIMATE_ADDED_TO_BRIEF: (name: string) => `Смета добавлена к ${name}`,
+  ERROR_ADDING_TO_BRIEF: 'Не удалось добавить смету к брифу',
 
   // Offer Tabs
   NEW_OFFER: '+ Новое предложение',

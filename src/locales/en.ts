@@ -294,6 +294,7 @@ export const EN_LOCALES = {
   ESTIMATE_NO_LONGER_AVAILABLE: 'This estimate is no longer available',
   SHARING_DISABLED_BY_OWNER: 'The owner has disabled sharing for this estimate',
   ESTIMATE_ADDED_TO_BRIEF: (name: string) => `Estimate added to ${name}`,
+  ERROR_ADDING_TO_BRIEF: 'Failed to add estimate to brief',
 
   // Offer Tabs
   NEW_OFFER: '+ New offer',

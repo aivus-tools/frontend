@@ -1,19 +1,22 @@
 'use client';
 
-import React, { use, useCallback, useEffect, useState } from 'react';
-import { Button, Select, Skeleton, message } from 'antd';
+import React, { use, useCallback, useEffect, useMemo, useState } from 'react';
+import { App, Button, Select, Skeleton } from 'antd';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useSession } from 'next-auth/react';
 import { t } from '@/lib/i18n';
 import { AppRoute } from '@/constants/appRoute';
 import { GROUPS } from '@/constants/constants';
-import { useGetShareByTokenQuery } from '@/services/client/sharesApi';
+import { useGetShareByTokenQuery, useLinkShareToBriefMutation } from '@/services/client/sharesApi';
+import { useGetBriefsQuery, useCreateBriefMutation } from '@/services/client/briefApi';
 import { useAppDispatch } from '@/store/hooks';
 import { setOfferDetails } from '@/store/slices/offer/slice';
 import { OfferDetails } from '@/types/store.interface';
+import { NewBrief } from '@/types/brief.interface';
 import { ClientOfferTable } from '@/modules/vendor/client-offer/ClientOfferTable';
 import { GuidanceProvider } from '@/context/GuidanceProvider';
+import logger from '@/lib/logger';
 import LogoIcon from '@/icons/aivus-logo.svg';
 import {
   PageContainer,
@@ -37,6 +40,8 @@ import {
   OfferTableWrapper,
 } from './styled';
 
+const CREATE_NEW_VALUE = 'create-new';
+
 interface PublicOfferViewProps {
   params: Promise<{ token: string }>;
 }
@@ -46,9 +51,18 @@ export const PublicOfferView: React.FC<PublicOfferViewProps> = ({ params }) => {
   const router = useRouter();
   const session = useSession();
   const dispatch = useAppDispatch();
+  const { message } = App.useApp();
   const { data, isLoading, error } = useGetShareByTokenQuery(token);
   const [addedBriefId, setAddedBriefId] = useState<string | null>(null);
   const [selectedBriefId, setSelectedBriefId] = useState<string | null>(null);
+
+  const userGroup = session?.data?.user?.group;
+  const isAuthenticated = session?.status === 'authenticated';
+  const isClient = isAuthenticated && userGroup === GROUPS.client;
+
+  const { data: briefs = [] } = useGetBriefsQuery(undefined, { skip: !isClient });
+  const [linkShareToBrief, { isLoading: isLinking }] = useLinkShareToBriefMutation();
+  const [createBrief] = useCreateBriefMutation();
 
   useEffect(() => {
     if (data?.offer?.details) {
@@ -56,17 +70,18 @@ export const PublicOfferView: React.FC<PublicOfferViewProps> = ({ params }) => {
     }
   }, [data, dispatch]);
 
-  const userGroup = session?.data?.user?.group;
-  const isAuthenticated = session?.status === 'authenticated';
-
-  // Determine viewer role
   const getViewerRole = useCallback((): 'guest' | 'vendor-author' | 'vendor-other' | 'client' => {
-    if (!isAuthenticated) return 'guest';
-    if (userGroup === GROUPS.client) return 'client';
+    if (!isAuthenticated) {
+      return 'guest';
+    }
+    if (userGroup === GROUPS.client) {
+      return 'client';
+    }
     if (userGroup === GROUPS.vendor) {
-      // Check if this vendor owns the offer
       const userId = session?.data?.user?.vendorId;
-      if (userId && data?.vendor?.id === userId) return 'vendor-author';
+      if (userId && data?.vendor?.id === userId) {
+        return 'vendor-author';
+      }
       return 'vendor-other';
     }
     return 'guest';
@@ -76,12 +91,36 @@ export const PublicOfferView: React.FC<PublicOfferViewProps> = ({ params }) => {
     router.push(`${AppRoute.AUTH}?redirect=/public/${token}`);
   }, [router, token]);
 
-  const handleAddToBrief = useCallback(() => {
-    if (!selectedBriefId) return;
-    // POST to link offer to brief
-    setAddedBriefId(selectedBriefId);
-    message.success(t('ESTIMATE_ADDED_TO_BRIEF', 'Brief'));
-  }, [selectedBriefId]);
+  const handleAddToBrief = useCallback(async () => {
+    if (!selectedBriefId) {
+      return;
+    }
+
+    try {
+      let briefId = selectedBriefId;
+
+      if (briefId === CREATE_NEW_VALUE) {
+        const newBrief = await createBrief({ details: {} as NewBrief['details'], status: 'DRAFT' }).unwrap();
+        briefId = newBrief.id;
+      }
+
+      await linkShareToBrief({ token, briefId }).unwrap();
+      setAddedBriefId(selectedBriefId);
+      message.success(t('ESTIMATE_ADDED_TO_BRIEF', 'Brief'));
+    } catch (err) {
+      logger.error('Error linking offer to brief:', err);
+      message.error(t('ERROR_ADDING_TO_BRIEF'));
+    }
+  }, [selectedBriefId, token, createBrief, linkShareToBrief, message]);
+
+  const briefOptions = useMemo(() => {
+    const options = briefs.map((x) => ({
+      value: x.id,
+      label: x.details?.projectName || t('UNTITLED_BRIEF'),
+    }));
+    options.push({ value: CREATE_NEW_VALUE, label: t('CREATE_NEW_BRIEF') });
+    return options;
+  }, [briefs]);
 
   if (isLoading) {
     return (
@@ -138,7 +177,6 @@ export const PublicOfferView: React.FC<PublicOfferViewProps> = ({ params }) => {
         )}
       </PublicHeader>
 
-      {/* Vendor-other Info Bar */}
       {viewerRole === 'vendor-other' && (
         <InfoBar>
           <InfoBarText>{t('SHARED_ESTIMATE_FROM', vendor?.name || '')}</InfoBarText>
@@ -146,7 +184,6 @@ export const PublicOfferView: React.FC<PublicOfferViewProps> = ({ params }) => {
       )}
 
       <MainContent>
-        {/* Guest Banner */}
         {viewerRole === 'guest' && (
           <GuestBanner>
             <BannerText>{t('SIGN_UP_TO_SAVE_ESTIMATE')}</BannerText>
@@ -171,7 +208,6 @@ export const PublicOfferView: React.FC<PublicOfferViewProps> = ({ params }) => {
           </GuestBanner>
         )}
 
-        {/* Vendor-author Banner */}
         {viewerRole === 'vendor-author' && (
           <AuthorBanner>
             <AuthorBannerText>{t('THIS_IS_YOUR_ESTIMATE')}</AuthorBannerText>
@@ -181,7 +217,6 @@ export const PublicOfferView: React.FC<PublicOfferViewProps> = ({ params }) => {
           </AuthorBanner>
         )}
 
-        {/* Client Action Panel */}
         {viewerRole === 'client' && (
           <ClientPanel>
             <ClientLabel>{t('ADD_TO_BRIEF')}</ClientLabel>
@@ -193,14 +228,12 @@ export const PublicOfferView: React.FC<PublicOfferViewProps> = ({ params }) => {
               }}
               onChange={(value) => setSelectedBriefId(value)}
               value={selectedBriefId}
-              options={[
-                // Brief options would be dynamically loaded
-                { value: 'create-new', label: t('CREATE_NEW_BRIEF') },
-              ]}
+              options={briefOptions}
             />
             <Button
               type="primary"
               onClick={handleAddToBrief}
+              loading={isLinking}
               disabled={!selectedBriefId || addedBriefId === selectedBriefId}
               style={{
                 height: 40,
@@ -215,7 +248,6 @@ export const PublicOfferView: React.FC<PublicOfferViewProps> = ({ params }) => {
           </ClientPanel>
         )}
 
-        {/* Read-only Offer Table */}
         <OfferTableWrapper>
           <div style={{ padding: '20px 0' }}>
             <h2 style={{

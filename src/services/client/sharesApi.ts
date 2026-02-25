@@ -31,6 +31,13 @@ export const sharesApi = createApi({
       query: (offerId) => `${ApiRoute.SHARE_LIST}?offerId=${offerId}`,
       providesTags: ['Share'],
     }),
+    linkShareToBrief: builder.mutation<{ id: string; briefId: string; offerId: string }, { token: string; briefId: string }>({
+      query: ({ token, briefId }) => ({
+        url: ApiRoute.SHARE_LINK_TO_BRIEF(token),
+        method: 'POST',
+        body: { briefId },
+      }),
+    }),
   }),
 });
 
@@ -39,4 +46,5 @@ export const {
   useGetShareByTokenQuery,
   useUpdateShareMutation,
   useGetShareByOfferIdQuery,
+  useLinkShareToBriefMutation,
 } = sharesApi;
