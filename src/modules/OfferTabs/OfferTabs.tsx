@@ -78,6 +78,7 @@ export const OfferTabs: React.FC = () => {
     if (!projectId) return;
     setDropdownOpen(false);
     try {
+      const today = new Date().toISOString().split('T')[0];
       const newOffer = await createOffer({
         projectName: `Offer ${offers.length + 1}`,
         projectId,
@@ -86,6 +87,18 @@ export const OfferTabs: React.FC = () => {
         deadline: new Date().toISOString(),
         source: 'PLATFORM',
         isLocked: false,
+        bidDate: today,
+        revision: '',
+        term: '6 months',
+        territory: ['United States'],
+        mediaPlacements: ['All online'],
+        coverPageNotes: '',
+        deliverables: [],
+        scheduleEntries: [
+          { phaseType: 'Prep', days: 1, hoursPerDay: 12, notes: '', sortOrder: 0 },
+          { phaseType: 'Shoot', days: 1, hoursPerDay: 12, notes: '', sortOrder: 1 },
+          { phaseType: 'Wrap / Return', days: 1, hoursPerDay: 12, notes: '', sortOrder: 2 },
+        ],
       }).unwrap();
       handleTabClick(newOffer.id);
     } catch {

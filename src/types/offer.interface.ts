@@ -2,6 +2,24 @@ import { OfferDetails } from './store.interface';
 
 export const source = ['PLATFORM', 'UPLOAD'] as const;
 
+export interface OfferDeliverable {
+  id?: string;
+  quantity: number;
+  duration: string;
+  durationUnit: string;
+  notes: string;
+  sortOrder: number;
+}
+
+export interface OfferScheduleEntry {
+  id?: string;
+  phaseType: string;
+  days: number;
+  hoursPerDay: number;
+  notes: string;
+  sortOrder: number;
+}
+
 export interface Offer {
   id: string;
   uuid: string;
@@ -11,12 +29,20 @@ export interface Offer {
   status: 'DRAFT' | 'PUBLISHED' | 'ARCHIVED';
   cost?: number | null;
   profit?: number | null;
-  details: OfferDetails | Record<string, unknown>; // JSON object (OfferDetails)
-  deadline: string; // DATE UTC
+  details: OfferDetails | Record<string, unknown>;
+  deadline: string;
   source: (typeof source)[number];
   isLocked: boolean;
-  createdAt: string; // DATE UTC
-  updatedAt: string; // DATE UTC
+  bidDate?: string | null;
+  revision?: string;
+  term?: string;
+  territory?: string[];
+  mediaPlacements?: string[];
+  coverPageNotes?: string;
+  deliverables?: OfferDeliverable[];
+  scheduleEntries?: OfferScheduleEntry[];
+  createdAt: string;
+  updatedAt: string;
 }
 
 export type NewOffer = Omit<Offer, 'id' | 'uuid' | 'createdAt' | 'updatedAt'>;

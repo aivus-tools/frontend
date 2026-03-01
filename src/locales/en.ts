@@ -466,4 +466,21 @@ export const EN_LOCALES = {
   // Public Offer - details
   NO_ESTIMATE_DETAILS: 'No estimate details available.',
   BY_VENDOR: (name: string) => `by ${name}`,
+
+  // Offer Meta Form
+  BID_DATE: 'Bid Date',
+  REVISION: 'Revision #',
+  BID_VERSION_NAME: 'Bid Version Name',
+  TERM_LABEL: 'Term',
+  TERRITORY_LABEL: 'Territory',
+  MEDIA_PLACEMENTS_LABEL: 'Media / Placements',
+  DELIVERABLES: 'Deliverables',
+  PRODUCTION_SCHEDULE: 'Production Schedule',
+  PRODUCTION_SCHEDULE_HINT: 'Number of days and length of the day, including 1 hour of lunch if the day is more than 6 hours long.',
+  COVER_PAGE_NOTES: 'Cover Page Notes',
+  ADD_DELIVERABLE: 'add deliverable',
+  ADD_SCHEDULE_ENTRY: 'add entry',
+  DAYS_LABEL: 'day(s)',
+  AT_LABEL: '@',
+  HOURS_LABEL: 'hours',
 };

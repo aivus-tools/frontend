@@ -13,11 +13,19 @@ import {
   changeOverallSurcharge,
   changeUnforeseenExpenses,
   changeShowCostPerVideo,
+  resetOffer,
 } from './slice';
 import { isAnyOf } from '@reduxjs/toolkit';
-import { selectIsNewBrief, selectProjectId } from '../project';
+import { setProjectId, selectIsNewBrief, selectProjectId } from '../project';
 
 export const offerListener = (startListening: AppStartListening) => {
+  startListening({
+    actionCreator: setProjectId,
+    effect: async (_, { dispatch }) => {
+      dispatch(resetOffer());
+    },
+  });
+
   startListening({
     matcher: categoriesApi.endpoints.getCategories.matchFulfilled,
     effect: async (action, { dispatch }) => {

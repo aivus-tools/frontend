@@ -13,6 +13,7 @@ import { AddButton } from './components/AddButton';
 import { useLoadData } from './hooks/useLoadData';
 import { useSetExternal } from './hooks/useSetExternal';
 import { useOfferSync } from '@/hooks/useOfferSync';
+import { OfferMetaForm } from './components/OfferMetaForm/OfferMetaForm';
 
 export function Estimation({ external }: { external?: boolean }) {
   useSetExternal(external);
@@ -30,6 +31,7 @@ export function Estimation({ external }: { external?: boolean }) {
     <KeysProvider>
       <HoverProvider>
         <Wrapper>
+          <OfferMetaForm />
           <Table>
             <Header />
             {categories.map((category) => (

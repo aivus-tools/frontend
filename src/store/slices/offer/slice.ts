@@ -330,6 +330,12 @@ export const offerSlice = createSlice({
     setTemplateId: (state, action: PayloadAction<string | null>) => {
       state.templateId = action.payload;
     },
+    resetOffer: (state) => {
+      state.offerDetails = initialState.offerDetails;
+      state.metaData = initialState.metaData;
+      state.external = initialState.external;
+      state.templateId = initialState.templateId;
+    },
   },
 });
 
@@ -347,4 +353,5 @@ export const {
   setExternal,
   changeOverallSurcharge,
   setTemplateId,
+  resetOffer,
 } = offerSlice.actions;

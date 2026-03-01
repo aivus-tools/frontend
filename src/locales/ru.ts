@@ -467,4 +467,21 @@ export const RU_LOCALES = {
   // Public Offer - details
   NO_ESTIMATE_DETAILS: 'Нет доступных деталей сметы.',
   BY_VENDOR: (name: string) => `от ${name}`,
+
+  // Offer Meta Form
+  BID_DATE: 'Дата предложения',
+  REVISION: 'Ревизия #',
+  BID_VERSION_NAME: 'Название версии',
+  TERM_LABEL: 'Срок',
+  TERRITORY_LABEL: 'Территория',
+  MEDIA_PLACEMENTS_LABEL: 'Медиа / Размещения',
+  DELIVERABLES: 'Результаты',
+  PRODUCTION_SCHEDULE: 'График производства',
+  PRODUCTION_SCHEDULE_HINT: 'Количество дней и продолжительность рабочего дня, включая 1 час обеда, если день длится более 6 часов.',
+  COVER_PAGE_NOTES: 'Заметки титульной страницы',
+  ADD_DELIVERABLE: 'добавить результат',
+  ADD_SCHEDULE_ENTRY: 'добавить запись',
+  DAYS_LABEL: 'дн.',
+  AT_LABEL: '@',
+  HOURS_LABEL: 'часов',
 };
