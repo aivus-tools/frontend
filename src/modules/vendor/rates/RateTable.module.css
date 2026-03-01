@@ -9,7 +9,7 @@
 /* Column headers row */
 .headerRow {
   display: grid;
-  grid-template-columns: 1fr 100px 35px 100px 30px;
+  grid-template-columns: 1fr 100px 30px;
   align-items: center;
   padding: 8px 26px 8px 20px;
   font-family: Montserrat, sans-serif;
@@ -132,7 +132,7 @@
 /* ========== Item row ========== */
 .itemRow {
   display: grid;
-  grid-template-columns: 1fr 100px 35px 100px 30px;
+  grid-template-columns: 1fr 100px 30px;
   align-items: center;
   min-height: 36px;
   padding: 0 20px;

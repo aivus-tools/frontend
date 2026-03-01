@@ -167,6 +167,4 @@ export const ErrorSubtitle = styled.p`
 export const OfferTableWrapper = styled.div`
   background: #ffffff;
   border-radius: 6px;
-  box-shadow: 0px 5px 16.5px -11px rgba(0, 0, 0, 0.25);
-  padding: 30px;
 `;

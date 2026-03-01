@@ -8,8 +8,8 @@ export function RateHeader() {
     <div className={styles.headerRow}>
       <div className={styles.headerItems}>{t('ITEMS')}</div>
       <div className={styles.headerPrice}>{t('PRICE')}</div>
-      <div />
-      <div className={styles.headerUnits}>{t('UNITS')}</div>
+      {/* <div />
+      <div className={styles.headerUnits}>{t('UNITS')}</div> */}
       <div />
     </div>
   );

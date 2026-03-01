@@ -146,8 +146,8 @@ export const PublicOfferView: React.FC<PublicOfferViewProps> = ({ params }) => {
     const title = isArchived
       ? t('PROJECT_ARCHIVED_UNAVAILABLE')
       : isDisabled
-      ? t('SHARING_DISABLED_BY_OWNER')
-      : t('ESTIMATE_NO_LONGER_AVAILABLE');
+        ? t('SHARING_DISABLED_BY_OWNER')
+        : t('ESTIMATE_NO_LONGER_AVAILABLE');
 
     return (
       <FullPageMessage>
@@ -249,7 +249,7 @@ export const PublicOfferView: React.FC<PublicOfferViewProps> = ({ params }) => {
         )}
 
         <OfferTableWrapper>
-          <div style={{ padding: '20px 0' }}>
+          <div style={{ padding: '20px 40px' }}>
             <h2 style={{
               fontFamily: "'Montserrat', sans-serif",
               fontWeight: 700,

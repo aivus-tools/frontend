@@ -23,12 +23,12 @@ export const SidebarBody: React.FC<Props> = ({ item }) => {
           <span style={{ fontSize: 12, color: 'var(--gray)' }}>{t('BASE_PRICE_LABEL')}</span>
           <span style={{ fontWeight: 600 }}>$ {formatPrice(Number(item.price))}</span>
         </div>
-        {item.unitLabel && (
+        {/* {item.unitLabel && (
           <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 8 }}>
             <span style={{ fontSize: 12, color: 'var(--gray)' }}>{t('UNITS')}</span>
             <span style={{ fontWeight: 500 }}>{item.unitLabel}</span>
           </div>
-        )}
+        )} */}
       </div>
     </div>
   );

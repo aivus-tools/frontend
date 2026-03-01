@@ -65,7 +65,7 @@ export function EntryRow({ catalogEntry, units, onPriceChange, onUnitChange, onR
           onBlur={handlePriceBlur}
         />
       </div>
-      <div className={styles.perCell}>{t('PER')}</div>
+      {/* <div className={styles.perCell}>{t('PER')}</div>
       <div className={styles.unitCell}>
         <Select
           className={styles.unitSelect}
@@ -76,7 +76,7 @@ export function EntryRow({ catalogEntry, units, onPriceChange, onUnitChange, onR
           options={unitOptions.map((u) => ({ value: u.id, label: u.name }))}
           popupMatchSelectWidth={false}
         />
-      </div>
+      </div> */}
       <div className={styles.actionsCell}>
         {hasRate && (
           <button className={styles.deleteBtn} onClick={handleRemove} aria-label={t('DELETE')}>
