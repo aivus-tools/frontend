@@ -40,13 +40,17 @@ export const RichTextEditor: React.FC<RichTextEditorProps> = props => {
           height: 150,
           menubar: false,
           plugins: ['lists', 'link'],
-          toolbar: 'bold italic underline | bullist numlist | link',
+          toolbar: 'blocks | bold italic underline | bullist numlist | link',
+          block_formats: 'Paragraph=p; Heading 3=h3; Heading 4=h4',
+          placeholder: 'e.g. Budget assumes 1 interior location and 1 shoot day.',
           content_style: `
             body {
               font-family: 'Montserrat', sans-serif;
               font-size: 14px;
               color: #4b5675;
             }
+            h3 { font-size: 16px; margin: 0 0 8px; }
+            h4 { font-size: 14px; margin: 0 0 6px; }
           `,
           branding: false,
           statusbar: false,

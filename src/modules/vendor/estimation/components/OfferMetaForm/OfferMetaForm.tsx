@@ -13,7 +13,7 @@ import { setMetaData } from '@/store/slices/offer/slice';
 import { useUpdateOfferMutation } from '@/services/client/offersApi';
 import { Offer, OfferDeliverable, OfferScheduleEntry } from '@/types/offer.interface';
 import { RichTextEditor } from './RichTextEditor';
-import { MEDIA_PLACEMENTS_OPTIONS, TERM_OPTIONS, DURATION_UNITS } from './constants';
+import { TERRITORY_OPTIONS, MEDIA_PLACEMENTS_OPTIONS, DURATION_UNITS, SCHEDULE_PHASES } from './constants';
 import {
   MetaFormContainer,
   MetaFormHeader,
@@ -249,7 +249,7 @@ export const OfferMetaForm: React.FC = () => {
     handleFieldChange('projectName', value);
   }, [handleFieldChange]);
 
-  const handleTermChange = useCallback((event: React.ChangeEvent<HTMLSelectElement>) => {
+  const handleTermChange = useCallback((event: React.ChangeEvent<HTMLInputElement>) => {
     const value = event.target.value;
     setTerm(value);
     handleFieldChange('term', value);
@@ -275,7 +275,7 @@ export const OfferMetaForm: React.FC = () => {
       id: uuidv4(),
       quantity: 1,
       duration: '',
-      durationUnit: 'Sec',
+      durationUnit: '',
       notes: '',
       sortOrder: deliverables.length,
     };
@@ -363,7 +363,7 @@ export const OfferMetaForm: React.FC = () => {
               <FieldInput
                 value={revision}
                 onChange={handleRevisionChange}
-                placeholder="#"
+                placeholder="1"
               />
             </FormField>
             <FormField $flex>
@@ -379,20 +379,19 @@ export const OfferMetaForm: React.FC = () => {
           <FormRow>
             <FormField $width="150px">
               <FieldLabel>{t('TERM_LABEL')}</FieldLabel>
-              <FieldSelect value={term} onChange={handleTermChange}>
-                <option value="">{t('SELECT_OPTION')}</option>
-                {TERM_OPTIONS.map(x => (
-                  <option key={x} value={x}>{x}</option>
-                ))}
-              </FieldSelect>
+              <FieldInput
+                value={term}
+                onChange={handleTermChange}
+                placeholder="e.g. 1 year"
+              />
             </FormField>
             <FormField $width="300px">
               <FieldLabel>{t('TERRITORY_LABEL')}</FieldLabel>
               <TagsField
                 value={territory}
                 onChange={handleTerritoryChange}
-                options={['United States', 'Worldwide', 'Europe', 'Asia', 'Canada', 'United Kingdom', 'Australia']}
-                placeholder={t('TERRITORY_LABEL')}
+                options={TERRITORY_OPTIONS}
+                placeholder="e.g. USA, Canada"
               />
             </FormField>
             <FormField $flex>
@@ -401,7 +400,7 @@ export const OfferMetaForm: React.FC = () => {
                 value={mediaPlacements}
                 onChange={handleMediaPlacementsChange}
                 options={MEDIA_PLACEMENTS_OPTIONS}
-                placeholder={t('MEDIA_PLACEMENTS_LABEL')}
+                placeholder="e.g. Paid Social, YouTube"
               />
             </FormField>
           </FormRow>
@@ -428,12 +427,12 @@ export const OfferMetaForm: React.FC = () => {
                   $width="75px"
                   value={x.duration}
                   onChange={event => handleDeliverableChange(i, 'duration', event.target.value)}
-                  placeholder="0"
+                  placeholder="30"
                 />
                 <FieldSelect
                   value={x.durationUnit}
                   onChange={event => handleDeliverableChange(i, 'durationUnit', event.target.value)}
-                  style={{ width: 90, flex: 'none' }}
+                  style={{ width: 100, flex: 'none' }}
                 >
                   {DURATION_UNITS.map(unit => (
                     <option key={unit} value={unit}>{unit}</option>
@@ -442,7 +441,7 @@ export const OfferMetaForm: React.FC = () => {
                 <DeliverableNotesInput
                   value={x.notes}
                   onChange={event => handleDeliverableChange(i, 'notes', event.target.value)}
-                  placeholder="Notes"
+                  placeholder="e.g. 16:9 Master"
                 />
                 <RemoveButton onClick={() => handleRemoveDeliverable(i)}>
                   <CloseIcon width={10} height={10} />
@@ -462,12 +461,16 @@ export const OfferMetaForm: React.FC = () => {
             <HintText>{t('PRODUCTION_SCHEDULE_HINT')}</HintText>
             {scheduleEntries.map((x, i) => (
               <DynamicRow key={x.id || i} style={{ marginTop: 6 }}>
-                <FieldInput
+                <FieldSelect
                   value={x.phaseType}
                   onChange={event => handleScheduleEntryChange(i, 'phaseType', event.target.value)}
-                  placeholder="Phase"
                   style={{ width: 150, flex: 'none' }}
-                />
+                >
+                  <option value="">Phase</option>
+                  {SCHEDULE_PHASES.map(phase => (
+                    <option key={phase} value={phase}>{phase}</option>
+                  ))}
+                </FieldSelect>
                 <SmallInput
                   $width="50px"
                   type="number"
@@ -488,7 +491,7 @@ export const OfferMetaForm: React.FC = () => {
                 <ScheduleNotesInput
                   value={x.notes}
                   onChange={event => handleScheduleEntryChange(i, 'notes', event.target.value)}
-                  placeholder="Notes"
+                  placeholder="e.g. 11+1 day"
                 />
                 <RemoveButton onClick={() => handleRemoveScheduleEntry(i)}>
                   <CloseIcon width={10} height={10} />

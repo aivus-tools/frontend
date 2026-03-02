@@ -1,23 +1,38 @@
+export const TERRITORY_OPTIONS = [
+  'Worldwide',
+  'USA',
+  'North America',
+  'Global',
+  'Canada',
+  'Europe',
+  'UK',
+  'LATAM',
+  'APAC',
+];
+
 export const MEDIA_PLACEMENTS_OPTIONS = [
-  'All online',
-  'TVC',
+  'Organic Social',
+  'Paid Social',
+  'Digital',
+  'Website',
+  'YouTube',
+  'Broadcast TV',
+  'CTV / OTT',
   'OOH',
-  'Indoor',
-  'RDC',
-  'Print',
+  'Taxi TV',
+  'In-store',
+  'Internal',
+  'Trade / Events',
 ];
 
-export const TERM_OPTIONS = [
-  '1 month',
-  '3 months',
-  '6 months',
-  '1 year',
-  '2 years',
-  '3 years',
-  '5 years',
-  'Perpetuity',
+export const DURATION_UNITS = ['', 'Sec', 'Min', 'Still(s)'];
+
+export const SCHEDULE_PHASES = [
+  'Prep',
+  'Tech Scout',
+  'Pre-light',
+  'Shoot',
+  'Wrap / Return',
+  'Edit',
+  'Delivery',
 ];
-
-export const DURATION_UNITS = ['Sec', 'Min'];
-
-export const DEFAULT_SCHEDULE_PHASES = ['Prep', 'Shoot', 'Wrap / Return'];
