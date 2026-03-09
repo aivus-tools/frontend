@@ -13,6 +13,7 @@ import { chatApi } from '@/services/client/chatApi';
 import { comparisonApi } from '@/services/client/comparisonApi';
 import { xlsxApi } from '@/services/client/xlsxApi';
 import { profileApi } from '@/services/client/profileApi';
+import { vendorSettingsApi } from '@/services/client/vendorSettingsApi';
 import { listenerMiddleware } from '@/lib/listenerMiddleware';
 
 export const makeStore = () => {
@@ -32,6 +33,7 @@ export const makeStore = () => {
         comparisonApi.middleware,
         xlsxApi.middleware,
         profileApi.middleware,
+        vendorSettingsApi.middleware,
         listenerMiddleware.middleware
       ),
   });

@@ -13,6 +13,7 @@ import { exportToExcel } from '@/helpers/excelExport/exportToExcel';
 import { useAppDispatch, useAppSelector } from '@/store/hooks';
 import { selectCategoriesExportData, selectOfferDetails, selectOfferMetaData, selectTemplateId } from '@/store/slices/offer/selectors';
 import { setMetaData } from '@/store/slices/offer/slice';
+import { selectProjectId } from '@/store/slices/project';
 import dayjs, { Dayjs } from 'dayjs';
 import { useCallback, useRef, useState } from 'react';
 import { SharePopup } from '@/modules/SharePopup/SharePopup';
@@ -30,6 +31,7 @@ export const ProjectNavbar = () => {
   const offerDetails = useAppSelector(selectOfferDetails);
   const offerMetaData = useAppSelector(selectOfferMetaData);
   const templateId = useAppSelector(selectTemplateId);
+  const projectId = useAppSelector(selectProjectId);
   const session = useSession();
   const [shareOpen, setShareOpen] = useState(false);
   const [saveTemplateOpen, setSaveTemplateOpen] = useState(false);
@@ -73,6 +75,8 @@ export const ProjectNavbar = () => {
       const uf = offerDetails.unforeseenExpenses;
       const agencyFeePercent = uf?.isVisible ? (uf?.clientPercent ?? 0) : 0;
       await exportToExcel(categoriesExportData, name, date, watermark, offerMetaData?.id, agencyFeePercent);
+    } else if (format === 'pdf' && offerMetaData?.id) {
+      window.open(`/export/${offerMetaData.id}`, '_blank');
     } else {
       message.info(t('COMING_SOON'));
     }

@@ -73,4 +73,7 @@ export const ApiRoute = {
   // Settings
   USER_SETTINGS: '/service/users/settings',
   CHANGE_PASSWORD: '/service/users/change-password',
+  VENDOR_SETTINGS: '/service/vendor/settings',
+  VENDOR_SETTINGS_LOGO: '/service/vendor/settings/logo',
+  OFFER_EXPORT_DATA: (offerId: string | number) => `/service/offers/${offerId}/export-data`,
 } as const;

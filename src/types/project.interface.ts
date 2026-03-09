@@ -7,7 +7,7 @@ export interface ProjectCollaborator {
   userId?: string | null;
   name: string;
   email: string;
-  role: 'internal_user' | 'external_user';
+  role: 'internal_user' | 'external_user' | 'producer' | 'agency_producer';
 }
 
 export interface ClientManager {
@@ -31,6 +31,7 @@ export interface Project {
   clientName?: string | null;
   irsEin?: string;
   brandName?: string;
+  agencyName?: string;
   thumbnailUrl?: string | null;
   collaborators?: ProjectCollaborator[];
   clientManagers?: ClientManager[];
@@ -42,7 +43,7 @@ export interface NewProjectCollaborator {
   userId?: string | null;
   name: string;
   email?: string;
-  role?: 'internal_user' | 'external_user';
+  role?: 'internal_user' | 'external_user' | 'producer' | 'agency_producer';
 }
 
 export interface NewClientManager {
@@ -62,6 +63,7 @@ export interface NewProject {
   clientName?: string;
   irsEin?: string;
   brandName?: string;
+  agencyName?: string;
   collaborators?: NewProjectCollaborator[];
   clientManagers?: NewClientManager[];
 }

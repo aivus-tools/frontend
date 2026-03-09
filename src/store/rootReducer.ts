@@ -15,6 +15,7 @@ import { chatApi } from '@/services/client/chatApi';
 import { comparisonApi } from '@/services/client/comparisonApi';
 import { xlsxApi } from '@/services/client/xlsxApi';
 import { profileApi } from '@/services/client/profileApi';
+import { vendorSettingsApi } from '@/services/client/vendorSettingsApi';
 
 export const rootReducer = combineReducers({
   [projectSlice.reducerPath]: projectSlice.reducer,
@@ -33,4 +34,5 @@ export const rootReducer = combineReducers({
   [comparisonApi.reducerPath]: comparisonApi.reducer,
   [xlsxApi.reducerPath]: xlsxApi.reducer,
   [profileApi.reducerPath]: profileApi.reducer,
+  [vendorSettingsApi.reducerPath]: vendorSettingsApi.reducer,
 });

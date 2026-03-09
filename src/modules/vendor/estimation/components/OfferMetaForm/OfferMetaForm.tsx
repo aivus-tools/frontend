@@ -157,6 +157,15 @@ export const OfferMetaForm: React.FC = () => {
   const [territory, setTerritory] = useState<string[]>([]);
   const [mediaPlacements, setMediaPlacements] = useState<string[]>([]);
   const [coverPageNotes, setCoverPageNotes] = useState('');
+  const [assumptionsExclusions, setAssumptionsExclusions] = useState('');
+  const [fringesPercent, setFringesPercent] = useState('');
+  const [handlingPercent, setHandlingPercent] = useState('');
+  const [markupPercent, setMarkupPercent] = useState('');
+  const [productionInsurancePercent, setProductionInsurancePercent] = useState('');
+  const [productionFeePercent, setProductionFeePercent] = useState('');
+  const [postMarkupPercent, setPostMarkupPercent] = useState('');
+  const [postInsurancePercent, setPostInsurancePercent] = useState('');
+  const [postTaxPercent, setPostTaxPercent] = useState('');
   const [deliverables, setDeliverables] = useState<OfferDeliverable[]>([]);
   const [scheduleEntries, setScheduleEntries] = useState<OfferScheduleEntry[]>([]);
 
@@ -174,6 +183,15 @@ export const OfferMetaForm: React.FC = () => {
     setTerritory(metaData.territory || []);
     setMediaPlacements(metaData.mediaPlacements || []);
     setCoverPageNotes(metaData.coverPageNotes || '');
+    setAssumptionsExclusions(metaData.assumptionsExclusions || '');
+    setFringesPercent(metaData.fringesPercent || '');
+    setHandlingPercent(metaData.handlingPercent || '');
+    setMarkupPercent(metaData.markupPercent || '');
+    setProductionInsurancePercent(metaData.productionInsurancePercent || '');
+    setProductionFeePercent(metaData.productionFeePercent || '');
+    setPostMarkupPercent(metaData.postMarkupPercent || '');
+    setPostInsurancePercent(metaData.postInsurancePercent || '');
+    setPostTaxPercent(metaData.postTaxPercent || '');
     setDeliverables(metaData.deliverables || []);
     setScheduleEntries(metaData.scheduleEntries || []);
   }, [metaData]);
@@ -268,6 +286,19 @@ export const OfferMetaForm: React.FC = () => {
   const handleCoverPageNotesChange = useCallback((value: string) => {
     setCoverPageNotes(value);
     handleFieldChange('coverPageNotes', value);
+  }, [handleFieldChange]);
+
+  const handleAssumptionsExclusionsChange = useCallback((value: string) => {
+    setAssumptionsExclusions(value);
+    handleFieldChange('assumptionsExclusions', value);
+  }, [handleFieldChange]);
+
+  const handlePercentChange = useCallback((field: string, setter: (value: string) => void) => {
+    return (event: React.ChangeEvent<HTMLInputElement>) => {
+      const value = event.target.value;
+      setter(value);
+      handleFieldChange(field, value || '0');
+    };
   }, [handleFieldChange]);
 
   const handleAddDeliverable = useCallback(() => {
@@ -505,6 +536,117 @@ export const OfferMetaForm: React.FC = () => {
             <div style={{ marginTop: 4 }}>
               <RichTextEditor value={coverPageNotes} onChange={handleCoverPageNotesChange} />
             </div>
+          </div>
+
+          <div>
+            <FieldLabel>Assumptions & Exclusions</FieldLabel>
+            <div style={{ marginTop: 4 }}>
+              <RichTextEditor value={assumptionsExclusions} onChange={handleAssumptionsExclusionsChange} />
+            </div>
+          </div>
+
+          <div>
+            <SectionHeader>
+              <SectionLabel>Production Percentages</SectionLabel>
+            </SectionHeader>
+            <FormRow>
+              <FormField $width="140px">
+                <FieldLabel>Fringes %</FieldLabel>
+                <FieldInput
+                  type="number"
+                  step="0.01"
+                  min="0"
+                  value={fringesPercent}
+                  onChange={handlePercentChange('fringesPercent', setFringesPercent)}
+                  placeholder="0"
+                />
+              </FormField>
+              <FormField $width="140px">
+                <FieldLabel>Handling %</FieldLabel>
+                <FieldInput
+                  type="number"
+                  step="0.01"
+                  min="0"
+                  value={handlingPercent}
+                  onChange={handlePercentChange('handlingPercent', setHandlingPercent)}
+                  placeholder="0"
+                />
+              </FormField>
+              <FormField $width="140px">
+                <FieldLabel>Markup %</FieldLabel>
+                <FieldInput
+                  type="number"
+                  step="0.01"
+                  min="0"
+                  value={markupPercent}
+                  onChange={handlePercentChange('markupPercent', setMarkupPercent)}
+                  placeholder="0"
+                />
+              </FormField>
+              <FormField $width="140px">
+                <FieldLabel>Prod Insurance %</FieldLabel>
+                <FieldInput
+                  type="number"
+                  step="0.01"
+                  min="0"
+                  value={productionInsurancePercent}
+                  onChange={handlePercentChange('productionInsurancePercent', setProductionInsurancePercent)}
+                  placeholder="0"
+                />
+              </FormField>
+              <FormField $width="140px">
+                <FieldLabel>Prod Fee %</FieldLabel>
+                <FieldInput
+                  type="number"
+                  step="0.01"
+                  min="0"
+                  value={productionFeePercent}
+                  onChange={handlePercentChange('productionFeePercent', setProductionFeePercent)}
+                  placeholder="0"
+                />
+              </FormField>
+            </FormRow>
+          </div>
+
+          <div>
+            <SectionHeader>
+              <SectionLabel>Post-Production Percentages</SectionLabel>
+            </SectionHeader>
+            <FormRow>
+              <FormField $width="140px">
+                <FieldLabel>Post Markup %</FieldLabel>
+                <FieldInput
+                  type="number"
+                  step="0.01"
+                  min="0"
+                  value={postMarkupPercent}
+                  onChange={handlePercentChange('postMarkupPercent', setPostMarkupPercent)}
+                  placeholder="0"
+                />
+              </FormField>
+              <FormField $width="140px">
+                <FieldLabel>Post Insurance %</FieldLabel>
+                <FieldInput
+                  type="number"
+                  step="0.01"
+                  min="0"
+                  value={postInsurancePercent}
+                  onChange={handlePercentChange('postInsurancePercent', setPostInsurancePercent)}
+                  placeholder="0"
+                />
+              </FormField>
+              <FormField $width="140px">
+                <FieldLabel>Post Tax %</FieldLabel>
+                <FieldInput
+                  type="number"
+                  step="0.01"
+                  min="0"
+                  value={postTaxPercent}
+                  onChange={handlePercentChange('postTaxPercent', setPostTaxPercent)}
+                  placeholder="0"
+                />
+              </FormField>
+            </FormRow>
           </div>
         </MetaFormBody>
       )}

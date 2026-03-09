@@ -79,6 +79,15 @@ export const GuidanceDictionary = {
       </>
     ),
   },
+  agencyName: {
+    label: 'Agency',
+    header: '',
+    description: (
+      <>
+        The advertising agency associated with this project. This will appear on cover pages and export documents.
+      </>
+    ),
+  },
   manager: {
     label: 'Manager',
     header: '',

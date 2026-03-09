@@ -14,7 +14,7 @@ export interface ProjectFormData {
     userId?: string | null;
     name: string;
     email?: string;
-    role?: 'internal_user' | 'external_user';
+    role?: 'internal_user' | 'external_user' | 'producer' | 'agency_producer';
   }>;
 
   // Client
@@ -22,6 +22,7 @@ export interface ProjectFormData {
   clientName?: string;
   irsEin?: string;
   brandName?: string;
+  agencyName?: string;
   managers?: Array<{
     name: string;
     position?: string;
@@ -58,6 +59,7 @@ export const useMutateProject = () => {
         clientName: formData.clientName || '',
         irsEin: formData.irsEin || '',
         brandName: formData.brandName || '',
+        agencyName: formData.agencyName || '',
         collaborators: formData.collaborators?.filter((c) => c.name || c.email).map((c) => ({
           userId: c.userId || null,
           name: c.name || c.email || '',
@@ -118,6 +120,9 @@ export const useMutateProject = () => {
       }
       if (formData.brandName !== undefined) {
         updatePayload.brandName = formData.brandName;
+      }
+      if (formData.agencyName !== undefined) {
+        updatePayload.agencyName = formData.agencyName;
       }
       if (formData.collaborators !== undefined) {
         updatePayload.collaborators = formData.collaborators.filter((c) => c.name || c.email).map((c) => ({

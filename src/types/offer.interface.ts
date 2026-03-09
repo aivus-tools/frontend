@@ -39,6 +39,15 @@ export interface Offer {
   territory?: string[];
   mediaPlacements?: string[];
   coverPageNotes?: string;
+  assumptionsExclusions?: string;
+  fringesPercent?: string;
+  handlingPercent?: string;
+  markupPercent?: string;
+  productionInsurancePercent?: string;
+  productionFeePercent?: string;
+  postMarkupPercent?: string;
+  postInsurancePercent?: string;
+  postTaxPercent?: string;
   deliverables?: OfferDeliverable[];
   scheduleEntries?: OfferScheduleEntry[];
   createdAt: string;

@@ -51,6 +51,7 @@ export default function Details() {
         clientName: existingProject.clientName || '',
         irsEin: existingProject.irsEin || '',
         brandName: existingProject.brandName || '',
+        agencyName: existingProject.agencyName || '',
         collaborators: existingProject.collaborators?.map((c) => ({
           userId: c.userId || null,
           name: c.name,

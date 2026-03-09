@@ -1,4 +1,5 @@
 import { Offer, NewOffer } from '@/types/offer.interface';
+import { OfferExportData } from '@/types/exportData.interface';
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
 import { ApiRoute } from '@/constants/apiRoute';
 
@@ -57,6 +58,10 @@ export const offersApi = createApi({
       }),
       invalidatesTags: ['Offer'],
     }),
+    getOfferExportData: builder.query<OfferExportData, string>({
+      query: (offerId) => ApiRoute.OFFER_EXPORT_DATA(offerId),
+      providesTags: ['Offer'],
+    }),
   }),
 });
 
@@ -69,4 +74,5 @@ export const {
   useGetOffersByProjectIdQuery,
   useCopyOfferMutation,
   useUpdateOfferStatusMutation,
+  useGetOfferExportDataQuery,
 } = offersApi;
