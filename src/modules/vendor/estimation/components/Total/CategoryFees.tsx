@@ -4,9 +4,8 @@ import React, { useState, useCallback } from 'react';
 import { Flex, Input } from 'antd';
 import { styled } from 'styled-components';
 import { useAppSelector, useAppDispatch } from '@/store/hooks';
-import { selectCategoryFees, selectIsExternal } from '@/store/slices/offer/selectors';
+import { selectCategoryFees, selectIsExternal , FeeRow } from '@/store/slices/offer/selectors';
 import { setCustomFeeName } from '@/store/slices/offer/slice';
-import { FeeRow } from '@/store/slices/offer/selectors';
 import { formatCurrency } from '@/lib/utils';
 import { RootState } from '@/store/store';
 

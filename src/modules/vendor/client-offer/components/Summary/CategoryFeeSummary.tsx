@@ -1,13 +1,11 @@
 'use client';
 
-import React from 'react';
+import React, { useCallback } from 'react';
 import { useAppSelector } from '@/store/hooks';
-import { selectAllCategoryFeesTotal, FeeRow } from '@/store/slices/offer/selectors';
-import { selectRootCategories, selectCategoryFees } from '@/store/slices/offer/selectors';
+import { selectAllCategoryFeesTotal, FeeRow , selectRootCategories, selectCategoryFees } from '@/store/slices/offer/selectors';
 import { formatCurrency } from '@/lib/utils';
 import { AgencyServiceRow } from '../styled';
 import { styled } from 'styled-components';
-import { useCallback } from 'react';
 import { RootState } from '@/store/store';
 
 const FeeLabel = styled.span`
