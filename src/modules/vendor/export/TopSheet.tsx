@@ -1,273 +1,276 @@
 import React from 'react';
 
-import { ExportCategorySection, OfferExportData } from '@/types/exportData.interface';
+import { OfferExportData } from '@/types/exportData.interface';
 
 const formatCurrency = (value: number): string => {
-  return new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(value);
+  if (value === 0) {
+    return '\u2013';
+  }
+  return new Intl.NumberFormat('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(value);
 };
 
 const FONT_FAMILY = "'Montserrat', sans-serif";
-const HEADER_BACKGROUND = '#1a3a5c';
-const SUBTOTAL_BACKGROUND = '#f5f5f5';
-const GRAND_TOTAL_BACKGROUND = '#e8f0fe';
+const TEXT_COLOR = '#4B5675';
+const ACCENT_COLOR = '#7CDFF1';
+const SUBTOTAL_BG = '#E8F5FD';
+const TOTAL_BG = '#7CDFF1';
+const GRAND_TOTAL_BG = '#7CDFF1';
+const GRAND_TOTAL_PRICE_BG = '#60D394';
 
-const cellStyle: React.CSSProperties = {
-  padding: '6px 12px',
-  fontFamily: FONT_FAMILY,
-  fontSize: '12px',
-  borderBottom: '1px solid #e0e0e0',
+interface SectionGroup {
+  id: string;
+  code: string;
+  name: string;
+  tags: string[];
+  children: Array<{ code: string; name: string; total: number }>;
+  subtotal: number;
+}
+
+interface FeeItem {
+  label: string;
+  percent: number;
+  value: number;
+}
+
+const DEFAULT_FEE_NAMES: Record<string, string> = {
+  PROD_INSURANCE: 'Production Insurance',
+  PROD_FEE: 'Production Fee',
+  POST_INSURANCE: 'Post Insurance',
+  POST_MARKUP: 'Post Markup',
+  POST_TAX: 'Post Tax',
 };
 
-const estimateCellStyle: React.CSSProperties = {
-  ...cellStyle,
-  textAlign: 'right',
+const getFeeName = (key: string, customFeeNames: Record<string, string>): string => {
+  return customFeeNames[key] || DEFAULT_FEE_NAMES[key] || key;
 };
 
-const headerCellStyle: React.CSSProperties = {
-  ...cellStyle,
-  backgroundColor: HEADER_BACKGROUND,
-  color: '#ffffff',
-  fontWeight: 700,
-  fontSize: '13px',
+const buildSectionFees = (
+  categoryId: string,
+  tags: string[],
+  subtotal: number,
+  offer: OfferExportData['offer'],
+): FeeItem[] => {
+  const fees: FeeItem[] = [];
+  const customNames = offer.customFeeNames || {};
+
+  if (tags.includes('production')) {
+    const insurancePct = parseFloat(offer.productionInsurancePercent) || 0;
+    const feePct = parseFloat(offer.productionFeePercent) || 0;
+    if (insurancePct > 0) {
+      fees.push({ label: getFeeName('PROD_INSURANCE', customNames), percent: insurancePct, value: subtotal * (insurancePct / 100) });
+    }
+    if (feePct > 0) {
+      fees.push({ label: getFeeName('PROD_FEE', customNames), percent: feePct, value: subtotal * (feePct / 100) });
+    }
+  }
+  if (tags.includes('post_production')) {
+    const insurancePct = parseFloat(offer.postInsurancePercent) || 0;
+    const markupPct = parseFloat(offer.postMarkupPercent) || 0;
+    const taxPct = parseFloat(offer.postTaxPercent) || 0;
+    if (insurancePct > 0) {
+      fees.push({ label: getFeeName('POST_INSURANCE', customNames), percent: insurancePct, value: subtotal * (insurancePct / 100) });
+    }
+    if (markupPct > 0) {
+      fees.push({ label: getFeeName('POST_MARKUP', customNames), percent: markupPct, value: subtotal * (markupPct / 100) });
+    }
+    if (taxPct > 0) {
+      fees.push({ label: getFeeName('POST_TAX', customNames), percent: taxPct, value: subtotal * (taxPct / 100) });
+    }
+  }
+
+  const extMarkup = (offer.categoryExternalMarkup || {})[categoryId];
+  if (extMarkup?.enabled && extMarkup.percent > 0) {
+    fees.push({
+      label: extMarkup.name || 'Markup',
+      percent: extMarkup.percent,
+      value: subtotal * (extMarkup.percent / 100),
+    });
+  }
+
+  return fees;
 };
-
-const subtotalRowStyle: React.CSSProperties = {
-  backgroundColor: SUBTOTAL_BACKGROUND,
-};
-
-const totalCellStyle: React.CSSProperties = {
-  ...cellStyle,
-  fontWeight: 700,
-};
-
-const totalEstimateCellStyle: React.CSSProperties = {
-  ...totalCellStyle,
-  textAlign: 'right',
-};
-
-const grandTotalCellStyle: React.CSSProperties = {
-  ...cellStyle,
-  fontWeight: 700,
-  fontSize: '14px',
-  backgroundColor: GRAND_TOTAL_BACKGROUND,
-};
-
-const grandTotalEstimateCellStyle: React.CSSProperties = {
-  ...grandTotalCellStyle,
-  textAlign: 'right',
-};
-
-const PRODUCTION_CODES: Array<{ code: string; label: string }> = [
-  { code: 'A', label: 'Prep Crew' },
-  { code: 'B', label: 'Shoot Crew' },
-  { code: 'C', label: 'Prep & Wrap Expenses' },
-  { code: 'D', label: 'Location/Travel Expenses' },
-  { code: 'E', label: 'Props/Wardrobe/Animals' },
-  { code: 'F', label: 'Studio Costs' },
-  { code: 'G', label: 'Art Dept Labor' },
-  { code: 'H', label: 'Art Dept Expenses' },
-  { code: 'I', label: 'Equipment Rental' },
-  { code: 'J', label: 'Media' },
-  { code: 'K', label: 'Misc Production Costs' },
-];
-
-const SECONDARY_PRODUCTION_CODES: Array<{ code: string; label: string }> = [
-  { code: 'L', label: "Director's Fees" },
-  { code: 'M', label: 'Talent' },
-  { code: 'N', label: 'Talent Expenses' },
-  { code: 'O', label: 'Other' },
-];
-
-const POST_PRODUCTION_CODES: Array<{ code: string; label: string }> = [
-  { code: 'Q', label: 'Editorial' },
-  { code: 'R', label: 'Social Versions' },
-  { code: 'S', label: 'Audio' },
-  { code: 'T', label: 'Finishing' },
-  { code: 'U', label: 'Misc Editorial' },
-  { code: 'V', label: 'Editorial Labor & Creative Fees' },
-  { code: 'W', label: 'Other' },
-];
-
-const ALL_AICP_CODES = new Set([
-  ...PRODUCTION_CODES,
-  ...SECONDARY_PRODUCTION_CODES,
-  ...POST_PRODUCTION_CODES,
-].map(x => x.code));
 
 interface TopSheetProps {
   data: OfferExportData;
 }
 
-export const TopSheet: React.FC<TopSheetProps> = props => {
-  const findCategory = (code: string): ExportCategorySection | null => {
-    return props.data.categories.find(x => x.code === code) ?? null;
-  };
+export const TopSheet: React.FC<TopSheetProps> = (props) => {
+  const groupsMap = new Map<string, SectionGroup>();
 
-  const getCategoryTotal = (code: string): number => {
-    const category = findCategory(code);
-    if (category == null) {
-      return 0;
+  for (const cat of props.data.categories) {
+    const parentKey = cat.parentCategoryId || cat.id;
+    const existing = groupsMap.get(parentKey);
+    if (existing) {
+      existing.children.push({ code: cat.code, name: cat.name, total: cat.sectionTotal });
+      existing.subtotal += cat.sectionTotal;
+    } else {
+      groupsMap.set(parentKey, {
+        id: cat.parentCategoryId || cat.id,
+        code: cat.parentCategoryCode || cat.code,
+        name: cat.parentCategoryName || cat.name,
+        tags: cat.parentTags.length > 0 ? cat.parentTags : cat.tags,
+        children: [{ code: cat.code, name: cat.name, total: cat.sectionTotal }],
+        subtotal: cat.sectionTotal,
+      });
     }
-    return category.sectionTotal;
-  };
+  }
 
-  const unmappedCategories = props.data.categories.filter(x => !x.code || !ALL_AICP_CODES.has(x.code));
-  const unmappedTotal = unmappedCategories.reduce((sum, x) => sum + x.sectionTotal, 0);
+  const groups = Array.from(groupsMap.values());
 
-  const subTotalAK = PRODUCTION_CODES.reduce((sum, x) => sum + getCategoryTotal(x.code), 0);
-  const subTotalLO = SECONDARY_PRODUCTION_CODES.reduce((sum, x) => sum + getCategoryTotal(x.code), 0);
-  const productionSubTotal = subTotalAK + subTotalLO;
-
-  const productionInsurancePercent = parseFloat(props.data.offer.productionInsurancePercent) || 0;
-  const productionFeePercent = parseFloat(props.data.offer.productionFeePercent) || 0;
-  const productionInsurance = productionSubTotal * (productionInsurancePercent / 100);
-  const productionFee = productionSubTotal * (productionFeePercent / 100);
-  const productionTotal = productionSubTotal + productionInsurance + productionFee;
-
-  const subTotalPost = POST_PRODUCTION_CODES.reduce((sum, x) => sum + getCategoryTotal(x.code), 0);
-
-  const postInsurancePercent = parseFloat(props.data.offer.postInsurancePercent) || 0;
-  const postMarkupPercent = parseFloat(props.data.offer.postMarkupPercent) || 0;
-  const postTaxPercent = parseFloat(props.data.offer.postTaxPercent) || 0;
-  const postInsurance = subTotalPost * (postInsurancePercent / 100);
-  const postMarkup = subTotalPost * (postMarkupPercent / 100);
-  const postTax = subTotalPost * (postTaxPercent / 100);
-  const postProductionTotal = subTotalPost + postInsurance + postMarkup + postTax;
-
-  const hasAicpData = productionSubTotal > 0 || subTotalPost > 0;
-  const grandTotal = productionTotal + postProductionTotal + unmappedTotal;
-
-  const renderCategoryRow = (code: string, label: string): React.ReactNode => {
-    return (
-      <tr key={code}>
-        <td style={cellStyle}>
-          {code}. {label}
-        </td>
-        <td style={cellStyle} />
-        <td style={estimateCellStyle}>{formatCurrency(getCategoryTotal(code))}</td>
-      </tr>
-    );
-  };
-
-  const renderUnmappedCategoryRow = (category: ExportCategorySection): React.ReactNode => {
-    const label = category.code ? `${category.code}. ${category.name}` : category.name;
-    return (
-      <tr key={category.id}>
-        <td style={cellStyle}>{label}</td>
-        <td style={cellStyle} />
-        <td style={estimateCellStyle}>{formatCurrency(category.sectionTotal)}</td>
-      </tr>
-    );
-  };
-
-  const renderSubTotalRow = (label: string, value: number): React.ReactNode => {
-    return (
-      <tr style={subtotalRowStyle}>
-        <td style={totalCellStyle}>{label}</td>
-        <td style={totalCellStyle} />
-        <td style={totalEstimateCellStyle}>{formatCurrency(value)}</td>
-      </tr>
-    );
-  };
-
-  const renderPercentRow = (label: string, percent: number, value: number): React.ReactNode => {
-    return (
-      <tr>
-        <td style={cellStyle}>
-          {label} ({percent}%)
-        </td>
-        <td style={cellStyle} />
-        <td style={estimateCellStyle}>{formatCurrency(value)}</td>
-      </tr>
-    );
-  };
-
-  const renderSectionTotalRow = (label: string, value: number): React.ReactNode => {
-    return (
-      <tr>
-        <td style={totalCellStyle}>{label}</td>
-        <td style={totalCellStyle} />
-        <td style={totalEstimateCellStyle}>{formatCurrency(value)}</td>
-      </tr>
-    );
-  };
-
-  const tableStyle: React.CSSProperties = {
-    width: '100%',
-    borderCollapse: 'collapse',
-    fontFamily: FONT_FAMILY,
-  };
+  let grandTotal = 0;
+  const sections = groups.map((group) => {
+    const fees = buildSectionFees(group.id, group.tags, group.subtotal, props.data.offer);
+    const feesTotal = fees.reduce((sum, x) => sum + x.value, 0);
+    const sectionTotal = group.subtotal + feesTotal;
+    grandTotal += sectionTotal;
+    return { ...group, fees, sectionTotal };
+  });
 
   return (
-    <div style={{ fontFamily: FONT_FAMILY, width: '100%' }}>
-      {hasAicpData && (
-        <>
-          <table style={tableStyle}>
-            <thead>
-              <tr>
-                <th style={{ ...headerCellStyle, textAlign: 'left', width: '50%' }}>PRODUCTION</th>
-                <th style={{ ...headerCellStyle, textAlign: 'left', width: '25%' }}>NOTE</th>
-                <th style={{ ...headerCellStyle, textAlign: 'right', width: '25%' }}>ESTIMATE</th>
-              </tr>
-            </thead>
-            <tbody>
-              {PRODUCTION_CODES.map(x => renderCategoryRow(x.code, x.label))}
-              {renderSubTotalRow('Sub-Total A to K', subTotalAK)}
-              {SECONDARY_PRODUCTION_CODES.map(x => renderCategoryRow(x.code, x.label))}
-              {renderSubTotalRow('Sub-Total L to O', subTotalLO)}
-              {renderPercentRow('Production Insurance', productionInsurancePercent, productionInsurance)}
-              {renderPercentRow('Production Fee', productionFeePercent, productionFee)}
-              {renderSectionTotalRow('PRODUCTION TOTAL', productionTotal)}
-            </tbody>
-          </table>
+    <div style={{ fontFamily: FONT_FAMILY, maxWidth: 1210, margin: '0 auto', padding: '0 32px' }}>
+      {sections.map((section, i) => (
+        <React.Fragment key={i}>
+          {i > 0 && <div style={{ height: 16 }} />}
+          <SectionTable
+            title={section.name}
+            items={section.children.map((x) => ({ code: x.code, label: x.name, value: x.total }))}
+            subTotals={[
+              { label: `Sub-Total ${section.name}`, value: section.subtotal },
+            ]}
+            fees={section.fees}
+            total={{ label: `${section.name.toUpperCase()} TOTAL`, value: section.sectionTotal }}
+          />
+        </React.Fragment>
+      ))}
 
-          <table style={{ ...tableStyle, marginTop: '16px' }}>
-            <thead>
-              <tr>
-                <th style={{ ...headerCellStyle, textAlign: 'left', width: '50%' }}>POST-PRODUCTION</th>
-                <th style={{ ...headerCellStyle, textAlign: 'left', width: '25%' }}>NOTE</th>
-                <th style={{ ...headerCellStyle, textAlign: 'right', width: '25%' }}>ESTIMATE</th>
-              </tr>
-            </thead>
-            <tbody>
-              {POST_PRODUCTION_CODES.map(x => renderCategoryRow(x.code, x.label))}
-              {renderSubTotalRow('Sub-Total Post-Production', subTotalPost)}
-              {renderPercentRow('Post Insurance', postInsurancePercent, postInsurance)}
-              {renderPercentRow('Post Markup', postMarkupPercent, postMarkup)}
-              {renderPercentRow('Post Tax', postTaxPercent, postTax)}
-              {renderSectionTotalRow('POST-PRODUCTION TOTAL', postProductionTotal)}
-            </tbody>
-          </table>
-        </>
-      )}
-
-      {unmappedCategories.length > 0 && (
-        <table style={{ ...tableStyle, marginTop: hasAicpData ? '16px' : undefined }}>
-          <thead>
-            <tr>
-              <th style={{ ...headerCellStyle, textAlign: 'left', width: '50%' }}>
-                {hasAicpData ? 'ADDITIONAL CATEGORIES' : 'SUMMARY'}
-              </th>
-              <th style={{ ...headerCellStyle, textAlign: 'left', width: '25%' }}>NOTE</th>
-              <th style={{ ...headerCellStyle, textAlign: 'right', width: '25%' }}>ESTIMATE</th>
-            </tr>
-          </thead>
-          <tbody>
-            {unmappedCategories.map(x => renderUnmappedCategoryRow(x))}
-            {renderSubTotalRow(hasAicpData ? 'Additional Sub-Total' : 'Sub-Total', unmappedTotal)}
-          </tbody>
-        </table>
-      )}
-
-      <table style={{ ...tableStyle, marginTop: '16px' }}>
+      <div style={{ height: 0 }} />
+      <table style={tableStyle}>
         <tbody>
           <tr>
-            <td style={{ ...grandTotalCellStyle, width: '50%' }}>GRAND TOTAL</td>
-            <td style={{ ...grandTotalCellStyle, width: '25%' }} />
-            <td style={{ ...grandTotalEstimateCellStyle, width: '25%' }}>{formatCurrency(grandTotal)}</td>
+            <td style={{ ...grandTotalCellStyle, width: 70, background: GRAND_TOTAL_BG }} />
+            <td style={{ ...grandTotalCellStyle, width: 320, background: GRAND_TOTAL_BG }} />
+            <td style={{ ...grandTotalCellStyle, background: GRAND_TOTAL_BG, textAlign: 'right' }}>GRAND TOTAL</td>
+            <td style={{ ...grandTotalCellStyle, width: 220, textAlign: 'right', background: GRAND_TOTAL_PRICE_BG }}>
+              {formatCurrency(grandTotal)}
+            </td>
           </tr>
         </tbody>
       </table>
     </div>
   );
+};
+
+interface SectionTableProps {
+  title: string;
+  items: Array<{ code: string; label: string; value: number }>;
+  subTotals: Array<{ label: string; value: number }>;
+  fees: Array<{ label: string; percent: number; value: number }>;
+  total: { label: string; value: number };
+}
+
+const SectionTable: React.FC<SectionTableProps> = (props) => {
+  return (
+    <table style={tableStyle}>
+      <thead>
+        <tr>
+          <th style={{ ...headerCellStyle, width: 70 }} />
+          <th style={{ ...headerCellStyle, width: 320, textAlign: 'left' }}>{props.title}</th>
+          <th style={{ ...headerCellStyle, textAlign: 'left' }}>NOTE</th>
+          <th style={{ ...headerCellStyle, width: 220, textAlign: 'right' }} />
+        </tr>
+      </thead>
+      <tbody>
+        {props.items.map((x) => (
+          <tr key={x.code}>
+            <td style={cellStyle}>{x.code}</td>
+            <td style={cellStyle}>{x.label}</td>
+            <td style={cellStyle} />
+            <td style={priceCellStyle}>{formatCurrency(x.value)}</td>
+          </tr>
+        ))}
+        {props.subTotals.map((x) => (
+          <tr key={x.label} style={{ background: SUBTOTAL_BG }}>
+            <td style={subtotalCellStyle} />
+            <td style={subtotalCellStyle} />
+            <td style={{ ...subtotalCellStyle, fontWeight: 700, textAlign: 'right' }}>{x.label}</td>
+            <td style={{ ...subtotalCellStyle, textAlign: 'right', fontWeight: 700 }}>{formatCurrency(x.value)}</td>
+          </tr>
+        ))}
+        {props.fees.map((x) => (
+          <tr key={x.label}>
+            <td style={cellStyle} />
+            <td style={cellStyle} />
+            <td style={cellStyle}>{x.label}</td>
+            <td style={priceCellStyle}>
+              <span style={{ marginRight: 16, color: '#99A1B7', fontSize: 12 }}>{x.percent}%</span>
+              {formatCurrency(x.value)}
+            </td>
+          </tr>
+        ))}
+        <tr style={{ background: TOTAL_BG }}>
+          <td style={totalCellStyle} />
+          <td style={totalCellStyle} />
+          <td style={{ ...totalCellStyle, fontWeight: 700, textAlign: 'right' }}>{props.total.label}</td>
+          <td style={{ ...totalCellStyle, textAlign: 'right', fontWeight: 700 }}>{formatCurrency(props.total.value)}</td>
+        </tr>
+      </tbody>
+    </table>
+  );
+};
+
+const tableStyle: React.CSSProperties = {
+  width: '100%',
+  borderCollapse: 'collapse',
+  fontFamily: FONT_FAMILY,
+  fontSize: 14,
+};
+
+const BORDER = '1px solid #0F4C5C';
+
+const headerCellStyle: React.CSSProperties = {
+  padding: '6px 6px',
+  fontFamily: FONT_FAMILY,
+  fontSize: 14,
+  fontWeight: 700,
+  color: '#fff',
+  background: ACCENT_COLOR,
+  border: BORDER,
+};
+
+const cellStyle: React.CSSProperties = {
+  padding: '6px 6px',
+  fontFamily: FONT_FAMILY,
+  fontSize: 14,
+  color: TEXT_COLOR,
+  border: BORDER,
+};
+
+const priceCellStyle: React.CSSProperties = {
+  ...cellStyle,
+  textAlign: 'right',
+};
+
+const subtotalCellStyle: React.CSSProperties = {
+  padding: '6px 6px',
+  fontFamily: FONT_FAMILY,
+  fontSize: 14,
+  color: TEXT_COLOR,
+  border: BORDER,
+};
+
+const totalCellStyle: React.CSSProperties = {
+  padding: '6px 6px',
+  fontFamily: FONT_FAMILY,
+  fontSize: 14,
+  color: '#fff',
+  border: BORDER,
+};
+
+const grandTotalCellStyle: React.CSSProperties = {
+  padding: '12px 6px',
+  fontFamily: FONT_FAMILY,
+  fontSize: 18,
+  fontWeight: 700,
+  color: '#0F4C5C',
+  border: BORDER,
 };

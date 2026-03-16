@@ -14,6 +14,7 @@ import { Title } from '@/modules/vendor/client-offer/components/Title/Title';
 import { SubCategory } from '@/modules/vendor/client-offer/components/SubCategory';
 import { Entries } from '@/modules/vendor/client-offer/components/Entries';
 import { Total } from '@/modules/vendor/client-offer/components/Total/Total';
+import { CategoryFees } from '@/modules/vendor/client-offer/components/Total/CategoryFees';
 
 export function Category({ category }: { category: TypeCategory }) {
     const { keys } = useExpandedKeys();
@@ -41,6 +42,7 @@ export function Category({ category }: { category: TypeCategory }) {
                     ))}
                     <Entries data={offers} />
                     <Total text={category.name} value={clientTotal} />
+                    <CategoryFees categoryId={category.id} />
                 </>
             )}
             <div style={{ gridColumn: 'span 7', padding: '15px' }} />

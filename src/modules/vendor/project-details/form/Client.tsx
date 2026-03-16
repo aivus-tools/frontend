@@ -32,14 +32,9 @@ export const Client: React.FC = () => {
           <Input placeholder={t('IRS_EIN')} onFocus={handleFocus('irsEin')} />
         </Form.Item>
       </Flex>
-      <Flex gap={20} flex={1} style={{ width: '100%' }}>
-        <Form.Item name='brandName' label={t('BRAND_NAME')} extra={t('SPECIFY_BRAND_WITHIN_COMPANY')} style={{ flex: '1 1 50%' }}>
-          <Input placeholder={t('BRAND_NAME')} onFocus={handleFocus('brandName')} />
-        </Form.Item>
-        <Form.Item name='agencyName' label="Agency" extra="Agency associated with this project" style={{ flex: '1 1 50%' }}>
-          <Input placeholder="Agency name" onFocus={handleFocus('agencyName')} />
-        </Form.Item>
-      </Flex>
+      <Form.Item name='brandName' label={t('BRAND_NAME')} extra={t('SPECIFY_BRAND_WITHIN_COMPANY')} style={{ width: '100%' }}>
+        <Input placeholder={t('BRAND_NAME')} onFocus={handleFocus('brandName')} />
+      </Form.Item>
       <Form.List name='managers'>
         {(fields, { add, remove }) => (
           <>

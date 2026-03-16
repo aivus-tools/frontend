@@ -9,7 +9,7 @@ import CloseIcon from '@/icons/cross.svg';
 import { t } from '@/lib/i18n';
 import { useAppDispatch, useAppSelector } from '@/store/hooks';
 import { selectOfferMetaData, selectIsExternal } from '@/store/slices/offer/selectors';
-import { setMetaData } from '@/store/slices/offer/slice';
+import { setMetaData, recalculateAllOffers } from '@/store/slices/offer/slice';
 import { useUpdateOfferMutation } from '@/services/client/offersApi';
 import { Offer, OfferDeliverable, OfferScheduleEntry } from '@/types/offer.interface';
 import { RichTextEditor } from './RichTextEditor';
@@ -301,6 +301,22 @@ export const OfferMetaForm: React.FC = () => {
     };
   }, [handleFieldChange]);
 
+  const handleFringesPercentChange = useCallback((event: React.ChangeEvent<HTMLInputElement>) => {
+    const value = event.target.value;
+    setFringesPercent(value);
+    handleFieldChange('fringesPercent', value || '0');
+    if (metaData) {
+      dispatch(setMetaData({ ...metaData, fringesPercent: value || '0' }));
+    }
+    dispatch(recalculateAllOffers());
+  }, [handleFieldChange, dispatch, metaData]);
+
+  const handleMarkupPercentChange = useCallback((event: React.ChangeEvent<HTMLInputElement>) => {
+    const value = event.target.value;
+    setMarkupPercent(value);
+    handleFieldChange('markupPercent', value || '0');
+  }, [handleFieldChange]);
+
   const handleAddDeliverable = useCallback(() => {
     const newDeliverable: OfferDeliverable = {
       id: uuidv4(),
@@ -557,7 +573,7 @@ export const OfferMetaForm: React.FC = () => {
                   step="0.01"
                   min="0"
                   value={fringesPercent}
-                  onChange={handlePercentChange('fringesPercent', setFringesPercent)}
+                  onChange={handleFringesPercentChange}
                   placeholder="0"
                 />
               </FormField>
@@ -573,13 +589,13 @@ export const OfferMetaForm: React.FC = () => {
                 />
               </FormField>
               <FormField $width="140px">
-                <FieldLabel>Markup %</FieldLabel>
+                <FieldLabel>Default External Markup %</FieldLabel>
                 <FieldInput
                   type="number"
                   step="0.01"
                   min="0"
                   value={markupPercent}
-                  onChange={handlePercentChange('markupPercent', setMarkupPercent)}
+                  onChange={handleMarkupPercentChange}
                   placeholder="0"
                 />
               </FormField>

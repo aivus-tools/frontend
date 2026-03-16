@@ -72,9 +72,7 @@ export const ProjectNavbar = () => {
     watermark?: string;
   }) => {
     if (format === 'xlsx') {
-      const uf = offerDetails.unforeseenExpenses;
-      const agencyFeePercent = uf?.isVisible ? (uf?.clientPercent ?? 0) : 0;
-      await exportToExcel(categoriesExportData, name, date, watermark, offerMetaData?.id, agencyFeePercent);
+      await exportToExcel(categoriesExportData, name, date, watermark, offerMetaData?.id);
     } else if (format === 'pdf' && offerMetaData?.id) {
       window.open(`/export/${offerMetaData.id}`, '_blank');
     } else {

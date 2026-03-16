@@ -9,7 +9,6 @@ import { InputNumberRight, UnforeseenRowWrapper } from '../../styled';
 import { useAppDispatch, useAppSelector } from '@/store/hooks';
 import { changeUnforeseenExpenses } from '@/store/slices/offer/slice';
 import { selectUnforeseenExpenses } from '@/store/slices/offer/selectors';
-import SettingsIcon from '@/icons/settings-icon.svg';
 import { t } from '@/lib/i18n';
 
 const Label = styled.div`
@@ -36,25 +35,15 @@ const EmptyBlockTotalSum = styled.div`
   background-color: var(--white);
 `;
 
-const MarkupLabel = styled.div`
-  font-weight: 500;
-  font-size: 13px;
-`;
-
 export const UnforeseenExpenses = () => {
   const dispatch = useAppDispatch();
-  const { isVisible, percent, clientPercent, total, clientTotal } = useAppSelector(selectUnforeseenExpenses);
+  const { isVisible, percent, total } = useAppSelector(selectUnforeseenExpenses);
   const handleVisible = () => {
     dispatch(changeUnforeseenExpenses({ isVisible: !isVisible }));
   };
   const handleChange = (percent: number | null) => {
     if (percent !== null) {
       dispatch(changeUnforeseenExpenses({ percent }));
-    }
-  };
-  const handleChangeClient = (clientPercent: number | null) => {
-    if (clientPercent !== null) {
-      dispatch(changeUnforeseenExpenses({ clientPercent }));
     }
   };
 
@@ -80,30 +69,6 @@ export const UnforeseenExpenses = () => {
           <TotalSum style={{ minWidth: '90px' }}>{total}</TotalSum>
         </Flex>
       </Label>
-      <div />
-      <Flex
-        justify='space-between'
-        align='center'
-        style={{ gridColumn: 'span 5', paddingRight: '16px', backgroundColor: 'var(--white)', borderRadius: '6px' }}
-      >
-        <Flex justify='space-between' align='center' gap={4}>
-          <Flex align='center' justify='center' style={{ height: '100%' }}>
-            <Flex align='center' justify='center' style={{ height: '100%', padding: '14px' }}>
-              <SettingsIcon />
-            </Flex>
-            <MarkupLabel>{t('MARKUP')}</MarkupLabel>
-          </Flex>
-          <InputNumberRight
-            onChange={handleChangeClient}
-            controls={false}
-            value={clientPercent}
-            formatter={percentFormat}
-            parser={percentParser}
-            style={{ maxWidth: "70px" }}
-          />
-        </Flex>
-        <TotalSum>{clientTotal}</TotalSum>
-      </Flex>
     </UnforeseenRowWrapper>
   );
 };

@@ -3,11 +3,13 @@ import { createSelector } from '@reduxjs/toolkit';
 
 import {
   CategoriesExportData,
+  CategoryExternalMarkup,
   CategoryWithoutSubcategories,
   CategoryWithSubcategories,
   ExportItem,
   OfferState,
 } from '@/types/store.interface';
+import { t } from '@/lib/i18n';
 import { OfferData } from '@/types/estimation.interface';
 
 export const selectOfferDetails = (state: { offer: OfferState }) => state.offer.offerDetails;
@@ -50,27 +52,146 @@ export const selectClientTotalSum = createSelector([selectOfferDetails], (offerD
   return { value, formatted: formatCurrency(value) };
 });
 
+const getCategorySubtotals = (offerDetails: OfferState['offerDetails'], categoryId: string) => {
+  const offers = offerDetails?.offers || [];
+  const directOffers = offers.filter(x => x.categoryId === categoryId);
+  let vendorSum = directOffers.reduce((acc, x) => acc + x.cost, 0);
+  let clientSum = directOffers.reduce((acc, x) => acc + x.clientCost, 0);
+
+  const subCategoryIds = (offerDetails?.subCategories || [])
+    .filter(x => x.parentCategoryId === categoryId)
+    .map(x => x.id);
+
+  for (const subId of subCategoryIds) {
+    const subOffers = offers.filter(x => x.categoryId === subId);
+    vendorSum += subOffers.reduce((acc, x) => acc + x.cost, 0);
+    clientSum += subOffers.reduce((acc, x) => acc + x.clientCost, 0);
+  }
+
+  return { vendorSum, clientSum };
+};
+
+export interface FeeRow {
+  key: string;
+  name: string;
+  percent: number;
+  vendorAmount: number;
+  clientAmount: number;
+}
+
+const buildCategoryFees = (
+  categoryId: string,
+  tags: string[],
+  vendorSum: number,
+  clientSum: number,
+  metaData: OfferState['metaData'],
+  customFeeNames: Record<string, string>,
+  externalMarkup: CategoryExternalMarkup | null,
+): FeeRow[] => {
+  const fees: FeeRow[] = [];
+  if (tags.includes('production')) {
+    const insurancePct = parseFloat(metaData?.productionInsurancePercent || '0') || 0;
+    const feePct = parseFloat(metaData?.productionFeePercent || '0') || 0;
+    if (insurancePct > 0) {
+      fees.push({ key: 'PROD_INSURANCE', name: customFeeNames['PROD_INSURANCE'] || t('PROD_INSURANCE'), percent: insurancePct, vendorAmount: applyPercentage(vendorSum, insurancePct), clientAmount: applyPercentage(clientSum, insurancePct) });
+    }
+    if (feePct > 0) {
+      fees.push({ key: 'PROD_FEE', name: customFeeNames['PROD_FEE'] || t('PROD_FEE'), percent: feePct, vendorAmount: applyPercentage(vendorSum, feePct), clientAmount: applyPercentage(clientSum, feePct) });
+    }
+  }
+  if (tags.includes('post_production')) {
+    const insurancePct = parseFloat(metaData?.postInsurancePercent || '0') || 0;
+    const markupPct = parseFloat(metaData?.postMarkupPercent || '0') || 0;
+    const taxPct = parseFloat(metaData?.postTaxPercent || '0') || 0;
+    if (insurancePct > 0) {
+      fees.push({ key: 'POST_INSURANCE', name: customFeeNames['POST_INSURANCE'] || t('POST_INSURANCE'), percent: insurancePct, vendorAmount: applyPercentage(vendorSum, insurancePct), clientAmount: applyPercentage(clientSum, insurancePct) });
+    }
+    if (markupPct > 0) {
+      fees.push({ key: 'POST_MARKUP', name: customFeeNames['POST_MARKUP'] || t('POST_MARKUP'), percent: markupPct, vendorAmount: applyPercentage(vendorSum, markupPct), clientAmount: applyPercentage(clientSum, markupPct) });
+    }
+    if (taxPct > 0) {
+      fees.push({ key: 'POST_TAX', name: customFeeNames['POST_TAX'] || t('POST_TAX'), percent: taxPct, vendorAmount: applyPercentage(vendorSum, taxPct), clientAmount: applyPercentage(clientSum, taxPct) });
+    }
+  }
+  if (externalMarkup?.enabled && externalMarkup.percent > 0) {
+    fees.push({
+      key: 'EXT_MARKUP_' + categoryId,
+      name: externalMarkup.name || 'Markup',
+      percent: externalMarkup.percent,
+      vendorAmount: 0,
+      clientAmount: applyPercentage(clientSum, externalMarkup.percent),
+    });
+  }
+  return fees;
+};
+
+const resolveCategoryTags = (
+  categoryId: string,
+  offerDetails: OfferState['offerDetails'],
+  dictionary: OfferState['dictionary'],
+): string[] => {
+  const category = offerDetails?.categories?.find(x => x.id === categoryId);
+  const tags = category?.tags || [];
+  if (tags.length > 0) {
+    return tags;
+  }
+  const dictCategory = dictionary?.category?.find(x => x.id === categoryId);
+  return dictCategory?.tags || [];
+};
+
+export const selectCategoryFees = createSelector(
+  [selectOfferDetails, selectOfferMetaData, selectDictionary, (_: { offer: OfferState }, categoryId: string) => categoryId],
+  (offerDetails, metaData, dictionary, categoryId): FeeRow[] => {
+    const tags = resolveCategoryTags(categoryId, offerDetails, dictionary);
+    const { vendorSum, clientSum } = getCategorySubtotals(offerDetails, categoryId);
+    const customFeeNames = offerDetails?.customFeeNames || {};
+    const externalMarkup = offerDetails?.categoryExternalMarkup?.[categoryId] || null;
+    if (tags.length === 0 && !externalMarkup?.enabled) {
+      return [];
+    }
+    return buildCategoryFees(categoryId, tags, vendorSum, clientSum, metaData, customFeeNames, externalMarkup);
+  }
+);
+
+export const selectAllCategoryFeesTotal = createSelector(
+  [selectOfferDetails, selectOfferMetaData, selectDictionary],
+  (offerDetails, metaData, dictionary) => {
+    let vendorTotal = 0;
+    let clientTotal = 0;
+    const customFeeNames = offerDetails?.customFeeNames || {};
+    for (const category of offerDetails?.categories || []) {
+      const tags = resolveCategoryTags(category.id, offerDetails, dictionary);
+      const externalMarkup = offerDetails?.categoryExternalMarkup?.[category.id] || null;
+      const { vendorSum, clientSum } = getCategorySubtotals(offerDetails, category.id);
+      const fees = buildCategoryFees(category.id, tags, vendorSum, clientSum, metaData, customFeeNames, externalMarkup);
+      for (const fee of fees) {
+        vendorTotal += fee.vendorAmount;
+        clientTotal += fee.clientAmount;
+      }
+    }
+    return { vendorTotal, clientTotal };
+  }
+);
+
 export const selectUnforeseenExpenses = createSelector(
-  [selectOfferDetails, selectTotalSum, selectClientTotalSum],
-  (offerDetails, { value }, { value: clientValue }) => {
-    const { percent = 0, clientPercent = 0, isVisible = true } = offerDetails?.unforeseenExpenses || {};
+  [selectOfferDetails, selectTotalSum, selectAllCategoryFeesTotal],
+  (offerDetails, { value }, { vendorTotal: vendorFees }) => {
+    const { percent = 0, isVisible = true } = offerDetails?.unforeseenExpenses || {};
+    const vendorBase = value + vendorFees;
     return {
       isVisible,
       percent,
-      clientPercent,
-      total: formatCurrency(applyPercentage(value, percent)),
-      clientTotal: formatCurrency(applyPercentage(clientValue, clientPercent)),
+      total: formatCurrency(applyPercentage(vendorBase, percent)),
     };
   }
 );
 
 export const selectGrandTotal = createSelector(
-  [selectTotalSum, selectClientTotalSum, selectUnforeseenExpenses],
-  ({ value: totalSum }, { value: clientTotalSum }, { percent, clientPercent, isVisible }) => {
-    const totalValue = isVisible ? totalSum + applyPercentage(totalSum, percent) : totalSum;
-    const clientTotalValue = isVisible
-      ? clientTotalSum + applyPercentage(clientTotalSum, clientPercent)
-      : clientTotalSum;
+  [selectTotalSum, selectClientTotalSum, selectAllCategoryFeesTotal, selectUnforeseenExpenses],
+  ({ value: totalSum }, { value: clientTotalSum }, { vendorTotal: vendorFees, clientTotal: clientFees }, { percent, isVisible }) => {
+    const vendorBase = totalSum + vendorFees;
+    const clientTotalValue = clientTotalSum + clientFees;
+    const totalValue = isVisible ? vendorBase + applyPercentage(vendorBase, percent) : vendorBase;
     return {
       totalValue,
       clientTotalValue,
@@ -122,7 +243,7 @@ export const selectTotalSumByCategoryId = createSelector(
   }
 );
 
-export const selectAllCategories = createSelector([selectDictionary], (dictionary) => dictionary.category);
+export const selectAllCategories = createSelector([selectDictionary], (dictionary) => dictionary?.category ?? []);
 
 export const selectCategorySurcharge = createSelector(
   [selectOfferDetails, (_, categoryId) => categoryId],
@@ -131,10 +252,17 @@ export const selectCategorySurcharge = createSelector(
   }
 );
 
+export const selectCategoryExternalMarkup = createSelector(
+  [selectOfferDetails, (_, categoryId: string) => categoryId],
+  (offerDetails, categoryId): CategoryExternalMarkup | null => {
+    return offerDetails?.categoryExternalMarkup?.[categoryId] || null;
+  }
+);
+
 export const selectOverallSurcharge = createSelector([selectOfferDetails], (offerDetails) => {
   return {
-    surcharge: offerDetails.overallSurcharge,
-    linked: offerDetails.isLinkedOverallSurcharge,
+    surcharge: offerDetails?.overallSurcharge ?? 0,
+    linked: offerDetails?.isLinkedOverallSurcharge ?? false,
   };
 });
 export const makeSelectCostPerVideo = () =>

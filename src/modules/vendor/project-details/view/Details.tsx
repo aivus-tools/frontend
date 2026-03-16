@@ -13,6 +13,14 @@ import { projectsApi } from '@/services/client/projectsApi';
 import { useAppSelector } from '@/store/hooks';
 import { selectProjectId } from '@/store/slices/project';
 
+const ROLE_LABELS: Record<string, string> = {
+  admin: 'Admin',
+  internal_user: 'Internal User',
+  external_user: 'External User',
+  producer: 'Producer',
+  agency_producer: 'Agency Producer',
+};
+
 interface Props {
   label?: string;
   value?: string | ReactNode;
@@ -110,6 +118,7 @@ export default function Details() {
                         ? project.collaborators.map((collaborator) => (
                             <span key={collaborator.id}>
                               {collaborator.name || collaborator.email}
+                              {collaborator.role ? <Typography.Text type='secondary'> - {ROLE_LABELS[collaborator.role] || collaborator.role}</Typography.Text> : null}
                               <br />
                             </span>
                           ))
@@ -148,6 +157,33 @@ export default function Details() {
                   <Item label={t('BRAND_NAME')} value={project.brandName} />
                 </Col>
               </Row>
+            </Content>
+          </Section>
+          <Section>
+            <Header>{t('THE_AGENCY')}</Header>
+            <Content>
+              <Row align='middle' style={{ marginTop: 20 }}>
+                <Col span={12}>
+                  <Item label={t('AGENCY_NAME')} value={project.agencyName} />
+                </Col>
+              </Row>
+              {project.collaborators && project.collaborators.filter(x => x.role === 'agency_producer').length > 0 && (
+                <Row align='middle' style={{ marginTop: 20 }}>
+                  <Col span={12}>
+                    <Item
+                      label={t('AGENCY_PRODUCERS')}
+                      value={
+                        project.collaborators.filter(x => x.role === 'agency_producer').map(x => (
+                          <span key={x.id}>
+                            {x.name || x.email}
+                            <br />
+                          </span>
+                        ))
+                      }
+                    />
+                  </Col>
+                </Row>
+              )}
             </Content>
           </Section>
         </Column>

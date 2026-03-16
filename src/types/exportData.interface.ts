@@ -34,6 +34,12 @@ export interface ExportCategorySection {
   id: string;
   code: string;
   name: string;
+  level: number;
+  parentCategoryId: string | null;
+  parentCategoryName: string | null;
+  parentCategoryCode: string | null;
+  tags: string[];
+  parentTags: string[];
   entries: ExportEntryItem[];
   subTotal: number;
   fringes: number | null;
@@ -63,6 +69,8 @@ export interface OfferExportData {
     deliverables: OfferDeliverable[];
     scheduleEntries: OfferScheduleEntry[];
     cost: number | null;
+    customFeeNames: Record<string, string>;
+    categoryExternalMarkup: Record<string, { enabled: boolean; percent: number; name: string }>;
   };
   project: {
     id: string;

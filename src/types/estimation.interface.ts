@@ -32,6 +32,7 @@ export interface OfferData {
   taxRate: number;
   taxPrice: number;
   showTax: boolean;
+  overtime: number;
   cost: number;
   surcharge: number;
   isLinkedSurcharge: boolean;

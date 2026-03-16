@@ -4,6 +4,7 @@ import { useRouter } from 'next/navigation';
 
 import { InitialParameters } from './InitialParameters';
 import { Client } from './Client';
+import { Agency } from './Agency';
 // Brief and Specifications are commented out - will be used by Client later
 // import { Brief } from './Brief';
 // import { Specifications } from './Specifications';
@@ -173,6 +174,12 @@ export default function Details() {
               <Header>{t('THE_CLIENT')}</Header>
               <Content>
                 <Client />
+              </Content>
+            </Section>
+            <Section>
+              <Header>{t('THE_AGENCY')}</Header>
+              <Content>
+                <Agency />
               </Content>
             </Section>
             {/* Brief and Specifications sections commented out - will be used by Client later

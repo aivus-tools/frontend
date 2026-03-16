@@ -70,7 +70,6 @@ function addItems(
     excel.addFont(unit2ValCell);
     unit2ValCell.alignment = CENTER_MIDDLE;
 
-    // Insert the formula into the next cell: IF(ISNUMBER(price),price,0) * IF(ISNUMBER(u1),u1,1) * IF(ISNUMBER(u2),u2,1)
     const priceCellAddress = priceCell.address;
     const unit1ValAddress = unit1ValCell.address;
     const unit2ValAddress = unit2ValCell.address;
@@ -90,7 +89,6 @@ function addItems(
     nextRow += 1;
   }
 
-  // Sum all item totals calculated above in this block (column  6)
   if (nextRow > rowIdx) {
     const firstAddr = excel.getCell(rowIdx, 6).address;
     const lastAddr = excel.getCell(nextRow - 1, 6).address;
@@ -112,7 +110,6 @@ function addItems(
       excel.addNumberFormat(headerTotalCell);
     }
   } else {
-    // No items added; avoid empty SUM range
     excel.getCell(nextRow, 6).value = defaultValue;
   }
 
@@ -125,7 +122,7 @@ const isCategoryWithSubcategories = (
   v: CategoryWithSubcategories | CategoryWithoutSubcategories
 ): v is CategoryWithSubcategories => Array.isArray(v.data);
 
-export async function exportToExcel(data: CategoriesExportData, fileName: string, date?: Dayjs, watermark?: string, offerId?: string, agencyFeePercent?: number) {
+export async function exportToExcel(data: CategoriesExportData, fileName: string, date?: Dayjs, watermark?: string, offerId?: string) {
   const res = await fetch('/template.xlsx');
   if (!res.ok) {
     throw new Error(`Failed to fetch template.xlsx: ${res.status} ${res.statusText}`);
@@ -248,61 +245,19 @@ export async function exportToExcel(data: CategoriesExportData, fileName: string
 
   nextRow += 1;
 
-  const subtotalTitleCell = excel.getCell(nextRow, 0);
-  subtotalTitleCell.value = 'Subtotal for All Sections';
-  excel.addBorderToLine(nextRow, 5);
-  excel.addColorToCellGroup(nextRow, 6, COLOR.SUB);
-  excel.addFont(subtotalTitleCell, true);
-
-  const subtotalValueCell = excel.getCell(nextRow, 6);
-  excel.addBorderToCell(subtotalValueCell);
-  excel.addFont(subtotalValueCell, true);
-  subtotalValueCell.value = { formula: `SUM(${categoryTotals.join(',')})` };
-  subtotalValueCell.alignment = RIGHT_MIDDLE;
-  excel.addNumberFormat(subtotalValueCell);
-
-  nextRow += 1;
-
-  const agencyFeeTitleCell = excel.getCell(nextRow, 0);
-  agencyFeeTitleCell.value = 'Agency Fee';
-  excel.addBorderToLine(nextRow, 5);
-  excel.addFont(agencyFeeTitleCell);
-
-  const agencyFeePercentCell = excel.getCell(nextRow, 4);
-  agencyFeePercentCell.value = 'Agency Fee';
-  excel.addFont(agencyFeePercentCell);
-  agencyFeePercentCell.alignment = RIGHT_MIDDLE;
-
-  const agencyFeeRateCell = excel.getCell(nextRow, 5);
-  const agencyFeeValueCell = excel.getCell(nextRow, 6);
-
-  nextRow += 1;
-
-  const totalSumTitleCell = excel.getCell(nextRow, 0);
-  totalSumTitleCell.value = 'GRAND TOTAL';
+  const grandTotalTitleCell = excel.getCell(nextRow, 0);
+  grandTotalTitleCell.value = 'GRAND TOTAL';
   excel.addBorderToLine(nextRow, 5);
   excel.addColorToCellGroup(nextRow, 5, COLOR.HEADER);
-  excel.addFont(totalSumTitleCell, true);
+  excel.addFont(grandTotalTitleCell, true);
 
-  const feeMultiplier = 1 + (agencyFeePercent ?? 0) / 100;
-  const totalSumValueCell = excel.getCell(nextRow, 6);
-  totalSumValueCell.value = { formula: `${subtotalValueCell.address}*${feeMultiplier}` };
-  excel.addBorderToCell(totalSumValueCell);
-  excel.addFont(totalSumValueCell, true);
-  totalSumValueCell.alignment = RIGHT_MIDDLE;
-  excel.addNumberFormat(totalSumValueCell);
-  totalSumValueCell.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: COLOR.TOTAL } };
-
-  agencyFeeValueCell.value = { formula: `${totalSumValueCell.address}-${subtotalValueCell.address}` };
-  agencyFeeValueCell.alignment = RIGHT_MIDDLE;
-  excel.addBorderToCell(agencyFeeValueCell);
-  excel.addNumberFormat(agencyFeeValueCell);
-  excel.addFont(agencyFeeValueCell);
-
-  agencyFeeRateCell.value = { formula: `IFERROR(${agencyFeeValueCell.address}/${totalSumValueCell.address},0)` };
-  agencyFeeRateCell.numFmt = '0%';
-  excel.addFont(agencyFeeRateCell);
-  agencyFeeRateCell.alignment = CENTER_MIDDLE;
+  const grandTotalValueCell = excel.getCell(nextRow, 6);
+  grandTotalValueCell.value = { formula: `SUM(${categoryTotals.join(',')})` };
+  grandTotalValueCell.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: COLOR.TOTAL } };
+  excel.addBorderToCell(grandTotalValueCell);
+  excel.addFont(grandTotalValueCell, true);
+  grandTotalValueCell.alignment = RIGHT_MIDDLE;
+  excel.addNumberFormat(grandTotalValueCell);
 
   nextRow += 1;
 
@@ -319,7 +274,7 @@ export async function exportToExcel(data: CategoriesExportData, fileName: string
   const videoCountCell = excel.getNamedCellRef('videoCount');
 
   if (videoCountCell) {
-    videoValueCell.value = { formula: `IFERROR(${totalSumValueCell.address}/${videoCountCell.a1}, "-")` };
+    videoValueCell.value = { formula: `IFERROR(${grandTotalValueCell.address}/${videoCountCell.a1}, "-")` };
   }
 
   wb.calcProperties.fullCalcOnLoad = true;

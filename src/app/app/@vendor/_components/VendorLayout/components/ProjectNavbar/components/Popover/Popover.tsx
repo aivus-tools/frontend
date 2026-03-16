@@ -15,7 +15,7 @@ export type ExportPopoverProps = {
 };
 
 export const ExportPopover: React.FC<ExportPopoverProps> = ({ children, action, defaultName }) => {
-  const [format, setFormat] = useState<'xlsx' | 'pdf' | 'csv'>('xlsx');
+  const [format, setFormat] = useState<'xlsx' | 'pdf' | 'csv'>('pdf');
   const [name, setName] = useState(defaultName || '');
 
   useEffect(() => {
@@ -49,7 +49,6 @@ export const ExportPopover: React.FC<ExportPopoverProps> = ({ children, action, 
             onChange={(v) => setFormat(v)}
             className={styles.formatSelect}
             options={[
-              { label: 'xlsx', value: 'xlsx' },
               { label: 'pdf', value: 'pdf' },
             ]}
           />

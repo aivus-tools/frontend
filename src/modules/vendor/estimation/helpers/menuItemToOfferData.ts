@@ -72,6 +72,7 @@ export const menuItemToOfferData = (item: MenuItem, globalDefaultUnit?: UnitOpti
     marketRange: '',
     taxRate: 0,
     taxPrice: 0,
+    overtime: 0,
     showTax: false,
     options,
   };

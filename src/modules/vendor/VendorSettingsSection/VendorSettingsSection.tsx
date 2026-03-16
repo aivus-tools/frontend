@@ -83,7 +83,7 @@ export const VendorSettingsSection: React.FC = () => {
   }
 
   return (
-    <div style={{ marginTop: 32 }}>
+    <div style={{ maxWidth: 600, margin: '32px auto 0', padding: '0 24px' }}>
       <h3 style={{ fontSize: 18, fontWeight: 600, marginBottom: 16 }}>Company Settings</h3>
 
       <div style={{ marginBottom: 24 }}>

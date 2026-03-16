@@ -1,6 +1,9 @@
 import React from 'react';
 import { OfferExportData } from '@/types/exportData.interface';
 
+const TEXT_COLOR = '#4B5675';
+const FONT_FAMILY = "'Montserrat', sans-serif";
+
 interface AssumptionsPageProps {
   data: OfferExportData;
 }
@@ -11,24 +14,24 @@ export const AssumptionsPage: React.FC<AssumptionsPageProps> = props => {
   }
 
   return (
-    <div style={{ pageBreakBefore: 'always', padding: '20px 0' }}>
+    <div style={{ pageBreakBefore: 'always', maxWidth: 1210, margin: '0 auto', padding: '20px 32px 0' }}>
       <div style={{
-        background: '#1a3a5c',
-        color: 'white',
-        padding: '10px 16px',
-        fontSize: 14,
         fontWeight: 700,
-        fontFamily: "'Montserrat', sans-serif",
-        marginBottom: 16,
+        fontSize: 20,
+        color: TEXT_COLOR,
+        fontFamily: FONT_FAMILY,
+        marginBottom: 12,
+        lineHeight: '30px',
       }}>
-        ASSUMPTIONS & EXCLUSIONS
+        Assumptions & Exclusions
       </div>
       <div
         style={{
-          fontFamily: "'Montserrat', sans-serif",
-          fontSize: 12,
+          fontFamily: FONT_FAMILY,
+          fontSize: 14,
           lineHeight: 1.6,
-          color: '#333',
+          color: TEXT_COLOR,
+          padding: '0 10px',
         }}
         dangerouslySetInnerHTML={{ __html: props.data.offer.assumptionsExclusions }}
       />

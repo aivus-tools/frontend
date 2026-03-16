@@ -15,6 +15,14 @@ import { useGetTemplatesQuery } from '@/services/client/templatesApi';
 
 const { TextArea } = Input;
 
+const ROLE_LABELS: Record<string, string> = {
+  admin: 'Admin',
+  internal_user: 'Internal User',
+  external_user: 'External User',
+  producer: 'Producer',
+  agency_producer: 'Agency Producer',
+};
+
 interface InitialParametersProps {
   thumbnailUrl?: string | null;
 }
@@ -101,21 +109,29 @@ export const InitialParameters: React.FC<InitialParametersProps> = ({ thumbnailU
         <Row gutter={20}>
           <Col span={12}>
             <Form.List name='collaborators'>
-              {(fields, { remove }) => (
+              {(fields, { remove }) => {
+                const collaborators = form.getFieldValue('collaborators') || [];
+                const visibleCount = fields.filter(x => collaborators[x.name]?.role !== 'agency_producer').length;
+                return (
                 <Form.Item label={<LabelWithAdd text={t('COLLABORATORS')} onClick={() => showModal()} />}>
-                  {fields.length === 0 && (
+                  {visibleCount === 0 && (
                     <Typography.Text type='secondary'>{t('EMPTY')}</Typography.Text>
                   )}
                   {fields.map((field) => {
-                    const collaborators = form.getFieldValue('collaborators') || [];
                     const collaborator = collaborators[field.name];
+                    if (collaborator?.role === 'agency_producer') {
+                      return null;
+                    }
                     const displayName = collaborator?.name || collaborator?.email || '';
                     const displayEmail = collaborator?.email && collaborator?.name ? ` (${collaborator.email})` : '';
+                    const roleLabel = ROLE_LABELS[collaborator?.role] || collaborator?.role || '';
 
                     return (
                       <Flex gap={12} key={field.key} align='center' style={{ marginBottom: 8 }}>
                         <Typography.Text style={{ flex: 1 }}>
-                          {displayName}{displayEmail}
+                          {displayName}
+                          {roleLabel ? <Typography.Text type='secondary'> - {roleLabel}</Typography.Text> : null}
+                          {displayEmail}
                         </Typography.Text>
                         <IconButton onClick={() => remove(field.name)}>
                           <RemoveIcon color={'var(--gray-light)'} />
@@ -124,7 +140,8 @@ export const InitialParameters: React.FC<InitialParametersProps> = ({ thumbnailU
                     );
                   })}
                 </Form.Item>
-              )}
+                );
+              }}
             </Form.List>
           </Col>
           <Col span={12}>

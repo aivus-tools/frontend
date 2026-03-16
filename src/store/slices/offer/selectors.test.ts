@@ -21,7 +21,6 @@ import {
 } from './selectors';
 import { OfferState } from '@/types/store.interface';
 
-// Mock state factory
 const createMockState = (overrides?: Partial<OfferState>): { offer: OfferState } => ({
   offer: {
     offerDetails: {
@@ -73,7 +72,6 @@ const createMockState = (overrides?: Partial<OfferState>): { offer: OfferState }
       ],
       unforeseenExpenses: {
         percent: 10,
-        clientPercent: 15,
         isVisible: true,
       },
       categorySurcharge: {
@@ -192,14 +190,14 @@ describe('Offer Selectors', () => {
     it('should calculate total sum correctly', () => {
       const state = createMockState();
       const result = selectTotalSum(state);
-      expect(result.value).toBe(800); // 100 + 200 + 500
+      expect(result.value).toBe(800);
       expect(result.formatted).toBe('$800.00');
     });
 
     it('should calculate client total sum correctly', () => {
       const state = createMockState();
       const result = selectClientTotalSum(state);
-      expect(result.value).toBe(1200); // 150 + 300 + 750
+      expect(result.value).toBe(1200);
       expect(result.formatted).toBe('$1,200.00');
     });
 
@@ -220,29 +218,26 @@ describe('Offer Selectors', () => {
 
       expect(result.isVisible).toBe(true);
       expect(result.percent).toBe(10);
-      expect(result.clientPercent).toBe(15);
-      expect(result.total).toBe('$80.00'); // 10% of 800
-      expect(result.clientTotal).toBe('$180.00'); // 15% of 1200
+      expect(result.total).toBe('$80.00');
     });
 
     it('should handle zero percent', () => {
       const state = createMockState({
         offerDetails: {
           ...createMockState().offer.offerDetails,
-          unforeseenExpenses: { percent: 0, clientPercent: 0, isVisible: true },
+          unforeseenExpenses: { percent: 0, isVisible: true },
         },
       });
       const result = selectUnforeseenExpenses(state);
 
       expect(result.total).toBe('$0.00');
-      expect(result.clientTotal).toBe('$0.00');
     });
 
     it('should handle invisible unforeseen expenses', () => {
       const state = createMockState({
         offerDetails: {
           ...createMockState().offer.offerDetails,
-          unforeseenExpenses: { percent: 10, clientPercent: 15, isVisible: false },
+          unforeseenExpenses: { percent: 10, isVisible: false },
         },
       });
       const result = selectUnforeseenExpenses(state);
@@ -256,17 +251,17 @@ describe('Offer Selectors', () => {
       const state = createMockState();
       const result = selectGrandTotal(state);
 
-      expect(result.totalValue).toBe(880); // 800 + (800 * 0.10)
-      expect(result.clientTotalValue).toBe(1380); // 1200 + (1200 * 0.15)
+      expect(result.totalValue).toBe(880);
+      expect(result.clientTotalValue).toBe(1200);
       expect(result.total).toBe('$880.00');
-      expect(result.clientTotal).toBe('$1,380.00');
+      expect(result.clientTotal).toBe('$1,200.00');
     });
 
     it('should calculate grand total without unforeseen expenses when not visible', () => {
       const state = createMockState({
         offerDetails: {
           ...createMockState().offer.offerDetails,
-          unforeseenExpenses: { percent: 10, clientPercent: 15, isVisible: false },
+          unforeseenExpenses: { percent: 10, isVisible: false },
         },
       });
       const result = selectGrandTotal(state);
@@ -281,7 +276,6 @@ describe('Offer Selectors', () => {
       const state = createMockState();
       const result = selectTotalSumByCategoryId(state, 'cat-1');
 
-      // cat-1 has offer-item-1 (100) + subcategory sub-1 with offer-item-2 (200)
       expect(result.total).toBe('$300.00');
       expect(result.clientTotal).toBe('$450.00');
     });
@@ -290,7 +284,6 @@ describe('Offer Selectors', () => {
       const state = createMockState();
       const result = selectTotalSumByCategoryId(state, 'cat-2');
 
-      // cat-2 has only offer-item-3 (500)
       expect(result.total).toBe('$500.00');
       expect(result.clientTotal).toBe('$750.00');
     });
@@ -336,8 +329,8 @@ describe('Offer Selectors', () => {
       const selector = makeSelectCostPerVideo();
       const result = selector(state, 5);
 
-      expect(result.vendor).toBe(176); // 880 / 5
-      expect(result.client).toBe(276); // 1380 / 5
+      expect(result.vendor).toBe(176);
+      expect(result.client).toBe(240);
     });
 
     it('should handle single video', () => {
@@ -346,7 +339,7 @@ describe('Offer Selectors', () => {
       const result = selector(state, 1);
 
       expect(result.vendor).toBe(880);
-      expect(result.client).toBe(1380);
+      expect(result.client).toBe(1200);
     });
 
     it('should handle zero count as 1', () => {
@@ -355,7 +348,7 @@ describe('Offer Selectors', () => {
       const result = selector(state, 0);
 
       expect(result.vendor).toBe(880);
-      expect(result.client).toBe(1380);
+      expect(result.client).toBe(1200);
     });
 
     it('should handle decimal counts', () => {
@@ -364,7 +357,7 @@ describe('Offer Selectors', () => {
       const result = selector(state, 2.5);
 
       expect(result.vendor).toBe(352);
-      expect(result.client).toBe(552);
+      expect(result.client).toBe(480);
     });
   });
 
@@ -394,7 +387,6 @@ describe('Offer Selectors', () => {
       const state = createMockState();
       const result = selectCategoriesExportData(state);
 
-      // Find the item with units
       const category = result.find((cat) => cat.category === 'Pre-Production');
       if (category && 'data' in category && Array.isArray(category.data)) {
         const items = category.data[0].items;

@@ -4,6 +4,8 @@ import type { Category as TypeCategory } from '@/types/estimation.interface';
 import { Entries } from './Entries/Entries';
 import { useExpandedKeys } from '../context/expanded';
 import { Total } from './Total/Total';
+import { CategoryFees } from './Total/CategoryFees';
+import { CategoryExternalMarkup } from './Total/CategoryExternalMarkup';
 import { Title } from './Title/Title';
 import { SubCategory } from './SubCategory';
 import { useAppSelector } from '@/store/hooks';
@@ -41,6 +43,8 @@ export function Category({ category }: { category: TypeCategory }) {
           ))}
           <Entries data={offers} />
           <Total text={category.name} value={total} clientValue={clientTotal} categoryId={category.id} />
+          <CategoryFees categoryId={category.id} />
+          <CategoryExternalMarkup categoryId={category.id} />
         </>
       )}
     </CategorySection>

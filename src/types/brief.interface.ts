@@ -24,7 +24,7 @@ export interface Person {
   surname: string;
   email: string;
   position: string;
-  role: 'admin' | 'internal_user' | 'external_user';
+  role: 'admin' | 'internal_user' | 'external_user' | 'producer' | 'agency_producer';
 }
 
 export interface Details {

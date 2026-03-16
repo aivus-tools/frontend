@@ -71,9 +71,9 @@ export const ExportPage: React.FC<ExportPageProps> = props => {
         }
         @media screen {
           .export-content {
-            max-width: 1200px;
+            max-width: 1340px;
             margin: 0 auto;
-            padding: 20px;
+            padding: 20px 0;
           }
         }
       `}</style>

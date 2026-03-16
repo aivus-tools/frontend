@@ -3,8 +3,13 @@ import { Offer } from '@/types/offer.interface';
 
 export interface UnforeseenExpenses {
   percent: number;
-  clientPercent: number;
   isVisible: boolean;
+}
+
+export interface CategoryExternalMarkup {
+  enabled: boolean;
+  percent: number;
+  name: string;
 }
 
 export interface OfferDetails {
@@ -18,6 +23,8 @@ export interface OfferDetails {
       linked: boolean;
     }
   >;
+  categoryExternalMarkup: Record<string, CategoryExternalMarkup>;
+  customFeeNames: Record<string, string>;
   unforeseenExpenses: UnforeseenExpenses;
   showCostPerVideo: boolean;
   overallSurcharge: number;

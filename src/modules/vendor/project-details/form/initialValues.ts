@@ -13,6 +13,10 @@ export const initialValues: ProjectFormData = {
   clientName: '',
   irsEin: '',
   brandName: '',
+
+  // Agency
+  agencyName: '',
+
   managers: [
     {
       name: '',
