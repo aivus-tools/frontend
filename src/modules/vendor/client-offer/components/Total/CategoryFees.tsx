@@ -11,8 +11,9 @@ const FeeRowWrapper = styled.div`
     grid-column: span 7;
     display: flex;
     padding: 8px 40px 8px 14px;
-    justify-content: space-between;
+    justify-content: flex-end;
     align-items: center;
+    gap: 16px;
     background: #fff;
 `;
 

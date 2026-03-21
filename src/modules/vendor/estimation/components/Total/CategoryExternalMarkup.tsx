@@ -12,7 +12,7 @@ import { percentFormat, percentParser } from '../../helpers/format';
 
 const MarkupLabel = styled.div`
   display: flex;
-  justify-content: space-between;
+  justify-content: flex-end;
   align-items: center;
   background-color: var(--white);
   padding: 4px 0;
@@ -140,7 +140,9 @@ export const CategoryExternalMarkup: React.FC<CategoryExternalMarkupProps> = (pr
             disabled={!markup.enabled}
             style={{ width: 70, fontSize: 12 }}
           />
-          <MarkupValue>-</MarkupValue>
+          <MarkupValue>
+            {markup.enabled ? formatCurrency(extFee?.vendorAmount ?? 0) : '-'}
+          </MarkupValue>
         </Flex>
       </MarkupLabel>
       <div />

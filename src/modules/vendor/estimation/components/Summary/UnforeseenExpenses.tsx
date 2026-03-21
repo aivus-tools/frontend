@@ -66,7 +66,7 @@ export const UnforeseenExpenses = () => {
             formatter={percentFormat}
             parser={percentParser}
           />
-          <TotalSum style={{ minWidth: '90px' }}>{total}</TotalSum>
+          <TotalSum style={{ minWidth: '90px' }}>{isVisible ? total : '\u2013'}</TotalSum>
         </Flex>
       </Label>
     </UnforeseenRowWrapper>

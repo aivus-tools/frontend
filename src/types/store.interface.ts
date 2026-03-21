@@ -48,14 +48,22 @@ export interface ExportItem {
   units: { key: string; value: number }[];
 }
 
+export interface ExportFeeItem {
+  name: string;
+  percent: number;
+  amount: number;
+}
+
 export interface CategoryWithSubcategories {
   category: string;
   data: { subcategory: string; items: ExportItem[] }[];
+  fees: ExportFeeItem[];
 }
 
 export interface CategoryWithoutSubcategories {
   category: string;
   data: { items: ExportItem[] };
+  fees: ExportFeeItem[];
 }
 
 export type CategoriesExportData = Array<CategoryWithSubcategories | CategoryWithoutSubcategories>;

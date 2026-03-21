@@ -178,6 +178,9 @@ export const UnforeseenRowWrapper = styled(SummaryRowWrapper)`
   z-index: 2;
   min-height: 50px;
   margin-top: 0;
+  &::before, &::after {
+    box-shadow: none;
+  }
 `;
 
 export const GrandTotalRowWrapper = styled(SummaryRowWrapper)`

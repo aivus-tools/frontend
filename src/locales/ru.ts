@@ -86,6 +86,7 @@ export const RU_LOCALES = {
   EXPORT_VERSION_SAVED_HELPER:
     'Эта версия расчета будет <b>сохранена</b> и всегда будет доступна для повторного скачивания.',
   EXTRA_MATERIALS: 'Дополнительные материалы',
+  FAILED_TO_LOAD_ESTIMATE: 'Не удалось загрузить данные. Попробуйте позже.',
   FAILED_TO_REGISTER: 'Не удалось зарегистрироваться',
   FOR_CLIENT: 'Для клиента',
   FORGOT_PASSWORD_MESSAGE: 'Введите ваш email, и мы отправим вам ссылку для восстановления пароля.',
@@ -225,6 +226,7 @@ export const RU_LOCALES = {
   SUBTOTAL_FOR_ALL_SECTIONS: 'Промежуточный итог всех разделов',
   SUBTOTAL_OF_LOCATIONS: (name: string) => `Промежуточный итог ${name}:`,
   SURCHARGE: 'Наценка',
+  FEES: 'Комиссии',
   TAXES_AND_FEES: 'Налоги и сборы',
   TAXPAYER_ID: 'Идентификационный номер налогоплательщика',
   TAX_RATE: 'Ставка налога',

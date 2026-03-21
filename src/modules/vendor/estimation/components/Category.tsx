@@ -13,6 +13,7 @@ import {
   selectSubcategoryById,
   selectOffersByCategoryId,
   selectTotalSumByCategoryId,
+  selectCategoryTotalWithFees,
 } from '@/store/slices/offer/selectors';
 import { useCallback } from 'react';
 import { RootState } from '@/store/store';
@@ -32,6 +33,9 @@ export function Category({ category }: { category: TypeCategory }) {
   const { total, clientTotal } = useAppSelector(
     useCallback((state: RootState) => selectTotalSumByCategoryId(state, category.id), [category.id])
   );
+  const { total: totalWithFees, clientTotal: clientTotalWithFees } = useAppSelector(
+    useCallback((state: RootState) => selectCategoryTotalWithFees(state, category.id), [category.id])
+  );
 
   return (
     <CategorySection>
@@ -42,9 +46,9 @@ export function Category({ category }: { category: TypeCategory }) {
             <SubCategory key={`${key}${subCategory.id}`} subCategory={subCategory} />
           ))}
           <Entries data={offers} />
-          <Total text={category.name} value={total} clientValue={clientTotal} categoryId={category.id} />
           <CategoryFees categoryId={category.id} />
           <CategoryExternalMarkup categoryId={category.id} />
+          <Total text={category.name} value={totalWithFees} clientValue={clientTotalWithFees} categoryId={category.id} />
         </>
       )}
     </CategorySection>

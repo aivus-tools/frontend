@@ -6,6 +6,7 @@ import {
   CategoryExternalMarkup,
   CategoryWithoutSubcategories,
   CategoryWithSubcategories,
+  ExportFeeItem,
   ExportItem,
   OfferState,
 } from '@/types/store.interface';
@@ -89,13 +90,14 @@ const buildCategoryFees = (
   externalMarkup: CategoryExternalMarkup | null,
 ): FeeRow[] => {
   const fees: FeeRow[] = [];
+  const hasExternalMarkup = !!externalMarkup?.enabled && externalMarkup.percent > 0;
   if (tags.includes('production')) {
     const insurancePct = parseFloat(metaData?.productionInsurancePercent || '0') || 0;
     const feePct = parseFloat(metaData?.productionFeePercent || '0') || 0;
     if (insurancePct > 0) {
       fees.push({ key: 'PROD_INSURANCE', name: customFeeNames['PROD_INSURANCE'] || t('PROD_INSURANCE'), percent: insurancePct, vendorAmount: applyPercentage(vendorSum, insurancePct), clientAmount: applyPercentage(clientSum, insurancePct) });
     }
-    if (feePct > 0) {
+    if (feePct > 0 && !hasExternalMarkup) {
       fees.push({ key: 'PROD_FEE', name: customFeeNames['PROD_FEE'] || t('PROD_FEE'), percent: feePct, vendorAmount: applyPercentage(vendorSum, feePct), clientAmount: applyPercentage(clientSum, feePct) });
     }
   }
@@ -106,20 +108,20 @@ const buildCategoryFees = (
     if (insurancePct > 0) {
       fees.push({ key: 'POST_INSURANCE', name: customFeeNames['POST_INSURANCE'] || t('POST_INSURANCE'), percent: insurancePct, vendorAmount: applyPercentage(vendorSum, insurancePct), clientAmount: applyPercentage(clientSum, insurancePct) });
     }
-    if (markupPct > 0) {
+    if (markupPct > 0 && !hasExternalMarkup) {
       fees.push({ key: 'POST_MARKUP', name: customFeeNames['POST_MARKUP'] || t('POST_MARKUP'), percent: markupPct, vendorAmount: applyPercentage(vendorSum, markupPct), clientAmount: applyPercentage(clientSum, markupPct) });
     }
     if (taxPct > 0) {
       fees.push({ key: 'POST_TAX', name: customFeeNames['POST_TAX'] || t('POST_TAX'), percent: taxPct, vendorAmount: applyPercentage(vendorSum, taxPct), clientAmount: applyPercentage(clientSum, taxPct) });
     }
   }
-  if (externalMarkup?.enabled && externalMarkup.percent > 0) {
+  if (hasExternalMarkup) {
     fees.push({
       key: 'EXT_MARKUP_' + categoryId,
-      name: externalMarkup.name || 'Markup',
-      percent: externalMarkup.percent,
-      vendorAmount: 0,
-      clientAmount: applyPercentage(clientSum, externalMarkup.percent),
+      name: externalMarkup!.name || 'Markup',
+      percent: externalMarkup!.percent,
+      vendorAmount: applyPercentage(vendorSum, externalMarkup!.percent),
+      clientAmount: applyPercentage(clientSum, externalMarkup!.percent),
     });
   }
   return fees;
@@ -130,7 +132,8 @@ const resolveCategoryTags = (
   offerDetails: OfferState['offerDetails'],
   dictionary: OfferState['dictionary'],
 ): string[] => {
-  const category = offerDetails?.categories?.find(x => x.id === categoryId);
+  const category = offerDetails?.categories?.find(x => x.id === categoryId)
+    || offerDetails?.subCategories?.find(x => x.id === categoryId);
   const tags = category?.tags || [];
   if (tags.length > 0) {
     return tags;
@@ -259,6 +262,23 @@ export const selectCategoryExternalMarkup = createSelector(
   }
 );
 
+export const selectCategoryTotalWithFees = createSelector(
+  [selectOfferDetails, selectOfferMetaData, selectDictionary, (_: { offer: OfferState }, categoryId: string) => categoryId],
+  (offerDetails, metaData, dictionary, categoryId) => {
+    const { vendorSum, clientSum } = getCategorySubtotals(offerDetails, categoryId);
+    const tags = resolveCategoryTags(categoryId, offerDetails, dictionary);
+    const customFeeNames = offerDetails?.customFeeNames || {};
+    const externalMarkup = offerDetails?.categoryExternalMarkup?.[categoryId] || null;
+    const fees = buildCategoryFees(categoryId, tags, vendorSum, clientSum, metaData, customFeeNames, externalMarkup);
+    const vendorFeeSum = fees.reduce((acc, x) => acc + x.vendorAmount, 0);
+    const clientFeeSum = fees.reduce((acc, x) => acc + x.clientAmount, 0);
+    return {
+      total: formatCurrency(vendorSum + vendorFeeSum),
+      clientTotal: formatCurrency(clientSum + clientFeeSum),
+    };
+  }
+);
+
 export const selectOverallSurcharge = createSelector([selectOfferDetails], (offerDetails) => {
   return {
     surcharge: offerDetails?.overallSurcharge ?? 0,
@@ -279,8 +299,8 @@ export const makeSelectCostPerVideo = () =>
   );
 
 export const selectCategoriesExportData = createSelector(
-  [selectOfferDetails, selectRootCategories],
-  (offerDetails, rootCategories): CategoriesExportData => {
+  [selectOfferDetails, selectRootCategories, selectOfferMetaData, selectDictionary],
+  (offerDetails, rootCategories, metaData, dictionary): CategoriesExportData => {
     const prepareUnits = (units: OfferData['units']) => {
       return units
         .map((unit) => {
@@ -293,13 +313,37 @@ export const selectCategoriesExportData = createSelector(
         .filter((unit): unit is { key: string; value: number } => unit !== undefined);
     };
 
+    const buildExportFees = (categoryId: string): ExportFeeItem[] => {
+      const tags = resolveCategoryTags(categoryId, offerDetails, dictionary);
+      const { vendorSum } = getCategorySubtotals(offerDetails, categoryId);
+      const customFeeNames = offerDetails?.customFeeNames || {};
+      const externalMarkup = offerDetails?.categoryExternalMarkup?.[categoryId] || null;
+      const feeRows = buildCategoryFees(categoryId, tags, vendorSum, vendorSum, metaData, customFeeNames, externalMarkup);
+      return feeRows.map((x) => ({ name: x.name, percent: x.percent, amount: x.vendorAmount }));
+    };
+
     return rootCategories.map((category): CategoryWithSubcategories | CategoryWithoutSubcategories => {
       const subCategories = (offerDetails?.subCategories || []).filter(
         (subCategory) => subCategory.parentCategoryId === category.id
       );
 
+      const fees = buildExportFees(category.id);
+
       if (subCategories.length > 0) {
-        const data = subCategories.map((subCategory) => {
+        const data: Array<{ subcategory: string; items: ExportItem[] }> = [];
+
+        const directItems: ExportItem[] = (offerDetails?.offers || [])
+          .filter((offer) => offer.categoryId === category.id)
+          .map((offer) => ({
+            name: offer.item,
+            price: offer.taxPrice,
+            units: prepareUnits(offer.units),
+          }));
+        if (directItems.length > 0) {
+          data.push({ subcategory: category.name, items: directItems });
+        }
+
+        for (const subCategory of subCategories) {
           const items: ExportItem[] = (offerDetails?.offers || [])
             .filter((offer) => offer.categoryId === subCategory.id)
             .map((offer) => ({
@@ -308,15 +352,13 @@ export const selectCategoriesExportData = createSelector(
               units: prepareUnits(offer.units),
             }));
 
-          return {
-            subcategory: subCategory.name,
-            items,
-          };
-        });
+          data.push({ subcategory: subCategory.name, items });
+        }
 
         return {
           category: category.name,
           data,
+          fees,
         };
       }
 
@@ -331,6 +373,7 @@ export const selectCategoriesExportData = createSelector(
       return {
         category: category.name,
         data: { items },
+        fees,
       };
     });
   }

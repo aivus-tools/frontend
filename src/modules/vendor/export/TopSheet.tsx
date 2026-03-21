@@ -53,13 +53,16 @@ const buildSectionFees = (
   const fees: FeeItem[] = [];
   const customNames = offer.customFeeNames || {};
 
+  const extMarkup = (offer.categoryExternalMarkup || {})[categoryId];
+  const hasExternalMarkup = !!extMarkup?.enabled && extMarkup.percent > 0;
+
   if (tags.includes('production')) {
     const insurancePct = parseFloat(offer.productionInsurancePercent) || 0;
     const feePct = parseFloat(offer.productionFeePercent) || 0;
     if (insurancePct > 0) {
       fees.push({ label: getFeeName('PROD_INSURANCE', customNames), percent: insurancePct, value: subtotal * (insurancePct / 100) });
     }
-    if (feePct > 0) {
+    if (feePct > 0 && !hasExternalMarkup) {
       fees.push({ label: getFeeName('PROD_FEE', customNames), percent: feePct, value: subtotal * (feePct / 100) });
     }
   }
@@ -70,7 +73,7 @@ const buildSectionFees = (
     if (insurancePct > 0) {
       fees.push({ label: getFeeName('POST_INSURANCE', customNames), percent: insurancePct, value: subtotal * (insurancePct / 100) });
     }
-    if (markupPct > 0) {
+    if (markupPct > 0 && !hasExternalMarkup) {
       fees.push({ label: getFeeName('POST_MARKUP', customNames), percent: markupPct, value: subtotal * (markupPct / 100) });
     }
     if (taxPct > 0) {
@@ -78,12 +81,11 @@ const buildSectionFees = (
     }
   }
 
-  const extMarkup = (offer.categoryExternalMarkup || {})[categoryId];
-  if (extMarkup?.enabled && extMarkup.percent > 0) {
+  if (hasExternalMarkup) {
     fees.push({
-      label: extMarkup.name || 'Markup',
-      percent: extMarkup.percent,
-      value: subtotal * (extMarkup.percent / 100),
+      label: extMarkup!.name || 'Markup',
+      percent: extMarkup!.percent,
+      value: subtotal * (extMarkup!.percent / 100),
     });
   }
 
@@ -200,7 +202,7 @@ const SectionTable: React.FC<SectionTableProps> = (props) => {
           <tr key={x.label}>
             <td style={cellStyle} />
             <td style={cellStyle} />
-            <td style={cellStyle}>{x.label}</td>
+            <td style={{ ...cellStyle, color: '#99A1B7', textAlign: 'right' }}>{x.label}</td>
             <td style={priceCellStyle}>
               <span style={{ marginRight: 16, color: '#99A1B7', fontSize: 12 }}>{x.percent}%</span>
               {formatCurrency(x.value)}
@@ -225,7 +227,7 @@ const tableStyle: React.CSSProperties = {
   fontSize: 14,
 };
 
-const BORDER = '1px solid #0F4C5C';
+const BORDER = '1px solid #D0D5DD';
 
 const headerCellStyle: React.CSSProperties = {
   padding: '6px 6px',

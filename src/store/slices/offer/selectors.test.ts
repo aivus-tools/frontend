@@ -18,6 +18,8 @@ import {
   selectOverallSurcharge,
   makeSelectCostPerVideo,
   selectCategoriesExportData,
+  selectCategoryFees,
+  selectAllCategoryFeesTotal,
 } from './selectors';
 import { OfferState } from '@/types/store.interface';
 
@@ -378,8 +380,9 @@ describe('Offer Selectors', () => {
       expect(preProduction).toBeDefined();
 
       if ('data' in preProduction! && Array.isArray(preProduction.data)) {
-        expect(preProduction.data).toHaveLength(1);
-        expect(preProduction.data[0].subcategory).toBe('Research');
+        expect(preProduction.data).toHaveLength(2);
+        expect(preProduction.data[0].subcategory).toBe('Pre-Production');
+        expect(preProduction.data[1].subcategory).toBe('Research');
       }
     });
 
@@ -392,6 +395,144 @@ describe('Offer Selectors', () => {
         const items = category.data[0].items;
         expect(items).toHaveLength(1);
       }
+    });
+  });
+
+  describe('Fee logic', () => {
+    const createFeeState = (overrides?: Partial<OfferState>) => {
+      return createMockState({
+        offerDetails: {
+          ...createMockState().offer.offerDetails,
+          categories: [
+            { id: 'cat-prod', name: 'Production', parentCategoryId: null, tags: ['production'] },
+            { id: 'cat-post', name: 'Post-Production', parentCategoryId: null, tags: ['post_production'] },
+          ],
+          subCategories: [],
+          offers: [
+            { id: 'o1', categoryId: 'cat-prod', item: 'Crew', cost: 1000, clientCost: 1200, price: 1000, clientPrice: 1200, units: [] },
+            { id: 'o2', categoryId: 'cat-post', item: 'Edit', cost: 500, clientCost: 600, price: 500, clientPrice: 600, units: [] },
+          ],
+          categorySurcharge: {
+            'cat-prod': { surcharge: 20, linked: false },
+            'cat-post': { surcharge: 20, linked: false },
+          },
+          ...overrides?.offerDetails,
+        } as OfferState['offerDetails'],
+        metaData: {
+          projectName: 'Test',
+          clientName: 'Client',
+          productionInsurancePercent: '3',
+          productionFeePercent: '20',
+          postInsurancePercent: '2',
+          postMarkupPercent: '15',
+          postTaxPercent: '5',
+        } as unknown as OfferState['metaData'],
+        ...overrides,
+      });
+    };
+
+    it('should calculate production fees with insurance and fee', () => {
+      const state = createFeeState();
+      const fees = selectCategoryFees(state, 'cat-prod');
+
+      expect(fees).toHaveLength(2);
+      expect(fees[0].key).toBe('PROD_INSURANCE');
+      expect(fees[0].percent).toBe(3);
+      expect(fees[0].vendorAmount).toBe(30);
+      expect(fees[0].clientAmount).toBe(36);
+      expect(fees[1].key).toBe('PROD_FEE');
+      expect(fees[1].percent).toBe(20);
+      expect(fees[1].vendorAmount).toBe(200);
+      expect(fees[1].clientAmount).toBe(240);
+    });
+
+    it('should calculate post-production fees', () => {
+      const state = createFeeState();
+      const fees = selectCategoryFees(state, 'cat-post');
+
+      expect(fees).toHaveLength(3);
+      expect(fees[0].key).toBe('POST_INSURANCE');
+      expect(fees[1].key).toBe('POST_MARKUP');
+      expect(fees[2].key).toBe('POST_TAX');
+    });
+
+    it('should suppress PROD_FEE when EXT_MARKUP is enabled', () => {
+      const state = createFeeState({
+        offerDetails: {
+          ...createFeeState().offer.offerDetails,
+          categoryExternalMarkup: {
+            'cat-prod': { enabled: true, percent: 25, name: 'Agency Fee' },
+          },
+        } as OfferState['offerDetails'],
+      });
+      const fees = selectCategoryFees(state, 'cat-prod');
+
+      const feeKeys = fees.map((x) => x.key);
+      expect(feeKeys).toContain('PROD_INSURANCE');
+      expect(feeKeys).not.toContain('PROD_FEE');
+      expect(feeKeys).toContain('EXT_MARKUP_cat-prod');
+    });
+
+    it('should suppress POST_MARKUP when EXT_MARKUP is enabled', () => {
+      const state = createFeeState({
+        offerDetails: {
+          ...createFeeState().offer.offerDetails,
+          categoryExternalMarkup: {
+            'cat-post': { enabled: true, percent: 10, name: 'Agency Fee' },
+          },
+        } as OfferState['offerDetails'],
+      });
+      const fees = selectCategoryFees(state, 'cat-post');
+
+      const feeKeys = fees.map((x) => x.key);
+      expect(feeKeys).toContain('POST_INSURANCE');
+      expect(feeKeys).not.toContain('POST_MARKUP');
+      expect(feeKeys).toContain('POST_TAX');
+      expect(feeKeys).toContain('EXT_MARKUP_cat-post');
+    });
+
+    it('should calculate EXT_MARKUP vendorAmount', () => {
+      const state = createFeeState({
+        offerDetails: {
+          ...createFeeState().offer.offerDetails,
+          categoryExternalMarkup: {
+            'cat-prod': { enabled: true, percent: 20, name: 'Markup' },
+          },
+        } as OfferState['offerDetails'],
+      });
+      const fees = selectCategoryFees(state, 'cat-prod');
+      const extFee = fees.find((x) => x.key === 'EXT_MARKUP_cat-prod');
+
+      expect(extFee).toBeDefined();
+      expect(extFee!.vendorAmount).toBe(200);
+      expect(extFee!.clientAmount).toBe(240);
+    });
+
+    it('should sum all category fees correctly', () => {
+      const state = createFeeState();
+      const totals = selectAllCategoryFeesTotal(state);
+
+      expect(totals.vendorTotal).toBeGreaterThan(0);
+      expect(totals.clientTotal).toBeGreaterThan(0);
+    });
+
+    it('should include fees in grand total', () => {
+      const state = createFeeState();
+      const grandTotal = selectGrandTotal(state);
+      const totalSum = selectTotalSum(state);
+      const feesTotal = selectAllCategoryFeesTotal(state);
+
+      expect(grandTotal.totalValue).toBeGreaterThan(totalSum.value);
+      expect(grandTotal.totalValue).toBe(
+        totalSum.value + feesTotal.vendorTotal + (totalSum.value + feesTotal.vendorTotal) * 0.1
+      );
+    });
+
+    it('should return empty fees for category without tags', () => {
+      const state = createMockState();
+      const fees = selectCategoryFees(state, 'cat-1');
+
+      expect(fees).toHaveLength(0);
     });
   });
 });

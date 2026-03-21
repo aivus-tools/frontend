@@ -16,7 +16,7 @@ const cellStyle: React.CSSProperties = {
   fontSize: 12,
   fontFamily: FONT_FAMILY,
   color: TEXT_COLOR,
-  borderBottom: '1px solid #E8E8E8',
+  borderBottom: '1px solid #D0D5DD',
 };
 
 const numericCellStyle: React.CSSProperties = {
@@ -32,6 +32,8 @@ interface BudgetSectionProps {
 }
 
 export const BudgetSection: React.FC<BudgetSectionProps> = props => {
+  const fringesMul = 1 + (parseFloat(props.fringesPercent) || 0) / 100;
+
   return (
     <table style={{ width: '100%', borderCollapse: 'collapse', marginBottom: 16, fontFamily: FONT_FAMILY }}>
       <thead>
@@ -75,7 +77,7 @@ export const BudgetSection: React.FC<BudgetSectionProps> = props => {
           <tr key={x.id}>
             <td style={cellStyle}>{x.code}</td>
             <td style={cellStyle}>{x.name}</td>
-            <td style={numericCellStyle}>{formatCurrency(x.rate)}</td>
+            <td style={numericCellStyle}>{formatCurrency(x.rate * fringesMul)}</td>
             <td style={numericCellStyle}>{x.units[0] != null ? x.units[0].count : ''}</td>
             <td style={numericCellStyle}>{x.units[0] != null ? x.units[0].symbol : ''}</td>
             <td style={numericCellStyle}>{x.units[1] != null ? x.units[1].count : ''}</td>

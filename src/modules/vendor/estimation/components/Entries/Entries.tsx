@@ -253,7 +253,7 @@ export function Entries({ data }: { data: OfferData[] }) {
                     />
                     {offer.taxPrice > offer.price && (
                       <div style={{ fontSize: '10px', color: 'var(--gray-light)', textAlign: 'right', marginTop: '-4px' }}>
-                        {formatCurrency(offer.taxPrice)} ({t('FRINGES_INCL')})
+                        {formatCurrency(offer.taxPrice)}
                       </div>
                     )}
                   </Flex>

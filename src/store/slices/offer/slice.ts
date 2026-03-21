@@ -18,8 +18,11 @@ const getEffectiveFringes = (offer: OfferData, state: OfferState): number => {
 };
 
 const calcBasePrice = (price: number, overtime: number, fringesPercent: number): number => {
-  const base = price + (overtime || 0);
-  return fringesPercent > 0 ? round(base * (1 + fringesPercent / 100)) : base;
+  const safePrice = Number.isFinite(price) ? price : 0;
+  const safeOvertime = Number.isFinite(overtime) ? overtime : 0;
+  const safeFringes = Number.isFinite(fringesPercent) ? fringesPercent : 0;
+  const base = safePrice + safeOvertime;
+  return safeFringes > 0 ? round(base * (1 + safeFringes / 100)) : base;
 };
 
 const initialState: OfferState = {
@@ -58,8 +61,8 @@ export const offerSlice = createSlice({
         categories: action.payload.categories || [],
         subCategories: action.payload.subCategories || [],
         categorySurcharge: action.payload.categorySurcharge || {},
-        categoryExternalMarkup: action.payload.categoryExternalMarkup ?? state.offerDetails.categoryExternalMarkup ?? {},
-        customFeeNames: action.payload.customFeeNames ?? state.offerDetails.customFeeNames ?? {},
+        categoryExternalMarkup: action.payload.categoryExternalMarkup || {},
+        customFeeNames: action.payload.customFeeNames || {},
       };
       if (state.offerDetails?.offers) {
         state.offerDetails.offers.forEach((offer) => {
@@ -69,9 +72,8 @@ export const offerSlice = createSlice({
             const fringesPrice = calcBasePrice(offer.price, offer.overtime || 0, fringes);
             offer.taxPrice = fringesPrice;
             offer.cost = round(fringesPrice * unitMultiplier);
-            if (offer.clientPrice > 0 && offer.clientCost === 0) {
-              offer.clientCost = round(offer.clientPrice * unitMultiplier);
-            }
+            offer.clientPrice = round(fringesPrice * (1 + (offer.surcharge || 0) / 100));
+            offer.clientCost = round(offer.clientPrice * unitMultiplier);
           }
         });
       }
@@ -192,6 +194,18 @@ export const offerSlice = createSlice({
             state.offerDetails.offers.find((offer) => offer.categoryId === category.id) ||
             state.offerDetails.subCategories?.find((subcategory) => subcategory.parentCategoryId === category.id)
         );
+
+        const remainingCategoryIds = new Set(state.offerDetails.categories.map((x) => x.id));
+        for (const key of Object.keys(state.offerDetails.categorySurcharge || {})) {
+          if (!remainingCategoryIds.has(key)) {
+            delete state.offerDetails.categorySurcharge[key];
+          }
+        }
+        for (const key of Object.keys(state.offerDetails.categoryExternalMarkup || {})) {
+          if (!remainingCategoryIds.has(key)) {
+            delete state.offerDetails.categoryExternalMarkup![key];
+          }
+        }
       }
     },
     changeOfferRow: (state, action: PayloadAction<Partial<OfferData>>) => {
@@ -217,10 +231,9 @@ export const offerSlice = createSlice({
       const fringes = getEffectiveFringes(newOffer, state);
 
       if (updatedParameter.includes('taxPrice') && updatedParameter.length === 1) {
-        const currentFringesPrice = calcBasePrice(newOffer.price, newOffer.overtime || 0, fringes);
-        newOffer.cost = round(currentFringesPrice * unitMultiplier);
+        newOffer.cost = round(newOffer.taxPrice * unitMultiplier);
         const markup = newOffer.isLinkedSurcharge ? catSurcharge : newOffer.surcharge;
-        newOffer.clientPrice = round(currentFringesPrice * (1 + markup / 100));
+        newOffer.clientPrice = round(newOffer.taxPrice * (1 + markup / 100));
         newOffer.clientCost = round(newOffer.clientPrice * unitMultiplier);
         state.offerDetails.offers[index] = newOffer;
 
@@ -229,6 +242,8 @@ export const offerSlice = createSlice({
 
       if (updatedParameter.includes('clientPrice') && updatedParameter.length === 1) {
         const currentFringesPrice = calcBasePrice(newOffer.price, newOffer.overtime || 0, fringes);
+        newOffer.taxPrice = currentFringesPrice;
+        newOffer.cost = round(currentFringesPrice * unitMultiplier);
         newOffer.surcharge = currentFringesPrice > 0 ? (newOffer.clientPrice / currentFringesPrice - 1) * 100 : 0;
         newOffer.clientCost = round(newOffer.clientPrice * unitMultiplier);
         state.offerDetails.offers[index] = newOffer;
@@ -236,7 +251,7 @@ export const offerSlice = createSlice({
         return;
       }
 
-      if (rootCategoryId !== undefined) {
+      if (rootCategoryId !== undefined && state.offerDetails.categorySurcharge[rootCategoryId]) {
         if (updatedParameter.includes('surcharge')) {
           state.offerDetails.categorySurcharge[rootCategoryId].linked = false;
           state.offerDetails.isLinkedOverallSurcharge = false;
@@ -312,11 +327,12 @@ export const offerSlice = createSlice({
 
       state.offerDetails.offers.forEach((offer) => {
         if (currentCategories.includes(offer.categoryId)) {
+          const wasLinked = offer.isLinkedSurcharge;
           if (newData.linked !== undefined) {
             offer.isLinkedSurcharge = newData.linked;
           }
 
-          if (newData.linked || offer.isLinkedSurcharge) {
+          if (newData.linked || wasLinked) {
             const unitMultiplier = offer.units?.reduce((acc, unit) => acc * (unit?.count ?? 1), 1) ?? 1;
             const fringes = getEffectiveFringes(offer, state);
             const { surcharge = 0 } = newCategorySurcharge;
@@ -343,9 +359,19 @@ export const offerSlice = createSlice({
         const fringes = getEffectiveFringes(offer, state);
         const fringesPrice = calcBasePrice(offer.price, offer.overtime || 0, fringes);
 
+        let markup = offer.surcharge;
+        if (offer.isLinkedSurcharge) {
+          const category = state.dictionary.category.find((x) => x.id === offer.categoryId);
+          const rootId = category?.parentCategoryId ?? category?.id;
+          if (rootId && state.offerDetails.categorySurcharge[rootId]) {
+            markup = state.offerDetails.categorySurcharge[rootId].surcharge;
+            offer.surcharge = markup;
+          }
+        }
+
         offer.taxPrice = fringesPrice;
         offer.cost = round(fringesPrice * unitMultiplier);
-        offer.clientPrice = round(fringesPrice * (1 + offer.surcharge / 100));
+        offer.clientPrice = round(fringesPrice * (1 + markup / 100));
         offer.clientCost = round(offer.clientPrice * unitMultiplier);
       });
     },

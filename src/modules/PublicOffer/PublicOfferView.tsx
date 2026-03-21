@@ -1,6 +1,6 @@
 'use client';
 
-import React, { use, useCallback, useEffect, useMemo, useState } from 'react';
+import React, { use, useCallback, useMemo, useState } from 'react';
 import { App, Button, Select, Skeleton } from 'antd';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
@@ -8,14 +8,13 @@ import { useSession } from 'next-auth/react';
 import { t } from '@/lib/i18n';
 import { AppRoute } from '@/constants/appRoute';
 import { GROUPS } from '@/constants/constants';
-import { useGetShareByTokenQuery, useLinkShareToBriefMutation } from '@/services/client/sharesApi';
+import { useGetShareByTokenQuery, useGetShareExportDataQuery, useLinkShareToBriefMutation } from '@/services/client/sharesApi';
 import { useGetBriefsQuery, useCreateBriefMutation } from '@/services/client/briefApi';
-import { useAppDispatch } from '@/store/hooks';
-import { setOfferDetails } from '@/store/slices/offer/slice';
-import { OfferDetails } from '@/types/store.interface';
+import { CoverPage } from '@/modules/vendor/export/CoverPage';
+import { TopSheet } from '@/modules/vendor/export/TopSheet';
+import { AssumptionsPage } from '@/modules/vendor/export/AssumptionsPage';
+import { BudgetDetail } from '@/modules/vendor/export/BudgetDetail';
 import { NewBrief } from '@/types/brief.interface';
-import { ClientOfferTable } from '@/modules/vendor/client-offer/ClientOfferTable';
-import { GuidanceProvider } from '@/context/GuidanceProvider';
 import logger from '@/lib/logger';
 import LogoIcon from '@/icons/aivus-logo.svg';
 import {
@@ -50,9 +49,9 @@ export const PublicOfferView: React.FC<PublicOfferViewProps> = ({ params }) => {
   const { token } = use(params);
   const router = useRouter();
   const session = useSession();
-  const dispatch = useAppDispatch();
   const { message } = App.useApp();
   const { data, isLoading, error } = useGetShareByTokenQuery(token);
+  const { data: exportData, isLoading: isExportLoading, error: exportError } = useGetShareExportDataQuery(token);
   const [addedBriefId, setAddedBriefId] = useState<string | null>(null);
   const [selectedBriefId, setSelectedBriefId] = useState<string | null>(null);
 
@@ -63,12 +62,6 @@ export const PublicOfferView: React.FC<PublicOfferViewProps> = ({ params }) => {
   const { data: briefs = [] } = useGetBriefsQuery(undefined, { skip: !isClient });
   const [linkShareToBrief, { isLoading: isLinking }] = useLinkShareToBriefMutation();
   const [createBrief] = useCreateBriefMutation();
-
-  useEffect(() => {
-    if (data?.offer?.details) {
-      dispatch(setOfferDetails(data.offer.details as unknown as OfferDetails));
-    }
-  }, [data, dispatch]);
 
   const getViewerRole = useCallback((): 'guest' | 'vendor-author' | 'vendor-other' | 'client' => {
     if (!isAuthenticated) {
@@ -249,31 +242,30 @@ export const PublicOfferView: React.FC<PublicOfferViewProps> = ({ params }) => {
         )}
 
         <OfferTableWrapper>
-          <div style={{ padding: '20px 40px' }}>
-            <h2 style={{
+          {exportError ? (
+            <div style={{
+              padding: '40px',
+              textAlign: 'center',
               fontFamily: "'Montserrat', sans-serif",
-              fontWeight: 700,
-              fontSize: 18,
-              color: '#4B5675',
-              margin: '0 0 8px 0',
+              fontSize: 14,
+              color: '#99A1B7',
             }}>
-              {offer.projectName}
-            </h2>
-            {vendor?.name && (
-              <div style={{
-                fontFamily: "'Montserrat', sans-serif",
-                fontWeight: 500,
-                fontSize: 13,
-                color: '#99A1B7',
-              }}>
-                {t('BY_VENDOR', vendor.name)}
-              </div>
-            )}
-          </div>
-
-          <GuidanceProvider>
-            <ClientOfferTable />
-          </GuidanceProvider>
+              {t('FAILED_TO_LOAD_ESTIMATE')}
+            </div>
+          ) : isExportLoading || !exportData ? (
+            <div style={{ padding: '40px' }}>
+              <Skeleton active paragraph={{ rows: 12 }} />
+            </div>
+          ) : (
+            <div style={{ padding: '40px' }}>
+              <CoverPage data={exportData} />
+              <div style={{ height: 32 }} />
+              <TopSheet data={exportData} />
+              <div style={{ height: 32 }} />
+              <AssumptionsPage data={exportData} />
+              <BudgetDetail data={exportData} />
+            </div>
+          )}
         </OfferTableWrapper>
       </MainContent>
     </PageContainer>

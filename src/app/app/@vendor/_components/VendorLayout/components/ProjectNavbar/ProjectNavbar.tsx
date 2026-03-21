@@ -9,11 +9,11 @@ import { ProjectTabs } from './components/ProjectTabs/ProjectTabs';
 import { ExportPopover } from './components/Popover/Popover';
 
 import styles from './ProjectNavbar.module.css';
-import { exportToExcel } from '@/helpers/excelExport/exportToExcel';
+import { exportOfferToExcel } from '@/helpers/excelExport/exportToExcel';
 import { useAppDispatch, useAppSelector } from '@/store/hooks';
-import { selectCategoriesExportData, selectOfferDetails, selectOfferMetaData, selectTemplateId } from '@/store/slices/offer/selectors';
+import { selectOfferMetaData, selectTemplateId } from '@/store/slices/offer/selectors';
+import { useLazyGetOfferExportDataQuery } from '@/services/client/offersApi';
 import { setMetaData } from '@/store/slices/offer/slice';
-import { selectProjectId } from '@/store/slices/project';
 import dayjs, { Dayjs } from 'dayjs';
 import { useCallback, useRef, useState } from 'react';
 import { SharePopup } from '@/modules/SharePopup/SharePopup';
@@ -27,11 +27,9 @@ export const ProjectNavbar = () => {
   useSetVendor();
 
   const dispatch = useAppDispatch();
-  const categoriesExportData = useAppSelector(selectCategoriesExportData);
-  const offerDetails = useAppSelector(selectOfferDetails);
   const offerMetaData = useAppSelector(selectOfferMetaData);
+  const [triggerExportData] = useLazyGetOfferExportDataQuery();
   const templateId = useAppSelector(selectTemplateId);
-  const projectId = useAppSelector(selectProjectId);
   const session = useSession();
   const [shareOpen, setShareOpen] = useState(false);
   const [saveTemplateOpen, setSaveTemplateOpen] = useState(false);
@@ -71,8 +69,9 @@ export const ProjectNavbar = () => {
     date?: Dayjs;
     watermark?: string;
   }) => {
-    if (format === 'xlsx') {
-      await exportToExcel(categoriesExportData, name, date, watermark, offerMetaData?.id);
+    if (format === 'xlsx' && offerMetaData?.id) {
+      const result = await triggerExportData(offerMetaData.id).unwrap();
+      await exportOfferToExcel(result, { fileName: name, date, watermark });
     } else if (format === 'pdf' && offerMetaData?.id) {
       window.open(`/export/${offerMetaData.id}`, '_blank');
     } else {

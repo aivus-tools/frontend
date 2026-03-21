@@ -7,9 +7,10 @@ import ArrowIcon from '@/icons/arrow-icon.svg';
 import AddIcon from '@/icons/add-icon.svg';
 import CloseIcon from '@/icons/cross.svg';
 import { t } from '@/lib/i18n';
+import logger from '@/lib/logger';
 import { useAppDispatch, useAppSelector } from '@/store/hooks';
-import { selectOfferMetaData, selectIsExternal } from '@/store/slices/offer/selectors';
-import { setMetaData, recalculateAllOffers } from '@/store/slices/offer/slice';
+import { selectOfferMetaData, selectIsExternal, selectOfferDetails } from '@/store/slices/offer/selectors';
+import { setMetaData, recalculateAllOffers, setCategoryExternalMarkup } from '@/store/slices/offer/slice';
 import { useUpdateOfferMutation } from '@/services/client/offersApi';
 import { Offer, OfferDeliverable, OfferScheduleEntry } from '@/types/offer.interface';
 import { RichTextEditor } from './RichTextEditor';
@@ -146,6 +147,7 @@ const TagsField: React.FC<TagsFieldProps> = props => {
 export const OfferMetaForm: React.FC = () => {
   const dispatch = useAppDispatch();
   const metaData = useAppSelector(selectOfferMetaData);
+  const offerDetails = useAppSelector(selectOfferDetails);
   const isExternal = useAppSelector(selectIsExternal);
   const [updateOffer] = useUpdateOfferMutation();
 
@@ -231,7 +233,7 @@ export const OfferMetaForm: React.FC = () => {
           });
         }
       })
-      .catch(() => {});
+      .catch(x => { logger.error('Failed to save offer metadata', x); });
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [metaData?.id, updateOffer, dispatch]);
 
@@ -315,7 +317,14 @@ export const OfferMetaForm: React.FC = () => {
     const value = event.target.value;
     setMarkupPercent(value);
     handleFieldChange('markupPercent', value || '0');
-  }, [handleFieldChange]);
+    const newPercent = parseFloat(value) || 0;
+    const markups = offerDetails?.categoryExternalMarkup || {};
+    for (const categoryId of Object.keys(markups)) {
+      if (!markups[categoryId].enabled) {
+        dispatch(setCategoryExternalMarkup({ categoryId, percent: newPercent }));
+      }
+    }
+  }, [handleFieldChange, offerDetails, dispatch]);
 
   const handleAddDeliverable = useCallback(() => {
     const newDeliverable: OfferDeliverable = {
@@ -565,8 +574,8 @@ export const OfferMetaForm: React.FC = () => {
             <SectionHeader>
               <SectionLabel>Production Percentages</SectionLabel>
             </SectionHeader>
-            <FormRow>
-              <FormField $width="140px">
+            <FormRow style={{ flexWrap: 'wrap' }}>
+              <FormField $flex style={{ minWidth: 120 }}>
                 <FieldLabel>Fringes %</FieldLabel>
                 <FieldInput
                   type="number"
@@ -577,7 +586,7 @@ export const OfferMetaForm: React.FC = () => {
                   placeholder="0"
                 />
               </FormField>
-              <FormField $width="140px">
+              <FormField $flex style={{ minWidth: 120 }}>
                 <FieldLabel>Handling %</FieldLabel>
                 <FieldInput
                   type="number"
@@ -588,7 +597,7 @@ export const OfferMetaForm: React.FC = () => {
                   placeholder="0"
                 />
               </FormField>
-              <FormField $width="140px">
+              <FormField $flex style={{ minWidth: 180 }}>
                 <FieldLabel>Default External Markup %</FieldLabel>
                 <FieldInput
                   type="number"
@@ -599,7 +608,7 @@ export const OfferMetaForm: React.FC = () => {
                   placeholder="0"
                 />
               </FormField>
-              <FormField $width="140px">
+              <FormField $flex style={{ minWidth: 120 }}>
                 <FieldLabel>Prod Insurance %</FieldLabel>
                 <FieldInput
                   type="number"
@@ -610,7 +619,7 @@ export const OfferMetaForm: React.FC = () => {
                   placeholder="0"
                 />
               </FormField>
-              <FormField $width="140px">
+              <FormField $flex style={{ minWidth: 120 }}>
                 <FieldLabel>Prod Fee %</FieldLabel>
                 <FieldInput
                   type="number"
@@ -628,8 +637,8 @@ export const OfferMetaForm: React.FC = () => {
             <SectionHeader>
               <SectionLabel>Post-Production Percentages</SectionLabel>
             </SectionHeader>
-            <FormRow>
-              <FormField $width="140px">
+            <FormRow style={{ flexWrap: 'wrap' }}>
+              <FormField $flex style={{ minWidth: 120 }}>
                 <FieldLabel>Post Markup %</FieldLabel>
                 <FieldInput
                   type="number"
@@ -640,7 +649,7 @@ export const OfferMetaForm: React.FC = () => {
                   placeholder="0"
                 />
               </FormField>
-              <FormField $width="140px">
+              <FormField $flex style={{ minWidth: 120 }}>
                 <FieldLabel>Post Insurance %</FieldLabel>
                 <FieldInput
                   type="number"
@@ -651,7 +660,7 @@ export const OfferMetaForm: React.FC = () => {
                   placeholder="0"
                 />
               </FormField>
-              <FormField $width="140px">
+              <FormField $flex style={{ minWidth: 120 }}>
                 <FieldLabel>Post Tax %</FieldLabel>
                 <FieldInput
                   type="number"

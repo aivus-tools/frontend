@@ -8,6 +8,7 @@ import {
     selectSubcategoryById,
     selectOffersByCategoryId,
     selectTotalSumByCategoryId,
+    selectCategoryTotalWithFees,
 } from '@/store/slices/offer/selectors';
 import { RootState } from '@/store/store';
 import { Title } from '@/modules/vendor/client-offer/components/Title/Title';
@@ -31,6 +32,9 @@ export function Category({ category }: { category: TypeCategory }) {
     const { clientTotal } = useAppSelector(
         useCallback((state: RootState) => selectTotalSumByCategoryId(state, category.id), [category.id])
     );
+    const { clientTotal: clientTotalWithFees } = useAppSelector(
+        useCallback((state: RootState) => selectCategoryTotalWithFees(state, category.id), [category.id])
+    );
 
     return (
         <>
@@ -41,8 +45,8 @@ export function Category({ category }: { category: TypeCategory }) {
                         <SubCategory key={`${key}${subCategory.id}`} subCategory={subCategory} />
                     ))}
                     <Entries data={offers} />
-                    <Total text={category.name} value={clientTotal} />
                     <CategoryFees categoryId={category.id} />
+                    <Total text={category.name} value={clientTotalWithFees} />
                 </>
             )}
             <div style={{ gridColumn: 'span 7', padding: '15px' }} />

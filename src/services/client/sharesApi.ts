@@ -1,4 +1,5 @@
 import { Share, CreateSharePayload, UpdateSharePayload, PublicOfferData } from '@/types/share.interface';
+import { OfferExportData } from '@/types/exportData.interface';
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
 import { ApiRoute } from '@/constants/apiRoute';
 
@@ -38,6 +39,9 @@ export const sharesApi = createApi({
         body: { briefId },
       }),
     }),
+    getShareExportData: builder.query<OfferExportData, string>({
+      query: (token) => ApiRoute.SHARE_EXPORT_DATA(token),
+    }),
   }),
 });
 
@@ -47,4 +51,5 @@ export const {
   useUpdateShareMutation,
   useGetShareByOfferIdQuery,
   useLinkShareToBriefMutation,
+  useGetShareExportDataQuery,
 } = sharesApi;

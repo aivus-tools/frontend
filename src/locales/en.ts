@@ -85,6 +85,7 @@ export const EN_LOCALES = {
   EXPORT_VERSION_SAVED_HELPER:
     'This version of the calculation will be <b>saved</b> and will always be available for re-download.',
   EXTRA_MATERIALS: 'Extra materials',
+  FAILED_TO_LOAD_ESTIMATE: 'Failed to load estimate data. Please try again later.',
   FAILED_TO_REGISTER: 'Failed to register',
   FOR_CLIENT: 'For client',
   FORGOT_PASSWORD_MESSAGE: 'Enter your email address and we will send you a link to reset your password.',
@@ -225,6 +226,7 @@ export const EN_LOCALES = {
   SUBTOTAL_OF_LOCATIONS: (name: string) => `Subtotal of ${name}:`,
   SURCHARGE: 'Surcharge',
   TAXPAYER_ID: 'Taxpayer Id',
+  FEES: 'Fees',
   TAXES_AND_FEES: 'Taxes & Fees',
   TAX_RATE: 'TAX Rate',
   TEMPLATE: 'Template',

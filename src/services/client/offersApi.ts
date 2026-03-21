@@ -75,4 +75,5 @@ export const {
   useCopyOfferMutation,
   useUpdateOfferStatusMutation,
   useGetOfferExportDataQuery,
+  useLazyGetOfferExportDataQuery,
 } = offersApi;

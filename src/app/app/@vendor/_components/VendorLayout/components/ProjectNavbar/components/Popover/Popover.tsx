@@ -50,6 +50,7 @@ export const ExportPopover: React.FC<ExportPopoverProps> = ({ children, action, 
             className={styles.formatSelect}
             options={[
               { label: 'pdf', value: 'pdf' },
+              { label: 'xlsx', value: 'xlsx' },
             ]}
           />
         </div>

@@ -11,7 +11,7 @@ import { RootState } from '@/store/store';
 
 const FeeLabel = styled.div`
   display: flex;
-  justify-content: space-between;
+  justify-content: flex-end;
   align-items: center;
   background-color: var(--white);
   padding: 4px 0;
