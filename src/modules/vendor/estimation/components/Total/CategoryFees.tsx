@@ -1,13 +1,18 @@
 'use client';
 
-import React, { useState, useCallback } from 'react';
+import React, { useState, useCallback, useMemo, useRef, useEffect } from 'react';
 import { Flex, Input } from 'antd';
 import { styled } from 'styled-components';
 import { useAppSelector, useAppDispatch } from '@/store/hooks';
-import { selectCategoryFees, selectIsExternal , FeeRow } from '@/store/slices/offer/selectors';
-import { setCustomFeeName } from '@/store/slices/offer/slice';
+import { selectCategoryFees, selectIsExternal, selectOfferMetaData, FeeRow } from '@/store/slices/offer/selectors';
+import { setCustomFeeName, setMetaData } from '@/store/slices/offer/slice';
 import { formatCurrency } from '@/lib/utils';
 import { RootState } from '@/store/store';
+import { InputNumberRight } from '../../styled';
+import { useUpdateOfferMutation } from '@/services/client/offersApi';
+import { Offer } from '@/types/offer.interface';
+import debounce from 'lodash.debounce';
+import logger from '@/lib/logger';
 
 const FeeLabel = styled.div`
   display: flex;
@@ -30,12 +35,6 @@ const FeeValue = styled.div`
   align-items: center;
   justify-content: flex-end;
   min-width: 90px;
-`;
-
-const PercentBadge = styled.span`
-  font-size: 11px;
-  color: #c4cada;
-  margin-right: 12px;
 `;
 
 const EmptyCell = styled.div`
@@ -82,8 +81,46 @@ interface FeeRowItemProps {
 
 const FeeRowItem: React.FC<FeeRowItemProps> = (props) => {
   const dispatch = useAppDispatch();
+  const metaData = useAppSelector(selectOfferMetaData);
+  const [updateOffer] = useUpdateOfferMutation();
   const [editing, setEditing] = useState(false);
   const [editValue, setEditValue] = useState(props.fee.name);
+
+  const saveToServer = useCallback((field: string, value: string) => {
+    if (!metaData) {
+      return;
+    }
+    updateOffer({ id: metaData.id, [field]: value } as Partial<Offer> & Pick<Offer, 'id'>)
+      .unwrap()
+      .then(x => {
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
+        const { details: _details, ...meta } = x;
+        dispatch(setMetaData(meta));
+      })
+      .catch(x => { logger.error('Failed to save fee percent', x); });
+  }, [metaData, updateOffer, dispatch]);
+
+  const debouncedSave = useMemo(() => {
+    return debounce(saveToServer, 500);
+  }, [saveToServer]);
+
+  const debouncedSaveRef = useRef(debouncedSave);
+  debouncedSaveRef.current = debouncedSave;
+
+  useEffect(() => {
+    return () => {
+      debouncedSaveRef.current.cancel();
+    };
+  }, []);
+
+  const handlePercentChange = useCallback((value: number | null) => {
+    if (!props.fee.metaField || !metaData) {
+      return;
+    }
+    const stringValue = String(value ?? 0);
+    dispatch(setMetaData({ ...metaData, [props.fee.metaField]: stringValue }));
+    debouncedSave(props.fee.metaField, stringValue);
+  }, [props.fee.metaField, metaData, dispatch, debouncedSave]);
 
   const handleStartEdit = () => {
     if (props.readOnly) {
@@ -131,14 +168,26 @@ const FeeRowItem: React.FC<FeeRowItemProps> = (props) => {
           )}
         </Flex>
         <Flex align="center">
-          <PercentBadge>{props.fee.percent}%</PercentBadge>
+          {props.fee.metaField && !props.readOnly ? (
+            <InputNumberRight
+              size="small"
+              value={props.fee.percent}
+              onChange={handlePercentChange}
+              controls={false}
+              min={0}
+              suffix="%"
+              style={{ width: 65, fontSize: 11 }}
+            />
+          ) : (
+            <span style={{ fontSize: 11, color: '#c4cada', marginRight: 12 }}>{props.fee.percent}%</span>
+          )}
           <FeeValue>{formatCurrency(props.fee.vendorAmount)}</FeeValue>
         </Flex>
       </FeeLabel>
       <div />
       <Flex
         justify="flex-end"
-        style={{ gridColumn: 'span 4', paddingRight: '16px', backgroundColor: 'var(--white)' }}
+        style={{ gridColumn: 'span 4', backgroundColor: 'var(--white)' }}
       >
         <FeeValue>{formatCurrency(props.fee.clientAmount)}</FeeValue>
       </Flex>

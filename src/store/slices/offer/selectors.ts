@@ -74,11 +74,20 @@ const getCategorySubtotals = (offerDetails: OfferState['offerDetails'], category
 
 export interface FeeRow {
   key: string;
+  metaField: string | null;
   name: string;
   percent: number;
   vendorAmount: number;
   clientAmount: number;
 }
+
+const FEE_KEY_TO_META_FIELD: Record<string, string> = {
+  PROD_INSURANCE: 'productionInsurancePercent',
+  PROD_FEE: 'productionFeePercent',
+  POST_MARKUP: 'postMarkupPercent',
+  POST_INSURANCE: 'postInsurancePercent',
+  POST_TAX: 'postTaxPercent',
+};
 
 const buildCategoryFees = (
   categoryId: string,
@@ -95,10 +104,10 @@ const buildCategoryFees = (
     const insurancePct = parseFloat(metaData?.productionInsurancePercent || '0') || 0;
     const feePct = parseFloat(metaData?.productionFeePercent || '0') || 0;
     if (insurancePct > 0) {
-      fees.push({ key: 'PROD_INSURANCE', name: customFeeNames['PROD_INSURANCE'] || t('PROD_INSURANCE'), percent: insurancePct, vendorAmount: applyPercentage(vendorSum, insurancePct), clientAmount: applyPercentage(clientSum, insurancePct) });
+      fees.push({ key: 'PROD_INSURANCE', metaField: FEE_KEY_TO_META_FIELD['PROD_INSURANCE'], name: customFeeNames['PROD_INSURANCE'] || t('PROD_INSURANCE'), percent: insurancePct, vendorAmount: applyPercentage(vendorSum, insurancePct), clientAmount: applyPercentage(clientSum, insurancePct) });
     }
     if (feePct > 0 && !hasExternalMarkup) {
-      fees.push({ key: 'PROD_FEE', name: customFeeNames['PROD_FEE'] || t('PROD_FEE'), percent: feePct, vendorAmount: applyPercentage(vendorSum, feePct), clientAmount: applyPercentage(clientSum, feePct) });
+      fees.push({ key: 'PROD_FEE', metaField: FEE_KEY_TO_META_FIELD['PROD_FEE'], name: customFeeNames['PROD_FEE'] || t('PROD_FEE'), percent: feePct, vendorAmount: applyPercentage(vendorSum, feePct), clientAmount: applyPercentage(clientSum, feePct) });
     }
   }
   if (tags.includes('post_production')) {
@@ -106,18 +115,19 @@ const buildCategoryFees = (
     const markupPct = parseFloat(metaData?.postMarkupPercent || '0') || 0;
     const taxPct = parseFloat(metaData?.postTaxPercent || '0') || 0;
     if (insurancePct > 0) {
-      fees.push({ key: 'POST_INSURANCE', name: customFeeNames['POST_INSURANCE'] || t('POST_INSURANCE'), percent: insurancePct, vendorAmount: applyPercentage(vendorSum, insurancePct), clientAmount: applyPercentage(clientSum, insurancePct) });
+      fees.push({ key: 'POST_INSURANCE', metaField: FEE_KEY_TO_META_FIELD['POST_INSURANCE'], name: customFeeNames['POST_INSURANCE'] || t('POST_INSURANCE'), percent: insurancePct, vendorAmount: applyPercentage(vendorSum, insurancePct), clientAmount: applyPercentage(clientSum, insurancePct) });
     }
     if (markupPct > 0 && !hasExternalMarkup) {
-      fees.push({ key: 'POST_MARKUP', name: customFeeNames['POST_MARKUP'] || t('POST_MARKUP'), percent: markupPct, vendorAmount: applyPercentage(vendorSum, markupPct), clientAmount: applyPercentage(clientSum, markupPct) });
+      fees.push({ key: 'POST_MARKUP', metaField: FEE_KEY_TO_META_FIELD['POST_MARKUP'], name: customFeeNames['POST_MARKUP'] || t('POST_MARKUP'), percent: markupPct, vendorAmount: applyPercentage(vendorSum, markupPct), clientAmount: applyPercentage(clientSum, markupPct) });
     }
     if (taxPct > 0) {
-      fees.push({ key: 'POST_TAX', name: customFeeNames['POST_TAX'] || t('POST_TAX'), percent: taxPct, vendorAmount: applyPercentage(vendorSum, taxPct), clientAmount: applyPercentage(clientSum, taxPct) });
+      fees.push({ key: 'POST_TAX', metaField: FEE_KEY_TO_META_FIELD['POST_TAX'], name: customFeeNames['POST_TAX'] || t('POST_TAX'), percent: taxPct, vendorAmount: applyPercentage(vendorSum, taxPct), clientAmount: applyPercentage(clientSum, taxPct) });
     }
   }
   if (hasExternalMarkup) {
     fees.push({
       key: 'EXT_MARKUP_' + categoryId,
+      metaField: null,
       name: externalMarkup!.name || 'Markup',
       percent: externalMarkup!.percent,
       vendorAmount: applyPercentage(vendorSum, externalMarkup!.percent),

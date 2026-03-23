@@ -1,5 +1,5 @@
 'use client';
-import React, { useCallback, useEffect } from 'react';
+import React, { useCallback, useEffect, useRef } from 'react';
 import { useRouter } from 'next/navigation';
 
 import { InitialParameters } from './InitialParameters';
@@ -37,14 +37,17 @@ export default function Details() {
   const [form] = Form.useForm<ProjectFormData>();
   const [messageApi, context] = message.useMessage();
   const router = useRouter();
+  const initializedRef = useRef(false);
 
-  // Set form values from existing project or brief
   useEffect(() => {
-    form.setFieldsValue(initialValues);
+    if (initializedRef.current) {
+      return;
+    }
 
-    // If we have an existing project, populate form from it
     if (existingProject) {
+      initializedRef.current = true;
       form.setFieldsValue({
+        ...initialValues,
         crmId: existingProject.crmId || '',
         projectName: existingProject.name || '',
         description: existingProject.description || '',
@@ -65,16 +68,16 @@ export default function Details() {
         })) || [{ name: '', position: '' }],
       });
     } else if (!isLoading && brief && typeof brief.details === 'object') {
-      // Fallback to brief details for backwards compatibility
+      initializedRef.current = true;
       const details = brief.details;
       form.setFieldsValue({
+        ...initialValues,
         crmId: details.crmId || '',
         projectName: details.projectName || '',
         description: details.description || '',
         clientName: details.clientName || '',
         irsEin: details.irsEin || '',
         brandName: details.brandName || '',
-        // Map old format { manager, position } to new { name, position }
         managers: details.managers?.map((m: { manager?: string; name?: string; position?: string }) => ({
           name: m.manager || m.name || '',
           position: m.position || '',
@@ -85,6 +88,8 @@ export default function Details() {
           role: 'internal_user' as const,
         })) || [],
       });
+    } else if (!isLoading) {
+      initializedRef.current = true;
     }
   }, [brief, existingProject, form, isLoading]);
 

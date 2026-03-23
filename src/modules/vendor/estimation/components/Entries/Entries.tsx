@@ -242,7 +242,7 @@ export function Entries({ data }: { data: OfferData[] }) {
             if (key === 'price') {
               return (
                 <EstimationItem key={`${offer.id}${KEY_SEPARATOR}${key}`} style={itemStyle} {...rowProps}>
-                  <Flex vertical align='flex-end' style={{ width: '100%' }}>
+                  <Flex align='center' gap={4} style={{ width: '100%' }}>
                     <InputNumberRight
                       style={{ flex: 1 }}
                       variant={isActive ? 'outlined' : 'borderless'}
@@ -252,9 +252,9 @@ export function Entries({ data }: { data: OfferData[] }) {
                       {...itemProps}
                     />
                     {offer.taxPrice > offer.price && (
-                      <div style={{ fontSize: '10px', color: 'var(--gray-light)', textAlign: 'right', marginTop: '-4px' }}>
+                      <span style={{ fontSize: '10px', color: 'var(--gray-light)', whiteSpace: 'nowrap' }}>
                         {formatCurrency(offer.taxPrice)}
-                      </div>
+                      </span>
                     )}
                   </Flex>
                 </EstimationItem>
