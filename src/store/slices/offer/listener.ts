@@ -13,6 +13,8 @@ import {
   changeOverallSurcharge,
   changeUnforeseenExpenses,
   changeShowCostPerVideo,
+  setCustomFeeName,
+  setCategoryExternalMarkup,
   resetOffer,
 } from './slice';
 import { isAnyOf } from '@reduxjs/toolkit';
@@ -50,7 +52,9 @@ export const offerListener = (startListening: AppStartListening) => {
       changeCategorySurcharge,
       changeOverallSurcharge,
       changeUnforeseenExpenses,
-      changeShowCostPerVideo
+      changeShowCostPerVideo,
+      setCustomFeeName,
+      setCategoryExternalMarkup
     ),
     effect: async (_, { dispatch, getState }) => {
       const state = getState();

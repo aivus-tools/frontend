@@ -28,7 +28,6 @@ export const BudgetDetail: React.FC<BudgetDetailProps> = props => {
           <BudgetSection
             key={x.id}
             section={x}
-            fringesPercent={props.data.offer.fringesPercent}
           />
         ))}
     </div>

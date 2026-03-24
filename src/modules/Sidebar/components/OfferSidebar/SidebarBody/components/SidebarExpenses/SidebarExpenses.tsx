@@ -68,7 +68,7 @@ export const SidebarExpenses: React.FC<Props> = (props) => {
       <div className={cn(styles.block, styles.fees)}>
         <div className={styles.feesSwitch}>
           <Switch size='small' checked={props.offer.showTax} onClick={handleFringesSwitch} />
-          <div className={styles.feesLabel}>Fringes</div>
+          <div className={styles.feesLabel}>Custom fringes</div>
         </div>
 
         <SidebarInput

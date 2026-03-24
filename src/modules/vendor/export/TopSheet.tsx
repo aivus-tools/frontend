@@ -1,6 +1,7 @@
 import React from 'react';
 
 import { OfferExportData } from '@/types/exportData.interface';
+import { buildSectionFees } from '@/helpers/excelExport/exportUtils';
 
 const formatCurrency = (value: number): string => {
   if (value === 0) {
@@ -25,72 +26,6 @@ interface SectionGroup {
   children: Array<{ code: string; name: string; total: number }>;
   subtotal: number;
 }
-
-interface FeeItem {
-  label: string;
-  percent: number;
-  value: number;
-}
-
-const DEFAULT_FEE_NAMES: Record<string, string> = {
-  PROD_INSURANCE: 'Production Insurance',
-  PROD_FEE: 'Production Fee',
-  POST_INSURANCE: 'Post Insurance',
-  POST_MARKUP: 'Post Markup',
-  POST_TAX: 'Post Tax',
-};
-
-const getFeeName = (key: string, customFeeNames: Record<string, string>): string => {
-  return customFeeNames[key] || DEFAULT_FEE_NAMES[key] || key;
-};
-
-const buildSectionFees = (
-  categoryId: string,
-  tags: string[],
-  subtotal: number,
-  offer: OfferExportData['offer'],
-): FeeItem[] => {
-  const fees: FeeItem[] = [];
-  const customNames = offer.customFeeNames || {};
-
-  const extMarkup = (offer.categoryExternalMarkup || {})[categoryId];
-  const hasExternalMarkup = !!extMarkup?.enabled && extMarkup.percent > 0;
-
-  if (tags.includes('production')) {
-    const insurancePct = parseFloat(offer.productionInsurancePercent) || 0;
-    const feePct = parseFloat(offer.productionFeePercent) || 0;
-    if (insurancePct > 0) {
-      fees.push({ label: getFeeName('PROD_INSURANCE', customNames), percent: insurancePct, value: subtotal * (insurancePct / 100) });
-    }
-    if (feePct > 0 && !hasExternalMarkup) {
-      fees.push({ label: getFeeName('PROD_FEE', customNames), percent: feePct, value: subtotal * (feePct / 100) });
-    }
-  }
-  if (tags.includes('post_production')) {
-    const insurancePct = parseFloat(offer.postInsurancePercent) || 0;
-    const markupPct = parseFloat(offer.postMarkupPercent) || 0;
-    const taxPct = parseFloat(offer.postTaxPercent) || 0;
-    if (insurancePct > 0) {
-      fees.push({ label: getFeeName('POST_INSURANCE', customNames), percent: insurancePct, value: subtotal * (insurancePct / 100) });
-    }
-    if (markupPct > 0 && !hasExternalMarkup) {
-      fees.push({ label: getFeeName('POST_MARKUP', customNames), percent: markupPct, value: subtotal * (markupPct / 100) });
-    }
-    if (taxPct > 0) {
-      fees.push({ label: getFeeName('POST_TAX', customNames), percent: taxPct, value: subtotal * (taxPct / 100) });
-    }
-  }
-
-  if (hasExternalMarkup) {
-    fees.push({
-      label: extMarkup!.name || 'Markup',
-      percent: extMarkup!.percent,
-      value: subtotal * (extMarkup!.percent / 100),
-    });
-  }
-
-  return fees;
-};
 
 interface TopSheetProps {
   data: OfferExportData;
@@ -182,9 +117,9 @@ const SectionTable: React.FC<SectionTableProps> = (props) => {
         </tr>
       </thead>
       <tbody>
-        {props.items.map((x) => (
-          <tr key={x.code}>
-            <td style={cellStyle}>{x.code}</td>
+        {props.items.map((x, i) => (
+          <tr key={`${x.code}-${i}`}>
+            <td style={{ ...cellStyle, textAlign: 'center' }}>{x.code}</td>
             <td style={cellStyle}>{x.label}</td>
             <td style={cellStyle} />
             <td style={priceCellStyle}>{formatCurrency(x.value)}</td>

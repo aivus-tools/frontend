@@ -1,14 +1,14 @@
 'use client';
 
 import React, { useState, useCallback, useMemo, useRef, useEffect } from 'react';
-import { Flex, Input } from 'antd';
+import { Flex, Input, InputNumber } from 'antd';
 import { styled } from 'styled-components';
 import { useAppSelector, useAppDispatch } from '@/store/hooks';
 import { selectCategoryFees, selectIsExternal, selectOfferMetaData, FeeRow } from '@/store/slices/offer/selectors';
 import { setCustomFeeName, setMetaData } from '@/store/slices/offer/slice';
 import { formatCurrency } from '@/lib/utils';
 import { RootState } from '@/store/store';
-import { InputNumberRight } from '../../styled';
+import { percentFormat, percentParser } from '../../helpers/format';
 import { useUpdateOfferMutation } from '@/services/client/offersApi';
 import { Offer } from '@/types/offer.interface';
 import debounce from 'lodash.debounce';
@@ -86,11 +86,15 @@ const FeeRowItem: React.FC<FeeRowItemProps> = (props) => {
   const [editing, setEditing] = useState(false);
   const [editValue, setEditValue] = useState(props.fee.name);
 
+  const metaDataRef = useRef(metaData);
+  metaDataRef.current = metaData;
+
   const saveToServer = useCallback((field: string, value: string) => {
-    if (!metaData) {
+    const current = metaDataRef.current;
+    if (!current) {
       return;
     }
-    updateOffer({ id: metaData.id, [field]: value } as Partial<Offer> & Pick<Offer, 'id'>)
+    updateOffer({ id: current.id, [field]: value } as Partial<Offer> & Pick<Offer, 'id'>)
       .unwrap()
       .then(x => {
         // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -98,29 +102,27 @@ const FeeRowItem: React.FC<FeeRowItemProps> = (props) => {
         dispatch(setMetaData(meta));
       })
       .catch(x => { logger.error('Failed to save fee percent', x); });
-  }, [metaData, updateOffer, dispatch]);
+  }, [updateOffer, dispatch]);
 
   const debouncedSave = useMemo(() => {
     return debounce(saveToServer, 500);
   }, [saveToServer]);
 
-  const debouncedSaveRef = useRef(debouncedSave);
-  debouncedSaveRef.current = debouncedSave;
-
   useEffect(() => {
     return () => {
-      debouncedSaveRef.current.cancel();
+      debouncedSave.cancel();
     };
-  }, []);
+  }, [debouncedSave]);
 
   const handlePercentChange = useCallback((value: number | null) => {
-    if (!props.fee.metaField || !metaData) {
+    const current = metaDataRef.current;
+    if (!props.fee.metaField || !current) {
       return;
     }
     const stringValue = String(value ?? 0);
-    dispatch(setMetaData({ ...metaData, [props.fee.metaField]: stringValue }));
+    dispatch(setMetaData({ ...current, [props.fee.metaField]: stringValue }));
     debouncedSave(props.fee.metaField, stringValue);
-  }, [props.fee.metaField, metaData, dispatch, debouncedSave]);
+  }, [props.fee.metaField, dispatch, debouncedSave]);
 
   const handleStartEdit = () => {
     if (props.readOnly) {
@@ -169,17 +171,17 @@ const FeeRowItem: React.FC<FeeRowItemProps> = (props) => {
         </Flex>
         <Flex align="center">
           {props.fee.metaField && !props.readOnly ? (
-            <InputNumberRight
+            <InputNumber
               size="small"
               value={props.fee.percent}
               onChange={handlePercentChange}
               controls={false}
-              min={0}
-              suffix="%"
-              style={{ width: 65, fontSize: 11 }}
+              formatter={percentFormat}
+              parser={percentParser}
+              style={{ width: 70, fontSize: 12 }}
             />
           ) : (
-            <span style={{ fontSize: 11, color: '#c4cada', marginRight: 12 }}>{props.fee.percent}%</span>
+            <span style={{ fontSize: 12, color: '#c4cada', marginRight: 12 }}>{props.fee.percent} %</span>
           )}
           <FeeValue>{formatCurrency(props.fee.vendorAmount)}</FeeValue>
         </Flex>

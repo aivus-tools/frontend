@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { Modal, Input, Button, Switch, Avatar, Popconfirm, Skeleton } from 'antd';
 import { CopyOutlined, CheckOutlined, UserOutlined } from '@ant-design/icons';
 import { t } from '@/lib/i18n';
@@ -35,8 +35,9 @@ export const SharePopup: React.FC<SharePopupProps> = ({ open, onClose, offerId, 
   });
 
   const [shareToken, setShareToken] = useState<string | null>(null);
-  const [isActive, setIsActive] = useState(true);
+  const [isActive, setIsActive] = useState<boolean | null>(null);
   const [hasError, setHasError] = useState(false);
+  const createGuardRef = useRef(false);
 
   // Sync state with fetched share data
   useEffect(() => {
@@ -49,7 +50,8 @@ export const SharePopup: React.FC<SharePopupProps> = ({ open, onClose, offerId, 
   // Auto-create share when modal opens and no existing share
   useEffect(() => {
     const is404 = shareError && 'status' in shareError && shareError.status === 404;
-    if (open && !existingShare && !isLoadingShare && !shareToken && (!shareError || is404)) {
+    if (open && !existingShare && !isLoadingShare && !shareToken && !createGuardRef.current && (!shareError || is404)) {
+      createGuardRef.current = true;
       createShare({ offerId })
         .unwrap()
         .then((share) => {
@@ -58,6 +60,9 @@ export const SharePopup: React.FC<SharePopupProps> = ({ open, onClose, offerId, 
         })
         .catch(() => {
           setHasError(true);
+        })
+        .finally(() => {
+          createGuardRef.current = false;
         });
     }
   }, [open, existingShare, isLoadingShare, shareToken, shareError, offerId, createShare]);
@@ -66,9 +71,10 @@ export const SharePopup: React.FC<SharePopupProps> = ({ open, onClose, offerId, 
   useEffect(() => {
     if (!open) {
       setShareToken(null);
-      setIsActive(true);
+      setIsActive(null);
       setHasError(false);
       setCopied(false);
+      createGuardRef.current = false;
     }
   }, [open]);
 
@@ -114,6 +120,7 @@ export const SharePopup: React.FC<SharePopupProps> = ({ open, onClose, offerId, 
     handleToggle(false);
   }, [handleToggle]);
 
+  const activeState = isActive ?? existingShare?.isActive ?? true;
   const isLoading = isLoadingShare || isCreating;
 
   return (
@@ -137,8 +144,8 @@ export const SharePopup: React.FC<SharePopupProps> = ({ open, onClose, offerId, 
         ) : (
           <Input
             readOnly
-            value={isActive ? shareUrl : t('LINK_SHARING_DISABLED')}
-            disabled={!isActive}
+            value={activeState ? shareUrl : t('LINK_SHARING_DISABLED')}
+            disabled={!activeState}
             style={{
               flex: 1,
               height: 40,
@@ -155,7 +162,7 @@ export const SharePopup: React.FC<SharePopupProps> = ({ open, onClose, offerId, 
           type="primary"
           icon={copied ? <CheckOutlined /> : <CopyOutlined />}
           onClick={handleCopy}
-          disabled={!isActive || isLoading}
+          disabled={!activeState || isLoading}
           style={{
             height: 40,
             minWidth: 80,
@@ -175,35 +182,37 @@ export const SharePopup: React.FC<SharePopupProps> = ({ open, onClose, offerId, 
         </div>
       )}
 
-      <ToggleRow>
-        {isActive ? (
-          <Popconfirm
-            title={t('DEACTIVATE_SHARE_LINK')}
-            onConfirm={handleToggleOff}
-            okText={t('YES')}
-            cancelText={t('NO')}
-          >
-            <Switch
-              checked={isActive}
-              style={{ backgroundColor: isActive ? '#2288FF' : undefined }}
-            />
-          </Popconfirm>
-        ) : (
-          <Switch checked={false} onChange={() => handleToggle(true)} />
-        )}
-        {isActive ? (
-          <Popconfirm
-            title={t('DEACTIVATE_SHARE_LINK')}
-            onConfirm={handleToggleOff}
-            okText={t('YES')}
-            cancelText={t('NO')}
-          >
-            <ToggleLabel style={{ cursor: 'pointer' }}>{t('ANYONE_WITH_LINK_CAN_VIEW')}</ToggleLabel>
-          </Popconfirm>
-        ) : (
-          <ToggleLabel>{t('ANYONE_WITH_LINK_CAN_VIEW')}</ToggleLabel>
-        )}
-      </ToggleRow>
+      {!isLoading && (
+        <ToggleRow>
+          {activeState ? (
+            <Popconfirm
+              title={t('DEACTIVATE_SHARE_LINK')}
+              onConfirm={handleToggleOff}
+              okText={t('YES')}
+              cancelText={t('NO')}
+            >
+              <Switch
+                checked={activeState}
+                style={{ backgroundColor: activeState ? '#2288FF' : undefined }}
+              />
+            </Popconfirm>
+          ) : (
+            <Switch checked={false} onChange={() => handleToggle(true)} />
+          )}
+          {activeState ? (
+            <Popconfirm
+              title={t('DEACTIVATE_SHARE_LINK')}
+              onConfirm={handleToggleOff}
+              okText={t('YES')}
+              cancelText={t('NO')}
+            >
+              <ToggleLabel style={{ cursor: 'pointer' }}>{t('ANYONE_WITH_LINK_CAN_VIEW')}</ToggleLabel>
+            </Popconfirm>
+          ) : (
+            <ToggleLabel>{t('ANYONE_WITH_LINK_CAN_VIEW')}</ToggleLabel>
+          )}
+        </ToggleRow>
+      )}
 
       <Divider />
 

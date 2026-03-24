@@ -1,5 +1,6 @@
 import React from 'react';
 import { ExportCategorySection } from '@/types/exportData.interface';
+import { computeDisplayValues } from '@/helpers/excelExport/exportUtils';
 
 const formatCurrency = (value: number): string => {
   return new Intl.NumberFormat('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(value);
@@ -28,12 +29,9 @@ const columnHeaders = ['ID', 'Description', 'Rate', 'Qty', 'Units', 'Qty', 'Unit
 
 interface BudgetSectionProps {
   section: ExportCategorySection;
-  fringesPercent: string;
 }
 
 export const BudgetSection: React.FC<BudgetSectionProps> = props => {
-  const fringesMul = 1 + (parseFloat(props.fringesPercent) || 0) / 100;
-
   return (
     <table style={{ width: '100%', borderCollapse: 'collapse', marginBottom: 16, fontFamily: FONT_FAMILY }}>
       <thead>
@@ -73,19 +71,22 @@ export const BudgetSection: React.FC<BudgetSectionProps> = props => {
         </tr>
       </thead>
       <tbody>
-        {props.section.entries.map(x => (
-          <tr key={x.id}>
-            <td style={cellStyle}>{x.code}</td>
-            <td style={cellStyle}>{x.name}</td>
-            <td style={numericCellStyle}>{formatCurrency(x.rate * fringesMul)}</td>
-            <td style={numericCellStyle}>{x.units[0] != null ? x.units[0].count : ''}</td>
-            <td style={numericCellStyle}>{x.units[0] != null ? x.units[0].symbol : ''}</td>
-            <td style={numericCellStyle}>{x.units[1] != null ? x.units[1].count : ''}</td>
-            <td style={numericCellStyle}>{x.units[1] != null ? x.units[1].symbol : ''}</td>
-            <td style={numericCellStyle}>{x.overtime > 0 ? formatCurrency(x.overtime) : '\u2013'}</td>
-            <td style={{ ...numericCellStyle, fontWeight: 600 }}>{formatCurrency(x.estimate)}</td>
-          </tr>
-        ))}
+        {props.section.entries.map(x => {
+          const display = computeDisplayValues(x);
+          return (
+            <tr key={x.id}>
+              <td style={{ ...cellStyle, textAlign: 'center' }}>{x.code}</td>
+              <td style={cellStyle}>{x.name}</td>
+              <td style={numericCellStyle}>{formatCurrency(display.rate)}</td>
+              <td style={numericCellStyle}>{x.units[0] != null ? x.units[0].count : ''}</td>
+              <td style={numericCellStyle}>{x.units[0] != null ? x.units[0].symbol : ''}</td>
+              <td style={numericCellStyle}>{x.units[1] != null ? x.units[1].count : ''}</td>
+              <td style={numericCellStyle}>{x.units[1] != null ? x.units[1].symbol : ''}</td>
+              <td style={numericCellStyle}>{display.overtime > 0 ? formatCurrency(display.overtime) : '\u2013'}</td>
+              <td style={{ ...numericCellStyle, fontWeight: 600 }}>{formatCurrency(x.estimate)}</td>
+            </tr>
+          );
+        })}
         <tr>
           <td colSpan={8} style={{ ...cellStyle, fontWeight: 700, background: SUBTOTAL_BG, textAlign: 'right' }}>
             Sub Total

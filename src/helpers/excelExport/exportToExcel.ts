@@ -1,7 +1,9 @@
 import ExcelJS from 'exceljs';
 import { saveAs } from 'file-saver';
 import { Dayjs } from 'dayjs';
+import QRCode from 'qrcode';
 import { OfferExportData } from '@/types/exportData.interface';
+import { computeDisplayValues, stripHtml, buildSectionFees } from './exportUtils';
 
 const FONT_NAME = 'Montserrat';
 const TEXT_ARGB = 'FF4B5675';
@@ -45,22 +47,6 @@ const formatDetailCurrency = (value: number): number => {
   return value;
 };
 
-const stripHtml = (html: string): string => {
-  return html
-    .replace(/<br\s*\/?>/gi, '\n')
-    .replace(/<\/p>/gi, '\n')
-    .replace(/<\/li>/gi, '\n')
-    .replace(/<[^>]*>/g, '')
-    .replace(/&nbsp;/g, ' ')
-    .replace(/&amp;/g, '&')
-    .replace(/&lt;/g, '<')
-    .replace(/&gt;/g, '>')
-    .replace(/&quot;/g, '"')
-    .replace(/&#39;/g, "'")
-    .replace(/\n{3,}/g, '\n\n')
-    .trim();
-};
-
 interface SectionGroup {
   id: string;
   code: string;
@@ -69,72 +55,6 @@ interface SectionGroup {
   children: Array<{ code: string; name: string; total: number }>;
   subtotal: number;
 }
-
-interface FeeItem {
-  label: string;
-  percent: number;
-  value: number;
-}
-
-const DEFAULT_FEE_NAMES: Record<string, string> = {
-  PROD_INSURANCE: 'Production Insurance',
-  PROD_FEE: 'Production Fee',
-  POST_INSURANCE: 'Post Insurance',
-  POST_MARKUP: 'Post Markup',
-  POST_TAX: 'Post Tax',
-};
-
-const getFeeName = (key: string, customFeeNames: Record<string, string>): string => {
-  return customFeeNames[key] || DEFAULT_FEE_NAMES[key] || key;
-};
-
-const buildSectionFees = (
-  categoryId: string,
-  tags: string[],
-  subtotal: number,
-  offer: OfferExportData['offer'],
-): FeeItem[] => {
-  const fees: FeeItem[] = [];
-  const customNames = offer.customFeeNames || {};
-
-  const extMarkup = (offer.categoryExternalMarkup || {})[categoryId];
-  const hasExternalMarkup = !!extMarkup?.enabled && extMarkup.percent > 0;
-
-  if (tags.includes('production')) {
-    const insurancePct = parseFloat(offer.productionInsurancePercent) || 0;
-    const feePct = parseFloat(offer.productionFeePercent) || 0;
-    if (insurancePct > 0) {
-      fees.push({ label: getFeeName('PROD_INSURANCE', customNames), percent: insurancePct, value: subtotal * (insurancePct / 100) });
-    }
-    if (feePct > 0 && !hasExternalMarkup) {
-      fees.push({ label: getFeeName('PROD_FEE', customNames), percent: feePct, value: subtotal * (feePct / 100) });
-    }
-  }
-  if (tags.includes('post_production')) {
-    const insurancePct = parseFloat(offer.postInsurancePercent) || 0;
-    const markupPct = parseFloat(offer.postMarkupPercent) || 0;
-    const taxPct = parseFloat(offer.postTaxPercent) || 0;
-    if (insurancePct > 0) {
-      fees.push({ label: getFeeName('POST_INSURANCE', customNames), percent: insurancePct, value: subtotal * (insurancePct / 100) });
-    }
-    if (markupPct > 0 && !hasExternalMarkup) {
-      fees.push({ label: getFeeName('POST_MARKUP', customNames), percent: markupPct, value: subtotal * (markupPct / 100) });
-    }
-    if (taxPct > 0) {
-      fees.push({ label: getFeeName('POST_TAX', customNames), percent: taxPct, value: subtotal * (taxPct / 100) });
-    }
-  }
-
-  if (hasExternalMarkup) {
-    fees.push({
-      label: extMarkup!.name || 'Markup',
-      percent: extMarkup!.percent,
-      value: subtotal * (extMarkup!.percent / 100),
-    });
-  }
-
-  return fees;
-};
 
 const applyRowFill = (sheet: ExcelJS.Worksheet, rowNum: number, startCol: number, endCol: number, argb: string): void => {
   const row = sheet.getRow(rowNum);
@@ -196,8 +116,6 @@ const formatDate = (value: string | null): string => {
 };
 
 function writeCoverSection(sheet: ExcelJS.Worksheet, data: OfferExportData, exportDate: Dayjs | null, watermark: string | null): number {
-  let row = 1;
-
   const producer = data.collaborators.find(x => x.role === 'producer') ?? null;
   const agencyProducer = data.collaborators.find(x => x.role === 'agency_producer') ?? null;
   const firstClientManager = data.project.clientManagers.length > 0
@@ -209,60 +127,61 @@ function writeCoverSection(sheet: ExcelJS.Worksheet, data: OfferExportData, expo
     .join(' / ') || '';
 
   const companyName = data.vendor.companyName ?? data.vendor.name;
-
-  setCellValue(sheet, row, 1, companyName, { bold: true, size: 14 });
-
-  setCellValue(sheet, row, 5, 'Job Name:', { size: 10 });
-  setCellValue(sheet, row, 6, data.project.name, { bold: true, size: 10 });
-  row++;
-
-  setCellValue(sheet, row, 5, 'Bid Date:', { size: 10 });
-  setCellValue(sheet, row, 6, formatDate(data.offer.bidDate), { bold: true, size: 10 });
-  row++;
-
-  setCellValue(sheet, row, 5, 'Bid Version:', { size: 10 });
-  setCellValue(sheet, row, 6, data.offer.revision ?? 'Initial Bidding', { bold: true, size: 10 });
-  row++;
-
-  setCellValue(sheet, row, 5, 'AIVUS ID:', { size: 10 });
-  setCellValue(sheet, row, 6, data.offer.uuid, { bold: true, size: 10 });
-  row++;
-
-  row++;
-
-  setCellValue(sheet, row, 1, 'Production:', { size: 10 });
-  setCellValue(sheet, row, 2, companyName, { bold: true, size: 10 });
-  setCellValue(sheet, row, 5, 'Client / Brand:', { size: 10 });
-  setCellValue(sheet, row, 6, clientBrand, { bold: true, size: 10 });
-  row++;
-
-  setCellValue(sheet, row, 1, 'Producer:', { size: 10 });
-  setCellValue(sheet, row, 2, producer != null ? producer.name : '', { bold: true, size: 10 });
   const clientManagerValue = firstClientManager != null
     ? `${firstClientManager.name}${firstClientManager.position ? ', ' + firstClientManager.position : ''}`
     : '';
-  setCellValue(sheet, row, 5, 'Client Manager:', { size: 10 });
-  setCellValue(sheet, row, 6, clientManagerValue, { bold: true, size: 10 });
-  row++;
 
-  row++;
+  setCellValue(sheet, 1, 1, companyName, { bold: true, size: 14 });
 
-  setCellValue(sheet, row, 1, 'Term:', { size: 10 });
-  setCellValue(sheet, row, 2, data.offer.term ?? '', { bold: true, size: 10 });
-  setCellValue(sheet, row, 5, 'Agency:', { size: 10 });
-  setCellValue(sheet, row, 6, data.project.agencyName ?? '', { bold: true, size: 10 });
-  row++;
+  const pairStartRow = 6;
 
-  setCellValue(sheet, row, 1, 'Territory:', { size: 10 });
-  setCellValue(sheet, row, 2, data.offer.territory.length > 0 ? data.offer.territory.join(', ') : '', { bold: true, size: 10 });
-  setCellValue(sheet, row, 5, 'Agency Producer:', { size: 10 });
-  setCellValue(sheet, row, 6, agencyProducer != null ? agencyProducer.name : '', { bold: true, size: 10 });
-  row++;
+  let leftRow = pairStartRow;
+  setCellValue(sheet, leftRow, 1, 'Production:', { size: 10 });
+  setCellValue(sheet, leftRow, 2, companyName, { bold: true, size: 10 });
+  leftRow++;
+  setCellValue(sheet, leftRow, 1, 'Producer:', { size: 10 });
+  setCellValue(sheet, leftRow, 2, producer != null ? producer.name : '', { bold: true, size: 10 });
+  leftRow++;
+  leftRow++;
+  setCellValue(sheet, leftRow, 1, 'Term:', { size: 10 });
+  setCellValue(sheet, leftRow, 2, data.offer.term ?? '', { bold: true, size: 10 });
+  leftRow++;
+  setCellValue(sheet, leftRow, 1, 'Territory:', { size: 10 });
+  setCellValue(sheet, leftRow, 2, data.offer.territory.length > 0 ? data.offer.territory.join(', ') : '', { bold: true, size: 10 });
+  leftRow++;
+  setCellValue(sheet, leftRow, 1, 'Media / Placements:', { size: 10 });
+  setCellValue(sheet, leftRow, 2, data.offer.mediaPlacements.length > 0 ? data.offer.mediaPlacements.join(', ') : '', { bold: true, size: 10 });
+  leftRow++;
 
-  setCellValue(sheet, row, 1, 'Media / Placements:', { size: 10 });
-  setCellValue(sheet, row, 2, data.offer.mediaPlacements.length > 0 ? data.offer.mediaPlacements.join(', ') : '', { bold: true, size: 10 });
-  row++;
+  let rightRow = pairStartRow;
+  setCellValue(sheet, rightRow, 3, 'Job Name:', { size: 10 });
+  setCellValue(sheet, rightRow, 4, data.project.name, { bold: true, size: 10 });
+  rightRow++;
+  setCellValue(sheet, rightRow, 3, 'Bid Date:', { size: 10 });
+  setCellValue(sheet, rightRow, 4, formatDate(data.offer.bidDate), { bold: true, size: 10 });
+  rightRow++;
+  setCellValue(sheet, rightRow, 3, 'Bid Version:', { size: 10 });
+  setCellValue(sheet, rightRow, 4, data.offer.revision ?? 'Initial Bidding', { bold: true, size: 10 });
+  rightRow++;
+  setCellValue(sheet, rightRow, 3, 'AIVUS ID:', { size: 10 });
+  setCellValue(sheet, rightRow, 4, data.offer.uuid, { bold: true, size: 10 });
+  rightRow++;
+  rightRow++;
+  setCellValue(sheet, rightRow, 3, 'Client / Brand:', { size: 10 });
+  setCellValue(sheet, rightRow, 4, clientBrand, { bold: true, size: 10 });
+  rightRow++;
+  setCellValue(sheet, rightRow, 3, 'Client Manager:', { size: 10 });
+  setCellValue(sheet, rightRow, 4, clientManagerValue, { bold: true, size: 10 });
+  rightRow++;
+  rightRow++;
+  setCellValue(sheet, rightRow, 3, 'Agency:', { size: 10 });
+  setCellValue(sheet, rightRow, 4, data.project.agencyName ?? '', { bold: true, size: 10 });
+  rightRow++;
+  setCellValue(sheet, rightRow, 3, 'Agency Producer:', { size: 10 });
+  setCellValue(sheet, rightRow, 4, agencyProducer != null ? agencyProducer.name : '', { bold: true, size: 10 });
+  rightRow++;
 
+  let row = Math.max(leftRow, rightRow);
   row++;
 
   if (data.offer.deliverables.length > 0) {
@@ -437,30 +356,33 @@ function writeTopSheet(sheet: ExcelJS.Worksheet, data: OfferExportData, startRow
   return row;
 }
 
-function writeBudgetDetail(wb: ExcelJS.Workbook, data: OfferExportData): void {
+function writeBudgetDetail(sheet: ExcelJS.Worksheet, data: OfferExportData, startRow: number): number {
   const detailCategories = data.categories.filter(
     x => x.entries.length > 0 && x.parentCategoryId != null,
   );
 
   if (detailCategories.length === 0) {
-    return;
+    return startRow;
   }
-
-  const sheet = wb.addWorksheet('Budget Detail');
 
   const BD_COLS = 9;
-  const colWidths = [10, 30, 12, 8, 10, 8, 10, 12, 14];
-  for (let i = 0; i < BD_COLS; i++) {
-    sheet.getColumn(i + 1).width = colWidths[i];
+  const extraColWidths: Array<{ col: number; width: number }> = [
+    { col: 8, width: 12 },
+    { col: 9, width: 14 },
+  ];
+  for (const cw of extraColWidths) {
+    const current = sheet.getColumn(cw.col).width ?? 8;
+    if (current < cw.width) {
+      sheet.getColumn(cw.col).width = cw.width;
+    }
   }
 
-  let row = 1;
+  let row = startRow;
 
   setCellValue(sheet, row, 1, 'Budget Detail', { bold: true, size: 14 });
   row += 2;
 
   const columnHeaders = ['ID', 'Description', 'Rate', 'Qty', 'Units', 'Qty', 'Units', 'Overtime', 'ESTIMATE'];
-  const fringesMul = 1 + (parseFloat(data.offer.fringesPercent) || 0) / 100;
 
   for (const section of detailCategories) {
     const titleText = section.code ? `${section.code} ${EN_DASH} ${section.name}` : section.name;
@@ -479,15 +401,15 @@ function writeBudgetDetail(wb: ExcelJS.Workbook, data: OfferExportData): void {
     row++;
 
     for (const entry of section.entries) {
-      const rateWithFringes = entry.rate * fringesMul;
-      setCellValue(sheet, row, 1, entry.code, { border: true });
+      const display = computeDisplayValues(entry);
+      setCellValue(sheet, row, 1, entry.code, { border: true, alignment: { horizontal: 'center' } });
       setCellValue(sheet, row, 2, entry.name, { border: true });
-      setCellValue(sheet, row, 3, formatDetailCurrency(rateWithFringes), { border: true, numFmt: NUM_FMT, alignment: { horizontal: 'right' } });
+      setCellValue(sheet, row, 3, formatDetailCurrency(display.rate), { border: true, numFmt: NUM_FMT, alignment: { horizontal: 'right' } });
       setCellValue(sheet, row, 4, entry.units[0] != null ? entry.units[0].count : '', { border: true, alignment: { horizontal: 'right' } });
       setCellValue(sheet, row, 5, entry.units[0] != null ? entry.units[0].symbol : '', { border: true, alignment: { horizontal: 'right' } });
       setCellValue(sheet, row, 6, entry.units[1] != null ? entry.units[1].count : '', { border: true, alignment: { horizontal: 'right' } });
       setCellValue(sheet, row, 7, entry.units[1] != null ? entry.units[1].symbol : '', { border: true, alignment: { horizontal: 'right' } });
-      setCellValue(sheet, row, 8, entry.overtime > 0 ? formatDetailCurrency(entry.overtime) : EN_DASH, { border: true, numFmt: entry.overtime > 0 ? NUM_FMT : undefined, alignment: { horizontal: 'right' } });
+      setCellValue(sheet, row, 8, display.overtime > 0 ? formatDetailCurrency(display.overtime) : EN_DASH, { border: true, numFmt: display.overtime > 0 ? NUM_FMT : undefined, alignment: { horizontal: 'right' } });
       setCellValue(sheet, row, 9, formatDetailCurrency(entry.estimate), { bold: true, border: true, numFmt: NUM_FMT, alignment: { horizontal: 'right' } });
       row++;
     }
@@ -514,21 +436,43 @@ function writeBudgetDetail(wb: ExcelJS.Workbook, data: OfferExportData): void {
 
     row++;
   }
+
+  return row;
 }
 
-function writeAssumptions(wb: ExcelJS.Workbook, data: OfferExportData): void {
+function writeAssumptions(sheet: ExcelJS.Worksheet, data: OfferExportData, startRow: number): number {
   if (!data.offer.assumptionsExclusions) {
-    return;
+    return startRow;
   }
 
-  const sheet = wb.addWorksheet('Assumptions');
-  sheet.getColumn(1).width = 120;
+  let row = startRow;
 
-  setCellValue(sheet, 1, 1, 'Assumptions & Exclusions', { bold: true, size: 14 });
+  setCellValue(sheet, row, 1, 'Assumptions & Exclusions', { bold: true, size: 14 });
+  row += 2;
 
   const text = stripHtml(data.offer.assumptionsExclusions);
-  const cell = setCellValue(sheet, 3, 1, text, { size: 10 });
+  const cell = setCellValue(sheet, row, 1, text, { size: 10 });
   cell.alignment = { wrapText: true, vertical: 'top' };
+  sheet.mergeCells(row, 1, row, 7);
+  row++;
+
+  return row;
+}
+
+async function fetchImageBuffer(url: string): Promise<{ buffer: ArrayBuffer; extension: 'png' | 'jpeg' } | null> {
+  try {
+    const fullUrl = url.startsWith('/') ? `${window.location.origin}${url}` : url;
+    const response = await fetch(fullUrl);
+    if (!response.ok) {
+      return null;
+    }
+    const buffer = await response.arrayBuffer();
+    const contentType = response.headers.get('content-type') || '';
+    const extension: 'png' | 'jpeg' = contentType.includes('jpeg') || contentType.includes('jpg') ? 'jpeg' : 'png';
+    return { buffer, extension };
+  } catch {
+    return null;
+  }
 }
 
 async function tryAddLogo(
@@ -536,23 +480,36 @@ async function tryAddLogo(
   sheet: ExcelJS.Worksheet,
   logoUrl: string,
 ): Promise<void> {
+  const image = await fetchImageBuffer(logoUrl);
+  if (image == null) {
+    return;
+  }
+  const imageId = wb.addImage({ buffer: image.buffer, extension: image.extension });
+  sheet.addImage(imageId, {
+    tl: { col: 0, row: 0 },
+    ext: { width: 200, height: 70 },
+  });
+}
+
+async function tryAddQrCode(
+  wb: ExcelJS.Workbook,
+  sheet: ExcelJS.Worksheet,
+  shareToken: string,
+): Promise<void> {
   try {
-    const response = await fetch(logoUrl);
-    if (!response.ok) {
-      return;
+    const shareUrl = `${window.location.origin}/public/${shareToken}`;
+    const dataUrl = await QRCode.toDataURL(shareUrl, { width: 120, margin: 1 });
+    const base64 = dataUrl.split(',')[1];
+    const binary = atob(base64);
+    const buffer = new ArrayBuffer(binary.length);
+    const view = new Uint8Array(buffer);
+    for (let i = 0; i < binary.length; i++) {
+      view[i] = binary.charCodeAt(i);
     }
-    const buffer = await response.arrayBuffer();
-
-    const contentType = response.headers.get('content-type') || '';
-    let extension: 'png' | 'jpeg' = 'png';
-    if (contentType.includes('jpeg') || contentType.includes('jpg')) {
-      extension = 'jpeg';
-    }
-
-    const imageId = wb.addImage({ buffer, extension });
+    const imageId = wb.addImage({ buffer, extension: 'png' });
     sheet.addImage(imageId, {
-      tl: { col: 0, row: 0 },
-      ext: { width: 200, height: 70 },
+      tl: { col: 4, row: 0 },
+      ext: { width: 100, height: 100 },
     });
   } catch {
     // noop
@@ -576,18 +533,23 @@ export async function exportOfferToExcel(
   estimateSheet.getColumn(6).width = 22;
   estimateSheet.getColumn(7).width = 22;
 
+  const imagePromises: Array<Promise<void>> = [];
   if (data.vendor.logoUrl != null) {
-    await tryAddLogo(wb, estimateSheet, data.vendor.logoUrl);
+    imagePromises.push(tryAddLogo(wb, estimateSheet, data.vendor.logoUrl));
   }
+  if (data.shareToken != null) {
+    imagePromises.push(tryAddQrCode(wb, estimateSheet, data.shareToken));
+  }
+  await Promise.all(imagePromises);
 
   const exportDate = options.date ?? null;
   const watermark = options.watermark ?? null;
 
   const topSheetStart = writeCoverSection(estimateSheet, data, exportDate, watermark);
-  writeTopSheet(estimateSheet, data, topSheetStart);
+  const afterTopSheet = writeTopSheet(estimateSheet, data, topSheetStart);
 
-  writeAssumptions(wb, data);
-  writeBudgetDetail(wb, data);
+  const afterAssumptions = writeAssumptions(estimateSheet, data, afterTopSheet + 1);
+  writeBudgetDetail(estimateSheet, data, afterAssumptions + 1);
 
   const buf = await wb.xlsx.writeBuffer();
   const fileName = options.fileName || 'estimate';

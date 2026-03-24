@@ -108,11 +108,10 @@ export const CategoryExternalMarkup: React.FC<CategoryExternalMarkupProps> = (pr
 
   return (
     <>
-      <SwitchCell>
-        <Switch size='small' checked={markup.enabled} onClick={handleToggle} />
-      </SwitchCell>
+      <EmptyCell />
       <MarkupLabel style={{ gridColumn: 'span 6' }}>
-        <Flex align='center' justify='end'>
+        <Flex align='center' justify='end' gap={8}>
+          <Switch size='small' checked={markup.enabled} onClick={handleToggle} />
           {editingName ? (
             <Input
               size='small'
@@ -148,7 +147,7 @@ export const CategoryExternalMarkup: React.FC<CategoryExternalMarkupProps> = (pr
       <div />
       <Flex
         justify='flex-end'
-        style={{ gridColumn: 'span 4', paddingRight: '16px', backgroundColor: 'var(--white)' }}
+        style={{ gridColumn: 'span 4', backgroundColor: 'var(--white)' }}
       >
         <MarkupValue>
           {markup.enabled ? formatCurrency(clientAmount) : '-'}
