@@ -5,6 +5,6 @@ export interface PriceBlockProps extends DetailedHTMLProps<HTMLAttributes<HTMLDi
   amount: number;
   highlight?: boolean;
   percentDiff?: number | null;
-  percentPositive?: boolean; // true если положительная динамика
+  percentPositive?: boolean; // true if positive trend
   children?: ReactNode;
 }

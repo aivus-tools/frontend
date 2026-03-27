@@ -1,20 +1,21 @@
 'use client';
 
-import type { Category } from '@/types/estimation.interface';
-import { Entries } from './Entries';
+import React, { useCallback } from 'react';
+import type { Category as TypeCategory } from '@/types/estimation.interface';
 import { useExpandedKeys } from '@/modules/vendor/estimation/context/expanded';
-import { SubTitle } from '@/modules/vendor/estimation/componnets/Title/SubTitle';
-import { SubTotal } from './SubTotal';
+import { useAppSelector } from '@/store/hooks';
 import { selectOffersByCategoryId, selectTotalSumByCategoryId } from '@/store/slices/offer/selectors';
 import { RootState } from '@/store/store';
-import { useCallback } from 'react';
-import { useAppSelector } from '@/store/hooks';
 import { KEY_SEPARATOR } from '@/modules/vendor/estimation/constants';
+import { SubTitle } from '@/modules/vendor/client-offer/components/Title/SubTitle';
+import { Entries } from '@/modules/vendor/client-offer/components/Entries';
+import { SubTotal } from '@/modules/vendor/client-offer/components/Total/SubTotal';
 
-export function SubCategory({ subCategory }: { subCategory: Category }) {
+export function SubCategory({ subCategory }: { subCategory: TypeCategory }) {
   const { keys } = useExpandedKeys();
   const key = `${subCategory.parentCategoryId}${KEY_SEPARATOR}${subCategory.id}`;
   const isOpen = keys?.includes(key);
+
   const offers = useAppSelector(
     useCallback((state: RootState) => selectOffersByCategoryId(state, subCategory.id), [subCategory.id])
   );
@@ -25,14 +26,17 @@ export function SubCategory({ subCategory }: { subCategory: Category }) {
 
   return (
     <>
-      <SubTitle text={subCategory.name} itemKey={key} value={`$ ${clientTotal}`} clientValue={`$ ${clientTotal}`} />
+      <SubTitle text={subCategory.name} itemKey={key} value={clientTotal} />
       {isOpen && (
         <>
           <Entries data={offers} />
-          <SubTotal clientTotal={clientTotal} subCategoryId={subCategory.id} />
+          <SubTotal
+            value={clientTotal}
+            subCategoryId={subCategory.id}
+            name={subCategory.name}
+          />
         </>
       )}
     </>
   );
 }
-

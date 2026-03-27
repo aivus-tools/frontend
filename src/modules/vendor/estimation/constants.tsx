@@ -2,6 +2,7 @@ import SettingsIcon from '@/icons/settings-icon.svg';
 import type { Headers } from '@/types/estimation.interface';
 import { percentFormat, percentParser, priceFormat, priceParser } from './helpers/format';
 import { t } from '@/lib/i18n';
+import { SurchargePopover } from './components/SurchargePopover/SurchargePopover';
 
 export const HEADERS: Headers[] = [
   {
@@ -52,11 +53,11 @@ export const HEADERS: Headers[] = [
 
 export const CLIENTS_HEADERS: Headers[] = [
   {
-    label: '',
+    label: <SurchargePopover />,
     key: 'link',
   },
   {
-    label: t('SURCHARGE'),
+    label: t('MARKUP'),
     key: 'surcharge',
     itemStyle: {
       color: 'var(--gray-light)',

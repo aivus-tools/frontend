@@ -7,7 +7,7 @@ const theme: ThemeConfig = {
   token: {
     fontFamily: 'inherit',
     colorPrimary: '#2288FF',
-    colorText: ' #4B5675',
+    colorText: '#4B5675',
   },
   components: {
     Layout: {

@@ -1,19 +1,33 @@
 import { AppStartListening } from '@/store/store';
 import { categoriesApi } from '@/services/client/categoriesApi';
 import { offersApi } from '@/services/client/offersApi';
+import { templatesApi } from '@/services/client/templatesApi';
+import logger from '@/lib/logger';
 import {
   addDictionaryCategory,
   addDictionaryEntry,
   addOfferRow,
   changeOfferRow,
   removeOfferRow,
-  setMetaData,
-  setOfferDetails,
+  changeCategorySurcharge,
+  changeOverallSurcharge,
+  changeUnforeseenExpenses,
+  changeShowCostPerVideo,
+  setCustomFeeName,
+  setCategoryExternalMarkup,
+  resetOffer,
 } from './slice';
 import { isAnyOf } from '@reduxjs/toolkit';
-import { selectIsNewBrief, selectProjectId } from '../project';
+import { setProjectId, selectIsNewBrief, selectProjectId } from '../project';
 
 export const offerListener = (startListening: AppStartListening) => {
+  startListening({
+    actionCreator: setProjectId,
+    effect: async (_, { dispatch }) => {
+      dispatch(resetOffer());
+    },
+  });
+
   startListening({
     matcher: categoriesApi.endpoints.getCategories.matchFulfilled,
     effect: async (action, { dispatch }) => {
@@ -23,7 +37,7 @@ export const offerListener = (startListening: AppStartListening) => {
   });
 
   startListening({
-    matcher: categoriesApi.endpoints.getEntries.matchFulfilled,
+    matcher: categoriesApi.endpoints.getEntriesFull.matchFulfilled,
     effect: async (action, { dispatch }) => {
       const { payload } = action;
       dispatch(addDictionaryEntry(payload.entries));
@@ -31,14 +45,37 @@ export const offerListener = (startListening: AppStartListening) => {
   });
 
   startListening({
-    matcher: isAnyOf(addOfferRow, removeOfferRow, changeOfferRow),
+    matcher: isAnyOf(
+      addOfferRow,
+      removeOfferRow,
+      changeOfferRow,
+      changeCategorySurcharge,
+      changeOverallSurcharge,
+      changeUnforeseenExpenses,
+      changeShowCostPerVideo,
+      setCustomFeeName,
+      setCategoryExternalMarkup
+    ),
     effect: async (_, { dispatch, getState }) => {
       const state = getState();
+      const templateId = state.offer.templateId;
+
+      // Template mode: save to template API instead of offer API
+      if (templateId) {
+        dispatch(
+          templatesApi.endpoints.updateTemplate.initiate({
+            id: templateId,
+            body: { details: state.offer.offerDetails },
+          })
+        );
+        return;
+      }
+
       const projectId = selectProjectId(state);
       const isNew = selectIsNewBrief(state);
 
       if (!projectId || isNew) {
-        console.warn('Project ID is not set or is a new brief');
+        logger.warn('Project ID is not set or is a new brief');
         return;
       }
 
@@ -56,20 +93,4 @@ export const offerListener = (startListening: AppStartListening) => {
     },
   });
 
-  startListening({
-    matcher: offersApi.endpoints.getOffersByProjectId.matchFulfilled,
-    effect: async (action, { dispatch }) => {
-      const offer = action.payload[0];
-      if (offer) {
-        try {
-          const { details, ...metaData } = offer;
-          dispatch(setMetaData(metaData));
-          // Details is already an object, no need to parse
-          dispatch(setOfferDetails(typeof details === 'string' ? JSON.parse(details) : details));
-        } catch (error) {
-          console.error('Error parsing offer details:', error);
-        }
-      }
-    },
-  });
 };

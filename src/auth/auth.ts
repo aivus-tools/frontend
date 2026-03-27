@@ -5,17 +5,16 @@ import { checkEmail, login, register } from '@/services/server/authService';
 import logger from '@/lib/logger';
 import { AUTH_TYPES, GROUPS } from '@/constants/constants';
 import { updateUserSession } from '@/services/server/userService';
-import { AppRoute } from '@/constants/appRoute';
-import type { Groups } from '@/types/user.interface.';
+import type { Groups } from '@/types/user.interface';
 
-// Получение переменных окружения для Google OAuth
+// Get environment variables for Google OAuth
 const googleClientId = process.env.AUTH_GOOGLE_ID;
 const googleClientSecret = process.env.AUTH_GOOGLE_SECRET;
 
-// Создаем массив провайдеров
+// Create providers array
 const providers = [];
 
-// Добавляем Google провайдер
+// Add Google provider
 if (googleClientId && googleClientSecret) {
   providers.push(
     Google({
@@ -23,11 +22,9 @@ if (googleClientId && googleClientSecret) {
       clientSecret: googleClientSecret,
     })
   );
-} else {
-  providers.push(Google());
 }
 
-// Добавляем Credentials провайдер
+// Add Credentials provider
 providers.push(
   Credentials({
     credentials: {
@@ -43,6 +40,7 @@ providers.push(
           name: user.name,
           email: user.email,
           group: user.group,
+          vendorId: user.vendorId,
           image: null,
         };
       } catch (error) {
@@ -56,6 +54,12 @@ providers.push(
 export const { handlers, signIn, signOut, auth } = NextAuth({
   debug: Boolean(process.env.DEBUG),
   providers,
+  session: {
+    maxAge: 24 * 60 * 60, // 24 hours
+  },
+  jwt: {
+    maxAge: 24 * 60 * 60, // 24 hours
+  },
   pages: {
     signIn: '/auth',
     error: '/auth',
@@ -74,19 +78,20 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
           logger.info('Google signIn: checking email', { email });
           const result = await checkEmail({ email: email as string });
           logger.info('Google signIn: checkEmail result', result);
-          
+
           if (result.exists) {
-            // Пользователь существует - логиним его через Google
+            // User exists - log in via Google
             logger.info('Google signIn: user exists, logging in');
             const aivusUser = await login({ email: email, password: '', authType: AUTH_TYPES.google });
             logger.info('Google signIn: login result', aivusUser);
             user.group = aivusUser.group;
             user.id = `${aivusUser.id}`;
             user.vendorId = aivusUser.vendorId;
+            user.clientId = aivusUser.clientId;
             return true;
           }
-          
-          // Пользователь не существует - регистрируем его
+
+          // User does not exist - register them
           if (name && email) {
             logger.info('Google signIn: user does not exist, registering', { name, email });
             const aivusUser = await register({ name, email, authType: AUTH_TYPES.google, password: '' });
@@ -94,9 +99,10 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
             user.group = aivusUser.group ?? GROUPS.confirmed;
             user.id = `${aivusUser.id}`;
             user.vendorId = aivusUser.vendorId;
+            user.clientId = aivusUser.clientId;
             return true;
           }
-          
+
           logger.error('Google signIn: No name and email from Google', user);
           return false;
         } catch (error) {
@@ -106,15 +112,25 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
       }
       return true;
     },
-    async jwt({ token, user, trigger }) {
-      // При первом входе (когда есть user) сохраняем данные в токен
+    async jwt({ token, user, trigger, session }) {
+      // On first sign-in (when user object is present), save data to token
       if (user) {
         token.group = user.group;
         token.id = user.id;
         token.vendorId = user.vendorId;
+        token.clientId = user.clientId;
       }
 
-      // Обновляем токен из API только при явном вызове update()
+      // If update() was called with data - use it immediately (takes priority)
+      if (trigger === 'update' && session?.user) {
+        if (session.user.group) token.group = session.user.group;
+        if (session.user.vendorId) token.vendorId = session.user.vendorId;
+        if (session.user.clientId) token.clientId = session.user.clientId;
+        if (session.user.name) token.name = session.user.name;
+        return token;
+      }
+
+      // Otherwise update token from API only on explicit update() call
       if (token.id && trigger === 'update') {
         try {
           const aivusUser = await updateUserSession({
@@ -123,6 +139,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
           });
           token.group = aivusUser.group;
           token.vendorId = aivusUser.vendorId;
+          token.clientId = aivusUser.clientId;
         } catch (error) {
           logger.warn('Failed to update JWT from API, keeping existing token data', error);
         }
@@ -131,10 +148,11 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
       return token;
     },
     async session({ session, token }) {
-      // Просто копируем данные из токена в сессию
+      // Simply copy data from token to session
       session.user.group = token.group as Groups;
-      session.user.id = token.id as string;
+      session.user.id = (token.id as string) || (token.sub as string);
       session.user.vendorId = token.vendorId as string | undefined;
+      session.user.clientId = token.clientId as string | undefined;
       return session;
     },
     authorized: async ({ auth }) => {

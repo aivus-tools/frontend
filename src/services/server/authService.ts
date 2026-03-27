@@ -1,20 +1,25 @@
 import logger from '@/lib/logger';
-import { ApiRoute } from '@/constants/apiRoute';
-import { AuthType, Groups } from '@/types/user.interface.';
+import { ApiPathname } from '@/constants/apiRoute';
+import { AuthType, Groups } from '@/types/user.interface';
+
+/** Backend base URL for server-side calls (Node.js cannot use relative URLs). */
+const API_URL = process.env.API_URL || 'http://localhost:8000';
 
 type Credentials = Partial<Record<'email' | 'password', unknown>> & { authType: AuthType };
 /**
- * Аутентификация пользователя.
- * @returns Данные пользователя
+ * Authenticate user.
+ * @returns User data
  */
 export async function login(credentials: Credentials): Promise<{
   id: string;
   name: string;
   email: string;
   group: Groups;
+  vendorId?: string;
+  clientId?: string;
 }> {
   try {
-    const response = await fetch(ApiRoute.LOGIN, {
+    const response = await fetch(`${API_URL}${ApiPathname.LOGIN}`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -22,7 +27,7 @@ export async function login(credentials: Credentials): Promise<{
       body: JSON.stringify(credentials),
     });
     if (!response.ok) {
-      throw new Error(`Failed to fetch ${ApiRoute.LOGIN}: ${response.statusText}`);
+      throw new Error(`Failed to fetch ${ApiPathname.LOGIN}: ${response.statusText}`);
     }
     return await response.json();
   } catch (error) {
@@ -32,8 +37,8 @@ export async function login(credentials: Credentials): Promise<{
 }
 
 /**
- * Регистрация пользователя.
- * @returns Данные пользователя
+ * Register user.
+ * @returns User data
  */
 export async function register({
   name,
@@ -49,10 +54,12 @@ export async function register({
   message: string;
   group?: Groups;
   id: string;
+  vendorId?: string;
+  clientId?: string;
 }> {
   try {
-    logger.info('Registering user:', { name, email, authType, password });
-    const response = await fetch(ApiRoute.REGISTER, {
+    logger.info('Registering user:', { name, email, authType });
+    const response = await fetch(`${API_URL}${ApiPathname.REGISTER}`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -67,7 +74,7 @@ export async function register({
     logger.info('Register response:', response);
 
     if (!response.ok) {
-      throw new Error(`Failed to fetch ${ApiRoute.LOGIN}: ${response.statusText}`);
+      throw new Error(`Failed to fetch ${ApiPathname.REGISTER}: ${response.statusText}`);
     }
     return await response.json();
   } catch (error) {
@@ -77,7 +84,7 @@ export async function register({
 }
 
 /**
- * Проверяет существует ли пользователь с таким email.
+ * Check if a user with the given email exists.
  * @returns boolean
  */
 export async function checkEmail({ email }: { email: string }): Promise<{
@@ -85,7 +92,7 @@ export async function checkEmail({ email }: { email: string }): Promise<{
   authType: AuthType;
 }> {
   try {
-    const response = await fetch(ApiRoute.CHECK_EMAIL, {
+    const response = await fetch(`${API_URL}${ApiPathname.CHECK_EMAIL}`, {
       method: 'POST',
       body: JSON.stringify({ email }),
       headers: {
@@ -93,7 +100,7 @@ export async function checkEmail({ email }: { email: string }): Promise<{
       },
     });
     if (!response.ok) {
-      throw new Error(`Failed to fetch ${ApiRoute.CHECK_EMAIL}: ${response.statusText}`);
+      throw new Error(`Failed to fetch ${ApiPathname.CHECK_EMAIL}: ${response.statusText}`);
     }
     return await response.json();
   } catch (error) {
@@ -103,21 +110,21 @@ export async function checkEmail({ email }: { email: string }): Promise<{
 }
 
 /**
- * Меняет роль пользователя.
+ * Change user role.
  * @returns boolean
  */
 export async function changeRole(id: string, newGroup: Groups): Promise<boolean> {
   try {
-    const res = await fetch(ApiRoute.CHANGE_ROLE(id), {
+    const res = await fetch(`${API_URL}${ApiPathname.CHANGE_ROLE(id)}`, {
       method: 'PATCH',
       headers: {
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify({ newGroup }),
+      body: JSON.stringify({ group: newGroup }),
     });
     if (!res.ok) {
       const message = await res.json();
-      throw new Error(`Failed to fetch ${ApiRoute.CHANGE_ROLE(id)}: ${res.statusText} ${message}`);
+      throw new Error(`Failed to fetch ${ApiPathname.CHANGE_ROLE(id)}: ${res.statusText} ${message}`);
     }
     return true;
   } catch (error) {
@@ -132,7 +139,7 @@ export async function changeRole(id: string, newGroup: Groups): Promise<boolean>
  */
 export async function resendConfirmation(email: string): Promise<{ message: string }> {
   try {
-    const response = await fetch(ApiRoute.RESEND_CONFIRMATION, {
+    const response = await fetch(`${API_URL}${ApiPathname.RESEND_CONFIRMATION}`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -140,7 +147,7 @@ export async function resendConfirmation(email: string): Promise<{ message: stri
       body: JSON.stringify({ email }),
     });
     if (!response.ok) {
-      throw new Error(`Failed to fetch ${ApiRoute.RESEND_CONFIRMATION}: ${response.statusText}`);
+      throw new Error(`Failed to fetch ${ApiPathname.RESEND_CONFIRMATION}: ${response.statusText}`);
     }
     return await response.json();
   } catch (error) {
@@ -155,7 +162,7 @@ export async function resendConfirmation(email: string): Promise<{ message: stri
  */
 export async function forgotPassword(email: string): Promise<{ message: string }> {
   try {
-    const response = await fetch(ApiRoute.FORGOT_PASSWORD, {
+    const response = await fetch(`${API_URL}${ApiPathname.FORGOT_PASSWORD}`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -164,7 +171,7 @@ export async function forgotPassword(email: string): Promise<{ message: string }
     });
     if (!response.ok) {
       const data = await response.json().catch(() => ({}));
-      throw new Error(data?.error || `Failed to fetch ${ApiRoute.FORGOT_PASSWORD}: ${response.statusText}`);
+      throw new Error(data?.error || `Failed to fetch ${ApiPathname.FORGOT_PASSWORD}: ${response.statusText}`);
     }
     return await response.json();
   } catch (error) {
@@ -180,7 +187,7 @@ export async function forgotPassword(email: string): Promise<{ message: string }
 export async function resetPassword(token: string, password: string): Promise<{ message: string }> {
   try {
     const encodedToken = encodeURIComponent(token);
-    const response = await fetch(`${ApiRoute.RESET_PASSWORD}?token=${encodedToken}`, {
+    const response = await fetch(`${API_URL}${ApiPathname.RESET_PASSWORD}?token=${encodedToken}`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -189,7 +196,7 @@ export async function resetPassword(token: string, password: string): Promise<{ 
     });
     if (!response.ok) {
       const data = await response.json().catch(() => ({}));
-      throw new Error(data?.error || `Failed to fetch ${ApiRoute.RESET_PASSWORD}: ${response.statusText}`);
+      throw new Error(data?.error || `Failed to fetch ${ApiPathname.RESET_PASSWORD}: ${response.statusText}`);
     }
     return await response.json();
   } catch (error) {

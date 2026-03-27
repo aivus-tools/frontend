@@ -1,11 +1,11 @@
 import { Category } from '@/types/categories.interface';
-import { Entry } from '@/types/entries.interface';
+import { Entry, UnitOption } from '@/types/entries.interface';
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
 import { ApiRoute } from '@/constants/apiRoute';
 
 export const categoriesApi = createApi({
   reducerPath: 'categoriesApi',
-  baseQuery: fetchBaseQuery(),
+  baseQuery: fetchBaseQuery({ baseUrl: '' }),
   endpoints: (builder) => ({
     createCategory: builder.mutation<void, { name: string; parentCategoryId: number }>({
       query: (body) => ({
@@ -41,6 +41,9 @@ export const categoriesApi = createApi({
     }),
     getEntry: builder.query<Entry, string>({
       query: (id) => ApiRoute.ENTRY(id),
+    }),
+    getUnits: builder.query<{ units: UnitOption[] }, void>({
+      query: () => ApiRoute.UNIT_LIST,
     }),
   }),
 });

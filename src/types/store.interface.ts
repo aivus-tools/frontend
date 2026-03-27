@@ -3,8 +3,13 @@ import { Offer } from '@/types/offer.interface';
 
 export interface UnforeseenExpenses {
   percent: number;
-  clientPercent: number;
   isVisible: boolean;
+}
+
+export interface CategoryExternalMarkup {
+  enabled: boolean;
+  percent: number;
+  name: string;
 }
 
 export interface OfferDetails {
@@ -18,8 +23,12 @@ export interface OfferDetails {
       linked: boolean;
     }
   >;
+  categoryExternalMarkup: Record<string, CategoryExternalMarkup>;
+  customFeeNames: Record<string, string>;
   unforeseenExpenses: UnforeseenExpenses;
   showCostPerVideo: boolean;
+  overallSurcharge: number;
+  isLinkedOverallSurcharge: boolean;
 }
 
 export interface OfferState {
@@ -30,22 +39,31 @@ export interface OfferState {
     entry: Entry[];
   };
   external: boolean;
+  templateId: string | null;
 }
 
 export interface ExportItem {
   name: string;
-  clientPrice: number;
+  price: number;
   units: { key: string; value: number }[];
+}
+
+export interface ExportFeeItem {
+  name: string;
+  percent: number;
+  amount: number;
 }
 
 export interface CategoryWithSubcategories {
   category: string;
   data: { subcategory: string; items: ExportItem[] }[];
+  fees: ExportFeeItem[];
 }
 
 export interface CategoryWithoutSubcategories {
   category: string;
   data: { items: ExportItem[] };
+  fees: ExportFeeItem[];
 }
 
 export type CategoriesExportData = Array<CategoryWithSubcategories | CategoryWithoutSubcategories>;

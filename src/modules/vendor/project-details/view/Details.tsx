@@ -3,16 +3,23 @@ import { ReactNode } from 'react';
 
 import { GuidanceAndControls } from '../common/GuidanceAndControls';
 import { Wrapper, Section, Header, Column, Content } from '../common/styled';
-import { Col, Flex, Row, Typography } from 'antd';
-import { useBrief } from '@/hooks/useBrief';
+import { Col, Flex, Image, Row, Typography } from 'antd';
 import { GuidanceProvider } from '@/context/GuidanceProvider';
 import Spinner from '@/components/Spinner';
 import HouseIcon from '@/icons/house.svg';
 import { styled } from 'styled-components';
-import i18n from 'i18n-iso-countries';
-import CrossIcon from '@/icons/cross.svg';
-import { timeUnitsMap } from '@/lib/utils';
-import { locale, t } from '@/lib/i18n';
+import { t } from '@/lib/i18n';
+import { projectsApi } from '@/services/client/projectsApi';
+import { useAppSelector } from '@/store/hooks';
+import { selectProjectId } from '@/store/slices/project';
+
+const ROLE_LABELS: Record<string, string> = {
+  admin: 'Admin',
+  internal_user: 'Internal User',
+  external_user: 'External User',
+  producer: 'Producer',
+  agency_producer: 'Agency Producer',
+};
 
 interface Props {
   label?: string;
@@ -38,45 +45,13 @@ const TextEmpty = styled(Typography.Text)`
   color: #d9d9d9 !important;
 `;
 
-const ItalicComment = styled(Typography.Text)`
-  font-weight: 400;
-  font-style: italic;
-  font-size: 14px;
-  line-height: 17.07px;
+const Thumbnail = styled.div`
+  width: 104px;
+  height: 104px;
+  border-radius: 8px;
+  overflow: hidden;
+  flex-shrink: 0;
 `;
-
-function formatUrl(url: string): string {
-  // Check if url is empty or not a valid URL
-  if (!url || typeof url !== 'string' || url.trim() === '') {
-    return '';
-  }
-
-  try {
-    const parsedUrl = new URL(url);
-    return parsedUrl.hostname + parsedUrl.pathname;
-  } catch (error) {
-    // If URL parsing fails, return the original string
-    console.warn('Invalid URL:', url, error);
-    return url;
-  }
-}
-
-function formatCount(count: number, { singular, plural }: { singular: string; plural: string }): string {
-  return `${count} ${count === 1 ? singular : plural}`;
-}
-
-function formatTimeUnit(number: string, unit: string): string {
-  const countNumber = parseInt(number, 10);
-  if (!Number.isFinite(countNumber)) {
-    return '';
-  }
-  const timeUnit = timeUnitsMap.find((timeUnit) => timeUnit.plural === unit);
-  if (timeUnit) {
-    return formatCount(countNumber, timeUnit);
-  }
-
-  return '';
-}
 
 const Item = ({ label, value }: Props) => (
   <Flex gap={4} justify='center' vertical>
@@ -86,16 +61,16 @@ const Item = ({ label, value }: Props) => (
 );
 
 export default function Details() {
-  const { data: brief, isLoading } = useBrief();
-  const countries = i18n.getNames(locale, { select: 'official' });
+  const projectId = useAppSelector(selectProjectId);
+  const { data: project, isLoading } = projectsApi.useGetProjectByIdQuery(projectId || '', {
+    skip: !projectId,
+  });
 
   if (isLoading) {
     return <Spinner />;
   }
 
-  const details = brief?.details;
-
-  if (!details) {
+  if (!project) {
     return null;
   }
 
@@ -106,44 +81,49 @@ export default function Details() {
           <Section>
             <Header>{t('INITIAL_PARAMETERS')}</Header>
             <Content style={{ minWidth: '584px' }}>
-              <Row align='middle'>
-                <Col span={12}>
-                  <Flex gap={20} align='center'>
-                    <HouseIcon />
-                    <Item label={t('CRM_ID_LINK')} value={details.crmId} />
-                  </Flex>
-                </Col>
-                <Col span={12}>
-                  <Item label={t('TEMPLATE')} value={details.estimationTemplate} />
+              <Flex gap={30} align='start'>
+                {project.thumbnailUrl ? (
+                  <Thumbnail>
+                    <Image
+                      src={project.thumbnailUrl}
+                      alt={t('THUMBNAIL')}
+                      width={104}
+                      height={104}
+                      style={{ objectFit: 'cover' }}
+                    />
+                  </Thumbnail>
+                ) : (
+                  <HouseIcon />
+                )}
+                <Flex gap={20} align='center' style={{ flex: 1 }}>
+                  <Item label={t('CRM_ID_LINK')} value={project.crmId} />
+                </Flex>
+              </Flex>
+              <Row align='middle' style={{ marginTop: 20 }}>
+                <Col span={24}>
+                  <Item label={t('PROJECT_NAME')} value={project.name} />
                 </Col>
               </Row>
               <Row align='middle' style={{ marginTop: 20 }}>
                 <Col span={24}>
-                  <Item label={t('PROJECT_NAME')} value={details.projectName} />
-                </Col>
-              </Row>
-              <Row align='middle' style={{ marginTop: 20 }}>
-                <Col span={24}>
-                  <Item label={t('DESCRIPTION')} value={details.description} />
+                  <Item label={t('DESCRIPTION')} value={project.description} />
                 </Col>
               </Row>
               <Row align='middle' style={{ marginTop: 20 }}>
                 <Col span={12}>
                   <Item
                     label={t('COLLABORATORS')}
-                    value={details.collaborators?.map((person) => {
-                      const label = (person as unknown as { label: string })?.label;
-
-                      if (label) {
-                        return (
-                          <>
-                            {label}
-                            <br />
-                          </>
-                        );
-                      }
-                      return null;
-                    })}
+                    value={
+                      project.collaborators && project.collaborators.length > 0
+                        ? project.collaborators.map((collaborator) => (
+                            <span key={collaborator.id}>
+                              {collaborator.name || collaborator.email}
+                              {collaborator.role ? <Typography.Text type='secondary'> - {ROLE_LABELS[collaborator.role] || collaborator.role}</Typography.Text> : null}
+                              <br />
+                            </span>
+                          ))
+                        : undefined
+                    }
                   />
                 </Col>
               </Row>
@@ -154,18 +134,18 @@ export default function Details() {
             <Content>
               <Row align='middle' style={{ marginTop: 20 }}>
                 <Col span={12}>
-                  <Item label={t('CLIENT')} value={details.clientName} />
+                  <Item label={t('CLIENT')} value={project.clientName} />
                 </Col>
                 <Col span={12}>
-                  <Item label={t('IRS_EIN')} value={details.irsEin} />
+                  <Item label={t('IRS_EIN')} value={project.irsEin} />
                 </Col>
               </Row>
-              {details.managers
-                .filter((manager) => manager.manager || manager.position)
+              {project.clientManagers
+                ?.filter((manager) => manager.name || manager.position)
                 .map((manager, index) => (
-                  <Row align='middle' style={{ marginTop: index === 0 ? 20 : 8 }} key={index}>
+                  <Row align='middle' style={{ marginTop: index === 0 ? 20 : 8 }} key={manager.id || index}>
                     <Col span={12}>
-                      <Item label={index === 0 ? t('CLIENTS_MANAGERS') : undefined} value={manager.manager} />
+                      <Item label={index === 0 ? t('CLIENTS_MANAGERS') : undefined} value={manager.name} />
                     </Col>
                     <Col span={12}>
                       <Item label={index === 0 ? t('MANAGER_POSITION') : undefined} value={manager.position} />
@@ -174,135 +154,36 @@ export default function Details() {
                 ))}
               <Row align='middle' style={{ marginTop: 20 }}>
                 <Col span={12}>
-                  <Item label={t('BRAND_NAME')} value={details.brandName} />
+                  <Item label={t('BRAND_NAME')} value={project.brandName} />
                 </Col>
               </Row>
             </Content>
           </Section>
           <Section>
-            <Header>{t('THE_CLIENTS_BRIEF')}</Header>
-            <Content>
-              <Row align='middle' style={{ marginTop: 20 }}>
-                <Col span={24}>
-                  <Item label={t('PROJECT_DESCRIPTION')} value={details.projectDescription} />
-                </Col>
-              </Row>
-              {details.referenceVideos
-                .filter((video) => video.url && video.url.trim() !== '')
-                .map((video, index) => (
-                  <Row align='middle' style={{ marginTop: index === 0 ? 20 : 8 }} key={index}>
-                    <Col span={12}>
-                      <Item
-                        label={index === 0 ? t('REFERENCE_VIDEOS') : undefined}
-                        value={
-                          <Typography.Link href={video.url} target='_blank' rel='noreferrer'>
-                            {formatUrl(video.url)}
-                          </Typography.Link>
-                        }
-                      />
-                    </Col>
-                    <Col span={12}>
-                      <ItalicComment>{video.comment}</ItalicComment>
-                    </Col>
-                  </Row>
-                ))}
-            </Content>
-          </Section>
-          <Section>
-            <Header>{t('RIGHTS_AND_TECHNICAL_SPECIFICATIONS')}</Header>
+            <Header>{t('THE_AGENCY')}</Header>
             <Content>
               <Row align='middle' style={{ marginTop: 20 }}>
                 <Col span={12}>
-                  <Item label={t('DISTRIBUTION_AND_AD_PLACEMENTS')} value={details.distributionAndAdPlacements} />
+                  <Item label={t('AGENCY_NAME')} value={project.agencyName} />
                 </Col>
               </Row>
-              <Row align='middle' style={{ marginTop: 20 }} gutter={16}>
-                <Col span={12}>
-                  <Item
-                    label={t('TERRITORY')}
-                    value={
-                      <>
-                        {details.territory.map((country, index) => (
-                          <Text key={country}>
-                            {countries[country]}
-                            {index === details.territory.length - 1 ? '' : ', '}
-                          </Text>
-                        ))}
-                      </>
-                    }
-                  />
-                </Col>
-                <Col span={12}>
-                  <Item
-                    label={t('TERM')}
-                    value={
-                      details.term.unit === 'perpetuity'
-                        ? details.term.unit
-                        : formatTimeUnit(details.term.length, details.term.unit)
-                    }
-                  />
-                </Col>
-              </Row>
-              <Row align='middle' style={{ marginTop: 20 }}>
-                <Col span={24}>
-                  <Item
-                    label={t('MAIN_VIDEO')}
-                    value={
-                      <Row align='middle'>
-                        <Col span={8}>
-                          <Text>{`${details.mainVideoDuration.number} ${t('VIDEO')}`} </Text>
-                          <CrossIcon />
-                          <Text style={{ marginLeft: '4px' }}>
-                            {formatTimeUnit(details.mainVideoDuration.length, details.mainVideoDuration.timeUnit)}
-                          </Text>
-                        </Col>
-                        <Col span={16}>
-                          <ItalicComment>{details.mainVideoDuration.comment}</ItalicComment>
-                        </Col>
-                      </Row>
-                    }
-                  />
-                </Col>
-              </Row>
-              {details.cuts
-                .filter((cut) => cut.number || cut.length || cut.timeUnit)
-                .map((cut, index) => (
-                  <Row
-                    key={cut.comment + cut.number + cut.length + cut.timeUnit}
-                    align='middle'
-                    style={{ marginTop: index === 0 ? 20 : 4 }}
-                  >
-                    <Col span={8}>
-                      <Text>{`${cut.number} ${t('VIDEO')}`} </Text>
-                      <CrossIcon />
-                      <Text style={{ marginLeft: '4px' }}>{formatTimeUnit(cut.length, cut.timeUnit)}</Text>
-                    </Col>
-                    <Col span={16}>
-                      <ItalicComment>{cut.comment}</ItalicComment>
-                    </Col>
-                  </Row>
-                ))}
-              <Row align='middle' style={{ marginTop: 20 }}>
-                <Col span={24}>
-                  <Item
-                    label={t('SHOOTING_DAYS')}
-                    value={
-                      <Row align='middle'>
-                        <Col span={8}>
-                          <Text>{`${details.shootingDays.number} ${t('VIDEO')}`} </Text>
-                          <CrossIcon />
-                          <Text style={{ marginLeft: '4px' }}>
-                            {formatTimeUnit(details.shootingDays.length, 'days')}
-                          </Text>
-                        </Col>
-                        <Col span={16}>
-                          <ItalicComment>{details.shootingDays.comment}</ItalicComment>
-                        </Col>
-                      </Row>
-                    }
-                  />
-                </Col>
-              </Row>
+              {project.collaborators && project.collaborators.filter(x => x.role === 'agency_producer').length > 0 && (
+                <Row align='middle' style={{ marginTop: 20 }}>
+                  <Col span={12}>
+                    <Item
+                      label={t('AGENCY_PRODUCERS')}
+                      value={
+                        project.collaborators.filter(x => x.role === 'agency_producer').map(x => (
+                          <span key={x.id}>
+                            {x.name || x.email}
+                            <br />
+                          </span>
+                        ))
+                      }
+                    />
+                  </Col>
+                </Row>
+              )}
             </Content>
           </Section>
         </Column>

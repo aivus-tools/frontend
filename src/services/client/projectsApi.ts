@@ -1,10 +1,10 @@
-import { Project, NewProject } from '@/types/project.interface.';
+import { Project, NewProject } from '@/types/project.interface';
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
 import { ApiRoute } from '@/constants/apiRoute';
 
 export const projectsApi = createApi({
   reducerPath: 'projectsApi',
-  baseQuery: fetchBaseQuery(),
+  baseQuery: fetchBaseQuery({ baseUrl: '' }),
   tagTypes: ['Project'],
   endpoints: (builder) => ({
     getAllProjects: builder.query<Project[], void>({
@@ -38,6 +38,29 @@ export const projectsApi = createApi({
       }),
       invalidatesTags: ['Project'],
     }),
+    uploadThumbnail: builder.mutation<{ thumbnailUrl: string }, { projectId: string; file: File }>({
+      query: ({ projectId, file }) => {
+        const formData = new FormData();
+        formData.append('thumbnail', file);
+        return {
+          url: ApiRoute.PROJECT_THUMBNAIL(projectId),
+          method: 'POST',
+          body: formData,
+        };
+      },
+      invalidatesTags: ['Project'],
+    }),
+    getArchivedProjects: builder.query<Project[], void>({
+      query: () => ApiRoute.PROJECT_ARCHIVED,
+      providesTags: ['Project'],
+    }),
+    restoreProject: builder.mutation<Project, string>({
+      query: (id) => ({
+        url: ApiRoute.PROJECT_RESTORE(id),
+        method: 'POST',
+      }),
+      invalidatesTags: ['Project'],
+    }),
   }),
 });
 
@@ -47,4 +70,7 @@ export const {
   useGetProjectByIdQuery,
   useUpdateProjectMutation,
   useDeleteProjectMutation,
+  useUploadThumbnailMutation,
+  useGetArchivedProjectsQuery,
+  useRestoreProjectMutation,
 } = projectsApi;

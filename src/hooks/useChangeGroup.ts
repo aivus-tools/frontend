@@ -1,5 +1,5 @@
 import { useSession } from 'next-auth/react';
-import { Groups } from '@/types/user.interface.';
+import { Groups } from '@/types/user.interface';
 import { useChangeGroupMutation } from '@/services/client/userApi';
 import { AppRoute } from '@/constants/appRoute';
 
@@ -8,13 +8,25 @@ export const useChangeGroup = () => {
   const [changeGroup, options] = useChangeGroupMutation();
 
   return {
-    change: async (newGroup: Omit<Groups, 'UNCONFIRMED' | 'CONFIRMED'>) => {
+    change: async (newGroup: Exclude<Groups, 'UNCONFIRMED' | 'CONFIRMED'>) => {
       if (session.data?.user?.id) {
-        await changeGroup({
+        const result = await changeGroup({
           userId: session.data.user.id,
           newGroup,
         }).unwrap();
-        await session.update();
+
+        await session.update({
+          user: {
+            ...session.data.user,
+            group: result.group,
+            vendorId: result.vendorId,
+            clientId: result.clientId,
+          },
+        });
+
+        // Wait for cookie update
+        await new Promise((resolve) => setTimeout(resolve, 1000));
+
         window.location.href = AppRoute.DASHBOARD;
       }
     },

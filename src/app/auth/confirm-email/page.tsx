@@ -7,7 +7,6 @@ import Spinner from '@/components/Spinner';
 import { t } from '@/lib/i18n';
 import { AppRoute } from '@/constants/appRoute';
 import { useSession } from 'next-auth/react';
-import { useOnceAsync } from '@/hooks/useOnce';
 
 const CONFIRM_DELAY_MS = 1500;
 
@@ -16,66 +15,67 @@ type ConfirmState = 'idle' | 'pending' | 'success' | 'error';
 const ConfirmEmailPage = () => {
   const searchParams = useSearchParams();
   const router = useRouter();
-  const { data: session, update: updateSession } = useSession();
+  const { data: session, status: sessionStatus, update: updateSession } = useSession();
   const [status, setStatus] = useState<ConfirmState>('idle');
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [messageApi, contextHolder] = message.useMessage();
+  const [hasStartedConfirmation, setHasStartedConfirmation] = useState(false);
 
   const token = useMemo(() => searchParams.get('token'), [searchParams]);
-
-  // Проверка токена (синхронная)
   useEffect(() => {
-    if (!token) {
-      setStatus('error');
-      const msg = t('INVALID_TOKEN');
-      setErrorMessage(msg);
-      messageApi.error(msg);
+    // Wait until session loads and token is available
+    if (!token || sessionStatus === 'loading' || hasStartedConfirmation) {
+      return;
     }
-  }, [token, messageApi]);
 
-  // Подтверждение email (один раз, даже в Strict Mode)
-  useOnceAsync(async () => {
-    if (!token) return;
+    const runConfirmation = async () => {
+      setHasStartedConfirmation(true);
+      try {
+        setStatus('pending');
+        const encodedToken = encodeURIComponent(token);
+        const response = await fetch(`/service/auth/confirm-email?token=${encodedToken}`, {
+          method: 'GET',
+        });
 
-    try {
-      setStatus('pending');
-      // Кодируем токен для безопасной передачи в URL
-      const encodedToken = encodeURIComponent(token);
-      const response = await fetch(`/service/auth/confirm-email?token=${encodedToken}`, {
-        method: 'GET',
-      });
+        const data = await response.json().catch(() => ({}));
 
-      const data = await response.json().catch(() => ({}));
+        if (!response.ok) {
+          const errMsg = data?.error ?? t('EMAIL_CONFIRMATION_FAILED');
+          throw new Error(errMsg);
+        }
 
-      if (!response.ok) {
-        const errMsg = data?.error ?? t('EMAIL_CONFIRMATION_FAILED');
-        throw new Error(errMsg);
+        messageApi.success(t('EMAIL_CONFIRMED'));
+        setStatus('success');
+
+        if (session?.user) {
+          // User is logged in - update session with fresh data
+          await updateSession({
+            user: {
+              ...session.user,
+              group: data.group,
+            },
+          });
+
+          // Wait for NextAuth to write cookie and session to update in memory
+          await new Promise((resolve) => setTimeout(resolve, CONFIRM_DELAY_MS));
+
+          // Redirect to role selection
+          window.location.href = AppRoute.GROUP;
+        } else {
+          // User is not logged in - wait and redirect to auth
+          await new Promise((resolve) => setTimeout(resolve, CONFIRM_DELAY_MS));
+          router.replace(AppRoute.AUTH);
+        }
+      } catch (error) {
+        const errMsg = error instanceof Error ? error.message : t('EMAIL_CONFIRMATION_FAILED');
+        setErrorMessage(errMsg);
+        setStatus('error');
+        messageApi.error(errMsg);
       }
+    };
 
-      messageApi.success(t('EMAIL_CONFIRMED'));
-      setStatus('success');
-
-      if (session?.user) {
-        // Пользователь залогинен - обновляем сессию
-        await updateSession();
-
-        // Ждём, чтобы NextAuth записал cookie
-        await new Promise((resolve) => setTimeout(resolve, CONFIRM_DELAY_MS));
-
-        // Используем window.location для полной перезагрузки со свежей сессией
-        window.location.href = AppRoute.GROUP;
-      } else {
-        // Пользователь не залогинен - ждём и редиректим на auth
-        await new Promise((resolve) => setTimeout(resolve, CONFIRM_DELAY_MS));
-        router.replace(AppRoute.AUTH);
-      }
-    } catch (error) {
-      const errMsg = error instanceof Error ? error.message : t('EMAIL_CONFIRMATION_FAILED');
-      setErrorMessage(errMsg);
-      setStatus('error');
-      messageApi.error(errMsg);
-    }
-  }, [token, session?.user, updateSession, router, messageApi]);
+    runConfirmation();
+  }, [token, sessionStatus, session?.user, updateSession, router, messageApi, hasStartedConfirmation]);
 
   const handleBackToAuth = () => {
     router.replace(AppRoute.AUTH);

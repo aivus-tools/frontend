@@ -1,42 +1,65 @@
-import React, { useRef } from 'react';
+import React from 'react';
 import { Form, Input, Select, Flex, Row, Col, Typography } from 'antd';
 import { Uploader } from './Uploader';
 import { LabelWithAdd } from './LabelWithAdd';
 import { usePersonModal } from '../hooks/usePersonModal';
-import { Details, Person } from '@/types/brief.interface';
+import { Person } from '@/types/brief.interface';
+import { ProjectFormData } from '@/hooks/useMutateProject';
 import { useGuidance } from '@/context/GuidanceProvider';
 import RemoveIcon from '@/icons/minus.svg';
-import { AntdListWrapper, IconButton } from '../common/styled';
+import { IconButton } from '../common/styled';
 import { t } from '@/lib/i18n';
+import { useAppSelector } from '@/store/hooks';
+import { selectIsNewBrief } from '@/store/slices/project';
+import { useGetTemplatesQuery } from '@/services/client/templatesApi';
 
 const { TextArea } = Input;
 
-export const InitialParameters: React.FC = () => {
-  const addPersonEmptyRow = useRef<() => void>(() => {});
+const ROLE_LABELS: Record<string, string> = {
+  admin: 'Admin',
+  internal_user: 'Internal User',
+  external_user: 'External User',
+  producer: 'Producer',
+  agency_producer: 'Agency Producer',
+};
+
+interface InitialParametersProps {
+  thumbnailUrl?: string | null;
+}
+
+export const InitialParameters: React.FC<InitialParametersProps> = ({ thumbnailUrl }) => {
+  const isNewProject = useAppSelector(selectIsNewBrief);
   const { handleFocus } = useGuidance();
-  const form = Form.useFormInstance<Details>();
+  const form = Form.useFormInstance<ProjectFormData>();
+  const { data: templates = [] } = useGetTemplatesQuery();
+
+  const templateOptions = templates.map((tmpl) => ({
+    label: tmpl.name,
+    value: tmpl.id,
+  }));
+
   const addPerson = (user: Person) => {
-    const currentValues: Person[] = form.getFieldValue(['options', 'collaborators']) ?? [];
-    form.setFieldValue(['options', 'collaborators'], [...currentValues, user]);
+    const currentCollaborators = form.getFieldValue('collaborators') || [];
+    form.setFieldsValue({
+      collaborators: [
+        ...currentCollaborators,
+        {
+          name: `${user.firstName} ${user.surname}`.trim(),
+          email: user.email,
+          role: user.role || 'internal_user',
+        },
+      ],
+    });
   };
 
   const { showModal, modal } = usePersonModal(addPerson);
-  const options = Form.useWatch('options', form);
-  const collaborators = Form.useWatch('collaborators', form);
-
-  const internalOptions = options?.collaborators
-    ?.map((person: Person) => ({
-      label: `${person.firstName} ${person.surname}`,
-      value: person.email,
-    }))
-    .filter((option) => !collaborators.some((collaborator) => collaborator === option.value));
 
   return (
     <>
       {modal}
       <Flex gap={30} style={{ width: '100%' }}>
         <Form.Item name='previewImage' valuePropName='image' style={{ width: 'auto' }}>
-          <Uploader />
+          <Uploader thumbnailUrl={thumbnailUrl} />
         </Form.Item>
         <Flex gap={20} flex={1}>
           <Form.Item
@@ -51,13 +74,19 @@ export const InitialParameters: React.FC = () => {
           </Form.Item>
           <Form.Item
             name='estimationTemplate'
-            label={t('CHOOSE_ESTIMATION_TEMPLATE')}
-            extra={t('SELECT_TEMPLATE')}
+            label={t('CHOOSE_TEMPLATE')}
+            extra={t('SELECT_TEMPLATE_HINT')}
             style={{
               flex: 1,
             }}
           >
-            <Select placeholder={t('SELECT_OPTION')} onFocus={handleFocus('estimationTemplate')} disabled />
+            <Select
+              placeholder={t('SELECT_OPTION')}
+              onFocus={handleFocus('estimationTemplate')}
+              options={templateOptions}
+              allowClear
+              notFoundContent={t('NO_TEMPLATES')}
+            />
           </Form.Item>
         </Flex>
       </Flex>
@@ -76,54 +105,56 @@ export const InitialParameters: React.FC = () => {
           autoSize={{ minRows: 2, maxRows: 2 }}
         />
       </Form.Item>
-      <Row gutter={20}>
-        <Col span={12}>
-          <AntdListWrapper>
+      {!isNewProject && (
+        <Row gutter={20}>
+          <Col span={12}>
             <Form.List name='collaborators'>
-              {(fields, { add, remove }) => {
-                addPersonEmptyRow.current = () => {
-                  add();
-                };
+              {(fields, { remove }) => {
+                const collaborators = form.getFieldValue('collaborators') || [];
+                const visibleCount = fields.filter(x => collaborators[x.name]?.role !== 'agency_producer').length;
                 return (
-                  <Form.Item label={<LabelWithAdd text={t('COLLABORATORS')} onClick={() => showModal()} />}>
-                    {fields.map((field, index) => (
-                      <Flex gap={20} key={field.key}>
-                        <Form.Item noStyle name={field.name}>
-                          <Select
-                            placeholder={t('SELECT_PERSON')}
-                            onFocus={handleFocus('collaborators')}
-                            options={internalOptions}
-                          />
-                        </Form.Item>
-                        {fields.length > 1 && fields.length - 1 !== index && (
-                          <Form.Item noStyle>
-                            <IconButton
-                              onClick={() => {
-                                if (fields.length > 1) remove(field.name);
-                              }}
-                            >
-                              <RemoveIcon color={'var(--gray-light)'} />
-                            </IconButton>
-                          </Form.Item>
-                        )}
+                <Form.Item label={<LabelWithAdd text={t('COLLABORATORS')} onClick={() => showModal()} />}>
+                  {visibleCount === 0 && (
+                    <Typography.Text type='secondary'>{t('EMPTY')}</Typography.Text>
+                  )}
+                  {fields.map((field) => {
+                    const collaborator = collaborators[field.name];
+                    if (collaborator?.role === 'agency_producer') {
+                      return null;
+                    }
+                    const displayName = collaborator?.name || collaborator?.email || '';
+                    const displayEmail = collaborator?.email && collaborator?.name ? ` (${collaborator.email})` : '';
+                    const roleLabel = ROLE_LABELS[collaborator?.role] || collaborator?.role || '';
+
+                    return (
+                      <Flex gap={12} key={field.key} align='center' style={{ marginBottom: 8 }}>
+                        <Typography.Text style={{ flex: 1 }}>
+                          {displayName}
+                          {roleLabel ? <Typography.Text type='secondary'> - {roleLabel}</Typography.Text> : null}
+                          {displayEmail}
+                        </Typography.Text>
+                        <IconButton onClick={() => remove(field.name)}>
+                          <RemoveIcon color={'var(--gray-light)'} />
+                        </IconButton>
                       </Flex>
-                    ))}
-                  </Form.Item>
+                    );
+                  })}
+                </Form.Item>
                 );
               }}
             </Form.List>
-          </AntdListWrapper>
-        </Col>
-        <Col span={12}>
-          <Typography.Text>
-            <b>{t('ADD_INTERNAL_MANAGERS')}</b> {t('INTERNAL_MANAGERS_DESCRIPTION')}
-          </Typography.Text>
-          <br />
-          <Typography.Text>
-            <b>{t('ADD_FREELANCERS')}</b> {t('FREELANCERS_DESCRIPTION')}
-          </Typography.Text>
-        </Col>
-      </Row>
+          </Col>
+          <Col span={12}>
+            <Typography.Text>
+              <b>{t('ADD_INTERNAL_MANAGERS')}</b> {t('INTERNAL_MANAGERS_DESCRIPTION')}
+            </Typography.Text>
+            <br />
+            <Typography.Text>
+              <b>{t('ADD_FREELANCERS')}</b> {t('FREELANCERS_DESCRIPTION')}
+            </Typography.Text>
+          </Col>
+        </Row>
+      )}
     </>
   );
 };

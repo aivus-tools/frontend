@@ -1,7 +1,7 @@
 import { createSlice } from '@reduxjs/toolkit';
 import { RootState } from '@/store/store';
 import { OfferData } from '@/types/estimation.interface';
-import { Rate } from '@/types/rate.interface';
+import { RateCardItem } from '@/types/rate.interface';
 
 export interface OfferSidebarInfo {
   type: 'offer';
@@ -9,7 +9,7 @@ export interface OfferSidebarInfo {
 }
 export interface RateSidebarInfo {
   type: 'rate';
-  data: Rate;
+  data: RateCardItem;
 }
 
 export interface SidebarState {

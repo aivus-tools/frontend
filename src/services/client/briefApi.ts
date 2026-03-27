@@ -4,7 +4,7 @@ import { ApiRoute } from '@/constants/apiRoute';
 
 export const briefApi = createApi({
   reducerPath: 'briefApi',
-  baseQuery: fetchBaseQuery(),
+  baseQuery: fetchBaseQuery({ baseUrl: '' }),
   tagTypes: ['Brief'],
   endpoints: (builder) => ({
     createBrief: builder.mutation<Brief, NewBrief>({

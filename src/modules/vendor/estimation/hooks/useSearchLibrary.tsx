@@ -1,5 +1,5 @@
 import React, { useMemo, ReactNode } from 'react';
-import { Label } from '@/modules/vendor/estimation/componnets/LibraryDropdown/Label';
+import { Label } from '@/modules/vendor/estimation/components/LibraryDropdown/Label';
 import { categoriesApi } from '@/services/client/categoriesApi';
 import { Entry } from '@/types/entries.interface';
 import { useAppSelector } from '@/store/hooks';
@@ -23,13 +23,17 @@ export const useSearchLibrary = () => {
   const categoriesQuery = categoriesApi.useGetCategoriesQuery(undefined, {
     skip,
   });
-  const entriesQuery = categoriesApi.useGetEntriesQuery(undefined, {
+  const entriesQuery = categoriesApi.useGetEntriesFullQuery(undefined, {
+    skip,
+  });
+  const unitsQuery = categoriesApi.useGetUnitsQuery(undefined, {
     skip,
   });
 
-  const { categories, entries } = useMemo(() => {
+  const { categories, entries, globalDefaultUnit } = useMemo(() => {
     let categories: Category[] = [];
     let entries: Entry[] = [];
+    let globalDefaultUnit = undefined;
 
     if (skip) {
       categories = CATEGORIES;
@@ -41,12 +45,23 @@ export const useSearchLibrary = () => {
       if (entriesQuery.isSuccess) {
         entries = entriesQuery.data?.entries || [];
       }
+      if (unitsQuery.isSuccess) {
+        globalDefaultUnit = unitsQuery.data?.units?.find((u) => u.isDefault);
+      }
     }
 
-    return { categories, entries };
-  }, [categoriesQuery.data, categoriesQuery.isSuccess, entriesQuery.data?.entries, entriesQuery.isSuccess, skip]);
+    return { categories, entries, globalDefaultUnit };
+  }, [
+    categoriesQuery.data,
+    categoriesQuery.isSuccess,
+    entriesQuery.data?.entries,
+    entriesQuery.isSuccess,
+    unitsQuery.data?.units,
+    unitsQuery.isSuccess,
+    skip,
+  ]);
 
-  return useMemo(
+  const items = useMemo(
     () =>
       entries?.reduce((acc: MenuItem[], entry) => {
         const category = categories?.find((cat) => cat.id === entry.categoryId);
@@ -65,4 +80,6 @@ export const useSearchLibrary = () => {
 
     [categories, entries]
   );
+
+  return { items, globalDefaultUnit };
 };

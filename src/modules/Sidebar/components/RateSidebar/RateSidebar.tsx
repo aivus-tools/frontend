@@ -3,12 +3,12 @@ import { SidebarBody } from './SidebarBody/SidebarBody';
 import { Button, Drawer } from 'antd';
 import CloseIcon from '@/icons/close-icon.svg';
 import { SidebarHeader } from './SidebarHeader/SidebarHeader';
-import { Rate } from '@/types/rate.interface';
+import { RateCardItem } from '@/types/rate.interface';
 
 import styles from './RateSidebar.module.css';
 
 interface Props {
-  data: Rate | null;
+  data: RateCardItem | null;
   isOpen: boolean;
   handleClose: () => void;
 }
@@ -31,7 +31,7 @@ export const RateSidebar = ({ data, isOpen, handleClose }: Props) => {
         },
       }}
     >
-      <SidebarBody initialRateData={data} />
+      <SidebarBody item={data} />
     </Drawer>
   );
 };

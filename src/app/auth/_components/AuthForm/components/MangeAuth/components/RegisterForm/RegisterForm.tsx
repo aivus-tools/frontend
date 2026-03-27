@@ -2,12 +2,12 @@
 import { Button, Form, Input, message } from 'antd';
 import { signIn } from 'next-auth/react';
 import { t } from '@/lib/i18n';
+import logger from '@/lib/logger';
 
 import styles from './styles.module.css';
 import { useState } from 'react';
-import { CALLBACK_URL } from '@/constants/apiRoute';
 import { AUTH_TYPES } from '@/constants/constants';
-import { AuthType } from '@/types/user.interface.';
+import { AuthType } from '@/types/user.interface';
 import { AppRoute } from '@/constants/appRoute';
 
 export interface ResponseData {
@@ -24,7 +24,7 @@ export interface ErrorDetails {
   statusCode: number;
 }
 
-//TODO заменить на register из src/services/server
+// TODO: Replace with register from src/services/server/authService.ts
 const register = async ({
   name,
   email,
@@ -36,7 +36,7 @@ const register = async ({
   authType: AuthType;
   password?: string;
 }) =>
-  await fetch('service/auth/register', {
+  await fetch('/service/auth/register', {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
@@ -79,11 +79,10 @@ export const RegisterForm = ({ email, prevStepAction }: { email: string; prevSte
         authType: AUTH_TYPES.credentials,
       });
       if (!response.ok) {
-        const data: ResponseData | null = await response.json();
-        if (data) {
-          data.errorDetails.message.forEach((message) => {
-            messageApi.error(message);
-          });
+        const data = await response.json().catch(() => null);
+        if (data?.error) {
+          const errors = Array.isArray(data.error) ? data.error : [data.error];
+          form.setFields([{ name: 'password', errors: errors.map(String) }]);
         } else {
           messageApi.error(t('FAILED_TO_REGISTER'));
         }
@@ -96,11 +95,11 @@ export const RegisterForm = ({ email, prevStepAction }: { email: string; prevSte
         form.resetFields();
         form.setFields([{ name: 'password', errors: [''] }]);
       } else {
-        window.location.href = CALLBACK_URL ?? AppRoute.HOME;
+        window.location.href = AppRoute.CONFIRM;
       }
     } catch (error) {
       messageApi.error(t('UNEXPECTED_ERROR'));
-      console.error('Error checking email:', error);
+      logger.error('Error checking email:', error);
     } finally {
       setLoading(false);
     }
@@ -109,12 +108,18 @@ export const RegisterForm = ({ email, prevStepAction }: { email: string; prevSte
     <Form form={form} layout='vertical' onFinish={handleFinish}>
       {contextHolder}
       <div className={styles.inputWrapper}>
-        <Form.Item name='name'>
+        <Form.Item name='name' rules={[{ required: true, message: t('NAME_PLACEHOLDER') }]}>
           <Input size='large' placeholder={t('NAME_PLACEHOLDER')} type='text' id='name' name='name' />
         </Form.Item>
       </div>
       <div className={styles.inputWrapper}>
-        <Form.Item name='password'>
+        <Form.Item
+          name='password'
+          rules={[
+            { required: true, message: t('PASSWORD_REQUIRED') },
+            { min: 8, message: t('PASSWORD_MIN_LENGTH') },
+          ]}
+        >
           <Input
             size='large'
             placeholder={t('ENTER_PASSWORD_PLACEHOLDER')}
@@ -125,7 +130,7 @@ export const RegisterForm = ({ email, prevStepAction }: { email: string; prevSte
         </Form.Item>
       </div>
       <div className={styles.inputWrapper}>
-        <Form.Item name='repeatPassword'>
+        <Form.Item name='repeatPassword' rules={[{ required: true, message: t('CONFIRM_PASSWORD_REQUIRED') }]}>
           <Input
             size='large'
             placeholder={t('REPEAT_PASSWORD_PLACEHOLDER')}

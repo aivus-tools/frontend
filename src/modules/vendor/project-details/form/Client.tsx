@@ -32,7 +32,7 @@ export const Client: React.FC = () => {
           <Input placeholder={t('IRS_EIN')} onFocus={handleFocus('irsEin')} />
         </Form.Item>
       </Flex>
-      <Form.Item name='brandName' label={t('BRAND_NAME')} extra={t('SPECIFY_BRAND_WITHIN_COMPANY')}>
+      <Form.Item name='brandName' label={t('BRAND_NAME')} extra={t('SPECIFY_BRAND_WITHIN_COMPANY')} style={{ width: '100%' }}>
         <Input placeholder={t('BRAND_NAME')} onFocus={handleFocus('brandName')} />
       </Form.Item>
       <Form.List name='managers'>
@@ -53,7 +53,7 @@ export const Client: React.FC = () => {
                 <Row key={field.key}>
                   <Col span={14}>
                     <Flex gap={10} style={{ marginRight: '20px' }}>
-                      <Form.Item name={[field.name, 'manager']} label={managerLabel} extra={extra} style={{ flex: 1 }}>
+                      <Form.Item name={[field.name, 'name']} label={managerLabel} extra={extra} style={{ flex: 1 }}>
                         <Input placeholder='' onFocus={handleFocus('manager')} />
                       </Form.Item>
                       <Form.Item label={isFirst ? ' ' : null}>

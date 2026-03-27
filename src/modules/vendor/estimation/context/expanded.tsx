@@ -1,4 +1,4 @@
-import React, { createContext, useContext, ReactNode, useState } from 'react';
+import React, { createContext, useContext, ReactNode, useState, useEffect } from 'react';
 
 interface KeysContextType {
   keys: string[] | undefined;
@@ -10,10 +10,18 @@ const HoverContext = createContext<KeysContextType | undefined>(undefined);
 
 interface FocusProviderProps {
   children: ReactNode;
+  initialKeys?: string[];
 }
 
-export const KeysProvider: React.FC<FocusProviderProps> = ({ children }) => {
-  const [keys, setKeys] = useState<string[]>();
+export const KeysProvider: React.FC<FocusProviderProps> = ({ children, initialKeys }) => {
+  const [keys, setKeys] = useState<string[] | undefined>(initialKeys);
+
+  // Update keys when initialKeys change (e.g., when data is loaded)
+  useEffect(() => {
+    if (initialKeys && initialKeys.length > 0) {
+      setKeys(initialKeys);
+    }
+  }, [initialKeys]);
 
   const switchKey = (key: string) => {
     setKeys((prevKeys) => {

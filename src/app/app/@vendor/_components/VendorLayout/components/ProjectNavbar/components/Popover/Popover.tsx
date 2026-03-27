@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Popover as AntdPopover, Select, Input, DatePicker, Switch, Button } from 'antd';
 import type { Dayjs } from 'dayjs';
 import dayjs from 'dayjs';
@@ -11,11 +11,17 @@ import styles from './Popover.module.css';
 export type ExportPopoverProps = {
   children: React.ReactElement;
   action: (data: { format: 'xlsx' | 'pdf' | 'csv'; name: string; date?: Dayjs; watermark?: string }) => void;
+  defaultName?: string;
 };
 
-export const ExportPopover: React.FC<ExportPopoverProps> = ({ children, action }) => {
-  const [format, setFormat] = useState<'xlsx' | 'pdf' | 'csv'>('xlsx');
-  const [name, setName] = useState('');
+export const ExportPopover: React.FC<ExportPopoverProps> = ({ children, action, defaultName }) => {
+  const [format, setFormat] = useState<'xlsx' | 'pdf' | 'csv'>('pdf');
+  const [name, setName] = useState(defaultName || '');
+
+  useEffect(() => {
+    if (defaultName && !name) setName(defaultName);
+  }, [defaultName]);
+
   const [includeDate, setIncludeDate] = useState(true);
   const [date, setDate] = useState<Dayjs | null>(dayjs());
   const [watermarkEnabled, setWatermarkEnabled] = useState(false);
@@ -43,9 +49,8 @@ export const ExportPopover: React.FC<ExportPopoverProps> = ({ children, action }
             onChange={(v) => setFormat(v)}
             className={styles.formatSelect}
             options={[
-              { label: 'xlsx', value: 'xlsx' },
               { label: 'pdf', value: 'pdf' },
-              { label: 'csv', value: 'csv' },
+              { label: 'xlsx', value: 'xlsx' },
             ]}
           />
         </div>

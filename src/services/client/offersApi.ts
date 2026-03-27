@@ -1,10 +1,11 @@
 import { Offer, NewOffer } from '@/types/offer.interface';
+import { OfferExportData } from '@/types/exportData.interface';
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
 import { ApiRoute } from '@/constants/apiRoute';
 
 export const offersApi = createApi({
   reducerPath: 'offersApi',
-  baseQuery: fetchBaseQuery(),
+  baseQuery: fetchBaseQuery({ baseUrl: '' }),
   tagTypes: ['Offer'],
   endpoints: (builder) => ({
     getAllOffers: builder.query<Offer[], void>({
@@ -42,6 +43,25 @@ export const offersApi = createApi({
       query: (projectId) => ApiRoute.OFFERS_BY_PROJECT_ID(projectId),
       providesTags: ['Offer'],
     }),
+    copyOffer: builder.mutation<Offer, string>({
+      query: (id) => ({
+        url: ApiRoute.OFFER_COPY(id),
+        method: 'POST',
+      }),
+      invalidatesTags: ['Offer'],
+    }),
+    updateOfferStatus: builder.mutation<Offer, { id: string; status: string }>({
+      query: ({ id, status }) => ({
+        url: ApiRoute.OFFER_STATUS(id),
+        method: 'PATCH',
+        body: { status },
+      }),
+      invalidatesTags: ['Offer'],
+    }),
+    getOfferExportData: builder.query<OfferExportData, string>({
+      query: (offerId) => ApiRoute.OFFER_EXPORT_DATA(offerId),
+      providesTags: ['Offer'],
+    }),
   }),
 });
 
@@ -52,4 +72,8 @@ export const {
   useUpdateOfferMutation,
   useDeleteOfferMutation,
   useGetOffersByProjectIdQuery,
+  useCopyOfferMutation,
+  useUpdateOfferStatusMutation,
+  useGetOfferExportDataQuery,
+  useLazyGetOfferExportDataQuery,
 } = offersApi;

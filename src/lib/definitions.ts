@@ -9,7 +9,7 @@ export const SignupFormSchema = z.object({
 });
 
 export const PasswordSchema = z.object({
-  password: z.string().min(6, { message: t('PASSWORD_MIN_LENGTH') }),
+  password: z.string().min(8, { message: t('PASSWORD_MIN_LENGTH') }),
 });
 
 export type FormState =

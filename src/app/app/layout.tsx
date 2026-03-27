@@ -1,8 +1,10 @@
-import { auth, signOut } from '@/auth/auth';
+import { auth } from '@/auth/auth';
+import { redirect } from 'next/navigation';
 import { ReduxStore } from '@/context/ReduxProvider';
 import { GROUPS } from '@/constants/constants';
 import React from 'react';
 import { Sidebar } from '@/modules/Sidebar/Sidebar';
+import { MobileStub } from '@/components/MobileStub/MobileStub';
 
 export default async function Layout({
   vendor,
@@ -26,7 +28,7 @@ export default async function Layout({
       case GROUPS.unconfirmed:
         return unknown;
       default: {
-        signOut();
+        redirect('/auth');
         return null;
       }
     }
@@ -34,8 +36,11 @@ export default async function Layout({
 
   return (
     <ReduxStore>
-      {getComponent()}
-      <Sidebar />
+      <MobileStub />
+      <div className="aivus-desktop-content">
+        {getComponent()}
+        <Sidebar />
+      </div>
     </ReduxStore>
   );
 }

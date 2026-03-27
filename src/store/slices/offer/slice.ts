@@ -1,12 +1,29 @@
-import { applyPercentage, round } from '@/lib/utils';
+import { round } from '@/lib/utils';
 import { Category, OfferData, Entry } from '@/types/estimation.interface';
 import { createSlice } from '@reduxjs/toolkit';
+import logger from '@/lib/logger';
 
 import type { PayloadAction } from '@reduxjs/toolkit';
-import clone from 'lodash.clone';
-import { OfferDetails, OfferState, UnforeseenExpenses } from '@/types/store.interface';
+import cloneDeep from 'lodash.clonedeep';
+import { CategoryExternalMarkup, OfferDetails, OfferState, UnforeseenExpenses } from '@/types/store.interface';
 import { CATEGORIES } from '@/modules/vendor/estimation/mock/categories';
 import { ENTRIES } from '@/modules/vendor/estimation/mock/entries';
+
+const getFringesPercent = (state: OfferState): number => {
+  return parseFloat(state.metaData?.fringesPercent || '0') || 0;
+};
+
+const getEffectiveFringes = (offer: OfferData, state: OfferState): number => {
+  return offer.showTax ? offer.taxRate : getFringesPercent(state);
+};
+
+const calcBasePrice = (price: number, overtime: number, fringesPercent: number): number => {
+  const safePrice = Number.isFinite(price) ? price : 0;
+  const safeOvertime = Number.isFinite(overtime) ? overtime : 0;
+  const safeFringes = Number.isFinite(fringesPercent) ? fringesPercent : 0;
+  const base = safePrice + safeOvertime;
+  return safeFringes > 0 ? round(base * (1 + safeFringes / 100)) : base;
+};
 
 const initialState: OfferState = {
   offerDetails: {
@@ -14,12 +31,15 @@ const initialState: OfferState = {
     categories: [],
     subCategories: [],
     categorySurcharge: {},
+    categoryExternalMarkup: {},
+    customFeeNames: {},
     unforeseenExpenses: {
       percent: 0,
-      clientPercent: 0,
       isVisible: true,
     },
     showCostPerVideo: true,
+    overallSurcharge: 0,
+    isLinkedOverallSurcharge: false,
   },
   metaData: null,
   dictionary: {
@@ -27,6 +47,7 @@ const initialState: OfferState = {
     entry: [],
   },
   external: false,
+  templateId: null,
 };
 
 export const offerSlice = createSlice({
@@ -34,13 +55,34 @@ export const offerSlice = createSlice({
   initialState,
   reducers: {
     setOfferDetails: (state, action: PayloadAction<OfferDetails>) => {
-      state.offerDetails = action.payload;
+      state.offerDetails = {
+        ...action.payload,
+        offers: action.payload.offers || [],
+        categories: action.payload.categories || [],
+        subCategories: action.payload.subCategories || [],
+        categorySurcharge: action.payload.categorySurcharge || {},
+        categoryExternalMarkup: action.payload.categoryExternalMarkup || {},
+        customFeeNames: action.payload.customFeeNames || {},
+      };
+      if (state.offerDetails?.offers) {
+        state.offerDetails.offers.forEach((offer) => {
+          if ((offer.price > 0 || (offer.overtime || 0) > 0) && offer.cost === 0) {
+            const unitMultiplier = offer.units?.reduce((acc, unit) => acc * (unit?.count ?? 1), 1) ?? 1;
+            const fringes = getEffectiveFringes(offer, state);
+            const fringesPrice = calcBasePrice(offer.price, offer.overtime || 0, fringes);
+            offer.taxPrice = fringesPrice;
+            offer.cost = round(fringesPrice * unitMultiplier);
+            offer.clientPrice = round(fringesPrice * (1 + (offer.surcharge || 0) / 100));
+            offer.clientCost = round(offer.clientPrice * unitMultiplier);
+          }
+        });
+      }
     },
     setMetaData: (state, action: PayloadAction<OfferState['metaData']>) => {
       state.metaData = action.payload;
     },
     addOfferRow: (state, action: PayloadAction<OfferData>) => {
-      const tempState = clone(state);
+      const tempState = cloneDeep(state);
       const { categoryId } = action.payload;
 
       const findCategory = (id: string) =>
@@ -57,9 +99,19 @@ export const offerSlice = createSlice({
         if (!tempState.offerDetails.categories.some((cat) => cat.id === category.id)) {
           tempState.offerDetails.categories.push(category);
           tempState.offerDetails.categorySurcharge[category.id] = {
-            surcharge: 0,
-            linked: false,
+            surcharge: state.offerDetails.isLinkedOverallSurcharge ? state.offerDetails.overallSurcharge : 0,
+            linked: true,
           };
+          if (!tempState.offerDetails.categoryExternalMarkup) {
+            tempState.offerDetails.categoryExternalMarkup = {};
+          }
+          if (!tempState.offerDetails.categoryExternalMarkup[category.id]) {
+            tempState.offerDetails.categoryExternalMarkup[category.id] = {
+              enabled: false,
+              percent: parseFloat(state.metaData?.markupPercent || '0') || 0,
+              name: 'Markup',
+            };
+          }
         }
       };
 
@@ -72,9 +124,19 @@ export const offerSlice = createSlice({
         }
       };
 
+      const getCategorySurcharge = (category: Category) => {
+        if (category.parentCategoryId) {
+          return tempState.offerDetails.categorySurcharge[category.parentCategoryId]?.surcharge;
+        }
+        if (tempState.offerDetails.categorySurcharge[category.id]?.surcharge) {
+          return tempState.offerDetails.categorySurcharge[category.id]?.surcharge;
+        }
+        return 0;
+      };
+
       const category = findCategory(categoryId);
       if (!category) {
-        console.warn('Category not found', categoryId);
+        logger.warn('Category not found', categoryId);
         return;
       }
 
@@ -83,7 +145,7 @@ export const offerSlice = createSlice({
 
         const parentCategory = findCategory(category.parentCategoryId);
         if (!parentCategory) {
-          console.warn('Parent category not found', category.parentCategoryId);
+          logger.warn('Parent category not found', category.parentCategoryId);
           return;
         }
         addCategoryIfNeeded(parentCategory);
@@ -94,9 +156,25 @@ export const offerSlice = createSlice({
       if (!tempState.offerDetails?.offers) {
         tempState.offerDetails.offers = [];
       }
-      tempState.offerDetails.offers.push(action.payload);
+      const categorySurcharge = getCategorySurcharge(category);
+      const newOffer = {
+        ...action.payload,
+        surcharge: categorySurcharge,
+      };
 
-      // Обновляем основной state
+      if (newOffer.price > 0 || (newOffer.overtime || 0) > 0) {
+        const unitMultiplier = newOffer.units?.reduce((acc, unit) => acc * (unit?.count ?? 1), 1) ?? 1;
+        const fringes = getEffectiveFringes(newOffer, tempState);
+        const fringesPrice = calcBasePrice(newOffer.price, newOffer.overtime || 0, fringes);
+        newOffer.taxPrice = fringesPrice;
+        newOffer.cost = round(fringesPrice * unitMultiplier);
+        newOffer.clientPrice = round(fringesPrice * (1 + categorySurcharge / 100));
+        newOffer.clientCost = round(newOffer.clientPrice * unitMultiplier);
+      }
+
+      tempState.offerDetails.offers.push(newOffer);
+
+      // Update the main state
       Object.assign(state, tempState);
     },
     removeOfferRow: (state, action: PayloadAction<string>) => {
@@ -116,6 +194,18 @@ export const offerSlice = createSlice({
             state.offerDetails.offers.find((offer) => offer.categoryId === category.id) ||
             state.offerDetails.subCategories?.find((subcategory) => subcategory.parentCategoryId === category.id)
         );
+
+        const remainingCategoryIds = new Set(state.offerDetails.categories.map((x) => x.id));
+        for (const key of Object.keys(state.offerDetails.categorySurcharge || {})) {
+          if (!remainingCategoryIds.has(key)) {
+            delete state.offerDetails.categorySurcharge[key];
+          }
+        }
+        for (const key of Object.keys(state.offerDetails.categoryExternalMarkup || {})) {
+          if (!remainingCategoryIds.has(key)) {
+            delete state.offerDetails.categoryExternalMarkup![key];
+          }
+        }
       }
     },
     changeOfferRow: (state, action: PayloadAction<Partial<OfferData>>) => {
@@ -132,45 +222,89 @@ export const offerSlice = createSlice({
 
       const updatedParameter = Object.keys(newOfferData).filter((key): key is keyof OfferData => key in newOffer);
 
-      if (updatedParameter.includes('showTax') && updatedParameter.length === 1) {
-        state.offerDetails.offers[index] = newOffer;
 
-        return;
-      }
+      const unitMultiplier = newOffer.units?.reduce((acc, unit) => acc * (unit?.count ?? 1), 1) ?? 1;
+      const category = state.dictionary.category.find((cat) => cat.id === newOffer.categoryId);
+      const rootCategoryId = category?.parentCategoryId ?? category?.id;
+      const { surcharge: catSurcharge = 0 } = state.offerDetails.categorySurcharge[rootCategoryId ?? ''] ?? {};
+
+      const fringes = getEffectiveFringes(newOffer, state);
 
       if (updatedParameter.includes('taxPrice') && updatedParameter.length === 1) {
-        newOffer.taxRate = (newOffer.taxPrice / newOffer.price - 1) * 100;
+        newOffer.cost = round(newOffer.taxPrice * unitMultiplier);
+        const markup = newOffer.isLinkedSurcharge ? catSurcharge : newOffer.surcharge;
+        newOffer.clientPrice = round(newOffer.taxPrice * (1 + markup / 100));
+        newOffer.clientCost = round(newOffer.clientPrice * unitMultiplier);
         state.offerDetails.offers[index] = newOffer;
 
         return;
       }
 
       if (updatedParameter.includes('clientPrice') && updatedParameter.length === 1) {
-        newOffer.surcharge = ((newOffer.clientPrice - newOffer.price) * 100) / newOffer.cost;
+        const currentFringesPrice = calcBasePrice(newOffer.price, newOffer.overtime || 0, fringes);
+        newOffer.taxPrice = currentFringesPrice;
+        newOffer.cost = round(currentFringesPrice * unitMultiplier);
+        newOffer.surcharge = currentFringesPrice > 0 ? (newOffer.clientPrice / currentFringesPrice - 1) * 100 : 0;
+        newOffer.clientCost = round(newOffer.clientPrice * unitMultiplier);
         state.offerDetails.offers[index] = newOffer;
 
         return;
       }
 
-      const unitMultiplier = newOffer.units?.reduce((acc, unit) => acc * (unit?.count ?? 1), 1) ?? 1;
-      const { price = 0 } = newOffer;
-      const category = state.dictionary.category.find((cat) => cat.id === newOffer.categoryId);
-      const rootCategoryId = category?.parentCategoryId ?? category?.id;
-      const { linked = false, surcharge = 0 } = state.offerDetails.categorySurcharge[rootCategoryId ?? 0] ?? {};
-
-      newOffer.cost = price * unitMultiplier;
-      newOffer.taxPrice = round(newOffer.price * (1 + newOffer.taxRate / 100));
-      const markup = linked ? surcharge : newOffer.surcharge;
-      newOffer.clientPrice = round(newOffer.taxPrice * (1 + markup / 100));
-      newOffer.clientCost = round(newOffer.clientPrice * unitMultiplier);
-
-      if (newOfferData.surcharge !== undefined) {
-        if (rootCategoryId !== undefined) {
+      if (rootCategoryId !== undefined && state.offerDetails.categorySurcharge[rootCategoryId]) {
+        if (updatedParameter.includes('surcharge')) {
+          state.offerDetails.categorySurcharge[rootCategoryId].linked = false;
+          state.offerDetails.isLinkedOverallSurcharge = false;
+          newOffer.isLinkedSurcharge = false;
+        }
+        if (newOfferData.isLinkedSurcharge === false) {
           state.offerDetails.categorySurcharge[rootCategoryId].linked = false;
         }
       }
 
+      const fringesPrice = calcBasePrice(newOffer.price, newOffer.overtime || 0, fringes);
+      newOffer.taxPrice = fringesPrice;
+      newOffer.cost = round(fringesPrice * unitMultiplier);
+      const markup = newOffer.isLinkedSurcharge ? catSurcharge : newOffer.surcharge;
+      newOffer.surcharge = markup;
+      newOffer.clientPrice = round(fringesPrice * (1 + markup / 100));
+      newOffer.clientCost = round(newOffer.clientPrice * unitMultiplier);
+
       state.offerDetails.offers[index] = newOffer;
+    },
+    changeOverallSurcharge: (
+      state,
+      action: PayloadAction<{
+        surcharge?: number;
+        linked?: boolean;
+      }>
+    ) => {
+      const { surcharge, linked } = action.payload;
+      if (linked !== undefined) {
+        state.offerDetails.isLinkedOverallSurcharge = linked;
+      }
+      if (surcharge !== undefined || linked !== undefined) {
+        const newSurcharge = surcharge ?? state.offerDetails.overallSurcharge;
+        state.offerDetails.overallSurcharge = newSurcharge;
+        if (state.offerDetails.isLinkedOverallSurcharge) {
+          Object.keys(state.offerDetails.categorySurcharge).forEach((categoryId) => {
+            state.offerDetails.categorySurcharge[categoryId].surcharge = newSurcharge;
+            state.offerDetails.categorySurcharge[categoryId].linked = true;
+          });
+          state.offerDetails.offers.forEach((offer) => {
+            const unitMultiplier = offer.units?.reduce((acc, unit) => acc * (unit?.count ?? 1), 1) ?? 1;
+            const fringes = getEffectiveFringes(offer, state);
+            const fringesPrice = calcBasePrice(offer.price, offer.overtime || 0, fringes);
+
+            offer.surcharge = newSurcharge;
+            offer.taxPrice = fringesPrice;
+            offer.cost = round(fringesPrice * unitMultiplier);
+            offer.clientPrice = round(fringesPrice * (1 + newSurcharge / 100));
+            offer.clientCost = round(offer.clientPrice * unitMultiplier);
+            offer.isLinkedSurcharge = true;
+          });
+        }
+      }
     },
     changeCategorySurcharge: (
       state,
@@ -184,31 +318,62 @@ export const offerSlice = createSlice({
       const lastData = state.offerDetails.categorySurcharge[categoryId];
       const newCategorySurcharge = { ...lastData, ...newData };
       if (newData.surcharge !== undefined) {
-        newCategorySurcharge.linked = true;
+        state.offerDetails.isLinkedOverallSurcharge = false;
       }
-
       state.offerDetails.categorySurcharge[categoryId] = newCategorySurcharge;
-      if (newCategorySurcharge.linked) {
-        const currentCategories = state.dictionary.category
-          .filter((category) => category.id === categoryId || category.parentCategoryId === categoryId)
-          .map((category) => category.id);
-        state.offerDetails.offers.forEach((offer) => {
-          if (currentCategories.includes(offer.categoryId)) {
-            const unitMultiplier = offer.units?.reduce((acc, unit) => acc * (unit?.count ?? 1), 1) ?? 1;
-            const { price = 0 } = offer;
-            const { surcharge = 0 } = newCategorySurcharge;
-            offer.surcharge = surcharge;
-            offer.clientPrice = price + applyPercentage(offer.cost, surcharge);
-            offer.clientCost = offer.clientPrice * unitMultiplier;
+      const currentCategories = state.dictionary.category
+        .filter((category) => category.id === categoryId || category.parentCategoryId === categoryId)
+        .map((category) => category.id);
+
+      state.offerDetails.offers.forEach((offer) => {
+        if (currentCategories.includes(offer.categoryId)) {
+          const wasLinked = offer.isLinkedSurcharge;
+          if (newData.linked !== undefined) {
+            offer.isLinkedSurcharge = newData.linked;
           }
-        });
-      }
+
+          if (newData.linked || wasLinked) {
+            const unitMultiplier = offer.units?.reduce((acc, unit) => acc * (unit?.count ?? 1), 1) ?? 1;
+            const fringes = getEffectiveFringes(offer, state);
+            const { surcharge = 0 } = newCategorySurcharge;
+            const fringesPrice = calcBasePrice(offer.price, offer.overtime || 0, fringes);
+
+            offer.surcharge = surcharge;
+            offer.taxPrice = fringesPrice;
+            offer.cost = round(fringesPrice * unitMultiplier);
+            offer.clientPrice = round(fringesPrice * (1 + surcharge / 100));
+            offer.clientCost = round(offer.clientPrice * unitMultiplier);
+          }
+        }
+      });
     },
     changeUnforeseenExpenses: (state, action: PayloadAction<Partial<UnforeseenExpenses>>) => {
       state.offerDetails.unforeseenExpenses = {
         ...state.offerDetails.unforeseenExpenses,
         ...action.payload,
       };
+    },
+    recalculateAllOffers: (state) => {
+      state.offerDetails.offers.forEach((offer) => {
+        const unitMultiplier = offer.units?.reduce((acc, unit) => acc * (unit?.count ?? 1), 1) ?? 1;
+        const fringes = getEffectiveFringes(offer, state);
+        const fringesPrice = calcBasePrice(offer.price, offer.overtime || 0, fringes);
+
+        let markup = offer.surcharge;
+        if (offer.isLinkedSurcharge) {
+          const category = state.dictionary.category.find((x) => x.id === offer.categoryId);
+          const rootId = category?.parentCategoryId ?? category?.id;
+          if (rootId && state.offerDetails.categorySurcharge[rootId]) {
+            markup = state.offerDetails.categorySurcharge[rootId].surcharge;
+            offer.surcharge = markup;
+          }
+        }
+
+        offer.taxPrice = fringesPrice;
+        offer.cost = round(fringesPrice * unitMultiplier);
+        offer.clientPrice = round(fringesPrice * (1 + markup / 100));
+        offer.clientCost = round(offer.clientPrice * unitMultiplier);
+      });
     },
     changeShowCostPerVideo: (state, action: PayloadAction<boolean>) => {
       state.offerDetails.showCostPerVideo = action.payload;
@@ -226,6 +391,44 @@ export const offerSlice = createSlice({
         state.dictionary.entry = ENTRIES;
       }
     },
+    setTemplateId: (state, action: PayloadAction<string | null>) => {
+      state.templateId = action.payload;
+    },
+    setCategoryExternalMarkup: (
+      state,
+      action: PayloadAction<{
+        categoryId: string;
+        enabled?: boolean;
+        percent?: number;
+        name?: string;
+      }>
+    ) => {
+      const { categoryId, ...updates } = action.payload;
+      if (!state.offerDetails.categoryExternalMarkup) {
+        state.offerDetails.categoryExternalMarkup = {};
+      }
+      const current: CategoryExternalMarkup = state.offerDetails.categoryExternalMarkup[categoryId] || {
+        enabled: false,
+        percent: parseFloat(state.metaData?.markupPercent || '0') || 0,
+        name: 'Markup',
+      };
+      state.offerDetails.categoryExternalMarkup[categoryId] = { ...current, ...updates };
+    },
+    setCustomFeeName: (
+      state,
+      action: PayloadAction<{ feeKey: string; name: string }>
+    ) => {
+      if (!state.offerDetails.customFeeNames) {
+        state.offerDetails.customFeeNames = {};
+      }
+      state.offerDetails.customFeeNames[action.payload.feeKey] = action.payload.name;
+    },
+    resetOffer: (state) => {
+      state.offerDetails = initialState.offerDetails;
+      state.metaData = initialState.metaData;
+      state.external = initialState.external;
+      state.templateId = initialState.templateId;
+    },
   },
 });
 
@@ -239,6 +442,12 @@ export const {
   changeOfferRow,
   changeCategorySurcharge,
   changeUnforeseenExpenses,
+  recalculateAllOffers,
   changeShowCostPerVideo,
   setExternal,
+  changeOverallSurcharge,
+  setCategoryExternalMarkup,
+  setCustomFeeName,
+  setTemplateId,
+  resetOffer,
 } = offerSlice.actions;

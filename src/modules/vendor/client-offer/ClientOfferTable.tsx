@@ -1,35 +1,72 @@
 'use client';
 
-import React from 'react';
+import React, { useMemo } from 'react';
+import { OfferData } from '@/types/estimation.interface';
+import { Table, TableHeader, HeaderCell, Content, Wrapper } from './components/styled';
+import { FileTextOutlined } from '@ant-design/icons';
+import { t } from '@/lib/i18n';
 import { useAppSelector } from '@/store/hooks';
-import { selectRootCategories } from '@/store/slices/offer/selectors';
-import { KeysProvider } from '../estimation/context/expanded';
-import { Category } from './components/Category';
-import { Table, Wrapper } from '../estimation/styled';
-import { Header } from './components/Header';
-import { GrandTotal } from './components/GrandTotal';
-import { useLoadData } from '../estimation/hooks/useLoadData';
-import Spinner from '@/components/Spinner';
+import { selectOfferDetails } from '@/store/slices/offer/selectors';
+import { KeysProvider } from '@/modules/vendor/estimation/context/expanded';
+import { Category } from '@/modules/vendor/client-offer/components/Category';
+import { Summary } from '@/modules/vendor/client-offer/components/Summary/Summary';
+import { Empty } from 'antd';
+import { KEY_SEPARATOR } from '../estimation/constants';
 
-export function ClientOfferTable() {
-  const categories = useAppSelector(selectRootCategories);
-  const isLoading = useLoadData();
-
-  if (isLoading) {
-    return <Spinner />;
-  }
-
-  return (
-    <KeysProvider>
-      <Wrapper>
-        <Table>
-          <Header />
-          {categories.map((category) => (
-            <Category key={category.id} category={category} />
-          ))}
-          <GrandTotal />
-        </Table>
-      </Wrapper>
-    </KeysProvider>
-  );
+interface Props {
+    offers?: OfferData[];
 }
+
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+export const ClientOfferTable = ({ offers }: Props) => {
+    const offerDetails = useAppSelector(selectOfferDetails);
+    const categories = offerDetails?.categories ?? [];
+    const subCategories = offerDetails?.subCategories ?? [];
+
+    const topCategories = useMemo(() =>
+        categories.filter(cat => !cat.parentCategoryId),
+        [categories]
+    );
+
+    const initialKeys = useMemo(() => {
+        const catKeys = categories.map(cat => cat.id.toString());
+        const subCatKeys = subCategories
+            .filter(cat => cat.parentCategoryId)
+            .map(cat => `${cat.parentCategoryId}${KEY_SEPARATOR}${cat.id}`);
+        return [...catKeys, ...subCatKeys];
+    }, [categories, subCategories]);
+
+    if (categories.length === 0) {
+        return (
+            <Content style={{ padding: '60px', alignItems: 'center' }}>
+                <Empty description={t('EMPTY')} />
+            </Content>
+        );
+    }
+
+    return (
+        <KeysProvider initialKeys={initialKeys}>
+            <Wrapper>
+                <Table>
+                    <TableHeader>
+                        <HeaderCell>
+                            <FileTextOutlined style={{ color: '#99A1B7', fontSize: 14 }} />
+                        </HeaderCell>
+                        <HeaderCell $align='left'>{t('ITEM')}</HeaderCell>
+                        <HeaderCell $align='right'>{t('PRICE')}</HeaderCell>
+                        <HeaderCell $align='right'>{t('UNITS')}</HeaderCell>
+                        <HeaderCell $align='center'>{t('QUANTITY')}</HeaderCell>
+                        <HeaderCell $align='center'>{t('COST')}</HeaderCell>
+                        <HeaderCell />
+                    </TableHeader>
+
+                    {topCategories.map((category) => (
+                        <Category key={category.id} category={category} />
+                    ))}
+
+                    <Summary />
+                </Table>
+            </Wrapper>
+        </KeysProvider>
+    );
+};

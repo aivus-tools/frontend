@@ -1,5 +1,5 @@
-import { ProjectStatus } from './project.interface.';
-import { Roles } from './user.interface.';
+import { ProjectStatus } from './project.interface';
+import { Roles } from './user.interface';
 
 export interface Brief {
   id: string;
@@ -15,7 +15,7 @@ export interface Brief {
 export type NewBrief = Omit<Brief, 'id' | 'uuid' | 'createdAt' | 'updatedAt'>;
 
 export interface Team {
-  userId: number;
+  userId: string;
   role: Roles;
 }
 
@@ -24,7 +24,7 @@ export interface Person {
   surname: string;
   email: string;
   position: string;
-  role: 'admin' | 'internal_user' | 'external_user';
+  role: 'admin' | 'internal_user' | 'external_user' | 'producer' | 'agency_producer';
 }
 
 export interface Details {

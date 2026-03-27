@@ -27,7 +27,7 @@ export const PriceBlock = ({
       {percentDiff !== null && (
         <div className={cn(styles.percentBadge, percentPositive ? styles.percentPositive : styles.percentNegative)}>
           {percentPositive ? '↑' : '↓'}{' '}
-          {percentDiff.toLocaleString('ru-RU', { minimumFractionDigits: 1, maximumFractionDigits: 1 })} %
+          {percentDiff.toLocaleString('en-US', { minimumFractionDigits: 1, maximumFractionDigits: 1 })} %
         </div>
       )}
       {children && <div className={cn(styles.item)}>{children}</div>}

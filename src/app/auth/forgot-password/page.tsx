@@ -1,24 +1,18 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import Link from 'next/link';
 import { Flex, Typography, Button, Form, Input, message } from 'antd';
 import { t } from '@/lib/i18n';
 import { AppRoute } from '@/constants/appRoute';
-import { forgotPassword } from '@/services/server/authService';
+import { ApiRoute } from '@/constants/apiRoute';
+import logger from '@/lib/logger';
 
 const ForgotPasswordPage = () => {
   const [form] = Form.useForm();
   const [loading, setLoading] = useState(false);
   const [emailSent, setEmailSent] = useState(false);
   const [messageApi, contextHolder] = message.useMessage();
-
-  useEffect(() => {
-    console.log('ForgotPasswordPage mounted');
-    return () => {
-      console.log('ForgotPasswordPage unmounted');
-    };
-  }, []);
 
   const handleSubmit = async ({ email }: { email: string }) => {
     if (loading) {
@@ -27,13 +21,21 @@ const ForgotPasswordPage = () => {
 
     try {
       setLoading(true);
-      await forgotPassword(email);
+      const response = await fetch(ApiRoute.FORGOT_PASSWORD, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email }),
+      });
+      if (!response.ok) {
+        const data = await response.json().catch(() => ({}));
+        throw new Error(data?.error || response.statusText);
+      }
       setEmailSent(true);
       messageApi.success(t('PASSWORD_RESET_EMAIL_SENT'));
     } catch (error) {
       const errorMessage = error instanceof Error ? error.message : t('PASSWORD_RESET_REQUEST_FAILED');
       messageApi.error(errorMessage);
-      console.error('Error requesting password reset:', error);
+      logger.error('Error requesting password reset:', error);
     } finally {
       setLoading(false);
     }

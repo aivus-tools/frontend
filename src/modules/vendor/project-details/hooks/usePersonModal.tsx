@@ -68,6 +68,8 @@ export const usePersonModal = (onSubmit?: OnSubmit) => {
                   { label: 'Admin', value: 'admin' },
                   { label: 'Internal User', value: 'internal_user' },
                   { label: 'External User', value: 'external_user' },
+                  { label: 'Producer', value: 'producer' },
+                  { label: 'Agency Producer', value: 'agency_producer' },
                 ]}
               />
             </Form.Item>

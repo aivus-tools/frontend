@@ -2,7 +2,7 @@ import type { Metadata } from 'next';
 import Script from 'next/script';
 import { AntdRegistry } from '@ant-design/nextjs-registry';
 import { ConfigProvider } from 'antd';
-import StyledComponentsRegistry from '@/app/_componnets/StyledComponentsRegistry';
+import StyledComponentsRegistry from '@/app/_components/StyledComponentsRegistry';
 import { Montserrat } from 'next/font/google';
 import SessionProvider from '@/context/SessionProvider';
 import './globals.css';
@@ -13,6 +13,7 @@ import path from 'path';
 import theme from '@/lib/themeConfig';
 import React from 'react';
 import { locale } from '@/lib/i18n';
+import { AntdAppProvider } from '@/app/_components/AntdAppProvider';
 
 const montserrat = Montserrat({
   subsets: ['latin'],
@@ -42,7 +43,9 @@ export default async function RootLayout({
         <StyledComponentsRegistry>
           <AntdRegistry>
             <ConfigProvider theme={theme}>
-              <SessionProvider session={session}>{children}</SessionProvider>
+              <AntdAppProvider>
+                <SessionProvider session={session}>{children}</SessionProvider>
+              </AntdAppProvider>
             </ConfigProvider>
           </AntdRegistry>
         </StyledComponentsRegistry>
@@ -51,7 +54,7 @@ export default async function RootLayout({
         {`
           function resizeIframe() {
             const height = document.body.scrollHeight;
-            parent.postMessage({ type: 'resize', height: height }, '*');
+            parent.postMessage({ type: 'resize', height: height }, window.location.origin);
           }
 
           window.addEventListener('load', resizeIframe);

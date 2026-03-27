@@ -5,7 +5,7 @@ export interface Menu {
 }
 
 export interface SidebarItem {
-  id: number;
+  id: string;
   title: string;
   type: 'section' | 'subsection' | 'row';
   isHidden: boolean;
@@ -19,7 +19,7 @@ export interface THead {
 }
 
 export interface TSection {
-  id: number;
+  id: string;
   title: string;
   isHidden: boolean;
   subSections?: TSubSection[];
@@ -27,14 +27,14 @@ export interface TSection {
 }
 
 export interface TSubSection {
-  id: number;
+  id: string;
   title: string;
   isHidden: boolean;
   rows: TRow[];
 }
 
 export interface TRow {
-  id: number;
+  id: string;
   item: string;
   price: number;
   units: string;

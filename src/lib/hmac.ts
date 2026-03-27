@@ -7,7 +7,7 @@ export async function createHmacSHA256(message: string) {
 
   const cryptoKey = await crypto.subtle.importKey('raw', keyData, { name: 'HMAC', hash: 'SHA-256' }, false, ['sign']);
   const signature = await crypto.subtle.sign('HMAC', cryptoKey, msgData);
-  // Преобразуем в hex-строку
+  // Convert to hex string
   const string = Array.from(new Uint8Array(signature))
     .map((b) => b.toString(16).padStart(2, '0'))
     .join('');

@@ -14,6 +14,10 @@ const nextConfig = {
         protocol: 'https',
         hostname: 'lh3.googleusercontent.com',
       },
+      {
+        protocol: 'https',
+        hostname: 'storage.googleapis.com',
+      },
     ],
   },
   webpack(config) {
@@ -46,43 +50,6 @@ const nextConfig = {
     return config;
   },
   output: 'standalone',
-  async headers() {
-    const isDevelopment = process.env.NODE_ENV === 'development';
-    
-    // CSP для development с unsafe-eval (для Ant Design, styled-components)
-    const cspDevelopment = [
-      "default-src 'self'",
-      "script-src 'self' 'unsafe-eval' 'unsafe-inline'",
-      "style-src 'self' 'unsafe-inline'",
-      "img-src 'self' data: https:",
-      "font-src 'self' data:",
-      "connect-src 'self' http://localhost:8000",
-      "frame-ancestors 'self' https://www.vilkaservice.com https://app.aivus.co",
-    ].join('; ');
-    
-    // CSP для production без unsafe-eval (более строгий)
-    const cspProduction = [
-      "default-src 'self'",
-      "script-src 'self' 'unsafe-inline'",
-      "style-src 'self' 'unsafe-inline'",
-      "img-src 'self' data: https:",
-      "font-src 'self' data:",
-      "connect-src 'self' https://api.aivus.co",
-      "frame-ancestors 'self' https://www.vilkaservice.com https://app.aivus.co",
-    ].join('; ');
-    
-    return [
-      {
-        source: '/(.*)',
-        headers: [
-          {
-            key: 'Content-Security-Policy',
-            value: isDevelopment ? cspDevelopment : cspProduction,
-          },
-        ],
-      },
-    ];
-  },
 };
 
 export default nextConfig;

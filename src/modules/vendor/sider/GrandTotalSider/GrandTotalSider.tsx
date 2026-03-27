@@ -7,6 +7,10 @@ import { t } from '@/lib/i18n';
 export const GrandTotalSider = () => {
   const { totalValue, clientTotalValue } = useAppSelector(selectGrandTotal);
 
+  if (totalValue === 0 && clientTotalValue === 0) {
+    return null;
+  }
+
   const diff = clientTotalValue - totalValue;
   const percent = clientTotalValue !== 0 ? (diff / clientTotalValue) * 100 : 0;
 

@@ -1,9 +1,10 @@
 'use client';
 import { useEffect } from 'react';
+import logger from '@/lib/logger';
 
 export const VersionLogger = ({ creationDate }: { creationDate?: string }) => {
   useEffect(() => {
-    console.log('Build date', creationDate);
+    logger.log('Build date', creationDate);
   }, [creationDate]);
   return null;
 };

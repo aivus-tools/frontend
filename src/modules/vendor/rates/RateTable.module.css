@@ -1,0 +1,285 @@
+/* Main container */
+.rateTable {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  min-width: 580px;
+}
+
+/* Column headers row */
+.headerRow {
+  display: grid;
+  grid-template-columns: 1fr 100px 30px;
+  align-items: center;
+  padding: 8px 26px 8px 20px;
+  font-family: Montserrat, sans-serif;
+  font-size: 10px;
+  font-weight: 500;
+  line-height: 12px;
+  color: #99a1b7;
+}
+
+.headerRow .headerItems {
+  padding-left: 0;
+}
+
+.headerRow .headerPrice {
+  text-align: center;
+}
+
+.headerRow .headerUnits {
+  text-align: left;
+}
+
+/* ========== Section card (white card with shadow) ========== */
+.sectionCard {
+  margin-top: 12px;
+  overflow: hidden;
+  background: #fff;
+  border-radius: 6px;
+  box-shadow: 0 5px 16.5px -11px rgb(0 0 0 / 25%);
+}
+
+.sectionCard:first-of-type {
+  margin-top: 0;
+}
+
+/* Section header */
+.sectionHeader {
+  display: flex;
+  align-items: center;
+  height: 45px;
+  padding: 0 20px 0 14px;
+  cursor: pointer;
+  user-select: none;
+  border-bottom: 0.5px dashed #d9d9d9;
+}
+
+.sectionTitle {
+  display: flex;
+  flex: 1;
+  gap: 6px;
+  align-items: center;
+}
+
+.sectionTitleText {
+  font-family: Montserrat, sans-serif;
+  font-size: 14px;
+  font-weight: 700;
+  line-height: 17px;
+  color: #28f;
+  text-transform: uppercase;
+}
+
+.sectionActions {
+  display: flex;
+  align-items: center;
+}
+
+/* Section body */
+.sectionBody {
+  padding: 0;
+}
+
+/* ========== Subsection ========== */
+.subSection {
+  margin: 0;
+}
+
+.subSectionHeader {
+  display: flex;
+  gap: 4px;
+  align-items: center;
+  height: 40px;
+  padding: 0 20px 0 14px;
+  cursor: pointer;
+  user-select: none;
+  background-color: #f6f9ff;
+}
+
+.subSectionTitleText {
+  font-family: Montserrat, sans-serif;
+  font-size: 13px;
+  font-weight: 500;
+  line-height: 16px;
+  color: #28f;
+}
+
+/* ========== Arrow ========== */
+.arrow {
+  display: flex;
+  flex-shrink: 0;
+  align-items: center;
+  justify-content: center;
+  width: 20px;
+  height: 20px;
+  transition: transform 0.2s ease;
+}
+
+.arrow svg {
+  width: 12px;
+  height: 12px;
+}
+
+.arrowOpen {
+  transform: rotate(0deg);
+}
+
+.arrowClosed {
+  transform: rotate(-90deg);
+}
+
+/* ========== Item row ========== */
+.itemRow {
+  display: grid;
+  grid-template-columns: 1fr 100px 30px;
+  align-items: center;
+  min-height: 36px;
+  padding: 0 20px;
+  border-bottom: 0.5px dashed #e8e8e8;
+  transition: background-color 0.15s ease;
+}
+
+.itemRow:hover {
+  background-color: #f4fbff;
+}
+
+.itemRow:last-child {
+  border-bottom: 0;
+}
+
+.itemName {
+  display: flex;
+  gap: 4px;
+  align-items: center;
+  font-family: Montserrat, sans-serif;
+  font-size: 13px;
+  font-weight: 500;
+  line-height: 16px;
+  color: #4b5675;
+}
+
+.itemNameText {
+  cursor: default;
+}
+
+/* ========== Price cell ========== */
+.priceCell {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+}
+
+.priceInput {
+  width: 90px;
+  text-align: right;
+}
+
+/* stylelint-disable-next-line selector-class-pattern */
+.priceInput :global(.ant-input-number-input) {
+  padding: 2px 4px;
+  font-family: Montserrat, sans-serif;
+  font-size: 13px;
+  text-align: right;
+}
+
+/* ========== Per text ========== */
+.perCell {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: Montserrat, sans-serif;
+  font-size: 9px;
+  color: #99a1b7;
+}
+
+/* ========== Unit cell ========== */
+.unitCell {
+  display: flex;
+  align-items: center;
+}
+
+.unitSelect {
+  width: 100%;
+}
+
+/* stylelint-disable-next-line selector-class-pattern */
+.unitSelect :global(.ant-select-selector) {
+  padding: 0 4px !important;
+  font-family: Montserrat, sans-serif;
+  font-size: 13px;
+}
+
+/* stylelint-disable-next-line selector-class-pattern */
+.unitSelect :global(.ant-select-selection-item) {
+  text-align: left;
+}
+
+/* ========== Actions ========== */
+.actionsCell {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  transition: opacity 0.15s ease;
+}
+
+.itemRow:hover .actionsCell {
+  opacity: 1;
+}
+
+.deleteBtn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  padding: 0;
+  color: #99a1b7;
+  cursor: pointer;
+  background: none;
+  border: 0;
+  border-radius: 4px;
+  transition: all 0.15s ease;
+}
+
+.deleteBtn:hover {
+  color: #d63c22;
+  background-color: #fff0f0;
+}
+
+/* ========== Add buttons ========== */
+.addItemRow {
+  display: flex;
+  align-items: center;
+  padding: 6px 0 6px 20px;
+}
+
+.addBtn {
+  display: flex;
+  gap: 4px;
+  align-items: center;
+  padding: 4px 8px;
+  font-family: Montserrat, sans-serif;
+  font-size: 10px;
+  font-weight: 500;
+  color: #99a1b7;
+  cursor: pointer;
+  background: none;
+  border: 0;
+  transition: color 0.15s ease;
+}
+
+.addBtn:hover {
+  color: #28f;
+}
+
+/* ========== Empty state ========== */
+.emptyState {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  align-items: center;
+  justify-content: center;
+  padding: 60px 20px;
+}

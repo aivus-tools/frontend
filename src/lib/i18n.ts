@@ -3,7 +3,17 @@ import type { Element } from 'domhandler';
 import parse, { domToReact, DOMNode } from 'html-react-parser';
 import React from 'react';
 
-export const locale: LocaleKey = (process.env.NEXT_PUBLIC_LOCALE as LocaleKey) || 'en';
+function getLocale(): LocaleKey {
+  if (typeof document !== 'undefined') {
+    const match = document.cookie.match(/(?:^|;\s*)locale=(\w+)/);
+    if (match && (match[1] === 'en' || match[1] === 'ru')) {
+      return match[1] as LocaleKey;
+    }
+  }
+  return (process.env.NEXT_PUBLIC_LOCALE as LocaleKey) || 'en';
+}
+
+export const locale: LocaleKey = getLocale();
 
 const messages = catalog[locale];
 
@@ -16,7 +26,11 @@ export function t(key: MsgKey, parameter?: string): string {
     return value ?? key;
   }
 
-  return value(parameter ?? '');
+  if (typeof value === 'function') {
+    return value(parameter ?? '');
+  }
+
+  return (key as string) ?? '';
 }
 
 function isElement(node: DOMNode): node is Element {

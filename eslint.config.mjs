@@ -26,10 +26,10 @@ const eslintConfig = compat.config({
     },
   },
   rules: {
-    'prettier/prettier': 'off', // Отключаем Prettier в ESLint (будет работать только как форматтер)
-    '@typescript-eslint/no-unused-vars': ['warn'], // Только предупреждения, не ошибки
-    'import/no-unused-modules': 'off', // Отключаем проверку неиспользуемых модулей
-    '@typescript-eslint/no-explicit-any': 'warn', // Только предупреждения для any
+    'prettier/prettier': 'off', // Disable Prettier in ESLint (runs as standalone formatter only)
+    '@typescript-eslint/no-unused-vars': ['warn'], // Warnings only, not errors
+    'import/no-unused-modules': 'off', // Disable unused modules check
+    '@typescript-eslint/no-explicit-any': 'warn', // Warnings only for any
   },
 });
 

@@ -1,9 +1,5 @@
-import { t } from '@/lib/i18n';
+import { TemplateList } from './_components/TemplateList/TemplateList';
 
 export default function Page() {
-  return (
-    <div>
-      <h1>{t('TEMPLATES')}</h1>
-    </div>
-  );
+  return <TemplateList />;
 }

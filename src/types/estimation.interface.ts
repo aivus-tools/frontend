@@ -9,15 +9,17 @@ export enum UnitType {
 export interface TimeUnit {
   type: UnitType.TIME;
   label: string;
-  value: number;
+  value: string;
   count: number;
+  isDefault?: boolean;
 }
 
 export interface QuantityUnit {
   type: UnitType.QUANTITY;
   label: string;
-  value: number;
+  value: string;
   count: number;
+  isDefault?: boolean;
 }
 
 export interface OfferData {
@@ -26,12 +28,14 @@ export interface OfferData {
   categoryId: string;
   item: string;
   price: number;
-  units: Partial<(TimeUnit | QuantityUnit)[]>;
+  units: (TimeUnit | QuantityUnit | undefined)[];
   taxRate: number;
   taxPrice: number;
   showTax: boolean;
+  overtime: number;
   cost: number;
   surcharge: number;
+  isLinkedSurcharge: boolean;
   clientPrice: number;
   clientCost: number;
   marketRange: string;
@@ -56,7 +60,7 @@ export type { Category } from './categories.interface';
 export type { Entry } from './entries.interface';
 
 export interface EntryVariant {
-  id: number;
+  id: string;
   label: string;
   children?: EntryVariant[];
 }

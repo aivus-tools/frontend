@@ -6,7 +6,7 @@ import Link from 'next/link';
 import { Flex, Typography, Button, Form, Input, message } from 'antd';
 import { t } from '@/lib/i18n';
 import { AppRoute } from '@/constants/appRoute';
-import { resetPassword } from '@/services/server/authService';
+import { ApiRoute } from '@/constants/apiRoute';
 
 type ResetState = 'idle' | 'pending' | 'success' | 'error';
 
@@ -19,7 +19,6 @@ const ResetPasswordPage = () => {
 
   const token = useMemo(() => searchParams.get('token'), [searchParams]);
 
-  // Проверка токена (синхронная)
   useEffect(() => {
     if (!token) {
       setStatus('error');
@@ -42,11 +41,17 @@ const ResetPasswordPage = () => {
 
     try {
       setStatus('pending');
-      await resetPassword(token, password);
+      const response = await fetch(`${ApiRoute.RESET_PASSWORD}?token=${encodeURIComponent(token)}`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ password }),
+      });
+      if (!response.ok) {
+        const data = await response.json().catch(() => ({}));
+        throw new Error(data?.error || response.statusText);
+      }
       messageApi.success(t('PASSWORD_RESET_SUCCESS'));
       setStatus('success');
-
-      // После успешного сброса пароля пользователь увидит сообщение и сможет перейти на страницу входа
     } catch (error) {
       const errMsg = error instanceof Error ? error.message : t('PASSWORD_RESET_FAILED');
       setErrorMessage(errMsg);

@@ -3,6 +3,7 @@ import { Button, Form, Input, message } from 'antd';
 import { signIn } from 'next-auth/react';
 import Link from 'next/link';
 import { t } from '@/lib/i18n';
+import logger from '@/lib/logger';
 import styles from './styles.module.css';
 import { useState } from 'react';
 import { CALLBACK_URL } from '@/constants/apiRoute';
@@ -25,11 +26,11 @@ export const PasswordForm = ({ email, prevStepAction }: { email: string; prevSte
         form.resetFields();
         form.setFields([{ name: 'password', errors: [''] }]);
       } else {
-        window.location.href = CALLBACK_URL ?? AppRoute.HOME;
+        window.location.href = CALLBACK_URL || AppRoute.HOME;
       }
     } catch (error) {
       messageApi.error(t('UNEXPECTED_ERROR'));
-      console.error(t('ERROR_CHECKING_EMAIL'), error);
+      logger.error(t('ERROR_CHECKING_EMAIL'), error);
     } finally {
       setLoading(false);
     }
@@ -39,7 +40,7 @@ export const PasswordForm = ({ email, prevStepAction }: { email: string; prevSte
     <Form form={form} layout='vertical' onFinish={handleFinish}>
       {contextHolder}
       <div className={styles.inputWrapper}>
-        <Form.Item name='password' style={{ marginBottom: 8 }}>
+        <Form.Item name='password' style={{ marginBottom: 8 }} rules={[{ required: true, message: t('PASSWORD_REQUIRED') }]}>
           <Input
             size='large'
             placeholder={t('ENTER_PASSWORD_PLACEHOLDER')}

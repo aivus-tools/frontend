@@ -2,11 +2,12 @@
 import { Button, Flex, message, Typography } from 'antd';
 
 import { useSearchParams } from 'next/navigation';
+import logger from '@/lib/logger';
 import Spinner from '@/components/Spinner';
 import { useSession } from 'next-auth/react';
 import { GROUPS } from '@/constants/constants';
 import { logout } from '@/auth/actions/logout';
-import { useConfirmEmailMutation, useResendConfirmationMutation } from '@/services/client/userApi';
+import { useLazyConfirmEmailQuery, useResendConfirmationMutation } from '@/services/client/userApi';
 import { AppRoute } from '@/constants/appRoute';
 import { t } from '@/lib/i18n';
 import { useOnceAsync } from '@/hooks/useOnce';
@@ -27,7 +28,7 @@ export const Confirm = () => {
   const email = session.data?.user?.email;
   const [messageApi, contextHolder] = message.useMessage();
 
-  const [confirmEmail, { isLoading }] = useConfirmEmailMutation();
+  const [confirmEmail, { isLoading }] = useLazyConfirmEmailQuery();
   const [resendConfirmation, { isLoading: isResending }] = useResendConfirmationMutation();
 
   const handleResend = async () => {
@@ -41,11 +42,11 @@ export const Confirm = () => {
       messageApi.success(t('EMAIL_RESENT_SUCCESS'));
     } catch (error) {
       messageApi.error(t('EMAIL_RESEND_FAILED'));
-      console.error('Failed to resend confirmation:', error);
+      logger.error('Failed to resend confirmation:', error);
     }
   };
 
-  // Подтверждение email из токена в URL (один раз, даже в Strict Mode)
+  // Confirm email from URL token (once, even in Strict Mode)
   useOnceAsync(async () => {
     if (!token) return;
 
@@ -55,12 +56,12 @@ export const Confirm = () => {
       await session.update();
       window.location.href = AppRoute.DASHBOARD;
     } catch (error) {
-      messageApi.error(t('UNEXPECTED_ERROR'));
-
       if (errorHasMessage(error)) {
         messageApi.error(error.data.message);
+      } else {
+        messageApi.error(t('UNEXPECTED_ERROR'));
       }
-      console.error('Failed to confirm email:', error);
+      logger.error('Failed to confirm email:', error);
     }
   }, [confirmEmail, messageApi, session, token]);
 

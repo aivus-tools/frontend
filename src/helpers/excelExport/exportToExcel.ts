@@ -1,340 +1,562 @@
 import ExcelJS from 'exceljs';
 import { saveAs } from 'file-saver';
-import {
-  CategoriesExportData,
-  CategoryWithoutSubcategories,
-  CategoryWithSubcategories,
-  ExportItem,
-} from '@/types/store.interface';
 import { Dayjs } from 'dayjs';
-import { ExcelState } from './ExcelState';
+import QRCode from 'qrcode';
+import { OfferExportData } from '@/types/exportData.interface';
+import { computeDisplayValues, stripHtml, buildSectionFees } from './exportUtils';
+
+const FONT_NAME = 'Montserrat';
+const TEXT_ARGB = 'FF4B5675';
+const WHITE_ARGB = 'FFFFFFFF';
+const BORDER_ARGB = 'FFD0D5DD';
+const EN_DASH = '\u2013';
 
 const COLOR = {
-  HEADER: 'FF7BDFF2',
-  SUB: 'FFB2F7EF',
-  TOTAL: 'FF60D394',
+  ACCENT: 'FF7CDFF1',
+  SUBTOTAL: 'FFE8F5FD',
+  TOTAL_PRICE: 'FF60D394',
 } as const;
 
-const RIGHT_MIDDLE = { horizontal: 'right', vertical: 'middle' } as const;
-const CENTER_MIDDLE = { horizontal: 'center', vertical: 'middle' } as const;
+const THIN_BORDER: ExcelJS.Border = { style: 'thin', color: { argb: BORDER_ARGB } };
 
-function addItems(
-  excel: ExcelState,
-  items: ExportItem[],
-  rowIdx: number,
-  colIndex: number,
-  color: string,
-  minPrevRowForRollup?: number
-): number {
-  let nextRow = rowIdx;
+const ALL_BORDERS: Partial<ExcelJS.Borders> = {
+  top: THIN_BORDER,
+  left: THIN_BORDER,
+  bottom: THIN_BORDER,
+  right: THIN_BORDER,
+};
 
-  const defaultValue = '-';
+const font = (bold = false, size = 10, color = TEXT_ARGB): Partial<ExcelJS.Font> => {
+  return { name: FONT_NAME, size, bold, color: { argb: color } };
+};
 
-  for (let i = 0; i < items.length; i++) {
-    const item = items.at(i);
+const fillSolid = (argb: string): ExcelJS.Fill => {
+  return { type: 'pattern', pattern: 'solid', fgColor: { argb } };
+};
 
-    if (!item) {
-      continue;
-    }
+const NUM_FMT = '#,##0.00';
 
-    const nameCell = excel.getCell(nextRow, 0);
-    nameCell.value = item.name;
-    excel.addFont(nameCell);
-
-    const clientPriceCell = excel.getCell(nextRow, 1);
-    clientPriceCell.value = item.clientPrice ?? defaultValue;
-    excel.addFont(clientPriceCell);
-    excel.addNumberFormat(clientPriceCell);
-
-    const [unit1, unit2] = item.units ?? [];
-    const unit1Name = unit1?.key ?? defaultValue;
-    const unit2Name = unit2?.key ?? defaultValue;
-
-    const unit1KeyCell = excel.getCell(nextRow, 2);
-    unit1KeyCell.value = unit1Name;
-    excel.addFont(unit1KeyCell);
-    unit1KeyCell.alignment = RIGHT_MIDDLE;
-
-    const unit1ValCell = excel.getCell(nextRow, 3);
-    unit1ValCell.value = unit1Name !== defaultValue ? (unit1?.value ?? 0) : defaultValue;
-    excel.addFont(unit1ValCell);
-    unit1ValCell.alignment = CENTER_MIDDLE;
-
-    const unit2KeyCell = excel.getCell(nextRow, 4);
-    unit2KeyCell.value = unit2Name;
-    excel.addFont(unit2KeyCell);
-    unit2KeyCell.alignment = RIGHT_MIDDLE;
-
-    const unit2ValCell = excel.getCell(nextRow, 5);
-    unit2ValCell.value = unit2Name !== defaultValue ? (unit2?.value ?? 0) : defaultValue;
-    excel.addFont(unit2ValCell);
-    unit2ValCell.alignment = CENTER_MIDDLE;
-
-    // Insert the formula into the next cell: IF(ISNUMBER(price),price,0) * IF(ISNUMBER(u1),u1,1) * IF(ISNUMBER(u2),u2,1)
-    const clientPriceCellAddress = clientPriceCell.address;
-    const unit1ValAddress = unit1ValCell.address;
-    const unit2ValAddress = unit2ValCell.address;
-
-    const itemSumFormula =
-      `IF(ISNUMBER(${clientPriceCellAddress}),${clientPriceCellAddress},0)` +
-      `*IF(ISNUMBER(${unit1ValAddress}),${unit1ValAddress},1)` +
-      `*IF(ISNUMBER(${unit2ValAddress}),${unit2ValAddress},1)`;
-
-    const sumCell = excel.getCell(nextRow, 6);
-    sumCell.value = { formula: itemSumFormula };
-    excel.addFont(sumCell, true);
-    excel.addNumberFormat(sumCell);
-
-    excel.addBorderToRow(nextRow, colIndex, 6);
-
-    nextRow += 1;
+const formatTopSheetCurrency = (value: number): string | number => {
+  if (value === 0) {
+    return EN_DASH;
   }
+  return value;
+};
 
-  // Sum all item totals calculated above in this block (column  6)
-  if (nextRow > rowIdx) {
-    const firstAddr = excel.getCell(rowIdx, 6).address;
-    const lastAddr = excel.getCell(nextRow - 1, 6).address;
-    const itemsSumFormula = `SUM(${firstAddr}:${lastAddr})`;
+const formatDetailCurrency = (value: number): number => {
+  return value;
+};
 
-    const totalCell = excel.getCell(nextRow, 6);
-    totalCell.value = { formula: itemsSumFormula };
-    totalCell.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: color } };
-    excel.addBorderToCell(totalCell);
-    excel.addFont(totalCell, true);
-    excel.addNumberFormat(totalCell);
-
-    const prevRow = rowIdx - 1;
-
-    if (minPrevRowForRollup === undefined || prevRow >= minPrevRowForRollup) {
-      const headerTotalCell = excel.getCell(prevRow, 6);
-      headerTotalCell.value = { formula: totalCell.address };
-      excel.addFont(headerTotalCell, true);
-      excel.addNumberFormat(headerTotalCell);
-    }
-  } else {
-    // No items added; avoid empty SUM range
-    excel.getCell(nextRow, 6).value = defaultValue;
-  }
-
-  nextRow += 1;
-
-  return nextRow;
+interface SectionGroup {
+  id: string;
+  code: string;
+  name: string;
+  tags: string[];
+  children: Array<{ code: string; name: string; total: number }>;
+  subtotal: number;
 }
 
-const isCategoryWithSubcategories = (
-  v: CategoryWithSubcategories | CategoryWithoutSubcategories
-): v is CategoryWithSubcategories => Array.isArray(v.data);
+const applyRowFill = (sheet: ExcelJS.Worksheet, rowNum: number, startCol: number, endCol: number, argb: string): void => {
+  const row = sheet.getRow(rowNum);
+  for (let col = startCol; col <= endCol; col++) {
+    row.getCell(col).fill = fillSolid(argb);
+  }
+};
 
-export async function exportToExcel(data: CategoriesExportData, fileName: string, date?: Dayjs, watermark?: string) {
-  const res = await fetch('/template.xlsx');
-  if (!res.ok) {
-    throw new Error(`Failed to fetch template.xlsx: ${res.status} ${res.statusText}`);
+const applyRowBorders = (sheet: ExcelJS.Worksheet, rowNum: number, startCol: number, endCol: number): void => {
+  const row = sheet.getRow(rowNum);
+  for (let col = startCol; col <= endCol; col++) {
+    row.getCell(col).border = ALL_BORDERS;
+  }
+};
+
+const setCellValue = (
+  sheet: ExcelJS.Worksheet,
+  rowNum: number,
+  col: number,
+  value: ExcelJS.CellValue,
+  options?: {
+    bold?: boolean;
+    size?: number;
+    color?: string;
+    numFmt?: string;
+    alignment?: Partial<ExcelJS.Alignment>;
+    fill?: string;
+    border?: boolean;
+  },
+): ExcelJS.Cell => {
+  const cell = sheet.getRow(rowNum).getCell(col);
+  cell.value = value;
+  cell.font = font(options?.bold ?? false, options?.size ?? 10, options?.color ?? TEXT_ARGB);
+  if (options?.numFmt) {
+    cell.numFmt = options.numFmt;
+  }
+  if (options?.alignment) {
+    cell.alignment = options.alignment;
+  }
+  if (options?.fill) {
+    cell.fill = fillSolid(options.fill);
+  }
+  if (options?.border) {
+    cell.border = ALL_BORDERS;
+  }
+  return cell;
+};
+
+const formatDate = (value: string | null): string => {
+  if (value == null) {
+    return '';
+  }
+  const date = new Date(value);
+  return date.toLocaleDateString('en-US', {
+    year: 'numeric',
+    month: 'numeric',
+    day: 'numeric',
+  });
+};
+
+function writeCoverSection(sheet: ExcelJS.Worksheet, data: OfferExportData, exportDate: Dayjs | null, watermark: string | null): number {
+  const producer = data.collaborators.find(x => x.role === 'producer') ?? null;
+  const agencyProducer = data.collaborators.find(x => x.role === 'agency_producer') ?? null;
+  const firstClientManager = data.project.clientManagers.length > 0
+    ? data.project.clientManagers[0]
+    : null;
+
+  const clientBrand = [data.project.clientName, data.project.brandName]
+    .filter(x => x != null)
+    .join(' / ') || '';
+
+  const companyName = data.vendor.companyName ?? data.vendor.name;
+  const clientManagerValue = firstClientManager != null
+    ? `${firstClientManager.name}${firstClientManager.position ? ', ' + firstClientManager.position : ''}`
+    : '';
+
+  setCellValue(sheet, 1, 1, companyName, { bold: true, size: 14 });
+
+  const pairStartRow = 6;
+
+  let leftRow = pairStartRow;
+  setCellValue(sheet, leftRow, 1, 'Production:', { size: 10 });
+  setCellValue(sheet, leftRow, 2, companyName, { bold: true, size: 10 });
+  leftRow++;
+  setCellValue(sheet, leftRow, 1, 'Producer:', { size: 10 });
+  setCellValue(sheet, leftRow, 2, producer != null ? producer.name : '', { bold: true, size: 10 });
+  leftRow++;
+  leftRow++;
+  setCellValue(sheet, leftRow, 1, 'Term:', { size: 10 });
+  setCellValue(sheet, leftRow, 2, data.offer.term ?? '', { bold: true, size: 10 });
+  leftRow++;
+  setCellValue(sheet, leftRow, 1, 'Territory:', { size: 10 });
+  setCellValue(sheet, leftRow, 2, data.offer.territory.length > 0 ? data.offer.territory.join(', ') : '', { bold: true, size: 10 });
+  leftRow++;
+  setCellValue(sheet, leftRow, 1, 'Media / Placements:', { size: 10 });
+  setCellValue(sheet, leftRow, 2, data.offer.mediaPlacements.length > 0 ? data.offer.mediaPlacements.join(', ') : '', { bold: true, size: 10 });
+  leftRow++;
+
+  let rightRow = pairStartRow;
+  setCellValue(sheet, rightRow, 3, 'Job Name:', { size: 10 });
+  setCellValue(sheet, rightRow, 4, data.project.name, { bold: true, size: 10 });
+  rightRow++;
+  setCellValue(sheet, rightRow, 3, 'Bid Date:', { size: 10 });
+  setCellValue(sheet, rightRow, 4, formatDate(data.offer.bidDate), { bold: true, size: 10 });
+  rightRow++;
+  setCellValue(sheet, rightRow, 3, 'Bid Version:', { size: 10 });
+  setCellValue(sheet, rightRow, 4, data.offer.revision ?? 'Initial Bidding', { bold: true, size: 10 });
+  rightRow++;
+  setCellValue(sheet, rightRow, 3, 'AIVUS ID:', { size: 10 });
+  setCellValue(sheet, rightRow, 4, data.offer.uuid, { bold: true, size: 10 });
+  rightRow++;
+  rightRow++;
+  setCellValue(sheet, rightRow, 3, 'Client / Brand:', { size: 10 });
+  setCellValue(sheet, rightRow, 4, clientBrand, { bold: true, size: 10 });
+  rightRow++;
+  setCellValue(sheet, rightRow, 3, 'Client Manager:', { size: 10 });
+  setCellValue(sheet, rightRow, 4, clientManagerValue, { bold: true, size: 10 });
+  rightRow++;
+  rightRow++;
+  setCellValue(sheet, rightRow, 3, 'Agency:', { size: 10 });
+  setCellValue(sheet, rightRow, 4, data.project.agencyName ?? '', { bold: true, size: 10 });
+  rightRow++;
+  setCellValue(sheet, rightRow, 3, 'Agency Producer:', { size: 10 });
+  setCellValue(sheet, rightRow, 4, agencyProducer != null ? agencyProducer.name : '', { bold: true, size: 10 });
+  rightRow++;
+
+  let row = Math.max(leftRow, rightRow);
+  row++;
+
+  if (data.offer.deliverables.length > 0) {
+    setCellValue(sheet, row, 1, 'Deliverables:', { bold: true, size: 10 });
+    row++;
+
+    for (const d of data.offer.deliverables) {
+      const parts = [
+        `${d.quantity} x :${d.duration} ${d.durationUnit}.`,
+        d.notes ? `${EN_DASH} ${d.notes}` : null,
+      ].filter(x => x != null).join(' ');
+
+      setCellValue(sheet, row, 1, parts, { size: 10 });
+      row++;
+    }
+
+    row++;
   }
 
-  const arrBuf = await res.arrayBuffer();
-  const wb = new ExcelJS.Workbook();
-  await wb.xlsx.load(arrBuf);
+  if (data.offer.coverPageNotes) {
+    setCellValue(sheet, row, 1, 'Notes:', { bold: true, size: 10 });
+    row++;
 
-  const excel = new ExcelState(wb);
+    const notesText = stripHtml(data.offer.coverPageNotes);
+    const notesCell = setCellValue(sheet, row, 1, notesText, { size: 10 });
+    notesCell.alignment = { wrapText: true, vertical: 'top' };
+    sheet.mergeCells(row, 1, row, 7);
+    row++;
 
-  if (!excel.startCell) {
-    throw new Error(`Failed to fetch template.xlsx: ${res.status} ${res.statusText}`);
+    row++;
   }
 
-  const { col: startCol, row: startRow, sheet } = excel.startCell;
+  if (data.shareToken != null) {
+    const shareUrl = `${typeof window !== 'undefined' ? window.location.origin : ''}/public/${data.shareToken}`;
+    setCellValue(sheet, row, 1, 'Share Link:', { bold: true, size: 10 });
+    const linkCell = setCellValue(sheet, row, 2, { text: shareUrl, hyperlink: shareUrl }, { size: 10, color: 'FF0563C1' });
+    linkCell.font = { ...linkCell.font!, underline: true };
+    row++;
 
-  if (date) {
-    excel.writeNamedDate('date', date);
+    row++;
   }
+
+  if (exportDate != null) {
+    setCellValue(sheet, row, 1, 'Export Date:', { size: 10 });
+    setCellValue(sheet, row, 2, exportDate.format('MM/DD/YYYY'), { bold: true, size: 10 });
+    row++;
+  }
+
   if (watermark) {
-    excel.setNamedCell('watermark', watermark);
+    setCellValue(sheet, row, 1, watermark, { size: 9, color: 'FF99A1B7' });
+    row++;
   }
 
-  let nextRow = excel.startCell.row;
+  if (exportDate != null || watermark) {
+    row++;
+  }
 
-  const categoryTotals: string[] = [];
+  for (let c = 1; c <= 7; c++) {
+    const dividerCell = sheet.getRow(row).getCell(c);
+    dividerCell.border = { bottom: { style: 'medium', color: { argb: COLOR.ACCENT } } };
+  }
+  row++;
 
-  for (let i = 0; i < data.length; i++) {
-    const currentBlock = data.at(i);
+  row++;
 
-    if (!currentBlock) {
-      continue;
-    }
+  return row;
+}
 
-    excel.addColorToCellGroup(nextRow, 6, COLOR.HEADER);
-    excel.addBorderToLine(nextRow, 6);
+function writeTopSheet(sheet: ExcelJS.Worksheet, data: OfferExportData, startRow: number): number {
+  let row = startRow;
 
-    const categoryTitleCell = excel.getCell(nextRow, 0);
-    categoryTitleCell.value = currentBlock.category.toUpperCase();
-    excel.addFont(categoryTitleCell, true);
+  const groupsMap = new Map<string, SectionGroup>();
 
-    nextRow += 1;
-
-    if (isCategoryWithSubcategories(currentBlock)) {
-      const headerTotalCell = excel.getCell(nextRow - 1, 6);
-
-      const blockData = currentBlock.data;
-
-      for (let j = 0; j < blockData.length; j++) {
-        const sub = blockData.at(j);
-        const subcategory = sub?.subcategory;
-
-        if (!subcategory) {
-          continue;
-        }
-
-        excel.addColorToCellGroup(nextRow, 6, COLOR.SUB);
-        excel.addBorderToLine(nextRow, 6);
-
-        const subcategoryCell = excel.getCell(nextRow, 0);
-        subcategoryCell.value = subcategory;
-        excel.addFont(subcategoryCell, true);
-
-        nextRow += 1;
-
-        const totalTitle = 'Итог по разделу';
-
-        nextRow = addItems(excel, sub?.items ?? [], nextRow, startCol, COLOR.SUB, startRow);
-
-        const subTotalCell = excel.getCell(nextRow - 1, 5);
-        subTotalCell.value = `${totalTitle} ${currentBlock.category.toUpperCase()} | ${subcategory}`;
-        excel.addFont(subTotalCell, true);
-        subTotalCell.alignment = RIGHT_MIDDLE;
-
-        if (j === blockData.length - 1) {
-          const totalCell = excel.getCell(nextRow, 5);
-          totalCell.value = `ИТОГО ${currentBlock.category.toUpperCase()}`;
-          excel.addFont(totalCell, true);
-          totalCell.alignment = RIGHT_MIDDLE;
-
-          excel.addColorToCellGroup(nextRow, 5, COLOR.HEADER);
-          excel.addBorderToLine(nextRow, 5);
-
-          const categoryResultCell = excel.getCell(nextRow, 6);
-          categoryResultCell.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: COLOR.TOTAL } };
-
-          const col5Letter = sheet.getColumn(startCol + 5).letter;
-          const col6Letter = sheet.getColumn(startCol + 6).letter;
-          categoryResultCell.value = {
-            formula:
-              `SUMIF($${col5Letter}:$${col5Letter},` +
-              `"${totalTitle} "&${categoryTitleCell.address}&"*",$${col6Letter}:$${col6Letter})`,
-          };
-          excel.addFont(categoryResultCell, true);
-          excel.addNumberFormat(categoryResultCell);
-          excel.addBorderToCell(categoryResultCell);
-          categoryTotals.push(categoryResultCell.address);
-
-          headerTotalCell.value = { formula: categoryResultCell.address };
-          excel.addFont(headerTotalCell, true);
-          excel.addNumberFormat(headerTotalCell);
-        }
-
-        nextRow += 1;
-      }
+  for (const cat of data.categories) {
+    const parentKey = cat.parentCategoryId || cat.id;
+    const existing = groupsMap.get(parentKey);
+    if (existing) {
+      existing.children.push({ code: cat.code, name: cat.name, total: cat.sectionTotal });
+      existing.subtotal += cat.sectionTotal;
     } else {
-      nextRow = addItems(excel, currentBlock.data.items ?? [], nextRow, startCol, COLOR.TOTAL, startRow);
-      const totalCell = excel.getCell(nextRow - 1, 5);
-      totalCell.value = `ИТОГО ${currentBlock.category.toUpperCase()}`;
-      totalCell.alignment = RIGHT_MIDDLE;
-      excel.addFont(totalCell, true);
-      categoryTotals.push(excel.getCell(nextRow - 1, 6).address);
-
-      excel.addColorToCellGroup(nextRow - 1, 5, COLOR.HEADER);
-      excel.addBorderToLine(nextRow - 1, 5);
-      nextRow += 1;
+      groupsMap.set(parentKey, {
+        id: cat.parentCategoryId || cat.id,
+        code: cat.parentCategoryCode || cat.code,
+        name: cat.parentCategoryName || cat.name,
+        tags: cat.parentTags.length > 0 ? cat.parentTags : cat.tags,
+        children: [{ code: cat.code, name: cat.name, total: cat.sectionTotal }],
+        subtotal: cat.sectionTotal,
+      });
     }
   }
 
-  nextRow += 1;
+  const groups = Array.from(groupsMap.values());
 
-  const managementTitleCell = excel.getCell(nextRow, 0);
-  managementTitleCell.value = 'Управление проектом';
-  excel.addBorderToLine(nextRow, 5);
-  excel.addFont(managementTitleCell);
+  let grandTotal = 0;
+  const sections = groups.map(group => {
+    const fees = buildSectionFees(group.id, group.tags, group.subtotal, data.offer);
+    const feesTotal = fees.reduce((sum, x) => sum + x.value, 0);
+    const sectionTotal = group.subtotal + feesTotal;
+    grandTotal += sectionTotal;
+    return { ...group, fees, sectionTotal };
+  });
 
-  const managementValueCell = excel.getCell(nextRow, 6);
-  excel.addBorderToCell(managementValueCell);
+  const TS_COL_CODE = 1;
+  const TS_COL_NAME = 2;
+  const TS_COL_NOTE = 3;
+  const TS_COL_PRICE = 4;
 
-  nextRow += 1;
+  for (const section of sections) {
+    applyRowFill(sheet, row, TS_COL_CODE, TS_COL_PRICE, COLOR.ACCENT);
+    applyRowBorders(sheet, row, TS_COL_CODE, TS_COL_PRICE);
 
-  const totalSumBeforeTaxTitleCell = excel.getCell(nextRow, 0);
-  totalSumBeforeTaxTitleCell.value = 'Общая сумма до налогов';
-  excel.addBorderToLine(nextRow, 5);
-  excel.addColorToCellGroup(nextRow, 6, COLOR.SUB);
-  excel.addFont(totalSumBeforeTaxTitleCell, true);
+    setCellValue(sheet, row, TS_COL_NAME, section.name, { bold: true, size: 10, color: WHITE_ARGB });
+    setCellValue(sheet, row, TS_COL_NOTE, 'NOTE', { bold: true, size: 10, color: WHITE_ARGB, alignment: { horizontal: 'left' } });
+    row++;
 
-  const totalSumBeforeTaxValueCell = excel.getCell(nextRow, 6);
-  excel.addBorderToCell(totalSumBeforeTaxValueCell);
-  excel.addFont(totalSumBeforeTaxValueCell, true);
-  totalSumBeforeTaxValueCell.value = { formula: `SUM(${categoryTotals.join(',')}, ${managementValueCell.address})` };
-  totalSumBeforeTaxValueCell.alignment = RIGHT_MIDDLE;
-  excel.addNumberFormat(totalSumBeforeTaxValueCell);
+    for (const child of section.children) {
+      setCellValue(sheet, row, TS_COL_CODE, child.code, { border: true });
+      setCellValue(sheet, row, TS_COL_NAME, child.name, { border: true });
+      setCellValue(sheet, row, TS_COL_NOTE, '', { border: true });
+      setCellValue(sheet, row, TS_COL_PRICE, formatTopSheetCurrency(child.total), {
+        border: true,
+        numFmt: NUM_FMT,
+        alignment: { horizontal: 'right' },
+      });
+      row++;
+    }
 
-  nextRow += 2;
+    applyRowFill(sheet, row, TS_COL_CODE, TS_COL_PRICE, COLOR.SUBTOTAL);
+    applyRowBorders(sheet, row, TS_COL_CODE, TS_COL_PRICE);
+    setCellValue(sheet, row, TS_COL_NOTE, `Sub-Total ${section.name}`, {
+      bold: true, alignment: { horizontal: 'right' },
+    });
+    setCellValue(sheet, row, TS_COL_PRICE, formatTopSheetCurrency(section.subtotal), {
+      bold: true, numFmt: NUM_FMT, alignment: { horizontal: 'right' },
+    });
+    row++;
 
-  const taxTitleCell = excel.getCell(nextRow, 0);
-  taxTitleCell.value = 'Налоги';
-  excel.addBorderToLine(nextRow, 5);
-  excel.addFont(taxTitleCell);
+    for (const fee of section.fees) {
+      setCellValue(sheet, row, TS_COL_CODE, '', { border: true });
+      setCellValue(sheet, row, TS_COL_NAME, '', { border: true });
+      setCellValue(sheet, row, TS_COL_NOTE, `${fee.label} (${fee.percent}%)`, { border: true, color: 'FF99A1B7', alignment: { horizontal: 'right' } });
+      setCellValue(sheet, row, TS_COL_PRICE, formatTopSheetCurrency(fee.value), {
+        border: true, numFmt: NUM_FMT, alignment: { horizontal: 'right' },
+      });
+      row++;
+    }
 
-  const taxInfoCell1 = excel.getCell(nextRow, 4);
-  taxInfoCell1.value = 'УСН';
-  excel.addFont(taxInfoCell1);
-  taxInfoCell1.alignment = RIGHT_MIDDLE;
+    applyRowFill(sheet, row, TS_COL_CODE, TS_COL_PRICE, COLOR.ACCENT);
+    applyRowBorders(sheet, row, TS_COL_CODE, TS_COL_PRICE);
+    setCellValue(sheet, row, TS_COL_NOTE, `${section.name.toUpperCase()} TOTAL`, {
+      bold: true, color: WHITE_ARGB, alignment: { horizontal: 'right' },
+    });
+    setCellValue(sheet, row, TS_COL_PRICE, formatTopSheetCurrency(section.sectionTotal), {
+      bold: true, color: WHITE_ARGB, numFmt: NUM_FMT, alignment: { horizontal: 'right' },
+    });
+    row++;
 
-  const taxInfoCell2 = excel.getCell(nextRow, 5);
-  taxInfoCell2.value = 0.06;
-  taxInfoCell2.numFmt = '0%';
-  excel.addFont(taxInfoCell2);
-  taxInfoCell2.alignment = CENTER_MIDDLE;
-
-  const taxValueCell = excel.getCell(nextRow, 6);
-  taxValueCell.alignment = RIGHT_MIDDLE;
-  excel.addBorderToCell(taxValueCell);
-  excel.addNumberFormat(taxValueCell);
-  excel.addFont(taxValueCell);
-  taxValueCell.value = { formula: `${taxInfoCell2.address} * ${totalSumBeforeTaxValueCell.address}` };
-
-  nextRow += 1;
-
-  const totalSumTitleCell = excel.getCell(nextRow, 0);
-  totalSumTitleCell.value = 'Общая сумма (Без НДС)';
-  excel.addBorderToLine(nextRow, 5);
-  excel.addColorToCellGroup(nextRow, 5, COLOR.HEADER);
-  excel.addFont(totalSumTitleCell, true);
-
-  const totalSumValueCell = excel.getCell(nextRow, 6);
-  excel.addBorderToCell(totalSumValueCell);
-  excel.addFont(totalSumValueCell, true);
-  totalSumValueCell.value = { formula: `${taxValueCell.address} + ${totalSumBeforeTaxValueCell.address}` };
-  totalSumValueCell.alignment = RIGHT_MIDDLE;
-  excel.addNumberFormat(totalSumValueCell);
-  totalSumValueCell.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: COLOR.TOTAL } };
-
-  nextRow += 1;
-
-  const videoTitleCell = excel.getCell(nextRow, 0);
-  videoTitleCell.value = 'Примерно за один ролик (для справки)';
-  excel.addBorderToLine(nextRow, 5);
-  excel.addFont(videoTitleCell);
-
-  const videoValueCell = excel.getCell(nextRow, 6);
-  videoValueCell.alignment = RIGHT_MIDDLE;
-  excel.addBorderToCell(videoValueCell);
-  excel.addNumberFormat(videoValueCell);
-  excel.addFont(videoValueCell);
-  const videoCountCell = excel.getNamedCellRef('videoCount');
-
-  if (videoCountCell) {
-    videoValueCell.value = { formula: `IFERROR(${totalSumValueCell.address}/${videoCountCell.a1}, "-")` };
+    row++;
   }
 
+  applyRowFill(sheet, row, TS_COL_CODE, TS_COL_NOTE, COLOR.ACCENT);
+  applyRowBorders(sheet, row, TS_COL_CODE, TS_COL_PRICE);
+  setCellValue(sheet, row, TS_COL_NOTE, 'GRAND TOTAL', {
+    bold: true, size: 12, color: 'FF0F4C5C', alignment: { horizontal: 'right' },
+  });
+  setCellValue(sheet, row, TS_COL_PRICE, formatTopSheetCurrency(grandTotal), {
+    bold: true, size: 12, color: 'FF0F4C5C', numFmt: NUM_FMT,
+    alignment: { horizontal: 'right' }, fill: COLOR.TOTAL_PRICE,
+  });
+  row++;
+
+  return row;
+}
+
+function writeBudgetDetail(sheet: ExcelJS.Worksheet, data: OfferExportData, startRow: number): number {
+  const detailCategories = data.categories.filter(
+    x => x.entries.length > 0 && x.parentCategoryId != null,
+  );
+
+  if (detailCategories.length === 0) {
+    return startRow;
+  }
+
+  const BD_COLS = 9;
+  const extraColWidths: Array<{ col: number; width: number }> = [
+    { col: 8, width: 12 },
+    { col: 9, width: 14 },
+  ];
+  for (const cw of extraColWidths) {
+    const current = sheet.getColumn(cw.col).width ?? 8;
+    if (current < cw.width) {
+      sheet.getColumn(cw.col).width = cw.width;
+    }
+  }
+
+  let row = startRow;
+
+  setCellValue(sheet, row, 1, 'Budget Detail', { bold: true, size: 14 });
+  row += 2;
+
+  const columnHeaders = ['ID', 'Description', 'Rate', 'Qty', 'Units', 'Qty', 'Units', 'Overtime', 'ESTIMATE'];
+
+  for (const section of detailCategories) {
+    const titleText = section.code ? `${section.code} ${EN_DASH} ${section.name}` : section.name;
+    applyRowFill(sheet, row, 1, BD_COLS, COLOR.ACCENT);
+    applyRowBorders(sheet, row, 1, BD_COLS);
+    setCellValue(sheet, row, 1, titleText, { bold: true, size: 11, color: WHITE_ARGB });
+    sheet.mergeCells(row, 1, row, BD_COLS);
+    row++;
+
+    applyRowFill(sheet, row, 1, BD_COLS, COLOR.SUBTOTAL);
+    for (let c = 0; c < BD_COLS; c++) {
+      setCellValue(sheet, row, c + 1, columnHeaders[c], {
+        bold: true, size: 9, alignment: { horizontal: c >= 2 ? 'right' : 'left' }, border: true,
+      });
+    }
+    row++;
+
+    for (const entry of section.entries) {
+      const display = computeDisplayValues(entry);
+      setCellValue(sheet, row, 1, entry.code, { border: true, alignment: { horizontal: 'center' } });
+      setCellValue(sheet, row, 2, entry.name, { border: true });
+      setCellValue(sheet, row, 3, formatDetailCurrency(display.rate), { border: true, numFmt: NUM_FMT, alignment: { horizontal: 'right' } });
+      setCellValue(sheet, row, 4, entry.units[0] != null ? entry.units[0].count : '', { border: true, alignment: { horizontal: 'right' } });
+      setCellValue(sheet, row, 5, entry.units[0] != null ? entry.units[0].symbol : '', { border: true, alignment: { horizontal: 'right' } });
+      setCellValue(sheet, row, 6, entry.units[1] != null ? entry.units[1].count : '', { border: true, alignment: { horizontal: 'right' } });
+      setCellValue(sheet, row, 7, entry.units[1] != null ? entry.units[1].symbol : '', { border: true, alignment: { horizontal: 'right' } });
+      setCellValue(sheet, row, 8, display.overtime > 0 ? formatDetailCurrency(display.overtime) : EN_DASH, { border: true, numFmt: display.overtime > 0 ? NUM_FMT : undefined, alignment: { horizontal: 'right' } });
+      setCellValue(sheet, row, 9, formatDetailCurrency(entry.estimate), { bold: true, border: true, numFmt: NUM_FMT, alignment: { horizontal: 'right' } });
+      row++;
+    }
+
+    applyRowFill(sheet, row, 1, BD_COLS, COLOR.SUBTOTAL);
+    applyRowBorders(sheet, row, 1, BD_COLS);
+    setCellValue(sheet, row, 8, 'Sub Total', { bold: true, alignment: { horizontal: 'right' } });
+    setCellValue(sheet, row, 9, formatDetailCurrency(section.subTotal), { bold: true, numFmt: NUM_FMT, alignment: { horizontal: 'right' } });
+    row++;
+
+    if (section.fringes != null) {
+      applyRowFill(sheet, row, 1, BD_COLS, COLOR.SUBTOTAL);
+      applyRowBorders(sheet, row, 1, BD_COLS);
+      setCellValue(sheet, row, 8, 'Fringes', { alignment: { horizontal: 'right' } });
+      setCellValue(sheet, row, 9, formatDetailCurrency(section.fringes), { numFmt: NUM_FMT, alignment: { horizontal: 'right' } });
+      row++;
+    }
+
+    applyRowFill(sheet, row, 1, BD_COLS, COLOR.ACCENT);
+    applyRowBorders(sheet, row, 1, BD_COLS);
+    setCellValue(sheet, row, 8, `TOTAL ${section.code ?? ''}`, { bold: true, color: WHITE_ARGB, alignment: { horizontal: 'right' } });
+    setCellValue(sheet, row, 9, formatDetailCurrency(section.sectionTotal), { bold: true, color: WHITE_ARGB, numFmt: NUM_FMT, alignment: { horizontal: 'right' } });
+    row++;
+
+    row++;
+  }
+
+  return row;
+}
+
+function writeAssumptions(sheet: ExcelJS.Worksheet, data: OfferExportData, startRow: number): number {
+  if (!data.offer.assumptionsExclusions) {
+    return startRow;
+  }
+
+  let row = startRow;
+
+  setCellValue(sheet, row, 1, 'Assumptions & Exclusions', { bold: true, size: 14 });
+  row += 2;
+
+  const text = stripHtml(data.offer.assumptionsExclusions);
+  const cell = setCellValue(sheet, row, 1, text, { size: 10 });
+  cell.alignment = { wrapText: true, vertical: 'top' };
+  sheet.mergeCells(row, 1, row, 7);
+  row++;
+
+  return row;
+}
+
+async function fetchImageBuffer(url: string): Promise<{ buffer: ArrayBuffer; extension: 'png' | 'jpeg' } | null> {
+  try {
+    const fullUrl = url.startsWith('/') ? `${window.location.origin}${url}` : url;
+    const response = await fetch(fullUrl);
+    if (!response.ok) {
+      return null;
+    }
+    const buffer = await response.arrayBuffer();
+    const contentType = response.headers.get('content-type') || '';
+    const extension: 'png' | 'jpeg' = contentType.includes('jpeg') || contentType.includes('jpg') ? 'jpeg' : 'png';
+    return { buffer, extension };
+  } catch {
+    return null;
+  }
+}
+
+async function tryAddLogo(
+  wb: ExcelJS.Workbook,
+  sheet: ExcelJS.Worksheet,
+  logoUrl: string,
+): Promise<void> {
+  const image = await fetchImageBuffer(logoUrl);
+  if (image == null) {
+    return;
+  }
+  const imageId = wb.addImage({ buffer: image.buffer, extension: image.extension });
+  sheet.addImage(imageId, {
+    tl: { col: 0, row: 0 },
+    ext: { width: 200, height: 70 },
+  });
+}
+
+async function tryAddQrCode(
+  wb: ExcelJS.Workbook,
+  sheet: ExcelJS.Worksheet,
+  shareToken: string,
+): Promise<void> {
+  try {
+    const shareUrl = `${window.location.origin}/public/${shareToken}`;
+    const dataUrl = await QRCode.toDataURL(shareUrl, { width: 120, margin: 1 });
+    const base64 = dataUrl.split(',')[1];
+    const binary = atob(base64);
+    const buffer = new ArrayBuffer(binary.length);
+    const view = new Uint8Array(buffer);
+    for (let i = 0; i < binary.length; i++) {
+      view[i] = binary.charCodeAt(i);
+    }
+    const imageId = wb.addImage({ buffer, extension: 'png' });
+    sheet.addImage(imageId, {
+      tl: { col: 4, row: 0 },
+      ext: { width: 100, height: 100 },
+    });
+  } catch {
+    // noop
+  }
+}
+
+export async function exportOfferToExcel(
+  data: OfferExportData,
+  options: { fileName: string; date?: Dayjs; watermark?: string },
+): Promise<void> {
+  const wb = new ExcelJS.Workbook();
   wb.calcProperties.fullCalcOnLoad = true;
 
+  const estimateSheet = wb.addWorksheet('Estimate');
+
+  estimateSheet.getColumn(1).width = 18;
+  estimateSheet.getColumn(2).width = 30;
+  estimateSheet.getColumn(3).width = 30;
+  estimateSheet.getColumn(4).width = 18;
+  estimateSheet.getColumn(5).width = 18;
+  estimateSheet.getColumn(6).width = 22;
+  estimateSheet.getColumn(7).width = 22;
+
+  const imagePromises: Array<Promise<void>> = [];
+  if (data.vendor.logoUrl != null) {
+    imagePromises.push(tryAddLogo(wb, estimateSheet, data.vendor.logoUrl));
+  }
+  if (data.shareToken != null) {
+    imagePromises.push(tryAddQrCode(wb, estimateSheet, data.shareToken));
+  }
+  await Promise.all(imagePromises);
+
+  const exportDate = options.date ?? null;
+  const watermark = options.watermark ?? null;
+
+  const topSheetStart = writeCoverSection(estimateSheet, data, exportDate, watermark);
+  const afterTopSheet = writeTopSheet(estimateSheet, data, topSheetStart);
+
+  const afterAssumptions = writeAssumptions(estimateSheet, data, afterTopSheet + 1);
+  writeBudgetDetail(estimateSheet, data, afterAssumptions + 1);
+
   const buf = await wb.xlsx.writeBuffer();
+  const fileName = options.fileName || 'estimate';
+  const fullName = fileName.endsWith('.xlsx') ? fileName : `${fileName}.xlsx`;
+
   saveAs(
     new Blob([buf], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' }),
-    fileName || 'report.xlsx'
+    fullName,
   );
 }

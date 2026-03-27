@@ -24,16 +24,12 @@ export const useMutateBrief = () => {
         throw new Error('User or vendor ID not found');
       }
 
-      console.log('Creating brief with details:', details);
-
       // Step 1: Create Brief
       const brief = await createBrief({
         status: 'DRAFT',
         details,
         clientId: null, // No client yet for vendor-initiated flow
       }).unwrap();
-
-      console.log('Brief created:', brief);
 
       // Step 2: Create Project
       const project = await createProject({
@@ -42,8 +38,6 @@ export const useMutateBrief = () => {
         briefId: brief.id,
         status: 'DRAFT',
       }).unwrap();
-
-      console.log('Project created:', project);
 
       // Step 3: Create Offer
       const offer = await createOffer({
@@ -57,8 +51,6 @@ export const useMutateBrief = () => {
         cost: null,
         profit: null,
       }).unwrap();
-
-      console.log('Offer created:', offer);
 
       // Return project ID for navigation
       return { projectId: project.id, brief, project, offer };

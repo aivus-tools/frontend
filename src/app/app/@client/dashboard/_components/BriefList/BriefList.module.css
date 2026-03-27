@@ -1,0 +1,22 @@
+.dashboard {
+  padding: 20px;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: 1.5fr 1.2fr 100px 100px 120px 130px 120px;
+  column-gap: 20px;
+  align-items: center;
+}
+
+.header {
+  padding: 3px 22px;
+}
+
+.content {
+  margin-top: 10px;
+}
+
+.alignRight {
+  text-align: right;
+}
