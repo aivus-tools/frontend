@@ -7,7 +7,7 @@ setup('authenticate', async ({ page }) => {
   await page.goto('/auth');
 
   await page.getByPlaceholder('Your email address').fill(email);
-  await page.getByRole('button', { name: 'Next' }).click();
+  await page.getByRole('button', { name: 'Next', exact: true }).click();
 
   const passwordInput = page.getByPlaceholder('Enter your password');
   await passwordInput.waitFor({ state: 'visible' });
