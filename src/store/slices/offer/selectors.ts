@@ -187,24 +187,22 @@ export const selectAllCategoryFeesTotal = createSelector(
 );
 
 export const selectUnforeseenExpenses = createSelector(
-  [selectOfferDetails, selectTotalSum, selectAllCategoryFeesTotal],
-  (offerDetails, { value }, { vendorTotal: vendorFees }) => {
+  [selectOfferDetails, selectTotalSum],
+  (offerDetails, { value }) => {
     const { percent = 0, isVisible = true } = offerDetails?.unforeseenExpenses || {};
-    const vendorBase = value + vendorFees;
     return {
       isVisible,
       percent,
-      total: formatCurrency(applyPercentage(vendorBase, percent)),
+      total: formatCurrency(applyPercentage(value, percent)),
     };
   }
 );
 
 export const selectGrandTotal = createSelector(
   [selectTotalSum, selectClientTotalSum, selectAllCategoryFeesTotal, selectUnforeseenExpenses],
-  ({ value: totalSum }, { value: clientTotalSum }, { vendorTotal: vendorFees, clientTotal: clientFees }, { percent, isVisible }) => {
-    const vendorBase = totalSum + vendorFees;
+  ({ value: totalSum }, { value: clientTotalSum }, { clientTotal: clientFees }, { percent, isVisible }) => {
     const clientTotalValue = clientTotalSum + clientFees;
-    const totalValue = isVisible ? vendorBase + applyPercentage(vendorBase, percent) : vendorBase;
+    const totalValue = isVisible ? totalSum + applyPercentage(totalSum, percent) : totalSum;
     return {
       totalValue,
       clientTotalValue,

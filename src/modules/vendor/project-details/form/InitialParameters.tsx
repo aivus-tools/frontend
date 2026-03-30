@@ -105,14 +105,16 @@ export const InitialParameters: React.FC<InitialParametersProps> = ({ thumbnailU
           autoSize={{ minRows: 2, maxRows: 2 }}
         />
       </Form.Item>
-      {!isNewProject && (
-        <Row gutter={20}>
-          <Col span={12}>
-            <Form.List name='collaborators'>
-              {(fields, { remove }) => {
-                const collaborators = form.getFieldValue('collaborators') || [];
-                const visibleCount = fields.filter(x => collaborators[x.name]?.role !== 'agency_producer').length;
-                return (
+      <Form.List name='collaborators'>
+        {(fields, { remove }) => {
+          if (isNewProject) {
+            return null;
+          }
+          const collaborators = form.getFieldValue('collaborators') || [];
+          const visibleCount = fields.filter(x => collaborators[x.name]?.role !== 'agency_producer').length;
+          return (
+            <Row gutter={20}>
+              <Col span={12}>
                 <Form.Item label={<LabelWithAdd text={t('COLLABORATORS')} onClick={() => showModal()} />}>
                   {visibleCount === 0 && (
                     <Typography.Text type='secondary'>{t('EMPTY')}</Typography.Text>
@@ -140,21 +142,20 @@ export const InitialParameters: React.FC<InitialParametersProps> = ({ thumbnailU
                     );
                   })}
                 </Form.Item>
-                );
-              }}
-            </Form.List>
-          </Col>
-          <Col span={12}>
-            <Typography.Text>
-              <b>{t('ADD_INTERNAL_MANAGERS')}</b> {t('INTERNAL_MANAGERS_DESCRIPTION')}
-            </Typography.Text>
-            <br />
-            <Typography.Text>
-              <b>{t('ADD_FREELANCERS')}</b> {t('FREELANCERS_DESCRIPTION')}
-            </Typography.Text>
-          </Col>
-        </Row>
-      )}
+              </Col>
+              <Col span={12}>
+                <Typography.Text>
+                  <b>{t('ADD_INTERNAL_MANAGERS')}</b> {t('INTERNAL_MANAGERS_DESCRIPTION')}
+                </Typography.Text>
+                <br />
+                <Typography.Text>
+                  <b>{t('ADD_FREELANCERS')}</b> {t('FREELANCERS_DESCRIPTION')}
+                </Typography.Text>
+              </Col>
+            </Row>
+          );
+        }}
+      </Form.List>
     </>
   );
 };

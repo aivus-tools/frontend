@@ -516,15 +516,13 @@ describe('Offer Selectors', () => {
       expect(totals.clientTotal).toBeGreaterThan(0);
     });
 
-    it('should include fees in grand total', () => {
+    it('should exclude vendor fees from grand total', () => {
       const state = createFeeState();
       const grandTotal = selectGrandTotal(state);
       const totalSum = selectTotalSum(state);
-      const feesTotal = selectAllCategoryFeesTotal(state);
 
-      expect(grandTotal.totalValue).toBeGreaterThan(totalSum.value);
       expect(grandTotal.totalValue).toBe(
-        totalSum.value + feesTotal.vendorTotal + (totalSum.value + feesTotal.vendorTotal) * 0.1
+        totalSum.value + totalSum.value * 0.1
       );
     });
 
