@@ -98,3 +98,31 @@ jobs:
             docker compose -f docker-compose.production.yml pull frontend
             docker compose -f docker-compose.production.yml up -d --no-deps frontend
             docker image prune -f
+
+  smoke-test:
+    if: >
+      (github.ref == 'refs/heads/master' && github.event_name == 'push') ||
+      github.event_name == 'workflow_dispatch'
+    needs: deploy
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+      - run: npm ci
+      - run: npx playwright install chromium
+      - run: npx playwright test --project=chromium
+        env:
+          SMOKE_TEST_URL: https://go.aivus.co
+          SMOKE_TEST_EMAIL: ${{ secrets.SMOKE_TEST_EMAIL }}
+          SMOKE_TEST_PASSWORD: ${{ secrets.SMOKE_TEST_PASSWORD }}
+      - uses: actions/upload-artifact@v4
+        if: failure()
+        with:
+          name: smoke-test-results
+          path: |
+            test-results/
+            playwright-report/
+          retention-days: 7
