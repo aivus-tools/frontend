@@ -84,10 +84,10 @@ export const TopSheet: React.FC<TopSheetProps> = (props) => {
       <table style={tableStyle}>
         <tbody>
           <tr>
-            <td style={{ ...grandTotalCellStyle, width: 70, background: GRAND_TOTAL_BG }} />
-            <td style={{ ...grandTotalCellStyle, width: 320, background: GRAND_TOTAL_BG }} />
+            <td style={{ ...grandTotalCellStyle, width: 50, background: GRAND_TOTAL_BG }} />
+            <td style={{ ...grandTotalCellStyle, width: 200, background: GRAND_TOTAL_BG }} />
             <td style={{ ...grandTotalCellStyle, background: GRAND_TOTAL_BG, textAlign: 'right' }}>GRAND TOTAL</td>
-            <td style={{ ...grandTotalCellStyle, width: 220, textAlign: 'right', background: GRAND_TOTAL_PRICE_BG }}>
+            <td style={{ ...grandTotalCellStyle, width: 150, textAlign: 'right', background: GRAND_TOTAL_PRICE_BG }}>
               {formatCurrency(grandTotal)}
             </td>
           </tr>
@@ -110,10 +110,10 @@ const SectionTable: React.FC<SectionTableProps> = (props) => {
     <table style={tableStyle}>
       <thead>
         <tr>
-          <th style={{ ...headerCellStyle, width: 70 }} />
-          <th style={{ ...headerCellStyle, width: 320, textAlign: 'left' }}>{props.title}</th>
+          <th style={{ ...headerCellStyle, width: 50 }} />
+          <th style={{ ...headerCellStyle, width: 200, textAlign: 'left' }}>{props.title}</th>
           <th style={{ ...headerCellStyle, textAlign: 'left' }}>NOTE</th>
-          <th style={{ ...headerCellStyle, width: 220, textAlign: 'right' }} />
+          <th style={{ ...headerCellStyle, width: 150, textAlign: 'right' }} />
         </tr>
       </thead>
       <tbody>

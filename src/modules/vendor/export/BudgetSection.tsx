@@ -34,7 +34,7 @@ interface BudgetSectionProps {
 
 export const BudgetSection: React.FC<BudgetSectionProps> = props => {
   return (
-    <table style={{ width: '100%', borderCollapse: 'collapse', marginBottom: 16, fontFamily: FONT_FAMILY, tableLayout: 'fixed' }}>
+    <table className="budget-section-table" style={{ width: '100%', borderCollapse: 'collapse', marginBottom: 16, fontFamily: FONT_FAMILY, tableLayout: 'fixed' }}>
       <colgroup>
         <col style={{ width: '6%' }} />
         <col />

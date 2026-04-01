@@ -58,8 +58,8 @@ export const ExportPage: React.FC<ExportPageProps> = props => {
             display: none !important;
           }
           @page {
-            size: A4 landscape;
-            margin: 15mm 18mm 15mm 18mm;
+            size: A4;
+            margin: 20mm 15mm 15mm 15mm;
           }
           body {
             -webkit-print-color-adjust: exact;
@@ -70,11 +70,25 @@ export const ExportPage: React.FC<ExportPageProps> = props => {
           }
           .export-page-section {
             page-break-before: always;
-            padding-top: 100px;
+            padding-top: 80px;
           }
           .export-page-section:first-child {
             page-break-before: auto;
-            padding-top: 60px;
+            padding-top: 40px;
+          }
+          .budget-section-table thead {
+            display: table-header-group;
+          }
+          .budget-section-table tr {
+            page-break-inside: avoid;
+          }
+          .budget-section-table td {
+            font-size: 10px !important;
+            padding: 3px 5px !important;
+          }
+          .budget-section-table thead tr:first-child td {
+            font-size: 11px !important;
+            padding: 6px 5px !important;
           }
         }
         @media screen {
