@@ -108,7 +108,7 @@ export const OfferTableHeader = styled.div`
   display: grid;
   grid-template-columns: 1fr 90px 90px 90px;
   gap: 12px;
-  padding: 10px 0 8px 20px;
+  padding: 10px 20px 8px 20px;
   font-family: 'Montserrat', sans-serif;
   font-weight: 600;
   font-size: 10px;
@@ -121,7 +121,7 @@ export const OfferRow = styled.div`
   display: grid;
   grid-template-columns: 1fr 90px 90px 90px;
   gap: 12px;
-  padding: 10px 0 10px 20px;
+  padding: 10px 20px 10px 20px;
   align-items: center;
   border-radius: 8px;
   transition: background 0.12s ease;
@@ -189,11 +189,11 @@ export const OfferStatusBadge = styled.span<{ $status: string }>`
           `}
 `;
 
-export const OfferValue = styled.div<{ $highlight?: boolean }>`
+export const OfferValue = styled.div<{ $highlight?: boolean; $negative?: boolean }>`
   font-family: 'Montserrat', sans-serif;
   font-weight: 600;
   font-size: 13px;
-  color: ${({ $highlight }) => ($highlight ? '#2288FF' : '#4b5675')};
+  color: ${({ $negative, $highlight }) => ($negative ? '#F5222D' : $highlight ? '#2288FF' : '#4b5675')};
   text-align: right;
 `;
 

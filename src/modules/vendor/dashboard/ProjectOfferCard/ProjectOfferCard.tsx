@@ -164,8 +164,8 @@ export const ProjectOfferCard: React.FC<ProjectOfferCardProps> = ({
               <OfferValue>
                 {offer.cost != null && offer.cost > 0 ? `$ ${formatPrice(offer.cost)}` : '-'}
               </OfferValue>
-              <OfferValue $highlight>
-                {offer.profit != null && offer.profit > 0 ? `$ ${formatPrice(offer.profit)}` : '-'}
+              <OfferValue $highlight={offer.profit != null && offer.profit > 0} $negative={offer.profit != null && offer.profit < 0}>
+                {offer.profit != null && offer.profit !== 0 ? `$ ${formatPrice(offer.profit)}` : '-'}
               </OfferValue>
             </OfferRow>
           ))}
