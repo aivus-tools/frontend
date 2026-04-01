@@ -1,5 +1,6 @@
 'use client';
 import { ReactNode } from 'react';
+import { useParams } from 'next/navigation';
 
 import { GuidanceAndControls } from '../common/GuidanceAndControls';
 import { Wrapper, Section, Header, Column, Content } from '../common/styled';
@@ -10,8 +11,6 @@ import HouseIcon from '@/icons/house.svg';
 import { styled } from 'styled-components';
 import { t } from '@/lib/i18n';
 import { projectsApi } from '@/services/client/projectsApi';
-import { useAppSelector } from '@/store/hooks';
-import { selectProjectId } from '@/store/slices/project';
 
 const ROLE_LABELS: Record<string, string> = {
   admin: 'Admin',
@@ -61,12 +60,14 @@ const Item = ({ label, value }: Props) => (
 );
 
 export default function Details() {
-  const projectId = useAppSelector(selectProjectId);
-  const { data: project, isLoading } = projectsApi.useGetProjectByIdQuery(projectId || '', {
+  const params = useParams();
+  const projectId = params.projectId as string | undefined;
+  const { data: project, isLoading, isFetching } = projectsApi.useGetProjectByIdQuery(projectId ?? '', {
     skip: !projectId,
+    refetchOnMountOrArgChange: true,
   });
 
-  if (isLoading) {
+  if (isLoading || isFetching) {
     return <Spinner />;
   }
 

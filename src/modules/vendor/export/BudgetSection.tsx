@@ -23,6 +23,7 @@ const cellStyle: React.CSSProperties = {
 const numericCellStyle: React.CSSProperties = {
   ...cellStyle,
   textAlign: 'right',
+  whiteSpace: 'nowrap',
 };
 
 const columnHeaders = ['ID', 'Description', 'Rate', 'Qty', 'Units', 'Qty', 'Units', 'Overtime', 'ESTIMATE'];
@@ -33,7 +34,18 @@ interface BudgetSectionProps {
 
 export const BudgetSection: React.FC<BudgetSectionProps> = props => {
   return (
-    <table style={{ width: '100%', borderCollapse: 'collapse', marginBottom: 16, fontFamily: FONT_FAMILY }}>
+    <table style={{ width: '100%', borderCollapse: 'collapse', marginBottom: 16, fontFamily: FONT_FAMILY, tableLayout: 'fixed' }}>
+      <colgroup>
+        <col style={{ width: '6%' }} />
+        <col />
+        <col style={{ width: '9%' }} />
+        <col style={{ width: '5%' }} />
+        <col style={{ width: '8%' }} />
+        <col style={{ width: '5%' }} />
+        <col style={{ width: '8%' }} />
+        <col style={{ width: '9%' }} />
+        <col style={{ width: '10%' }} />
+      </colgroup>
       <thead>
         <tr>
           <td
@@ -61,7 +73,7 @@ export const BudgetSection: React.FC<BudgetSectionProps> = props => {
                 fontWeight: 600,
                 fontFamily: FONT_FAMILY,
                 color: TEXT_COLOR,
-                textAlign: i >= 2 ? 'right' : 'left',
+                textAlign: i === 0 ? 'center' : i >= 2 ? 'right' : 'left',
                 borderBottom: '1px solid #D0E8F0',
               }}
             >

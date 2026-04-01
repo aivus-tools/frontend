@@ -9,12 +9,8 @@ interface AssumptionsPageProps {
 }
 
 export const AssumptionsPage: React.FC<AssumptionsPageProps> = props => {
-  if (!props.data.offer.assumptionsExclusions) {
-    return null;
-  }
-
   return (
-    <div style={{ pageBreakBefore: 'always', maxWidth: 1210, margin: '0 auto', padding: '20px 32px 0' }}>
+    <div style={{ maxWidth: 1210, margin: '0 auto', padding: '0 32px' }}>
       <div style={{
         fontWeight: 700,
         fontSize: 20,
@@ -33,7 +29,7 @@ export const AssumptionsPage: React.FC<AssumptionsPageProps> = props => {
           color: TEXT_COLOR,
           padding: '0 10px',
         }}
-        dangerouslySetInnerHTML={{ __html: props.data.offer.assumptionsExclusions }}
+        dangerouslySetInnerHTML={{ __html: props.data.offer.assumptionsExclusions! }}
       />
     </div>
   );

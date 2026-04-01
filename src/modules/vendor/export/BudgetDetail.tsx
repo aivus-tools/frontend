@@ -11,7 +11,7 @@ interface BudgetDetailProps {
 
 export const BudgetDetail: React.FC<BudgetDetailProps> = props => {
   return (
-    <div style={{ maxWidth: 1210, margin: '0 auto', padding: '20px 32px 0', fontFamily: FONT_FAMILY }}>
+    <div style={{ maxWidth: 1210, margin: '0 auto', padding: '0 32px', fontFamily: FONT_FAMILY }}>
       <div style={{
         fontWeight: 700,
         fontSize: 20,

@@ -59,14 +59,22 @@ export const ExportPage: React.FC<ExportPageProps> = props => {
           }
           @page {
             size: A4 landscape;
-            margin: 12mm;
+            margin: 15mm 18mm 15mm 18mm;
           }
           body {
             -webkit-print-color-adjust: exact;
             print-color-adjust: exact;
           }
-          .export-section {
-            page-break-inside: avoid;
+          .export-content {
+            padding-top: 0 !important;
+          }
+          .export-page-section {
+            page-break-before: always;
+            padding-top: 100px;
+          }
+          .export-page-section:first-child {
+            page-break-before: auto;
+            padding-top: 60px;
           }
         }
         @media screen {
@@ -119,10 +127,20 @@ export const ExportPage: React.FC<ExportPageProps> = props => {
       </div>
 
       <div className="export-content" style={{ paddingTop: 76 }}>
-        <CoverPage data={data} />
-        <TopSheet data={data} />
-        <AssumptionsPage data={data} />
-        <BudgetDetail data={data} />
+        <div className="export-page-section">
+          <CoverPage data={data} />
+        </div>
+        <div className="export-page-section">
+          <TopSheet data={data} />
+        </div>
+        {!!data.offer.assumptionsExclusions && (
+          <div className="export-page-section">
+            <AssumptionsPage data={data} />
+          </div>
+        )}
+        <div className="export-page-section">
+          <BudgetDetail data={data} />
+        </div>
       </div>
     </>
   );

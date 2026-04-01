@@ -1,6 +1,6 @@
 'use client';
 import React, { useCallback, useEffect, useRef } from 'react';
-import { useRouter } from 'next/navigation';
+import { useParams, useRouter } from 'next/navigation';
 
 import { InitialParameters } from './InitialParameters';
 import { Client } from './Client';
@@ -16,6 +16,7 @@ import { useBrief } from '@/hooks/useBrief';
 import { GuidanceProvider } from '@/context/GuidanceProvider';
 import { useAppDispatch, useAppSelector } from '@/store/hooks';
 import { setMode, selectProjectId } from '@/store/slices/project';
+import { NEW_BRIEF_SLUG } from '@/constants/constants';
 import { initialValues } from './initialValues';
 import { t } from '@/lib/i18n';
 import logger from '@/lib/logger';
@@ -26,13 +27,17 @@ import { offersApi } from '@/services/client/offersApi';
 
 export default function Details() {
   const dispatch = useAppDispatch();
+  const params = useParams();
+  const routeProjectId = params.projectId as string | undefined;
   const storedProjectId = useAppSelector(selectProjectId);
   const { create, update, isLoading: isMutating } = useMutateProject();
   const [uploadThumbnail] = projectsApi.useUploadThumbnailMutation();
   const [applyTemplate] = useApplyTemplateMutation();
   const { data: brief, isLoading } = useBrief();
-  const { data: existingProject } = projectsApi.useGetProjectByIdQuery(storedProjectId || '', {
-    skip: !storedProjectId,
+  const isExistingProject = !!routeProjectId && routeProjectId !== NEW_BRIEF_SLUG;
+  const { data: existingProject, isFetching: isProjectFetching } = projectsApi.useGetProjectByIdQuery(routeProjectId ?? '', {
+    skip: !isExistingProject,
+    refetchOnMountOrArgChange: true,
   });
   const [form] = Form.useForm<ProjectFormData>();
   const [messageApi, context] = message.useMessage();
@@ -88,20 +93,20 @@ export default function Details() {
           role: 'internal_user' as const,
         })) || [],
       });
-    } else if (!isLoading) {
+    } else if (!isLoading && !isProjectFetching) {
       initializedRef.current = true;
     }
-  }, [brief, existingProject, form, isLoading]);
+  }, [brief, existingProject, form, isLoading, isProjectFetching]);
 
   const handleSubmit = useCallback(
     async (formData: ProjectFormData) => {
       try {
         let projectId: string | undefined;
 
-        if (storedProjectId && existingProject) {
-          // Update existing project
-          await update(storedProjectId, formData);
-          projectId = storedProjectId;
+        const effectiveProjectId = routeProjectId ?? storedProjectId;
+        if (isExistingProject && existingProject && effectiveProjectId) {
+          await update(effectiveProjectId, formData);
+          projectId = effectiveProjectId;
         } else {
           // Create new project + offer (without Brief!)
           const data = await create(formData);
@@ -151,7 +156,7 @@ export default function Details() {
         messageApi.error((error as { data?: { message?: string } })?.data?.message || t('ERROR_SAVING_DETAILS'));
       }
     },
-    [applyTemplate, create, dispatch, existingProject, form, messageApi, router, storedProjectId, update, uploadThumbnail]
+    [applyTemplate, create, dispatch, existingProject, form, isExistingProject, messageApi, routeProjectId, router, storedProjectId, update, uploadThumbnail]
   );
 
   return (
