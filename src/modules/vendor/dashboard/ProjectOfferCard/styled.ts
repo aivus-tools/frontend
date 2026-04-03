@@ -38,12 +38,18 @@ export const CardContainer = styled.div<{ $status?: string }>`
   overflow: hidden;
   margin-bottom: 16px;
   cursor: pointer;
-  transition: box-shadow 0.2s ease, transform 0.15s ease;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06), 0 0 0 1px rgba(0, 0, 0, 0.03);
+  transition:
+    box-shadow 0.2s ease,
+    transform 0.15s ease;
+  box-shadow:
+    0 2px 8px rgba(0, 0, 0, 0.06),
+    0 0 0 1px rgba(0, 0, 0, 0.03);
   border-left: 5px solid ${({ $status }) => statusAccent($status)};
 
   &:hover {
-    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1), 0 0 0 1px rgba(0, 0, 0, 0.04);
+    box-shadow:
+      0 8px 24px rgba(0, 0, 0, 0.1),
+      0 0 0 1px rgba(0, 0, 0, 0.04);
     transform: translateY(-2px);
   }
 `;
@@ -106,7 +112,7 @@ export const OffersTable = styled.div`
 
 export const OfferTableHeader = styled.div`
   display: grid;
-  grid-template-columns: 1fr 90px 90px 90px;
+  grid-template-columns: 2fr 90px 1fr 1fr 1fr;
   gap: 12px;
   padding: 10px 20px 8px 20px;
   font-family: 'Montserrat', sans-serif;
@@ -119,7 +125,7 @@ export const OfferTableHeader = styled.div`
 
 export const OfferRow = styled.div`
   display: grid;
-  grid-template-columns: 1fr 90px 90px 90px;
+  grid-template-columns: 2fr 90px 1fr 1fr 1fr;
   gap: 12px;
   padding: 10px 20px 10px 20px;
   align-items: center;
@@ -195,6 +201,21 @@ export const OfferValue = styled.div<{ $highlight?: boolean; $negative?: boolean
   font-size: 13px;
   color: ${({ $negative, $highlight }) => ($negative ? '#F5222D' : $highlight ? '#2288FF' : '#4b5675')};
   text-align: right;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 6px;
+`;
+
+export const PercentBadge = styled.span<{ $positive: boolean }>`
+  font-family: 'Montserrat', sans-serif;
+  font-weight: 600;
+  font-size: 10px;
+  padding: 1px 5px;
+  border-radius: 4px;
+  white-space: nowrap;
+  background: ${({ $positive }) => ($positive ? '#f0fcd4' : '#fff1f0')};
+  color: ${({ $positive }) => ($positive ? '#7ead00' : '#F5222D')};
 `;
 
 export const StatusDropdown = styled.div`

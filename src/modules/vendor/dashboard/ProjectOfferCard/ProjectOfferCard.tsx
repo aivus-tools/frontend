@@ -26,6 +26,7 @@ import {
   OfferNameText,
   OfferStatusBadge,
   OfferValue,
+  PercentBadge,
   StatusDropdown,
   StatusDropdownOption,
   KebabButton,
@@ -54,7 +55,11 @@ export const ProjectOfferCard: React.FC<ProjectOfferCardProps> = ({
   const [deleteProject] = useDeleteProjectMutation();
   const [restoreProject] = useRestoreProjectMutation();
 
-  const handleStatusChange = async (e: React.MouseEvent, offerId: string, newStatus: 'DRAFT' | 'PUBLISHED' | 'ARCHIVED') => {
+  const handleStatusChange = async (
+    e: React.MouseEvent,
+    offerId: string,
+    newStatus: 'DRAFT' | 'PUBLISHED' | 'ARCHIVED'
+  ) => {
     e.stopPropagation();
     setStatusPopoverId(null);
     try {
@@ -102,11 +107,7 @@ export const ProjectOfferCard: React.FC<ProjectOfferCardProps> = ({
           </ProjectMeta>
         </ProjectInfo>
         <HeaderActions>
-          <Dropdown
-            menu={{ items: menuItems, onClick: handleMenuClick }}
-            trigger={['click']}
-            placement="bottomRight"
-          >
+          <Dropdown menu={{ items: menuItems, onClick: handleMenuClick }} trigger={['click']} placement='bottomRight'>
             <KebabButton onClick={(e) => e.stopPropagation()}>
               <MoreOutlined />
             </KebabButton>
@@ -119,56 +120,78 @@ export const ProjectOfferCard: React.FC<ProjectOfferCardProps> = ({
           <OfferTableHeader>
             <span>{t('OFFER')}</span>
             <span style={{ textAlign: 'right' }}>{t('DASHBOARD_STATUS')}</span>
-            <span style={{ textAlign: 'right' }}>{t('COST')}</span>
+            <span style={{ textAlign: 'right' }}>{t('TOTAL_CLIENTS_COST')}</span>
+            <span style={{ textAlign: 'right' }}>{t('EXPENSES')}</span>
             <span style={{ textAlign: 'right' }}>{t('PROFIT')}</span>
           </OfferTableHeader>
-          {offers.map((offer) => (
-            <OfferRow
-              key={offer.id}
-              onClick={(e) => {
-                e.stopPropagation();
-                router.push(AppRoute.DASHBOARD_PROJECT_ESTIMATION(item.id) + '?offer=' + offer.id);
-              }}
-            >
-              <OfferName>
-                <OfferNameText>{offer.projectName}</OfferNameText>
-              </OfferName>
-              <div style={{ textAlign: 'right' }}>
-                <Popover
-                  open={statusPopoverId === offer.id}
-                  onOpenChange={(open) => setStatusPopoverId(open ? offer.id : null)}
-                  trigger="click"
-                  placement="bottom"
-                  content={
-                    <StatusDropdown>
-                      <StatusDropdownOption onClick={(e) => handleStatusChange(e, offer.id, 'DRAFT')}>
-                        <OfferStatusBadge $status="DRAFT">{t('STATUS_DRAFT')}</OfferStatusBadge>
-                      </StatusDropdownOption>
-                      <StatusDropdownOption onClick={(e) => handleStatusChange(e, offer.id, 'PUBLISHED')}>
-                        <OfferStatusBadge $status="PUBLISHED">{t('STATUS_PUBLISHED')}</OfferStatusBadge>
-                      </StatusDropdownOption>
-                      <StatusDropdownOption onClick={(e) => handleStatusChange(e, offer.id, 'ARCHIVED')}>
-                        <OfferStatusBadge $status="ARCHIVED">{t('STATUS_ARCHIVED')}</OfferStatusBadge>
-                      </StatusDropdownOption>
-                    </StatusDropdown>
-                  }
-                >
-                  <OfferStatusBadge
-                    $status={offer.status}
-                    onClick={(e) => e.stopPropagation()}
+          {offers.map((offer) => {
+            const expenses = offer.cost ?? 0;
+            const profit = offer.profit ?? 0;
+            const clientCost = expenses + profit;
+            const markupPercent = clientCost !== 0 ? (profit / clientCost) * 100 : 0;
+
+            return (
+              <OfferRow
+                key={offer.id}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  router.push(AppRoute.DASHBOARD_PROJECT_ESTIMATION(item.id) + '?offer=' + offer.id);
+                }}
+              >
+                <OfferName>
+                  <OfferNameText>{offer.projectName}</OfferNameText>
+                </OfferName>
+                <div style={{ textAlign: 'right' }}>
+                  <Popover
+                    open={statusPopoverId === offer.id}
+                    onOpenChange={(open) => setStatusPopoverId(open ? offer.id : null)}
+                    trigger='click'
+                    placement='bottom'
+                    content={
+                      <StatusDropdown>
+                        <StatusDropdownOption onClick={(e) => handleStatusChange(e, offer.id, 'DRAFT')}>
+                          <OfferStatusBadge $status='DRAFT'>{t('STATUS_DRAFT')}</OfferStatusBadge>
+                        </StatusDropdownOption>
+                        <StatusDropdownOption onClick={(e) => handleStatusChange(e, offer.id, 'PUBLISHED')}>
+                          <OfferStatusBadge $status='PUBLISHED'>{t('STATUS_PUBLISHED')}</OfferStatusBadge>
+                        </StatusDropdownOption>
+                        <StatusDropdownOption onClick={(e) => handleStatusChange(e, offer.id, 'ARCHIVED')}>
+                          <OfferStatusBadge $status='ARCHIVED'>{t('STATUS_ARCHIVED')}</OfferStatusBadge>
+                        </StatusDropdownOption>
+                      </StatusDropdown>
+                    }
                   >
-                    {offer.status === 'PUBLISHED' ? t('STATUS_PUBLISHED') : offer.status === 'ARCHIVED' ? t('STATUS_ARCHIVED') : t('STATUS_DRAFT')}
-                  </OfferStatusBadge>
-                </Popover>
-              </div>
-              <OfferValue>
-                {offer.cost != null && offer.cost > 0 ? `$ ${formatPrice(offer.cost)}` : '-'}
-              </OfferValue>
-              <OfferValue $highlight={offer.profit != null && offer.profit > 0} $negative={offer.profit != null && offer.profit < 0}>
-                {offer.profit != null && offer.profit !== 0 ? `$ ${formatPrice(offer.profit)}` : '-'}
-              </OfferValue>
-            </OfferRow>
-          ))}
+                    <OfferStatusBadge $status={offer.status} onClick={(e) => e.stopPropagation()}>
+                      {offer.status === 'PUBLISHED'
+                        ? t('STATUS_PUBLISHED')
+                        : offer.status === 'ARCHIVED'
+                          ? t('STATUS_ARCHIVED')
+                          : t('STATUS_DRAFT')}
+                    </OfferStatusBadge>
+                  </Popover>
+                </div>
+                <OfferValue>{clientCost > 0 ? `$ ${formatPrice(clientCost)}` : '-'}</OfferValue>
+                <OfferValue>{expenses > 0 ? `$ ${formatPrice(expenses)}` : '-'}</OfferValue>
+                <OfferValue $highlight={profit > 0} $negative={profit < 0}>
+                  {profit !== 0 ? (
+                    <>
+                      {`$ ${formatPrice(profit)}`}
+                      <PercentBadge $positive={markupPercent >= 0}>
+                        {markupPercent >= 0 ? '\u2191' : '\u2193'}{' '}
+                        {Math.abs(markupPercent).toLocaleString('en-US', {
+                          minimumFractionDigits: 1,
+                          maximumFractionDigits: 1,
+                        })}
+                        %
+                      </PercentBadge>
+                    </>
+                  ) : (
+                    '-'
+                  )}
+                </OfferValue>
+              </OfferRow>
+            );
+          })}
         </OffersTable>
       ) : (
         <EmptyOffers>{t('NO_OFFERS_YET')}</EmptyOffers>
