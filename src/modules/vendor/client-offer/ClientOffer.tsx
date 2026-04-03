@@ -12,7 +12,7 @@ import { CoverPage } from '@/modules/vendor/export/CoverPage';
 import { TopSheet } from '@/modules/vendor/export/TopSheet';
 import { AssumptionsPage } from '@/modules/vendor/export/AssumptionsPage';
 import { BudgetDetail } from '@/modules/vendor/export/BudgetDetail';
-import { Guidance } from './components/Guidance';
+// import { Guidance } from './components/Guidance';
 import { Wrapper, Column } from './components/styled';
 
 export function ClientOffer() {
@@ -48,28 +48,18 @@ export function ClientOffer() {
             <Spin size='large' />
           </div>
         ) : exportData ? (
-          <>
-            <Column style={{ flex: '1 1 70%' }}>
-              <div style={{ maxWidth: 1340, margin: '0 auto' }}>
-                <CoverPage data={exportData} />
-                <TopSheet data={exportData} />
-                {!!exportData.offer.assumptionsExclusions && <AssumptionsPage data={exportData} />}
-                <BudgetDetail data={exportData} />
-              </div>
-            </Column>
-            <Column style={{ flex: '1 1 30%', justifyContent: 'space-between' }}>
-              <Guidance />
-            </Column>
-          </>
+          <Column style={{ flex: '1 1 100%' }}>
+            <div style={{ maxWidth: 1340, margin: '0 auto' }}>
+              <CoverPage data={exportData} />
+              <TopSheet data={exportData} />
+              {!!exportData.offer.assumptionsExclusions && <AssumptionsPage data={exportData} />}
+              <BudgetDetail data={exportData} />
+            </div>
+          </Column>
         ) : (
-          <>
-            <Column style={{ flex: '1 1 70%' }}>
-              <div style={{ textAlign: 'center', padding: '60px 0', color: '#99A1B7' }}>No offer data available</div>
-            </Column>
-            <Column style={{ flex: '1 1 30%', justifyContent: 'space-between' }}>
-              <Guidance />
-            </Column>
-          </>
+          <Column style={{ flex: '1 1 100%' }}>
+            <div style={{ textAlign: 'center', padding: '60px 0', color: '#99A1B7' }}>No offer data available</div>
+          </Column>
         )}
       </Wrapper>
     </GuidanceProvider>
