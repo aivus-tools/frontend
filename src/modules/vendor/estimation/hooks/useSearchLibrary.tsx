@@ -67,12 +67,24 @@ export const useSearchLibrary = () => {
         const category = categories?.find((cat) => cat.id === entry.categoryId);
         if (!category) return acc;
 
+        const parentCategory = category.parentCategoryId
+          ? categories?.find((cat) => cat.id === category.parentCategoryId)
+          : null;
+        const sectionPath = parentCategory ? `${parentCategory.name} / ${category.name}` : category.name;
+        const itemKey = `${category.id}${KEY_SEPARATOR}${entry.id}`;
+
         acc.push({
           ...entry,
-          key: `${category.id}${KEY_SEPARATOR}${entry.id}`,
-          label: <Label itemKey={`${category.id}${KEY_SEPARATOR}${entry.id}`}>{`${entry.name}`}</Label>,
+          key: itemKey,
+          label: (
+            <Label itemKey={itemKey}>
+              {entry.name}
+              <span style={{ color: '#99A1B7', fontSize: 12, marginLeft: 8 }}>{sectionPath}</span>
+            </Label>
+          ),
           value: `${entry.name}`,
           name: entry.name,
+          path: sectionPath,
         });
 
         return acc;

@@ -41,7 +41,8 @@ export function useOfferSync() {
   const searchParams = useSearchParams();
   const dispatch = useAppDispatch();
   const projectId = useAppSelector(selectProjectId);
-  const currentOfferId = useAppSelector(selectOfferMetaData)?.id;
+  const currentMeta = useAppSelector(selectOfferMetaData);
+  const currentOfferId = currentMeta?.id;
   const templateId = useAppSelector(selectTemplateId);
 
   const { data: offers = [] } = useGetOffersByProjectIdQuery(projectId!, {
@@ -49,13 +50,11 @@ export function useOfferSync() {
   });
 
   useEffect(() => {
-    // Skip offer sync when in template edit mode
     if (templateId) return;
     if (!projectId || offers.length === 0) return;
 
     const urlOfferId = searchParams.get('offer');
 
-    // Determine which offer to load: URL param > sessionStorage > first offer
     let targetOfferId = urlOfferId;
     if (!targetOfferId) {
       targetOfferId = getStoredOfferId(projectId);
@@ -64,7 +63,6 @@ export function useOfferSync() {
       targetOfferId = offers[0]?.id;
     }
 
-    // Skip if already showing the right offer
     if (!targetOfferId || targetOfferId === currentOfferId) return;
 
     const offer = offers.find((o) => o.id === targetOfferId);
@@ -79,4 +77,14 @@ export function useOfferSync() {
       logger.error('Error syncing offer from URL:', error);
     }
   }, [searchParams, offers, currentOfferId, projectId, templateId, dispatch]);
+
+  useEffect(() => {
+    if (!currentOfferId || !offers.length) return;
+    const offer = offers.find((o) => o.id === currentOfferId);
+    if (!offer) return;
+    if (offer.status !== currentMeta?.status) {
+      const { details, ...metaData } = offer;
+      dispatch(setMetaData(metaData));
+    }
+  }, [offers, currentOfferId, currentMeta?.status, dispatch]);
 }

@@ -24,6 +24,7 @@ import { AppRoute } from '@/constants/appRoute';
 import { projectsApi } from '@/services/client/projectsApi';
 import { useApplyTemplateMutation } from '@/services/client/templatesApi';
 import { offersApi } from '@/services/client/offersApi';
+import { useGetVendorSettingsQuery } from '@/services/client/vendorSettingsApi';
 
 export default function Details() {
   const dispatch = useAppDispatch();
@@ -34,11 +35,15 @@ export default function Details() {
   const [uploadThumbnail] = projectsApi.useUploadThumbnailMutation();
   const [applyTemplate] = useApplyTemplateMutation();
   const { data: brief, isLoading } = useBrief();
+  const { data: vendorSettings } = useGetVendorSettingsQuery();
   const isExistingProject = !!routeProjectId && routeProjectId !== NEW_BRIEF_SLUG;
-  const { data: existingProject, isFetching: isProjectFetching } = projectsApi.useGetProjectByIdQuery(routeProjectId ?? '', {
-    skip: !isExistingProject,
-    refetchOnMountOrArgChange: true,
-  });
+  const { data: existingProject, isFetching: isProjectFetching } = projectsApi.useGetProjectByIdQuery(
+    routeProjectId ?? '',
+    {
+      skip: !isExistingProject,
+      refetchOnMountOrArgChange: true,
+    }
+  );
   const [form] = Form.useForm<ProjectFormData>();
   const [messageApi, context] = message.useMessage();
   const router = useRouter();
@@ -61,12 +66,13 @@ export default function Details() {
         irsEin: existingProject.irsEin || '',
         brandName: existingProject.brandName || '',
         agencyName: existingProject.agencyName || '',
-        collaborators: existingProject.collaborators?.map((c) => ({
-          userId: c.userId || null,
-          name: c.name,
-          email: c.email,
-          role: c.role,
-        })) || [],
+        collaborators:
+          existingProject.collaborators?.map((c) => ({
+            userId: c.userId || null,
+            name: c.name,
+            email: c.email,
+            role: c.role,
+          })) || [],
         managers: existingProject.clientManagers?.map((m) => ({
           name: m.name,
           position: m.position,
@@ -87,16 +93,29 @@ export default function Details() {
           name: m.manager || m.name || '',
           position: m.position || '',
         })) || [{ name: '', position: '' }],
-        collaborators: details.collaborators?.map((c: string) => ({
-          name: c,
-          email: '',
-          role: 'internal_user' as const,
-        })) || [],
+        collaborators:
+          details.collaborators?.map((c: string) => ({
+            name: c,
+            email: '',
+            role: 'internal_user' as const,
+          })) || [],
       });
     } else if (!isLoading && !isProjectFetching) {
       initializedRef.current = true;
     }
   }, [brief, existingProject, form, isLoading, isProjectFetching]);
+
+  useEffect(() => {
+    if (isExistingProject) return;
+    if (isLoading || isProjectFetching) return;
+    if (!vendorSettings) return;
+    const currentAgencyName = form.getFieldValue('agencyName') as string;
+    if (!currentAgencyName) {
+      form.setFieldsValue({
+        agencyName: vendorSettings.agencyName || '',
+      });
+    }
+  }, [vendorSettings, form, isExistingProject, isLoading, isProjectFetching]);
 
   const handleSubmit = useCallback(
     async (formData: ProjectFormData) => {
@@ -156,7 +175,20 @@ export default function Details() {
         messageApi.error((error as { data?: { message?: string } })?.data?.message || t('ERROR_SAVING_DETAILS'));
       }
     },
-    [applyTemplate, create, dispatch, existingProject, form, isExistingProject, messageApi, routeProjectId, router, storedProjectId, update, uploadThumbnail]
+    [
+      applyTemplate,
+      create,
+      dispatch,
+      existingProject,
+      form,
+      isExistingProject,
+      messageApi,
+      routeProjectId,
+      router,
+      storedProjectId,
+      update,
+      uploadThumbnail,
+    ]
   );
 
   return (

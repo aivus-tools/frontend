@@ -51,7 +51,10 @@ export function EntryRow({ catalogEntry, units, onPriceChange, onUnitChange, onR
   return (
     <div className={styles.itemRow}>
       <div className={styles.itemName}>
-        <span className={styles.itemNameText}>{entry.name}</span>
+        <span className={styles.itemNameText}>
+          <span style={{ color: '#99A1B7', marginRight: 6 }}>{catalogEntry.label}.</span>
+          {entry.name}
+        </span>
       </div>
       <div className={styles.priceCell}>
         <InputNumber
@@ -61,7 +64,7 @@ export function EntryRow({ catalogEntry, units, onPriceChange, onUnitChange, onR
           controls={false}
           min={0}
           precision={1}
-          variant="borderless"
+          variant='borderless'
           onBlur={handlePriceBlur}
         />
       </div>
@@ -90,10 +93,7 @@ export function EntryRow({ catalogEntry, units, onPriceChange, onUnitChange, onR
 
 function getUnitOptions(entry: CatalogEntry['entry'], allUnits: UnitOption[]): UnitOption[] {
   if (entry.units) {
-    const entryUnits = [
-      ...(entry.units.quantity || []),
-      ...(entry.units.temporal || []),
-    ];
+    const entryUnits = [...(entry.units.quantity || []), ...(entry.units.temporal || [])];
     if (entryUnits.length > 0) return entryUnits;
   }
   return allUnits;

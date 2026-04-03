@@ -1,25 +1,20 @@
 'use client';
 
-import { useState, useCallback, useEffect, useRef } from 'react';
+import { useState, useCallback, useEffect, useRef, useMemo } from 'react';
+import { Input } from 'antd';
+import { SearchOutlined } from '@ant-design/icons';
 import Spinner from '@/components/Spinner';
 import { RateHeader } from './components/Header';
 import { Section } from './components/Section';
-import { useRateCardData } from './useRateCardData';
+import { useRateCardData, CatalogSection } from './useRateCardData';
 
 import styles from './RateTable.module.css';
 
 export function RateTable() {
-  const {
-    catalogSections,
-    isLoading,
-    units,
-    setEntryPrice,
-    setEntryUnit,
-    removeEntry,
-  } = useRateCardData();
+  const { catalogSections, isLoading, units, setEntryPrice, setEntryUnit, removeEntry } = useRateCardData();
 
-  // Expand/collapse state: set of expanded keys (section ids, subcategory ids)
   const [expandedKeys, setExpandedKeys] = useState<Set<string>>(new Set());
+  const [searchQuery, setSearchQuery] = useState('');
   const initializedRef = useRef(false);
 
   const toggleKey = useCallback((key: string) => {
@@ -34,7 +29,53 @@ export function RateTable() {
     });
   }, []);
 
-  // Initialize all sections as expanded when data first arrives
+  const filteredSections = useMemo((): CatalogSection[] => {
+    const query = searchQuery.trim().toLowerCase();
+    if (!query) {
+      return catalogSections;
+    }
+
+    return catalogSections
+      .map((section) => {
+        const filteredSubCategories = section.subCategories
+          .map((sub) => ({
+            ...sub,
+            entries: sub.entries.filter(
+              (x) => x.entry.name.toLowerCase().includes(query) || x.label.toLowerCase().includes(query)
+            ),
+          }))
+          .filter((sub) => sub.entries.length > 0);
+
+        const filteredDirectEntries = section.directEntries.filter(
+          (x) => x.entry.name.toLowerCase().includes(query) || x.label.toLowerCase().includes(query)
+        );
+
+        if (filteredSubCategories.length === 0 && filteredDirectEntries.length === 0) {
+          return null;
+        }
+
+        return {
+          ...section,
+          subCategories: filteredSubCategories,
+          directEntries: filteredDirectEntries,
+        };
+      })
+      .filter((x): x is CatalogSection => x !== null);
+  }, [catalogSections, searchQuery]);
+
+  useEffect(() => {
+    if (searchQuery.trim()) {
+      const allKeys = new Set<string>();
+      filteredSections.forEach((section) => {
+        allKeys.add(section.category.id);
+        section.subCategories.forEach((sub) => {
+          allKeys.add(`${section.category.id}:${sub.category.id}`);
+        });
+      });
+      setExpandedKeys(allKeys);
+    }
+  }, [filteredSections, searchQuery]);
+
   useEffect(() => {
     if (!initializedRef.current && catalogSections.length > 0) {
       const allKeys = new Set<string>();
@@ -55,8 +96,19 @@ export function RateTable() {
 
   return (
     <div className={styles.rateTable}>
+      <div style={{ marginBottom: 12 }}>
+        <Input
+          prefix={<SearchOutlined style={{ color: '#99A1B7' }} />}
+          placeholder='Search rates...'
+          value={searchQuery}
+          onChange={(event) => setSearchQuery(event.target.value)}
+          allowClear
+          size='middle'
+          style={{ maxWidth: 320 }}
+        />
+      </div>
       <RateHeader />
-      {catalogSections.map((section) => (
+      {filteredSections.map((section) => (
         <Section
           key={section.category.id}
           section={section}
@@ -68,6 +120,11 @@ export function RateTable() {
           onRemove={removeEntry}
         />
       ))}
+      {filteredSections.length === 0 && searchQuery.trim() && (
+        <div style={{ textAlign: 'center', padding: '32px 0', color: '#99A1B7', fontSize: 14 }}>
+          No rates found for &quot;{searchQuery}&quot;
+        </div>
+      )}
     </div>
   );
 }

@@ -1,23 +1,14 @@
 'use client';
 
 import React, { useEffect } from 'react';
-import { Form, Input, Button, Switch, Select, Checkbox, App, Spin } from 'antd';
+import { Form, Input, Button, Select, App, Spin } from 'antd';
 import { t, locale } from '@/lib/i18n';
 import {
   useGetSettingsQuery,
   useUpdateSettingsMutation,
   useChangePasswordMutation,
 } from '@/services/client/profileApi';
-import {
-  SettingsFormWrapper,
-  PageTitle,
-  SectionTitle,
-  SectionDivider,
-  SettingRow,
-  SettingLabel,
-  FieldLabel,
-  FormSection,
-} from './styled';
+import { SettingsFormWrapper, PageTitle, SectionTitle, SectionDivider, FieldLabel, FormSection } from './styled';
 
 interface PasswordFormValues {
   current_password: string;
@@ -38,9 +29,6 @@ export const SettingsForm = () => {
     if (settings) {
       settingsForm.setFieldsValue({
         language: settings.language,
-        nda_accepted: settings.nda_accepted,
-        email_notifications: settings.email_notifications,
-        browser_notifications: settings.browser_notifications,
       });
     }
   }, [settings, settingsForm]);
@@ -76,7 +64,7 @@ export const SettingsForm = () => {
   if (isLoadingSettings) {
     return (
       <SettingsFormWrapper>
-        <Spin size="large" style={{ display: 'block', margin: '80px auto' }} />
+        <Spin size='large' style={{ display: 'block', margin: '80px auto' }} />
       </SettingsFormWrapper>
     );
   }
@@ -86,34 +74,31 @@ export const SettingsForm = () => {
       <PageTitle>{t('SETTINGS')}</PageTitle>
 
       <SectionTitle>{t('CHANGE_PASSWORD')}</SectionTitle>
-      <Form form={passwordForm} layout="vertical" onFinish={handlePasswordSubmit}>
+      <Form form={passwordForm} layout='vertical' onFinish={handlePasswordSubmit}>
         <FormSection>
           <FieldLabel>{t('CURRENT_PASSWORD')}</FieldLabel>
-          <Form.Item
-            name="current_password"
-            rules={[{ required: true, message: t('PASSWORD_REQUIRED') }]}
-          >
-            <Input.Password placeholder={t('CURRENT_PASSWORD')} size="large" />
+          <Form.Item name='current_password' rules={[{ required: true, message: t('PASSWORD_REQUIRED') }]}>
+            <Input.Password placeholder={t('CURRENT_PASSWORD')} size='large' />
           </Form.Item>
         </FormSection>
 
         <FormSection>
           <FieldLabel>{t('NEW_PASSWORD')}</FieldLabel>
           <Form.Item
-            name="new_password"
+            name='new_password'
             rules={[
               { required: true, message: t('PASSWORD_REQUIRED') },
               { min: 8, message: t('PASSWORD_MIN_LENGTH') },
             ]}
           >
-            <Input.Password placeholder={t('NEW_PASSWORD')} size="large" />
+            <Input.Password placeholder={t('NEW_PASSWORD')} size='large' />
           </Form.Item>
         </FormSection>
 
         <FormSection>
           <FieldLabel>{t('CONFIRM_NEW_PASSWORD')}</FieldLabel>
           <Form.Item
-            name="confirm_password"
+            name='confirm_password'
             dependencies={['new_password']}
             rules={[
               { required: true, message: t('CONFIRM_PASSWORD_REQUIRED') },
@@ -127,56 +112,31 @@ export const SettingsForm = () => {
               }),
             ]}
           >
-            <Input.Password placeholder={t('CONFIRM_NEW_PASSWORD')} size="large" />
+            <Input.Password placeholder={t('CONFIRM_NEW_PASSWORD')} size='large' />
           </Form.Item>
         </FormSection>
 
-        <Button type="primary" htmlType="submit" loading={isChangingPassword} size="large">
+        <Button type='primary' htmlType='submit' loading={isChangingPassword} size='large'>
           {t('CHANGE_PASSWORD')}
         </Button>
       </Form>
 
       <SectionDivider />
 
-      <Form form={settingsForm} layout="vertical">
+      <Form form={settingsForm} layout='vertical'>
         <SectionTitle>{t('LANGUAGE')}</SectionTitle>
         <FormSection>
-          <Form.Item name="language">
-            <Select size="large" style={{ width: '100%' }}>
-              <Select.Option value="en">{t('LANGUAGE_ENGLISH')}</Select.Option>
-              <Select.Option value="ru">{t('LANGUAGE_RUSSIAN')}</Select.Option>
+          <Form.Item name='language'>
+            <Select size='large' style={{ width: '100%' }}>
+              <Select.Option value='en'>{t('LANGUAGE_ENGLISH')}</Select.Option>
+              <Select.Option value='ru'>{t('LANGUAGE_RUSSIAN')}</Select.Option>
             </Select>
           </Form.Item>
         </FormSection>
 
         <SectionDivider />
 
-        <SectionTitle>{t('NOTIFICATION_PREFERENCES')}</SectionTitle>
-        <SettingRow>
-          <SettingLabel>{t('EMAIL_NOTIFICATIONS')}</SettingLabel>
-          <Form.Item name="email_notifications" valuePropName="checked" noStyle>
-            <Switch />
-          </Form.Item>
-        </SettingRow>
-        <SettingRow>
-          <SettingLabel>{t('BROWSER_NOTIFICATIONS')}</SettingLabel>
-          <Form.Item name="browser_notifications" valuePropName="checked" noStyle>
-            <Switch />
-          </Form.Item>
-        </SettingRow>
-
-        <SectionDivider />
-
-        <Form.Item name="nda_accepted" valuePropName="checked">
-          <Checkbox>{t('NDA_ACCEPT')}</Checkbox>
-        </Form.Item>
-
-        <Button
-          type="primary"
-          onClick={handleSettingsSubmit}
-          loading={isUpdatingSettings}
-          size="large"
-        >
+        <Button type='primary' onClick={handleSettingsSubmit} loading={isUpdatingSettings} size='large'>
           {t('SAVE_SETTINGS')}
         </Button>
       </Form>

@@ -7,23 +7,22 @@ import { RateCard, RateCardItem, RateCardItemPayload } from '@/types/rate.interf
 import { Category } from '@/types/categories.interface';
 import { Entry, UnitOption } from '@/types/entries.interface';
 
-/** A catalog entry with optional rate card data overlaid */
 export interface CatalogEntry {
   entry: Entry;
   rateItem?: RateCardItem;
+  label: string;
 }
 
-/** Subcategory with its entries */
 export interface CatalogSubCategory {
   category: Category;
   entries: CatalogEntry[];
 }
 
-/** Root category section with subcategories and direct entries */
 export interface CatalogSection {
   category: Category;
   subCategories: CatalogSubCategory[];
   directEntries: CatalogEntry[];
+  letter: string;
 }
 
 export function useRateCardData() {
@@ -49,38 +48,56 @@ export function useRateCardData() {
     return map;
   }, [rateCard]);
 
-  // Build catalog tree: root categories → subcategories → entries
   const catalogSections = useMemo((): CatalogSection[] => {
     if (!categories.length) return [];
 
-    const rootCategories = categories
-      .filter((c) => !c.parentCategoryId)
-      .sort((a, b) => a.name.localeCompare(b.name));
+    const toSectionLetter = (index: number): string => {
+      let result = '';
+      let n = index;
+      do {
+        result = String.fromCharCode(65 + (n % 26)) + result;
+        n = Math.floor(n / 26) - 1;
+      } while (n >= 0);
+      return result;
+    };
 
-    return rootCategories.map((rootCat) => {
+    const rootCategories = categories.filter((c) => !c.parentCategoryId).sort((a, b) => a.name.localeCompare(b.name));
+
+    return rootCategories.map((rootCat, sectionIndex) => {
+      const letter = toSectionLetter(sectionIndex);
+      let entryCounter = 0;
+
       const subCategories = categories
         .filter((c) => c.parentCategoryId === rootCat.id)
         .sort((a, b) => a.name.localeCompare(b.name))
-        .map((subCat): CatalogSubCategory => ({
-          category: subCat,
-          entries: entries
-            .filter((e) => e.categoryId === subCat.id)
-            .sort((a, b) => a.name.localeCompare(b.name))
-            .map((entry): CatalogEntry => ({
-              entry,
-              rateItem: rateItemsByEntryId.get(entry.id),
-            })),
-        }));
+        .map(
+          (subCat): CatalogSubCategory => ({
+            category: subCat,
+            entries: entries
+              .filter((e) => e.categoryId === subCat.id)
+              .sort((a, b) => a.name.localeCompare(b.name))
+              .map(
+                (entry): CatalogEntry => ({
+                  entry,
+                  rateItem: rateItemsByEntryId.get(entry.id),
+                  label: `${letter}${++entryCounter}`,
+                })
+              ),
+          })
+        );
 
       const directEntries = entries
         .filter((e) => e.categoryId === rootCat.id)
         .sort((a, b) => a.name.localeCompare(b.name))
-        .map((entry): CatalogEntry => ({
-          entry,
-          rateItem: rateItemsByEntryId.get(entry.id),
-        }));
+        .map(
+          (entry): CatalogEntry => ({
+            entry,
+            rateItem: rateItemsByEntryId.get(entry.id),
+            label: `${letter}${++entryCounter}`,
+          })
+        );
 
-      return { category: rootCat, subCategories, directEntries };
+      return { category: rootCat, subCategories, directEntries, letter };
     });
   }, [categories, entries, rateItemsByEntryId]);
 
@@ -104,7 +121,13 @@ export function useRateCardData() {
     }));
 
   // Set price for an entry (creates or updates rate card item)
-  const setEntryPrice = async (entryId: string, entryName: string, price: number, unitId?: string, unitLabel?: string) => {
+  const setEntryPrice = async (
+    entryId: string,
+    entryName: string,
+    price: number,
+    unitId?: string,
+    unitLabel?: string
+  ) => {
     const currentItems = getCurrentItems();
     const existingIndex = currentItems.findIndex((item) => item.entryId === entryId);
 

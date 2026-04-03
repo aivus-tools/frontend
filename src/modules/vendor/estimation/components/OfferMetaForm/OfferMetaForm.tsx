@@ -50,51 +50,74 @@ interface TagsFieldProps {
   placeholder?: string;
 }
 
-const TagsField: React.FC<TagsFieldProps> = props => {
+const TagsField: React.FC<TagsFieldProps> = (props) => {
   const { value, onChange, options } = props;
   const [inputValue, setInputValue] = useState('');
   const [showSuggestions, setShowSuggestions] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
 
   const availableOptions = useMemo(() => {
-    return options.filter(x => !value.includes(x));
+    return options.filter((x) => !value.includes(x));
   }, [options, value]);
 
   const filteredOptions = useMemo(() => {
     if (!inputValue.trim()) {
       return availableOptions;
     }
-    return availableOptions.filter(x => x.toLowerCase().includes(inputValue.toLowerCase()));
+    return availableOptions.filter((x) => x.toLowerCase().includes(inputValue.toLowerCase()));
   }, [availableOptions, inputValue]);
 
-  const handleAddTag = useCallback((tag: string) => {
-    if (!value.includes(tag)) {
-      onChange([...value, tag]);
-    }
-    setInputValue('');
-    setShowSuggestions(false);
-  }, [value, onChange]);
+  const handleAddTag = useCallback(
+    (tag: string) => {
+      if (!value.includes(tag)) {
+        onChange([...value, tag]);
+      }
+      setInputValue('');
+      setShowSuggestions(false);
+    },
+    [value, onChange]
+  );
 
-  const handleRemoveTag = useCallback((tag: string) => {
-    onChange(value.filter(x => x !== tag));
-  }, [value, onChange]);
+  const handleRemoveTag = useCallback(
+    (tag: string) => {
+      onChange(value.filter((x) => x !== tag));
+    },
+    [value, onChange]
+  );
 
-  const handleKeyDown = useCallback((event: React.KeyboardEvent<HTMLInputElement>) => {
-    if (event.key === 'Enter' && inputValue.trim()) {
-      event.preventDefault();
-      handleAddTag(inputValue.trim());
-    } else if (event.key === 'Backspace' && !inputValue && value.length > 0) {
-      handleRemoveTag(value[value.length - 1]);
-    }
-  }, [inputValue, value, handleAddTag, handleRemoveTag]);
+  const handleKeyDown = useCallback(
+    (event: React.KeyboardEvent<HTMLInputElement>) => {
+      if (event.key === 'Enter' && inputValue.trim()) {
+        event.preventDefault();
+        handleAddTag(inputValue.trim());
+      } else if (event.key === 'Backspace' && !inputValue && value.length > 0) {
+        handleRemoveTag(value[value.length - 1]);
+      }
+    },
+    [inputValue, value, handleAddTag, handleRemoveTag]
+  );
+
+  const handleBlur = useCallback(() => {
+    setTimeout(() => {
+      if (inputValue.trim()) {
+        handleAddTag(inputValue.trim());
+      }
+      setShowSuggestions(false);
+    }, 200);
+  }, [inputValue, handleAddTag]);
 
   return (
     <div style={{ position: 'relative' }}>
       <TagsContainer onClick={() => inputRef.current?.focus()}>
-        {value.map(x => (
+        {value.map((x) => (
           <Tag key={x}>
             {x}
-            <TagRemove onClick={(event) => { event.stopPropagation(); handleRemoveTag(x); }}>
+            <TagRemove
+              onClick={(event) => {
+                event.stopPropagation();
+                handleRemoveTag(x);
+              }}
+            >
               <CloseIcon />
             </TagRemove>
           </Tag>
@@ -102,28 +125,30 @@ const TagsField: React.FC<TagsFieldProps> = props => {
         <TagInput
           ref={inputRef}
           value={inputValue}
-          onChange={event => setInputValue(event.target.value)}
+          onChange={(event) => setInputValue(event.target.value)}
           onFocus={() => setShowSuggestions(true)}
-          onBlur={() => setTimeout(() => setShowSuggestions(false), 200)}
+          onBlur={handleBlur}
           onKeyDown={handleKeyDown}
-          placeholder={value.length === 0 ? (props.placeholder || '') : ''}
+          placeholder={value.length === 0 ? props.placeholder || 'Type to search or add custom value' : ''}
         />
       </TagsContainer>
       {showSuggestions && filteredOptions.length > 0 && (
-        <div style={{
-          position: 'absolute',
-          top: '100%',
-          left: 0,
-          right: 0,
-          background: 'var(--white)',
-          border: '1px solid #d9d9d9',
-          borderRadius: 6,
-          boxShadow: '0 4px 12px rgba(0,0,0,0.1)',
-          zIndex: 10,
-          maxHeight: 200,
-          overflow: 'auto',
-        }}>
-          {filteredOptions.map(x => (
+        <div
+          style={{
+            position: 'absolute',
+            top: '100%',
+            left: 0,
+            right: 0,
+            background: 'var(--white)',
+            border: '1px solid #d9d9d9',
+            borderRadius: 6,
+            boxShadow: '0 4px 12px rgba(0,0,0,0.1)',
+            zIndex: 10,
+            maxHeight: 300,
+            overflow: 'auto',
+          }}
+        >
+          {filteredOptions.map((x) => (
             <div
               key={x}
               style={{
@@ -133,7 +158,10 @@ const TagsField: React.FC<TagsFieldProps> = props => {
                 fontSize: 14,
                 color: '#4b5675',
               }}
-              onMouseDown={(event) => { event.preventDefault(); handleAddTag(x); }}
+              onMouseDown={(event) => {
+                event.preventDefault();
+                handleAddTag(x);
+              }}
             >
               {x}
             </div>
@@ -205,37 +233,42 @@ export const OfferMetaForm: React.FC = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [metaData?.projectName]);
 
-  const saveToServer = useCallback((fields: Record<string, unknown>) => {
-    if (!metaData) {
-      return;
-    }
-    updateOffer({ id: metaData.id, ...fields } as Partial<Offer> & Pick<Offer, 'id'>)
-      .unwrap()
-      .then(x => {
-        // eslint-disable-next-line @typescript-eslint/no-unused-vars
-        const { details: _details, ...meta } = x;
-        dispatch(setMetaData(meta));
-        lastMetaRef.current = meta;
-        if (x.deliverables) {
-          setDeliverables(currentLocal => {
-            if (currentLocal.length === x.deliverables!.length) {
-              return currentLocal.map((local, i) => ({ ...local, id: x.deliverables![i].id }));
-            }
-            return x.deliverables!;
-          });
-        }
-        if (x.scheduleEntries) {
-          setScheduleEntries(currentLocal => {
-            if (currentLocal.length === x.scheduleEntries!.length) {
-              return currentLocal.map((local, i) => ({ ...local, id: x.scheduleEntries![i].id }));
-            }
-            return x.scheduleEntries!;
-          });
-        }
-      })
-      .catch(x => { logger.error('Failed to save offer metadata', x); });
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [metaData?.id, updateOffer, dispatch]);
+  const saveToServer = useCallback(
+    (fields: Record<string, unknown>) => {
+      if (!metaData) {
+        return;
+      }
+      updateOffer({ id: metaData.id, ...fields } as Partial<Offer> & Pick<Offer, 'id'>)
+        .unwrap()
+        .then((x) => {
+          // eslint-disable-next-line @typescript-eslint/no-unused-vars
+          const { details: _details, ...meta } = x;
+          dispatch(setMetaData(meta));
+          lastMetaRef.current = meta;
+          if (x.deliverables) {
+            setDeliverables((currentLocal) => {
+              if (currentLocal.length === x.deliverables!.length) {
+                return currentLocal.map((local, i) => ({ ...local, id: x.deliverables![i].id }));
+              }
+              return x.deliverables!;
+            });
+          }
+          if (x.scheduleEntries) {
+            setScheduleEntries((currentLocal) => {
+              if (currentLocal.length === x.scheduleEntries!.length) {
+                return currentLocal.map((local, i) => ({ ...local, id: x.scheduleEntries![i].id }));
+              }
+              return x.scheduleEntries!;
+            });
+          }
+        })
+        .catch((x) => {
+          logger.error('Failed to save offer metadata', x);
+        });
+      // eslint-disable-next-line react-hooks/exhaustive-deps
+    },
+    [metaData?.id, updateOffer, dispatch]
+  );
 
   const debouncedSave = useMemo(() => {
     return debounce(saveToServer, 500);
@@ -247,84 +280,120 @@ export const OfferMetaForm: React.FC = () => {
     };
   }, [debouncedSave]);
 
-  const handleFieldChange = useCallback((field: string, value: unknown) => {
-    debouncedSave({ [field]: value });
-  }, [debouncedSave]);
+  const handleFieldChange = useCallback(
+    (field: string, value: unknown) => {
+      debouncedSave({ [field]: value });
+    },
+    [debouncedSave]
+  );
 
-  const handleBidDateChange = useCallback((event: React.ChangeEvent<HTMLInputElement>) => {
-    const value = event.target.value;
-    setBidDate(value);
-    handleFieldChange('bidDate', value || null);
-  }, [handleFieldChange]);
-
-  const handleRevisionChange = useCallback((event: React.ChangeEvent<HTMLInputElement>) => {
-    const value = event.target.value;
-    setRevision(value);
-    handleFieldChange('revision', value);
-  }, [handleFieldChange]);
-
-  const handleBidVersionNameChange = useCallback((event: React.ChangeEvent<HTMLInputElement>) => {
-    const value = event.target.value;
-    setBidVersionName(value);
-    handleFieldChange('projectName', value);
-  }, [handleFieldChange]);
-
-  const handleTermChange = useCallback((event: React.ChangeEvent<HTMLInputElement>) => {
-    const value = event.target.value;
-    setTerm(value);
-    handleFieldChange('term', value);
-  }, [handleFieldChange]);
-
-  const handleTerritoryChange = useCallback((value: string[]) => {
-    setTerritory(value);
-    handleFieldChange('territory', value);
-  }, [handleFieldChange]);
-
-  const handleMediaPlacementsChange = useCallback((value: string[]) => {
-    setMediaPlacements(value);
-    handleFieldChange('mediaPlacements', value);
-  }, [handleFieldChange]);
-
-  const handleCoverPageNotesChange = useCallback((value: string) => {
-    setCoverPageNotes(value);
-    handleFieldChange('coverPageNotes', value);
-  }, [handleFieldChange]);
-
-  const handleAssumptionsExclusionsChange = useCallback((value: string) => {
-    setAssumptionsExclusions(value);
-    handleFieldChange('assumptionsExclusions', value);
-  }, [handleFieldChange]);
-
-  const handlePercentChange = useCallback((field: string, setter: (value: string) => void) => {
-    return (event: React.ChangeEvent<HTMLInputElement>) => {
+  const handleBidDateChange = useCallback(
+    (event: React.ChangeEvent<HTMLInputElement>) => {
       const value = event.target.value;
-      setter(value);
-      handleFieldChange(field, value || '0');
-    };
-  }, [handleFieldChange]);
+      setBidDate(value);
+      handleFieldChange('bidDate', value || null);
+    },
+    [handleFieldChange]
+  );
 
-  const handleFringesPercentChange = useCallback((event: React.ChangeEvent<HTMLInputElement>) => {
-    const value = event.target.value;
-    setFringesPercent(value);
-    handleFieldChange('fringesPercent', value || '0');
-    if (metaData) {
-      dispatch(setMetaData({ ...metaData, fringesPercent: value || '0' }));
-    }
-    dispatch(recalculateAllOffers());
-  }, [handleFieldChange, dispatch, metaData]);
+  const handleRevisionChange = useCallback(
+    (event: React.ChangeEvent<HTMLInputElement>) => {
+      const value = event.target.value;
+      setRevision(value);
+      handleFieldChange('revision', value);
+    },
+    [handleFieldChange]
+  );
 
-  const handleMarkupPercentChange = useCallback((event: React.ChangeEvent<HTMLInputElement>) => {
-    const value = event.target.value;
-    setMarkupPercent(value);
-    handleFieldChange('markupPercent', value || '0');
-    const newPercent = parseFloat(value) || 0;
-    const markups = offerDetails?.categoryExternalMarkup || {};
-    for (const categoryId of Object.keys(markups)) {
-      if (!markups[categoryId].enabled) {
-        dispatch(setCategoryExternalMarkup({ categoryId, percent: newPercent }));
+  const handleBidVersionNameChange = useCallback(
+    (event: React.ChangeEvent<HTMLInputElement>) => {
+      const value = event.target.value;
+      setBidVersionName(value);
+      handleFieldChange('projectName', value);
+    },
+    [handleFieldChange]
+  );
+
+  const handleTermChange = useCallback(
+    (event: React.ChangeEvent<HTMLInputElement>) => {
+      const value = event.target.value;
+      setTerm(value);
+      handleFieldChange('term', value);
+    },
+    [handleFieldChange]
+  );
+
+  const handleTerritoryChange = useCallback(
+    (value: string[]) => {
+      setTerritory(value);
+      handleFieldChange('territory', value);
+    },
+    [handleFieldChange]
+  );
+
+  const handleMediaPlacementsChange = useCallback(
+    (value: string[]) => {
+      setMediaPlacements(value);
+      handleFieldChange('mediaPlacements', value);
+    },
+    [handleFieldChange]
+  );
+
+  const handleCoverPageNotesChange = useCallback(
+    (value: string) => {
+      setCoverPageNotes(value);
+      handleFieldChange('coverPageNotes', value);
+    },
+    [handleFieldChange]
+  );
+
+  const handleAssumptionsExclusionsChange = useCallback(
+    (value: string) => {
+      setAssumptionsExclusions(value);
+      handleFieldChange('assumptionsExclusions', value);
+    },
+    [handleFieldChange]
+  );
+
+  const handlePercentChange = useCallback(
+    (field: string, setter: (value: string) => void) => {
+      return (event: React.ChangeEvent<HTMLInputElement>) => {
+        const value = event.target.value;
+        setter(value);
+        handleFieldChange(field, value || '0');
+      };
+    },
+    [handleFieldChange]
+  );
+
+  const handleFringesPercentChange = useCallback(
+    (event: React.ChangeEvent<HTMLInputElement>) => {
+      const value = event.target.value;
+      setFringesPercent(value);
+      handleFieldChange('fringesPercent', value || '0');
+      if (metaData) {
+        dispatch(setMetaData({ ...metaData, fringesPercent: value || '0' }));
       }
-    }
-  }, [handleFieldChange, offerDetails, dispatch]);
+      dispatch(recalculateAllOffers());
+    },
+    [handleFieldChange, dispatch, metaData]
+  );
+
+  const handleMarkupPercentChange = useCallback(
+    (event: React.ChangeEvent<HTMLInputElement>) => {
+      const value = event.target.value;
+      setMarkupPercent(value);
+      handleFieldChange('markupPercent', value || '0');
+      const newPercent = parseFloat(value) || 0;
+      const markups = offerDetails?.categoryExternalMarkup || {};
+      for (const categoryId of Object.keys(markups)) {
+        if (!markups[categoryId].enabled) {
+          dispatch(setCategoryExternalMarkup({ categoryId, percent: newPercent }));
+        }
+      }
+    },
+    [handleFieldChange, offerDetails, dispatch]
+  );
 
   const handleAddDeliverable = useCallback(() => {
     const newDeliverable: OfferDeliverable = {
@@ -340,22 +409,28 @@ export const OfferMetaForm: React.FC = () => {
     handleFieldChange('deliverables', updated);
   }, [deliverables, handleFieldChange]);
 
-  const handleRemoveDeliverable = useCallback((index: number) => {
-    const updated = deliverables.filter((_, i) => i !== index).map((x, i) => ({ ...x, sortOrder: i }));
-    setDeliverables(updated);
-    handleFieldChange('deliverables', updated);
-  }, [deliverables, handleFieldChange]);
+  const handleRemoveDeliverable = useCallback(
+    (index: number) => {
+      const updated = deliverables.filter((_, i) => i !== index).map((x, i) => ({ ...x, sortOrder: i }));
+      setDeliverables(updated);
+      handleFieldChange('deliverables', updated);
+    },
+    [deliverables, handleFieldChange]
+  );
 
-  const handleDeliverableChange = useCallback((index: number, field: keyof OfferDeliverable, value: unknown) => {
-    const updated = deliverables.map((x, i) => {
-      if (i === index) {
-        return { ...x, [field]: value };
-      }
-      return x;
-    });
-    setDeliverables(updated);
-    handleFieldChange('deliverables', updated);
-  }, [deliverables, handleFieldChange]);
+  const handleDeliverableChange = useCallback(
+    (index: number, field: keyof OfferDeliverable, value: unknown) => {
+      const updated = deliverables.map((x, i) => {
+        if (i === index) {
+          return { ...x, [field]: value };
+        }
+        return x;
+      });
+      setDeliverables(updated);
+      handleFieldChange('deliverables', updated);
+    },
+    [deliverables, handleFieldChange]
+  );
 
   const handleAddScheduleEntry = useCallback(() => {
     const newEntry: OfferScheduleEntry = {
@@ -371,22 +446,28 @@ export const OfferMetaForm: React.FC = () => {
     handleFieldChange('scheduleEntries', updated);
   }, [scheduleEntries, handleFieldChange]);
 
-  const handleRemoveScheduleEntry = useCallback((index: number) => {
-    const updated = scheduleEntries.filter((_, i) => i !== index).map((x, i) => ({ ...x, sortOrder: i }));
-    setScheduleEntries(updated);
-    handleFieldChange('scheduleEntries', updated);
-  }, [scheduleEntries, handleFieldChange]);
+  const handleRemoveScheduleEntry = useCallback(
+    (index: number) => {
+      const updated = scheduleEntries.filter((_, i) => i !== index).map((x, i) => ({ ...x, sortOrder: i }));
+      setScheduleEntries(updated);
+      handleFieldChange('scheduleEntries', updated);
+    },
+    [scheduleEntries, handleFieldChange]
+  );
 
-  const handleScheduleEntryChange = useCallback((index: number, field: keyof OfferScheduleEntry, value: unknown) => {
-    const updated = scheduleEntries.map((x, i) => {
-      if (i === index) {
-        return { ...x, [field]: value };
-      }
-      return x;
-    });
-    setScheduleEntries(updated);
-    handleFieldChange('scheduleEntries', updated);
-  }, [scheduleEntries, handleFieldChange]);
+  const handleScheduleEntryChange = useCallback(
+    (index: number, field: keyof OfferScheduleEntry, value: unknown) => {
+      const updated = scheduleEntries.map((x, i) => {
+        if (i === index) {
+          return { ...x, [field]: value };
+        }
+        return x;
+      });
+      setScheduleEntries(updated);
+      handleFieldChange('scheduleEntries', updated);
+    },
+    [scheduleEntries, handleFieldChange]
+  );
 
   if (!metaData || isExternal) {
     return null;
@@ -406,21 +487,13 @@ export const OfferMetaForm: React.FC = () => {
       {isOpen && (
         <MetaFormBody>
           <FormRow>
-            <FormField $width="150px">
+            <FormField $width='150px'>
               <FieldLabel>{t('BID_DATE')}</FieldLabel>
-              <FieldInput
-                type="date"
-                value={bidDate}
-                onChange={handleBidDateChange}
-              />
+              <FieldInput type='date' value={bidDate} onChange={handleBidDateChange} />
             </FormField>
-            <FormField $width="100px">
+            <FormField $width='100px'>
               <FieldLabel>{t('REVISION')}</FieldLabel>
-              <FieldInput
-                value={revision}
-                onChange={handleRevisionChange}
-                placeholder="1"
-              />
+              <FieldInput value={revision} onChange={handleRevisionChange} placeholder='1' />
             </FormField>
             <FormField $flex>
               <FieldLabel>{t('BID_VERSION_NAME')}</FieldLabel>
@@ -433,21 +506,17 @@ export const OfferMetaForm: React.FC = () => {
           </FormRow>
 
           <FormRow>
-            <FormField $width="150px">
+            <FormField $width='150px'>
               <FieldLabel>{t('TERM_LABEL')}</FieldLabel>
-              <FieldInput
-                value={term}
-                onChange={handleTermChange}
-                placeholder="e.g. 1 year"
-              />
+              <FieldInput value={term} onChange={handleTermChange} placeholder='e.g. 1 year' />
             </FormField>
-            <FormField $width="300px">
+            <FormField $width='300px'>
               <FieldLabel>{t('TERRITORY_LABEL')}</FieldLabel>
               <TagsField
                 value={territory}
                 onChange={handleTerritoryChange}
                 options={TERRITORY_OPTIONS}
-                placeholder="e.g. USA, Canada"
+                placeholder='e.g. USA, Canada'
               />
             </FormField>
             <FormField $flex>
@@ -456,7 +525,7 @@ export const OfferMetaForm: React.FC = () => {
                 value={mediaPlacements}
                 onChange={handleMediaPlacementsChange}
                 options={MEDIA_PLACEMENTS_OPTIONS}
-                placeholder="e.g. Paid Social, YouTube"
+                placeholder='e.g. Paid Social, YouTube'
               />
             </FormField>
           </FormRow>
@@ -465,39 +534,41 @@ export const OfferMetaForm: React.FC = () => {
             <SectionHeader>
               <SectionLabel>{t('DELIVERABLES')}</SectionLabel>
               <AddButton onClick={handleAddDeliverable}>
-                <AddIcon color="var(--gray-light)" width={12} height={12} />
+                <AddIcon color='var(--gray-light)' width={12} height={12} />
                 {t('ADD_DELIVERABLE')}
               </AddButton>
             </SectionHeader>
             {deliverables.map((x, i) => (
               <DynamicRow key={x.id || i} style={{ marginTop: 6 }}>
                 <SmallInput
-                  $width="50px"
-                  type="number"
-                  min="1"
+                  $width='50px'
+                  type='number'
+                  min='1'
                   value={x.quantity}
-                  onChange={event => handleDeliverableChange(i, 'quantity', parseInt(event.target.value, 10) || 0)}
+                  onChange={(event) => handleDeliverableChange(i, 'quantity', parseInt(event.target.value, 10) || 0)}
                 />
                 <InlineLabel>x</InlineLabel>
                 <SmallInput
-                  $width="75px"
+                  $width='75px'
                   value={x.duration}
-                  onChange={event => handleDeliverableChange(i, 'duration', event.target.value)}
-                  placeholder="30"
+                  onChange={(event) => handleDeliverableChange(i, 'duration', event.target.value)}
+                  placeholder='30'
                 />
                 <FieldSelect
                   value={x.durationUnit}
-                  onChange={event => handleDeliverableChange(i, 'durationUnit', event.target.value)}
+                  onChange={(event) => handleDeliverableChange(i, 'durationUnit', event.target.value)}
                   style={{ width: 100, flex: 'none' }}
                 >
-                  {DURATION_UNITS.map(unit => (
-                    <option key={unit} value={unit}>{unit}</option>
+                  {DURATION_UNITS.map((unit) => (
+                    <option key={unit} value={unit}>
+                      {unit}
+                    </option>
                   ))}
                 </FieldSelect>
                 <DeliverableNotesInput
                   value={x.notes}
-                  onChange={event => handleDeliverableChange(i, 'notes', event.target.value)}
-                  placeholder="e.g. 16:9 Master"
+                  onChange={(event) => handleDeliverableChange(i, 'notes', event.target.value)}
+                  placeholder='e.g. 16:9 Master'
                 />
                 <RemoveButton onClick={() => handleRemoveDeliverable(i)}>
                   <CloseIcon width={10} height={10} />
@@ -510,7 +581,7 @@ export const OfferMetaForm: React.FC = () => {
             <SectionHeader>
               <SectionLabel>{t('PRODUCTION_SCHEDULE')}</SectionLabel>
               <AddButton onClick={handleAddScheduleEntry}>
-                <AddIcon color="var(--gray-light)" width={12} height={12} />
+                <AddIcon color='var(--gray-light)' width={12} height={12} />
                 {t('ADD_SCHEDULE_ENTRY')}
               </AddButton>
             </SectionHeader>
@@ -519,35 +590,39 @@ export const OfferMetaForm: React.FC = () => {
               <DynamicRow key={x.id || i} style={{ marginTop: 6 }}>
                 <FieldSelect
                   value={x.phaseType}
-                  onChange={event => handleScheduleEntryChange(i, 'phaseType', event.target.value)}
+                  onChange={(event) => handleScheduleEntryChange(i, 'phaseType', event.target.value)}
                   style={{ width: 150, flex: 'none' }}
                 >
-                  <option value="">Phase</option>
-                  {SCHEDULE_PHASES.map(phase => (
-                    <option key={phase} value={phase}>{phase}</option>
+                  <option value=''>Phase</option>
+                  {SCHEDULE_PHASES.map((phase) => (
+                    <option key={phase} value={phase}>
+                      {phase}
+                    </option>
                   ))}
                 </FieldSelect>
                 <SmallInput
-                  $width="50px"
-                  type="number"
-                  min="0"
+                  $width='50px'
+                  type='number'
+                  min='0'
                   value={x.days}
-                  onChange={event => handleScheduleEntryChange(i, 'days', parseInt(event.target.value, 10) || 0)}
+                  onChange={(event) => handleScheduleEntryChange(i, 'days', parseInt(event.target.value, 10) || 0)}
                 />
                 <InlineLabel>{t('DAYS_LABEL')}</InlineLabel>
                 <InlineLabel>{t('AT_LABEL')}</InlineLabel>
                 <SmallInput
-                  $width="50px"
-                  type="number"
-                  min="0"
+                  $width='50px'
+                  type='number'
+                  min='0'
                   value={x.hoursPerDay}
-                  onChange={event => handleScheduleEntryChange(i, 'hoursPerDay', parseInt(event.target.value, 10) || 0)}
+                  onChange={(event) =>
+                    handleScheduleEntryChange(i, 'hoursPerDay', parseInt(event.target.value, 10) || 0)
+                  }
                 />
                 <InlineLabel>{t('HOURS_LABEL')}</InlineLabel>
                 <ScheduleNotesInput
                   value={x.notes}
-                  onChange={event => handleScheduleEntryChange(i, 'notes', event.target.value)}
-                  placeholder="e.g. 11+1 day"
+                  onChange={(event) => handleScheduleEntryChange(i, 'notes', event.target.value)}
+                  placeholder='e.g. 11+1 day'
                 />
                 <RemoveButton onClick={() => handleRemoveScheduleEntry(i)}>
                   <CloseIcon width={10} height={10} />
@@ -578,56 +653,56 @@ export const OfferMetaForm: React.FC = () => {
               <FormField $flex style={{ minWidth: 120 }}>
                 <FieldLabel>Fringes %</FieldLabel>
                 <FieldInput
-                  type="number"
-                  step="0.01"
-                  min="0"
+                  type='number'
+                  step='0.01'
+                  min='0'
                   value={fringesPercent}
                   onChange={handleFringesPercentChange}
-                  placeholder="0"
+                  placeholder='0'
                 />
               </FormField>
               <FormField $flex style={{ minWidth: 120 }}>
                 <FieldLabel>Handling %</FieldLabel>
                 <FieldInput
-                  type="number"
-                  step="0.01"
-                  min="0"
+                  type='number'
+                  step='0.01'
+                  min='0'
                   value={handlingPercent}
                   onChange={handlePercentChange('handlingPercent', setHandlingPercent)}
-                  placeholder="0"
+                  placeholder='0'
                 />
               </FormField>
               <FormField $flex style={{ minWidth: 180 }}>
                 <FieldLabel>Default External Markup %</FieldLabel>
                 <FieldInput
-                  type="number"
-                  step="0.01"
-                  min="0"
+                  type='number'
+                  step='0.01'
+                  min='0'
                   value={markupPercent}
                   onChange={handleMarkupPercentChange}
-                  placeholder="0"
+                  placeholder='0'
                 />
               </FormField>
               <FormField $flex style={{ minWidth: 120 }}>
                 <FieldLabel>Prod Insurance %</FieldLabel>
                 <FieldInput
-                  type="number"
-                  step="0.01"
-                  min="0"
+                  type='number'
+                  step='0.01'
+                  min='0'
                   value={productionInsurancePercent}
                   onChange={handlePercentChange('productionInsurancePercent', setProductionInsurancePercent)}
-                  placeholder="0"
+                  placeholder='0'
                 />
               </FormField>
               <FormField $flex style={{ minWidth: 120 }}>
                 <FieldLabel>Prod Fee %</FieldLabel>
                 <FieldInput
-                  type="number"
-                  step="0.01"
-                  min="0"
+                  type='number'
+                  step='0.01'
+                  min='0'
                   value={productionFeePercent}
                   onChange={handlePercentChange('productionFeePercent', setProductionFeePercent)}
-                  placeholder="0"
+                  placeholder='0'
                 />
               </FormField>
             </FormRow>
@@ -641,34 +716,34 @@ export const OfferMetaForm: React.FC = () => {
               <FormField $flex style={{ minWidth: 120 }}>
                 <FieldLabel>Post Markup %</FieldLabel>
                 <FieldInput
-                  type="number"
-                  step="0.01"
-                  min="0"
+                  type='number'
+                  step='0.01'
+                  min='0'
                   value={postMarkupPercent}
                   onChange={handlePercentChange('postMarkupPercent', setPostMarkupPercent)}
-                  placeholder="0"
+                  placeholder='0'
                 />
               </FormField>
               <FormField $flex style={{ minWidth: 120 }}>
                 <FieldLabel>Post Insurance %</FieldLabel>
                 <FieldInput
-                  type="number"
-                  step="0.01"
-                  min="0"
+                  type='number'
+                  step='0.01'
+                  min='0'
                   value={postInsurancePercent}
                   onChange={handlePercentChange('postInsurancePercent', setPostInsurancePercent)}
-                  placeholder="0"
+                  placeholder='0'
                 />
               </FormField>
               <FormField $flex style={{ minWidth: 120 }}>
                 <FieldLabel>Post Tax %</FieldLabel>
                 <FieldInput
-                  type="number"
-                  step="0.01"
-                  min="0"
+                  type='number'
+                  step='0.01'
+                  min='0'
                   value={postTaxPercent}
                   onChange={handlePercentChange('postTaxPercent', setPostTaxPercent)}
-                  placeholder="0"
+                  placeholder='0'
                 />
               </FormField>
             </FormRow>

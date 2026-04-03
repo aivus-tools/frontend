@@ -16,7 +16,7 @@ const Editor = dynamic(
     const tinymceReact = await import('@tinymce/tinymce-react');
     return tinymceReact.Editor;
   },
-  { ssr: false, loading: () => <div style={{ height: 150, border: '1px solid #d9d9d9', borderRadius: 6 }} /> }
+  { ssr: false, loading: () => <div style={{ height: 200, border: '1px solid #d9d9d9', borderRadius: 6 }} /> }
 );
 
 interface RichTextEditorProps {
@@ -24,7 +24,7 @@ interface RichTextEditorProps {
   onChange: (value: string) => void;
 }
 
-export const RichTextEditor: React.FC<RichTextEditorProps> = props => {
+export const RichTextEditor: React.FC<RichTextEditorProps> = (props) => {
   const editorRef = useRef<unknown>(null);
 
   return (
@@ -35,13 +35,14 @@ export const RichTextEditor: React.FC<RichTextEditorProps> = props => {
         }}
         value={props.value}
         onEditorChange={props.onChange}
-        licenseKey="gpl"
+        licenseKey='gpl'
         init={{
-          height: 150,
+          min_height: 200,
+          resize: true,
           menubar: false,
           plugins: ['lists', 'link'],
           toolbar: 'blocks | bold italic underline | bullist numlist | link',
-          block_formats: 'Paragraph=p; Heading 3=h3; Heading 4=h4',
+          block_formats: 'Paragraph=p; Heading 1=h1; Heading 2=h2; Heading 3=h3; Heading 4=h4',
           placeholder: 'e.g. Budget assumes 1 interior location and 1 shoot day.',
           content_style: `
             body {
@@ -49,11 +50,13 @@ export const RichTextEditor: React.FC<RichTextEditorProps> = props => {
               font-size: 14px;
               color: #4b5675;
             }
+            h1 { font-size: 22px; margin: 0 0 12px; }
+            h2 { font-size: 18px; margin: 0 0 10px; }
             h3 { font-size: 16px; margin: 0 0 8px; }
             h4 { font-size: 14px; margin: 0 0 6px; }
           `,
           branding: false,
-          statusbar: false,
+          statusbar: true,
           promotion: false,
           skin: false,
           content_css: false,

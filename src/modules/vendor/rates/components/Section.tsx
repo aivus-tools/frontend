@@ -37,7 +37,9 @@ export function Section({
           <ArrowIcon />
         </div>
         <div className={styles.sectionTitle}>
-          <span className={styles.sectionTitleText}>{section.category.name}</span>
+          <span className={styles.sectionTitleText}>
+            {section.letter}. {section.category.name}
+          </span>
         </div>
       </div>
 
@@ -70,7 +72,6 @@ export function Section({
               onRemove={onRemove}
             />
           ))}
-
         </div>
       )}
     </div>
@@ -124,7 +125,6 @@ function SubSection({
               onRemove={onRemove}
             />
           ))}
-
         </>
       )}
     </div>
