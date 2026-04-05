@@ -32,9 +32,7 @@ const Tab = styled.button<{ $isActive: boolean }>`
   `}
 `;
 
-const CLIENT_TABS = [
-  { key: 'dashboard', label: t('DASHBOARD') },
-];
+const CLIENT_TABS = [{ key: 'dashboard', label: t('DASHBOARD') }];
 
 export const ClientNavbar = () => {
   const router = useRouter();
@@ -44,27 +42,23 @@ export const ClientNavbar = () => {
     <div style={{ flex: 1, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
       <Nav>
         {CLIENT_TABS.map((item) => (
-          <Tab
-            key={item.key}
-            $isActive={tab === item.key}
-            onClick={() => router.push(`/app/${item.key}`)}
-          >
+          <Tab key={item.key} $isActive={tab === item.key} onClick={() => router.push(`/app/${item.key}`)}>
             {item.label}
           </Tab>
         ))}
       </Nav>
       <div style={{ display: 'flex', gap: 12, alignItems: 'center' }}>
         <Button
-          type="primary"
+          type='primary'
           style={{ background: '#FD8258', borderColor: '#FD8258' }}
           onClick={() => {
-            router.push('/app/brief/create');
+            router.push('/app/brief/create-v2');
           }}
         >
           {t('CREATE_A_BRIEF')}
         </Button>
         <Tooltip title={t('COMING_SOON')}>
-          <Button type="primary" disabled>
+          <Button type='primary' disabled>
             {t('CREATE_A_CALCULATION')}
           </Button>
         </Tooltip>

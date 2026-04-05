@@ -14,6 +14,8 @@ import { comparisonApi } from '@/services/client/comparisonApi';
 import { xlsxApi } from '@/services/client/xlsxApi';
 import { profileApi } from '@/services/client/profileApi';
 import { vendorSettingsApi } from '@/services/client/vendorSettingsApi';
+import { briefAiApi } from '@/services/client/briefAiApi';
+import { publicBriefApi } from '@/services/client/publicBriefApi';
 import { listenerMiddleware } from '@/lib/listenerMiddleware';
 
 export const makeStore = () => {
@@ -34,6 +36,8 @@ export const makeStore = () => {
         xlsxApi.middleware,
         profileApi.middleware,
         vendorSettingsApi.middleware,
+        briefAiApi.middleware,
+        publicBriefApi.middleware,
         listenerMiddleware.middleware
       ),
   });

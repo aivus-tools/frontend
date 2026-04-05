@@ -86,7 +86,7 @@ export default auth(async (req) => {
       newPathname += search;
     }
     const headers = new Headers(req.headers);
-    if (!newPathname.startsWith('/api/v1/auth/')) {
+    if (!newPathname.startsWith('/api/v1/auth/') && !newPathname.startsWith('/api/v1/public/')) {
       const timestamp = Math.floor(Date.now() / 1000).toString();
       headers.set('x-timestamp', timestamp);
       headers.set('x-user-id', id ?? '');

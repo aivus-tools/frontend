@@ -24,6 +24,10 @@ export const AppRoute = {
   BRIEF_COMPARISON: (briefId: string) => `/app/dashboard/${briefId}/comparison`,
   PROFILE: '/app/profile',
   SETTINGS: '/app/settings',
+  CREATE_BRIEF_V2: '/app/brief/create-v2',
+  BRIEF_V2_DETAIL: (briefId: string) => `/app/brief/${briefId}`,
+  PUBLIC_BRIEF: '/public-brief',
+  PUBLIC_BRIEF_DETAIL: (briefId: string) => `/public-brief/${briefId}`,
 } as const;
 
 export type AppRouteValue = (typeof AppRoute)[keyof typeof AppRoute];

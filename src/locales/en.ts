@@ -20,7 +20,8 @@ export const EN_LOCALES = {
   AND: 'and',
   ARCHIVE: 'Archive',
   ARCHIVE_PROJECT: 'Archive Project',
-  ARCHIVE_PROJECT_CONFIRM: 'This project and its offers will be moved to the archive. Public share links will stop working. You can restore the project later.',
+  ARCHIVE_PROJECT_CONFIRM:
+    'This project and its offers will be moved to the archive. Public share links will stop working. You can restore the project later.',
   AT_LEAST_ONE_PLACEMENT_REQUIRED: 'At least one placement is required',
   AT_LEAST_ONE_REFERENCE_VIDEO_REQUIRED: 'At least one reference video is required',
   BACK: 'Back',
@@ -144,13 +145,15 @@ export const EN_LOCALES = {
   PASSWORD_MIN_LENGTH: 'Password must be at least 8 characters long.',
   PASSWORD_REQUIRED: 'Password is required',
   PASSWORD_RESET_EMAIL_SENT: 'Password reset link has been sent to your email.',
-  PASSWORD_RESET_EMAIL_SENT_MESSAGE: 'We have sent a password reset link to your email. Please check your inbox and follow the instructions.',
+  PASSWORD_RESET_EMAIL_SENT_MESSAGE:
+    'We have sent a password reset link to your email. Please check your inbox and follow the instructions.',
   PASSWORD_RESET_EMAIL_SENT_TITLE: 'Email sent',
   PASSWORD_RESET_FAILED: 'Failed to reset password. Please try again.',
   PASSWORD_RESET_FAILED_TITLE: 'Reset failed',
   PASSWORD_RESET_REQUEST_FAILED: 'Failed to send password reset request',
   PASSWORD_RESET_SUCCESS: 'Password has been reset successfully',
-  PASSWORD_RESET_SUCCESS_MESSAGE: 'Your password has been successfully reset. You can now log in using your new password.',
+  PASSWORD_RESET_SUCCESS_MESSAGE:
+    'Your password has been successfully reset. You can now log in using your new password.',
   PASSWORD_RESET_SUCCESS_TITLE: 'Password reset',
   PERPETUITY: 'Perpetuity',
   PLEASE_CHOOSE_YOUR_ROLE: 'Please, choose your role:',
@@ -382,7 +385,7 @@ export const EN_LOCALES = {
 
   // AI Brief Chat
   AI_BRIEF_WELCOME:
-    'Hi! I\'m your AI assistant. I\'ll help you create a brief for your video production project. Let\'s start -- what is the name of your project?',
+    "Hi! I'm your AI assistant. I'll help you create a brief for your video production project. Let's start -- what is the name of your project?",
   AI_BRIEF_PLACEHOLDER: 'Type your message...',
   AI_BRIEF_SUBTITLE: 'Chat with AI to create your brief, or skip to fill the form manually.',
   AI_BRIEF_GUIDANCE_TEXT:
@@ -400,6 +403,31 @@ export const EN_LOCALES = {
   ABOUT_THE_PROJECT: 'About the project',
   YOU: 'You',
   AI_ASSISTANT: 'AI Assistant',
+
+  BRIEF_V2_GENERATING: 'Generating your brief...',
+  BRIEF_V2_GENERATING_SUBTITLE: 'This usually takes 10-15 seconds',
+  BRIEF_V2_SEND_PLACEHOLDER: 'Type your answer...',
+  BRIEF_V2_MESSAGE_LIMIT: 'Message limit reached',
+  BRIEF_V2_VERSION_CONFLICT: 'Someone else edited this section. Please refresh.',
+  BRIEF_V2_GENERATION_FAILED: 'Brief generation failed. Please try again.',
+  BRIEF_V2_SECTION_PROJECT_HEADER: 'Project Header',
+  BRIEF_V2_SECTION_BUDGET_TIMELINE: 'Budget & Timeline',
+  BRIEF_V2_SECTION_STRATEGIC_FOUNDATION: 'Strategic Foundation',
+  BRIEF_V2_SECTION_CREATIVE_DIRECTION: 'Creative Direction',
+  BRIEF_V2_SECTION_SCOPE_VIDEO: 'Video Production',
+  BRIEF_V2_SECTION_SCOPE_PHOTO: 'Photography & Design',
+  BRIEF_V2_SECTION_POST_PRODUCTION: 'Post-Production',
+  BRIEF_V2_SECTION_USAGE_RIGHTS: 'Usage Rights',
+  BRIEF_V2_SECTION_DELIVERABLES: 'Deliverables',
+  BRIEF_V2_DESCRIBE_PROJECT: 'Describe your video production project in a few sentences...',
+  BRIEF_V2_CREATE_BUTTON: 'Create Brief',
+  BRIEF_V2_COST_LABEL: 'Cost',
+  BRIEF_V2_FINALIZE: 'Finalize Brief',
+  BRIEF_V2_BRIEF_READY: 'Your brief is ready!',
+  BRIEF_V2_REGISTER_CTA: 'Register to edit and download your brief',
+  BRIEF_V2_REGISTER_BUTTON: 'Create Free Account',
+  BRIEF_V2_PUBLIC_TITLE: 'Create a Professional Brief',
+  BRIEF_V2_PUBLIC_SUBTITLE: 'Describe your project and get a complete video production brief in seconds.',
 
   // Comparison
   COMPARISON: 'Comparison',
@@ -419,8 +447,7 @@ export const EN_LOCALES = {
   NO_COMPARISON_DATA: 'No comparison data available. Add offers to this brief to compare.',
   COMPARISON_GUIDANCE_TEXT:
     'This table compares vendor offers side by side. Colors indicate relative pricing: green is the lowest and red is the highest.',
-  COMPARISON_COLOR_HINT:
-    'Use the AI Analysis tab to ask questions about pricing differences and get recommendations.',
+  COMPARISON_COLOR_HINT: 'Use the AI Analysis tab to ask questions about pricing differences and get recommendations.',
 
   // Profile
   PROFILE: 'Profile',
@@ -482,7 +509,8 @@ export const EN_LOCALES = {
   MEDIA_PLACEMENTS_LABEL: 'Media / Placements',
   DELIVERABLES: 'Deliverables',
   PRODUCTION_SCHEDULE: 'Production Schedule',
-  PRODUCTION_SCHEDULE_HINT: 'Number of days and length of the day, including 1 hour of lunch if the day is more than 6 hours long.',
+  PRODUCTION_SCHEDULE_HINT:
+    'Number of days and length of the day, including 1 hour of lunch if the day is more than 6 hours long.',
   COVER_PAGE_NOTES: 'Cover Page Notes',
   ADD_DELIVERABLE: 'add deliverable',
   ADD_SCHEDULE_ENTRY: 'add entry',
