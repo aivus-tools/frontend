@@ -1,15 +1,24 @@
 'use client';
 
 import React, { useState, useRef, useEffect, useCallback } from 'react';
-import { Button, Input } from 'antd';
-import { SendOutlined, LikeOutlined, DislikeOutlined } from '@ant-design/icons';
+import { Button, Input, Modal } from 'antd';
+import { SendOutlined, LikeOutlined, DislikeOutlined, CommentOutlined } from '@ant-design/icons';
 import { t } from '@/lib/i18n';
-import { ChatMessageV2, ConversationPhase } from '@/types/briefV2.interface';
+import {
+  ChatMessageV2,
+  ConversationPhase,
+  SectionStatus,
+  SECTION_DISPLAY_NAMES,
+  BriefSectionKey,
+} from '@/types/briefV2.interface';
 import {
   ChatPanel,
   ChatHeader,
   ChatTitle,
   ChatPhase,
+  ProgressBar,
+  ProgressFill,
+  ProgressText,
   MessagesArea,
   MessageRow,
   MessageBubble,
@@ -18,6 +27,10 @@ import {
   SectionBadge,
   FeedbackRow,
   FeedbackButton,
+  CommentModalBody,
+  CommentRatingRow,
+  CommentRatingButton,
+  CommentContext,
   TypingIndicator,
   TypingDot,
   InputArea,
@@ -30,11 +43,14 @@ const TextArea = Input.TextArea;
 interface BriefChatPanelProps {
   messages: ChatMessageV2[];
   conversationPhase: ConversationPhase;
+  sectionsStatus: Record<string, SectionStatus>;
   isLoading: boolean;
   messageLimit: number;
   messageCount: number;
   onSendMessage: (message: string) => void;
   onFeedback: ((messageId: string, rating: 'up' | 'down') => void) | null;
+  onFeedbackComment: ((messageId: string, rating: 'up' | 'down', comment: string) => void) | null;
+  onFinalize: (() => void) | null;
 }
 
 const PHASE_LABELS: Record<ConversationPhase, string> = {
@@ -49,9 +65,16 @@ const formatTime = (iso: string): string => {
   return date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
 };
 
+const getSectionDisplayName = (key: string): string => {
+  return SECTION_DISPLAY_NAMES[key as BriefSectionKey] ?? key.replace(/_/g, ' ');
+};
+
 export const BriefChatPanel: React.FC<BriefChatPanelProps> = (props) => {
   const [inputValue, setInputValue] = useState('');
   const [feedbackGiven, setFeedbackGiven] = useState<Record<string, 'up' | 'down'>>({});
+  const [commentModalMessageId, setCommentModalMessageId] = useState<string | null>(null);
+  const [commentText, setCommentText] = useState('');
+  const [commentRating, setCommentRating] = useState<'up' | 'down'>('up');
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLTextAreaElement>(null);
 
@@ -93,19 +116,52 @@ export const BriefChatPanel: React.FC<BriefChatPanelProps> = (props) => {
     props.onFeedback(messageId, rating);
   };
 
+  const openCommentModal = (messageId: string) => {
+    const existingRating = feedbackGiven[messageId];
+    setCommentModalMessageId(messageId);
+    setCommentText('');
+    setCommentRating(existingRating ?? 'up');
+  };
+
+  const handleCommentSubmit = () => {
+    if (!commentModalMessageId || !commentText.trim()) {
+      return;
+    }
+    props.onFeedbackComment?.(commentModalMessageId, commentRating, commentText.trim());
+    setFeedbackGiven((prev) => ({ ...prev, [commentModalMessageId]: commentRating }));
+    setCommentModalMessageId(null);
+  };
+
+  const commentModalMessage = commentModalMessageId ? props.messages.find((x) => x.id === commentModalMessageId) : null;
+
   const isLimitReached = props.messageCount >= props.messageLimit;
+  const firstAssistantIndex = props.messages.findIndex((x) => x.role === 'assistant');
+
+  const sectionValues = Object.values(props.sectionsStatus);
+  const totalSections = sectionValues.length || 9;
+  const completedSections = sectionValues.filter((x) => x === 'complete').length;
+  const draftSections = sectionValues.filter((x) => x === 'draft').length;
+  const progressPercent = Math.round(((completedSections + draftSections * 0.5) / totalSections) * 100);
 
   return (
     <ChatPanel>
       <ChatHeader>
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
           <ChatTitle>Chat</ChatTitle>
-          <ChatPhase>{PHASE_LABELS[props.conversationPhase]}</ChatPhase>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+            <ProgressText>
+              {completedSections}/{totalSections}
+            </ProgressText>
+            <ChatPhase>{PHASE_LABELS[props.conversationPhase]}</ChatPhase>
+          </div>
         </div>
+        <ProgressBar>
+          <ProgressFill $percent={progressPercent} />
+        </ProgressBar>
       </ChatHeader>
 
       <MessagesArea>
-        {props.messages.map((message) => (
+        {props.messages.map((message, index) => (
           <div key={message.id}>
             <MessageRow $isUser={message.role === 'user'}>
               <MessageBubble $isUser={message.role === 'user'}>{message.content}</MessageBubble>
@@ -114,7 +170,10 @@ export const BriefChatPanel: React.FC<BriefChatPanelProps> = (props) => {
               <MessageTime $isUser={message.role === 'user'}>{formatTime(message.createdAt)}</MessageTime>
               {message.role === 'assistant' &&
                 message.sectionsChanged.length > 0 &&
-                message.sectionsChanged.map((key) => <SectionBadge key={key}>{key.replace(/_/g, ' ')}</SectionBadge>)}
+                index !== firstAssistantIndex &&
+                message.sectionsChanged.map((key) => (
+                  <SectionBadge key={key}>{getSectionDisplayName(key)}</SectionBadge>
+                ))}
             </MessageMeta>
             {message.role === 'assistant' && props.onFeedback && (
               <FeedbackRow>
@@ -130,6 +189,11 @@ export const BriefChatPanel: React.FC<BriefChatPanelProps> = (props) => {
                 >
                   <DislikeOutlined />
                 </FeedbackButton>
+                {props.onFeedbackComment && (
+                  <FeedbackButton onClick={() => openCommentModal(message.id)}>
+                    <CommentOutlined />
+                  </FeedbackButton>
+                )}
               </FeedbackRow>
             )}
           </div>
@@ -149,7 +213,16 @@ export const BriefChatPanel: React.FC<BriefChatPanelProps> = (props) => {
       </MessagesArea>
 
       <InputArea>
-        {isLimitReached ? (
+        {props.conversationPhase === 'complete' && props.onFinalize ? (
+          <Button
+            type='primary'
+            onClick={props.onFinalize}
+            block
+            style={{ background: '#22c55e', borderColor: '#22c55e', fontWeight: 600, height: 44 }}
+          >
+            {t('BRIEF_V2_FINALIZE')}
+          </Button>
+        ) : isLimitReached ? (
           <LimitBadge>{t('BRIEF_V2_MESSAGE_LIMIT')}</LimitBadge>
         ) : (
           <>
@@ -186,6 +259,45 @@ export const BriefChatPanel: React.FC<BriefChatPanelProps> = (props) => {
           </>
         )}
       </InputArea>
+      <Modal
+        title={t('BRIEF_V2_FEEDBACK_TITLE')}
+        open={commentModalMessageId != null}
+        onCancel={() => setCommentModalMessageId(null)}
+        onOk={handleCommentSubmit}
+        okText={t('BRIEF_V2_FEEDBACK_SUBMIT')}
+        cancelText={t('BRIEF_V2_FEEDBACK_CANCEL')}
+        okButtonProps={{ disabled: !commentText.trim() }}
+        width={400}
+        destroyOnClose
+      >
+        <CommentModalBody>
+          <CommentRatingRow>
+            <CommentRatingButton $active={commentRating === 'up'} onClick={() => setCommentRating('up')}>
+              <LikeOutlined />
+            </CommentRatingButton>
+            <CommentRatingButton $active={commentRating === 'down'} onClick={() => setCommentRating('down')}>
+              <DislikeOutlined />
+            </CommentRatingButton>
+          </CommentRatingRow>
+          <Input.TextArea
+            value={commentText}
+            onChange={(event) => setCommentText(event.target.value)}
+            placeholder={t('BRIEF_V2_FEEDBACK_PLACEHOLDER')}
+            autoSize={{ minRows: 3, maxRows: 6 }}
+            maxLength={2000}
+            showCount
+            style={{ fontFamily: "'Montserrat', sans-serif", fontSize: 13 }}
+          />
+          {commentModalMessage && commentModalMessage.sectionsChanged.length > 0 && (
+            <CommentContext>
+              <span>{t('BRIEF_V2_FEEDBACK_SECTIONS')}:</span>
+              {commentModalMessage.sectionsChanged.map((key) => (
+                <SectionBadge key={key}>{getSectionDisplayName(key)}</SectionBadge>
+              ))}
+            </CommentContext>
+          )}
+        </CommentModalBody>
+      </Modal>
     </ChatPanel>
   );
 };

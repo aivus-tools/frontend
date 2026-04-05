@@ -1,6 +1,6 @@
 'use client';
 import { Button, message, Typography } from 'antd';
-import { useState } from 'react';
+import { useState, useEffect, useRef } from 'react';
 
 import { GROUPS } from '@/constants/constants';
 import { Groups } from '@/types/user.interface';
@@ -21,6 +21,7 @@ export function Form() {
   const [loading, setLoading] = useState(false);
   const { change } = useChangeGroup();
   const [group, setGroup] = useState<Groups | null>(null);
+  const autoTriggered = useRef(false);
 
   const trigger = (group: Exclude<Groups, 'UNCONFIRMED' | 'CONFIRMED'>) => async () => {
     setLoading(true);
@@ -34,6 +35,17 @@ export function Form() {
       setLoading(false);
     }
   };
+
+  useEffect(() => {
+    if (session.data?.user?.group !== GROUPS.confirmed || autoTriggered.current) {
+      return;
+    }
+    const redirect = sessionStorage.getItem('aivus_post_auth_redirect');
+    if (redirect && redirect.includes('/brief/claim/')) {
+      autoTriggered.current = true;
+      trigger(GROUPS.client)();
+    }
+  }, [session.data?.user?.group]);
 
   if (session.data?.user?.group !== GROUPS.confirmed) {
     return <Spinner />;

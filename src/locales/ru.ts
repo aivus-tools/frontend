@@ -426,8 +426,17 @@ export const RU_LOCALES = {
   BRIEF_V2_BRIEF_READY: 'Your brief is ready!',
   BRIEF_V2_REGISTER_CTA: 'Register to edit and download your brief',
   BRIEF_V2_REGISTER_BUTTON: 'Create Free Account',
+  BRIEF_V2_EXPORT_PDF: 'Export PDF',
+  BRIEF_V2_EDIT: 'Edit',
   BRIEF_V2_PUBLIC_TITLE: 'Create a Professional Brief',
   BRIEF_V2_PUBLIC_SUBTITLE: 'Describe your project and get a complete video production brief in seconds.',
+  BRIEF_V2_FEEDBACK_TITLE: 'Leave Feedback',
+  BRIEF_V2_FEEDBACK_SUBMIT: 'Submit',
+  BRIEF_V2_FEEDBACK_CANCEL: 'Cancel',
+  BRIEF_V2_FEEDBACK_PLACEHOLDER: 'What could be improved in this response?',
+  BRIEF_V2_FEEDBACK_SECTIONS: 'Sections affected',
+  BRIEF_V2_START_EXAMPLE:
+    'e.g. "We need a 60-second commercial for our fitness app. Two actors, gym location. For Instagram and YouTube ads, targeting young professionals."',
 
   // Comparison
   COMPARISON: 'Сравнение',

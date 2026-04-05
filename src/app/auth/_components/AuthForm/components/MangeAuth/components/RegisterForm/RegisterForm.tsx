@@ -95,6 +95,10 @@ export const RegisterForm = ({ email, prevStepAction }: { email: string; prevSte
         form.resetFields();
         form.setFields([{ name: 'password', errors: [''] }]);
       } else {
+        const redirect = new URLSearchParams(window.location.search).get('redirect');
+        if (redirect) {
+          sessionStorage.setItem('aivus_post_auth_redirect', redirect);
+        }
         window.location.href = AppRoute.CONFIRM;
       }
     } catch (error) {

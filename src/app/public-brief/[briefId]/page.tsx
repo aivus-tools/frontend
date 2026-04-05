@@ -3,7 +3,7 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { useParams, useSearchParams, useRouter } from 'next/navigation';
 import { styled } from 'styled-components';
-import { Button, message } from 'antd';
+import { App, Button } from 'antd';
 import { t } from '@/lib/i18n';
 import { BriefEditor } from '@/modules/client/BriefEditorV2/BriefEditor';
 import { BriefChatPanel } from '@/modules/client/BriefChatV2/BriefChatPanel';
@@ -45,6 +45,7 @@ const POLL_INTERVAL = 1500;
 const POLL_TIMEOUT = 120000;
 
 export default function PublicBriefDetailPage() {
+  const { message } = App.useApp();
   const params = useParams();
   const searchParams = useSearchParams();
   const router = useRouter();
@@ -142,7 +143,7 @@ export default function PublicBriefDetailPage() {
     }, POLL_TIMEOUT);
 
     return stopPolling;
-  }, [briefId, initialTaskId, token, triggerStatus, stopPolling]);
+  }, [briefId, initialTaskId, token, triggerStatus, stopPolling, message]);
 
   const handleSendMessage = async (text: string) => {
     if (!token) {
@@ -247,11 +248,14 @@ export default function PublicBriefDetailPage() {
         <BriefChatPanel
           messages={messages}
           conversationPhase={conversationPhase}
+          sectionsStatus={sectionsStatus}
           isLoading={isChatLoading}
           messageLimit={MESSAGE_LIMIT}
           messageCount={messageCount}
           onSendMessage={handleSendMessage}
           onFeedback={null}
+          onFeedbackComment={null}
+          onFinalize={null}
         />
       </LayoutWrapper>
       {conversationPhase === 'complete' && (
@@ -259,7 +263,7 @@ export default function PublicBriefDetailPage() {
           <BannerText>{t('BRIEF_V2_REGISTER_CTA')}</BannerText>
           <Button
             type='primary'
-            onClick={() => router.push(`/auth?redirect=/public-brief/${briefId}/claim`)}
+            onClick={() => router.push(`/auth?redirect=/app/brief/claim/${briefId}`)}
             style={{ background: '#2288FF', borderColor: '#2288FF', fontWeight: 600 }}
           >
             {t('BRIEF_V2_REGISTER_BUTTON')}

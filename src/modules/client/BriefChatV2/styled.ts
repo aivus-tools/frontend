@@ -30,6 +30,29 @@ export const ChatPhase = styled.span`
   font-weight: 500;
 `;
 
+export const ProgressBar = styled.div`
+  height: 4px;
+  background: #eef0f4;
+  border-radius: 2px;
+  margin-top: 8px;
+  overflow: hidden;
+`;
+
+export const ProgressFill = styled.div<{ $percent: number }>`
+  height: 100%;
+  width: ${(x) => x.$percent}%;
+  background: ${(x) => (x.$percent >= 100 ? '#22c55e' : '#2288ff')};
+  border-radius: 2px;
+  transition: width 0.5s ease;
+`;
+
+export const ProgressText = styled.span`
+  font-family: 'Montserrat', sans-serif;
+  font-size: 10px;
+  color: #99a1b7;
+  font-weight: 500;
+`;
+
 export const MessagesArea = styled.div`
   flex: 1;
   overflow-y: auto;
@@ -74,7 +97,8 @@ export const MessageBubble = styled.div<{ $isUser: boolean }>`
 export const MessageMeta = styled.div<{ $isUser: boolean }>`
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 6px;
+  flex-wrap: wrap;
   margin-top: 4px;
   justify-content: ${(x) => (x.$isUser ? 'flex-end' : 'flex-start')};
 `;
@@ -123,6 +147,48 @@ export const FeedbackButton = styled.button<{ $active?: boolean }>`
     background: #eef0f4;
     color: #4b5675;
   }
+`;
+
+export const CommentModalBody = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+`;
+
+export const CommentRatingRow = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 8px;
+`;
+
+export const CommentRatingButton = styled.button<{ $active?: boolean }>`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border: 1px solid ${(x) => (x.$active ? '#2288FF' : '#e5e7eb')};
+  border-radius: 6px;
+  background: ${(x) => (x.$active ? '#e8f0fe' : '#ffffff')};
+  color: ${(x) => (x.$active ? '#2288FF' : '#99a1b7')};
+  cursor: pointer;
+  font-size: 14px;
+  transition: all 0.15s ease;
+
+  &:hover {
+    border-color: #2288ff;
+    color: #2288ff;
+  }
+`;
+
+export const CommentContext = styled.div`
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  align-items: center;
+  font-family: 'Montserrat', sans-serif;
+  font-size: 11px;
+  color: #99a1b7;
 `;
 
 const dotPulse = keyframes`

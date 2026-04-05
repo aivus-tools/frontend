@@ -26,6 +26,10 @@ export const PasswordForm = ({ email, prevStepAction }: { email: string; prevSte
         form.resetFields();
         form.setFields([{ name: 'password', errors: [''] }]);
       } else {
+        const redirect = new URLSearchParams(window.location.search).get('redirect');
+        if (redirect) {
+          sessionStorage.setItem('aivus_post_auth_redirect', redirect);
+        }
         window.location.href = CALLBACK_URL || AppRoute.HOME;
       }
     } catch (error) {
@@ -40,7 +44,11 @@ export const PasswordForm = ({ email, prevStepAction }: { email: string; prevSte
     <Form form={form} layout='vertical' onFinish={handleFinish}>
       {contextHolder}
       <div className={styles.inputWrapper}>
-        <Form.Item name='password' style={{ marginBottom: 8 }} rules={[{ required: true, message: t('PASSWORD_REQUIRED') }]}>
+        <Form.Item
+          name='password'
+          style={{ marginBottom: 8 }}
+          rules={[{ required: true, message: t('PASSWORD_REQUIRED') }]}
+        >
           <Input
             size='large'
             placeholder={t('ENTER_PASSWORD_PLACEHOLDER')}

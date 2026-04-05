@@ -26,6 +26,7 @@ export const AppRoute = {
   SETTINGS: '/app/settings',
   CREATE_BRIEF_V2: '/app/brief/create-v2',
   BRIEF_V2_DETAIL: (briefId: string) => `/app/brief/${briefId}`,
+  BRIEF_CLAIM: (briefId: string) => `/app/brief/claim/${briefId}`,
   PUBLIC_BRIEF: '/public-brief',
   PUBLIC_BRIEF_DETAIL: (briefId: string) => `/public-brief/${briefId}`,
 } as const;

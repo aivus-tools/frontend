@@ -2,7 +2,7 @@
 
 import React, { useState, useCallback, useRef, useEffect } from 'react';
 import { styled } from 'styled-components';
-import { Button, message } from 'antd';
+import { App, Button } from 'antd';
 import { t } from '@/lib/i18n';
 import { BriefEditor } from './BriefEditor';
 import { BriefChatPanel } from '@/modules/client/BriefChatV2/BriefChatPanel';
@@ -76,13 +76,14 @@ const StartTextarea = styled.textarea`
   }
 `;
 
-const FooterBar = styled.div`
-  padding: 12px 20px;
-  border-top: 1px solid #eef0f4;
-  background: #ffffff;
-  display: flex;
-  justify-content: flex-end;
-  gap: 12px;
+const StartExample = styled.p`
+  font-family: 'Montserrat', sans-serif;
+  font-size: 12px;
+  color: #9ca3af;
+  margin: -12px 0 0;
+  max-width: 600px;
+  line-height: 1.5;
+  font-style: italic;
 `;
 
 const MESSAGE_LIMIT = 50;
@@ -94,6 +95,7 @@ interface BriefEditorLayoutProps {
 }
 
 export const BriefEditorLayout: React.FC<BriefEditorLayoutProps> = (props) => {
+  const { message } = App.useApp();
   const [briefId, setBriefId] = useState<string | null>(props.briefId);
   const [taskId, setTaskId] = useState<string | null>(null);
   const [isGenerating, setIsGenerating] = useState(false);
@@ -194,7 +196,7 @@ export const BriefEditorLayout: React.FC<BriefEditorLayoutProps> = (props) => {
         message.error(t('BRIEF_V2_GENERATION_FAILED'));
       }, POLL_TIMEOUT);
     },
-    [stopPolling, triggerStatus]
+    [stopPolling, triggerStatus, message]
   );
 
   const handleStart = async () => {
@@ -313,7 +315,7 @@ export const BriefEditorLayout: React.FC<BriefEditorLayoutProps> = (props) => {
         }
       }
     },
-    [briefId, updateSection]
+    [briefId, updateSection, message]
   );
 
   const handleFeedback = useCallback(
@@ -328,6 +330,26 @@ export const BriefEditorLayout: React.FC<BriefEditorLayoutProps> = (props) => {
           sectionKey: '',
           rating,
           comment: '',
+        }).unwrap();
+      } catch {
+        // noop
+      }
+    },
+    [briefId, sendFeedback]
+  );
+
+  const handleFeedbackComment = useCallback(
+    async (messageId: string, rating: 'up' | 'down', comment: string) => {
+      if (!briefId) {
+        return;
+      }
+      try {
+        await sendFeedback({
+          briefId,
+          messageId,
+          sectionKey: '',
+          rating,
+          comment,
         }).unwrap();
       } catch {
         // noop
@@ -366,6 +388,7 @@ export const BriefEditorLayout: React.FC<BriefEditorLayoutProps> = (props) => {
               }
             }}
           />
+          <StartExample>{t('BRIEF_V2_START_EXAMPLE')}</StartExample>
           <Button
             type='primary'
             size='large'
@@ -405,19 +428,15 @@ export const BriefEditorLayout: React.FC<BriefEditorLayoutProps> = (props) => {
       <BriefChatPanel
         messages={messages}
         conversationPhase={conversationPhase}
+        sectionsStatus={sectionsStatus}
         isLoading={isChatLoading}
         messageLimit={MESSAGE_LIMIT}
         messageCount={messageCount}
         onSendMessage={handleSendMessage}
         onFeedback={handleFeedback}
+        onFeedbackComment={handleFeedbackComment}
+        onFinalize={handleFinalize}
       />
-      {conversationPhase === 'complete' && (
-        <FooterBar>
-          <Button type='primary' onClick={handleFinalize} style={{ background: '#22c55e', borderColor: '#22c55e' }}>
-            {t('BRIEF_V2_FINALIZE')}
-          </Button>
-        </FooterBar>
-      )}
     </LayoutWrapper>
   );
 };

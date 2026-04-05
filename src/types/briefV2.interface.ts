@@ -16,6 +16,18 @@ export const BRIEF_SECTION_KEYS = [
 
 export type BriefSectionKey = (typeof BRIEF_SECTION_KEYS)[number];
 
+export const SECTION_DISPLAY_NAMES: Record<BriefSectionKey, string> = {
+  project_header: 'Project Header',
+  budget_timeline: 'Budget & Timeline',
+  strategic_foundation: 'Strategic Foundation',
+  creative_direction: 'Creative Direction',
+  scope_video: 'Video Production',
+  scope_photo: 'Photography',
+  post_production: 'Post-Production',
+  usage_rights: 'Usage Rights',
+  deliverables: 'Deliverables',
+};
+
 export interface BriefV2 {
   id: string;
   status: string;

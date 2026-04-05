@@ -27,7 +27,13 @@ export const useChangeGroup = () => {
         // Wait for cookie update
         await new Promise((resolve) => setTimeout(resolve, 1000));
 
-        window.location.href = AppRoute.DASHBOARD;
+        const postAuthRedirect = sessionStorage.getItem('aivus_post_auth_redirect');
+        if (postAuthRedirect) {
+          sessionStorage.removeItem('aivus_post_auth_redirect');
+          window.location.href = postAuthRedirect;
+        } else {
+          window.location.href = AppRoute.DASHBOARD;
+        }
       }
     },
     ...options,

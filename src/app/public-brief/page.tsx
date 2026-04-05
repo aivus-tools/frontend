@@ -82,6 +82,16 @@ const Logo = styled.div`
   margin-bottom: 8px;
 `;
 
+const Example = styled.p`
+  font-family: 'Montserrat', sans-serif;
+  font-size: 12px;
+  color: #9ca3af;
+  margin: -12px 0 0;
+  line-height: 1.5;
+  font-style: italic;
+  text-align: center;
+`;
+
 export default function PublicBriefPage() {
   const [inputValue, setInputValue] = useState('');
   const [isLoading, setIsLoading] = useState(false);
@@ -123,6 +133,7 @@ export default function PublicBriefPage() {
             }
           }}
         />
+        <Example>{t('BRIEF_V2_START_EXAMPLE')}</Example>
         <Button
           type='primary'
           size='large'
