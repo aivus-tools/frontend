@@ -85,6 +85,7 @@ export const briefAiApi = createApi({
         url: ApiRoute.BRIEF_AI_FINALIZE(briefId),
         method: 'POST',
       }),
+      invalidatesTags: ['BriefV2'],
     }),
   }),
 });

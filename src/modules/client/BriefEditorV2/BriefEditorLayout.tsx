@@ -4,8 +4,10 @@ import React, { useState, useCallback, useRef, useEffect } from 'react';
 import { styled } from 'styled-components';
 import { App, Button } from 'antd';
 import { t } from '@/lib/i18n';
+import { ApiRoute } from '@/constants/apiRoute';
 import { BriefEditor } from './BriefEditor';
 import { BriefChatPanel } from '@/modules/client/BriefChatV2/BriefChatPanel';
+import { BriefSharePopup } from '@/modules/BriefSharePopup/BriefSharePopup';
 import { Spinner, GeneratingOverlay, GeneratingTitle, GeneratingSubtitle } from '@/modules/client/BriefChatV2/styled';
 import {
   useStartBriefAiMutation,
@@ -17,6 +19,28 @@ import {
   useFinalizeBriefAiMutation,
 } from '@/services/client/briefAiApi';
 import { ChatMessageV2, ConversationPhase, SectionStatus, BriefV2ChatResponse } from '@/types/briefV2.interface';
+
+const OuterWrapper = styled.div`
+  display: flex;
+  flex-direction: column;
+  height: calc(100vh - 70px);
+  background: #f8f9fb;
+`;
+
+const ActionBar = styled.div`
+  padding: 8px 20px;
+  border-bottom: 1px solid #eef0f4;
+  background: #ffffff;
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+`;
+
+const ContentWrapper = styled.div`
+  display: flex;
+  flex: 1;
+  overflow: hidden;
+`;
 
 const LayoutWrapper = styled.div`
   display: flex;
@@ -102,6 +126,7 @@ export const BriefEditorLayout: React.FC<BriefEditorLayoutProps> = (props) => {
   const [documentHtml, setDocumentHtml] = useState('');
   const [sectionsStatus, setSectionsStatus] = useState<Record<string, SectionStatus>>({});
   const [conversationPhase, setConversationPhase] = useState<ConversationPhase>('initial');
+  const [briefStatus, setBriefStatus] = useState('DRAFT');
   const [messages, setMessages] = useState<ChatMessageV2[]>([]);
   const [sectionsChanged, setSectionsChanged] = useState<string[]>([]);
   const [totalCostUsd, setTotalCostUsd] = useState('0');
@@ -110,6 +135,7 @@ export const BriefEditorLayout: React.FC<BriefEditorLayoutProps> = (props) => {
   const [isChatLoading, setIsChatLoading] = useState(false);
   const [isStarting, setIsStarting] = useState(false);
   const [startMessage, setStartMessage] = useState('');
+  const [isShareOpen, setIsShareOpen] = useState(false);
   const pollRef = useRef<ReturnType<typeof setInterval> | null>(null);
   const pollTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const highlightTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -131,6 +157,7 @@ export const BriefEditorLayout: React.FC<BriefEditorLayoutProps> = (props) => {
     setDocumentHtml(briefDetail.documentHtml);
     setSectionsStatus(briefDetail.sectionsStatus);
     setConversationPhase(briefDetail.conversationPhase);
+    setBriefStatus(briefDetail.status);
     setMessages(briefDetail.messages);
     setTotalCostUsd(briefDetail.totalCostUsd);
     setVersion(briefDetail.version);
@@ -365,7 +392,19 @@ export const BriefEditorLayout: React.FC<BriefEditorLayoutProps> = (props) => {
     try {
       await finalizeBrief(briefId).unwrap();
       message.success(t('BRIEF_V2_BRIEF_READY'));
-      setConversationPhase('complete');
+      setBriefStatus('COMPLETED');
+    } catch {
+      message.error(t('UNEXPECTED_ERROR'));
+    }
+  };
+
+  const handlePdf = async () => {
+    if (!briefId) {
+      return;
+    }
+    try {
+      const { downloadPdf } = await import('@/helpers/downloadPdf');
+      await downloadPdf(ApiRoute.BRIEF_AI_PDF(briefId), 'Brief.pdf');
     } catch {
       message.error(t('UNEXPECTED_ERROR'));
     }
@@ -415,28 +454,42 @@ export const BriefEditorLayout: React.FC<BriefEditorLayoutProps> = (props) => {
     );
   }
 
+  const isCompleted = briefStatus === 'COMPLETED';
+
   return (
-    <LayoutWrapper>
-      <BriefEditor
-        documentHtml={documentHtml}
-        sectionsStatus={sectionsStatus}
-        sectionsChanged={sectionsChanged}
-        readOnly={false}
-        totalCostUsd={totalCostUsd}
-        onSectionEdit={handleSectionEdit}
-      />
-      <BriefChatPanel
-        messages={messages}
-        conversationPhase={conversationPhase}
-        sectionsStatus={sectionsStatus}
-        isLoading={isChatLoading}
-        messageLimit={MESSAGE_LIMIT}
-        messageCount={messageCount}
-        onSendMessage={handleSendMessage}
-        onFeedback={handleFeedback}
-        onFeedbackComment={handleFeedbackComment}
-        onFinalize={handleFinalize}
-      />
-    </LayoutWrapper>
+    <OuterWrapper>
+      {isCompleted && (
+        <ActionBar>
+          <Button onClick={handlePdf}>{t('BRIEF_V2_EXPORT_PDF')}</Button>
+          <Button onClick={() => setIsShareOpen(true)}>{t('BRIEF_V2_SHARE')}</Button>
+        </ActionBar>
+      )}
+      <ContentWrapper>
+        <BriefEditor
+          documentHtml={documentHtml}
+          sectionsStatus={sectionsStatus}
+          sectionsChanged={sectionsChanged}
+          readOnly={false}
+          totalCostUsd={totalCostUsd}
+          onSectionEdit={handleSectionEdit}
+        />
+        <BriefChatPanel
+          messages={messages}
+          conversationPhase={conversationPhase}
+          briefStatus={briefStatus}
+          sectionsStatus={sectionsStatus}
+          isLoading={isChatLoading}
+          messageLimit={MESSAGE_LIMIT}
+          messageCount={messageCount}
+          onSendMessage={handleSendMessage}
+          onFeedback={handleFeedback}
+          onFeedbackComment={handleFeedbackComment}
+          onFinalize={handleFinalize}
+        />
+      </ContentWrapper>
+      {isCompleted && briefId && (
+        <BriefSharePopup open={isShareOpen} onClose={() => setIsShareOpen(false)} briefId={briefId} />
+      )}
+    </OuterWrapper>
   );
 };

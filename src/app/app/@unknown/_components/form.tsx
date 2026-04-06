@@ -12,6 +12,7 @@ import { useSession } from 'next-auth/react';
 import Spinner from '@/components/Spinner';
 import { t } from '@/lib/i18n';
 import { logout } from '@/auth/actions/logout';
+import { AppRoute } from '@/constants/appRoute';
 
 const { Title } = Typography;
 
@@ -44,6 +45,23 @@ export function Form() {
     if (redirect && redirect.includes('/brief/claim/')) {
       autoTriggered.current = true;
       trigger(GROUPS.client)();
+    }
+  }, [session.data?.user?.group]);
+
+  useEffect(() => {
+    if (autoTriggered.current) {
+      return;
+    }
+    const currentGroup = session.data?.user?.group;
+    if (!currentGroup || currentGroup === GROUPS.confirmed || currentGroup === GROUPS.unconfirmed) {
+      return;
+    }
+    const redirect = sessionStorage.getItem('aivus_post_auth_redirect');
+    if (redirect) {
+      sessionStorage.removeItem('aivus_post_auth_redirect');
+      window.location.href = redirect;
+    } else {
+      window.location.href = AppRoute.DASHBOARD;
     }
   }, [session.data?.user?.group]);
 

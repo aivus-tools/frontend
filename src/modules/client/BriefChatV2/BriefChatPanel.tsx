@@ -43,6 +43,7 @@ const TextArea = Input.TextArea;
 interface BriefChatPanelProps {
   messages: ChatMessageV2[];
   conversationPhase: ConversationPhase;
+  briefStatus: string;
   sectionsStatus: Record<string, SectionStatus>;
   isLoading: boolean;
   messageLimit: number;
@@ -213,7 +214,7 @@ export const BriefChatPanel: React.FC<BriefChatPanelProps> = (props) => {
       </MessagesArea>
 
       <InputArea>
-        {props.conversationPhase === 'complete' && props.onFinalize ? (
+        {props.conversationPhase === 'complete' && props.briefStatus !== 'COMPLETED' && props.onFinalize ? (
           <Button
             type='primary'
             onClick={props.onFinalize}
@@ -234,7 +235,7 @@ export const BriefChatPanel: React.FC<BriefChatPanelProps> = (props) => {
                 onKeyDown={handleKeyDown}
                 placeholder={t('BRIEF_V2_SEND_PLACEHOLDER')}
                 autoSize={{ minRows: 1, maxRows: 4 }}
-                disabled={props.isLoading || props.conversationPhase === 'complete'}
+                disabled={props.isLoading}
                 style={{
                   fontFamily: "'Montserrat', sans-serif",
                   fontSize: 13,
@@ -247,7 +248,7 @@ export const BriefChatPanel: React.FC<BriefChatPanelProps> = (props) => {
               type='primary'
               icon={<SendOutlined />}
               onClick={handleSend}
-              disabled={!inputValue.trim() || props.isLoading || props.conversationPhase === 'complete'}
+              disabled={!inputValue.trim() || props.isLoading}
               style={{
                 background: '#FD8258',
                 borderColor: '#FD8258',

@@ -46,13 +46,15 @@ export const MobileStub = () => {
           .aivus-mobile-stub { display: flex !important; }
           .aivus-desktop-content { display: none !important; }
         }
+        @media print {
+          .aivus-mobile-stub { display: none !important; }
+          .aivus-desktop-content { display: block !important; }
+        }
       `}</style>
-      <div className="aivus-mobile-stub" style={overlayStyle}>
+      <div className='aivus-mobile-stub' style={overlayStyle}>
         <div style={logoStyle}>Aivus</div>
         <div style={titleStyle}>Aivus works best on desktop</div>
-        <div style={subtitleStyle}>
-          Please open this page on a device with a larger screen to access all features
-        </div>
+        <div style={subtitleStyle}>Please open this page on a device with a larger screen to access all features</div>
       </div>
     </>
   );

@@ -54,7 +54,7 @@ export const Confirm = () => {
       await confirmEmail(token).unwrap();
       messageApi.success(t('EMAIL_CONFIRMED'));
       await session.update();
-      window.location.href = AppRoute.DASHBOARD;
+      window.location.href = AppRoute.GROUP;
     } catch (error) {
       if (errorHasMessage(error)) {
         messageApi.error(error.data.message);

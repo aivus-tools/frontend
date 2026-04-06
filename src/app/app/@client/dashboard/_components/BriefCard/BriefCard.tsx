@@ -8,6 +8,7 @@ import { formatPrice } from '@/helpers/helper';
 import { format } from 'date-fns';
 import { t } from '@/lib/i18n';
 import { PROJECT_STATUS } from '@/constants/constants';
+import { AppRoute } from '@/constants/appRoute';
 
 import styles from './BriefCard.module.css';
 
@@ -45,41 +46,34 @@ const getRowBg = (status?: string): string => {
 export const BriefCard: React.FC<BriefCardProps> = ({ brief }) => {
   const router = useRouter();
 
-  const projectName = brief.details?.projectName || t('UNTITLED_BRIEF');
-  const formattedCreated = brief.createdAt
-    ? format(new Date(brief.createdAt), 'MMM dd, yyyy')
-    : '';
+  const isV2 = !brief.details?.projectName;
+  const projectName =
+    (brief.structuredData?.projectName as string) || brief.details?.projectName || t('UNTITLED_BRIEF');
+  const formattedCreated = brief.createdAt ? format(new Date(brief.createdAt), 'MMM dd, yyyy') : '';
 
   const handleClick = () => {
-    router.push(`/app/dashboard/${brief.id}`);
+    if (isV2) {
+      router.push(AppRoute.BRIEF_V2_DETAIL(brief.id));
+    } else {
+      router.push(AppRoute.BRIEF_DETAIL(brief.id));
+    }
   };
 
   return (
-    <div
-      className={styles.card}
-      style={{ backgroundColor: getRowBg(brief.status) }}
-      onClick={handleClick}
-    >
+    <div className={styles.card} style={{ backgroundColor: getRowBg(brief.status) }} onClick={handleClick}>
       <div className={styles.row}>
         {/* Project name */}
         <div className={styles.projectCell}>
-          <div
-            className={styles.accent}
-            style={{ backgroundColor: getAccentColor(brief.status) }}
-          />
+          <div className={styles.accent} style={{ backgroundColor: getAccentColor(brief.status) }} />
           <div>
             <div className={styles.projectName}>{projectName.toUpperCase()}</div>
-            <div className={styles.assignee}>
-              {brief.clientId ? t('ASSIGNED_TO', 'me') : ''}
-            </div>
+            <div className={styles.assignee}>{brief.clientId ? t('ASSIGNED_TO', 'me') : ''}</div>
           </div>
         </div>
 
         {/* Activity */}
         <div className={styles.activityCell}>
-          <div className={styles.activityText}>
-            {brief.details?.description || ''}
-          </div>
+          <div className={styles.activityText}>{brief.details?.description || ''}</div>
         </div>
 
         {/* Status */}

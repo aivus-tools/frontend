@@ -155,7 +155,17 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
       session.user.clientId = token.clientId as string | undefined;
       return session;
     },
-    authorized: async ({ auth }) => {
+    authorized: async ({ auth, request }) => {
+      const pathname = request.nextUrl.pathname;
+      if (
+        pathname.startsWith('/auth') ||
+        pathname.startsWith('/external') ||
+        pathname.startsWith('/public') ||
+        pathname.startsWith('/shared-brief') ||
+        pathname.startsWith('/public-brief')
+      ) {
+        return true;
+      }
       return !!auth;
     },
   },

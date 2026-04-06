@@ -36,7 +36,6 @@ const Tab = styled.button<{ $active: boolean }>`
 const TABS = [
   { key: 'brief', label: 'Brief', suffix: '' },
   { key: 'comparison', label: 'Comparison', suffix: '/comparison' },
-  { key: 'offers', label: 'Vendor Offers', suffix: '/offers' },
 ];
 
 export const BriefTabBar: React.FC<BriefTabBarProps> = (props) => {

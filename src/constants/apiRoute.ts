@@ -89,4 +89,9 @@ export const ApiRoute = {
   PUBLIC_BRIEF_AI_CHAT: (briefId: string) => `/service/public/briefs/ai/${briefId}/chat`,
   PUBLIC_BRIEF_AI_DETAIL: (briefId: string) => `/service/public/briefs/ai/${briefId}`,
   PUBLIC_BRIEF_AI_CLAIM: (briefId: string) => `/service/public/briefs/ai/${briefId}/claim`,
+  BRIEF_AI_SHARE: (briefId: string) => `/service/client/briefs/ai/${briefId}/share`,
+  BRIEF_SHARE_PUBLIC: (token: string) => `/service/public/brief-shares/${token}`,
+  BRIEF_SHARE_MANAGE: (token: string) => `/service/client/brief-shares/${token}/manage`,
+  BRIEF_AI_PDF: (briefId: string) => `/service/client/briefs/ai/${briefId}/pdf`,
+  BRIEF_SHARE_PDF: (token: string) => `/service/public/brief-shares/${token}/pdf`,
 } as const;

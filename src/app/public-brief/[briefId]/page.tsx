@@ -248,6 +248,7 @@ export default function PublicBriefDetailPage() {
         <BriefChatPanel
           messages={messages}
           conversationPhase={conversationPhase}
+          briefStatus='DRAFT'
           sectionsStatus={sectionsStatus}
           isLoading={isChatLoading}
           messageLimit={MESSAGE_LIMIT}

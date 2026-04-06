@@ -5,8 +5,8 @@ export interface Brief {
   id: string;
   uuid: string;
   status: ProjectStatus;
-  /** JSON object with brief details */
   details: Details;
+  structuredData?: Record<string, unknown> | null;
   clientId?: string | null;
   createdAt: string;
   updatedAt: string | null;

@@ -1,14 +1,17 @@
 'use client';
 
-import React from 'react';
+import React, { useState } from 'react';
 import { styled } from 'styled-components';
 import { Button } from 'antd';
 import { BriefEditor } from './BriefEditor';
+import { BriefSharePopup } from '@/modules/BriefSharePopup/BriefSharePopup';
 import { BriefV2Detail } from '@/types/briefV2.interface';
 import { t } from '@/lib/i18n';
+import { ApiRoute } from '@/constants/apiRoute';
 
 interface BriefReadOnlyViewProps {
   brief: BriefV2Detail;
+  onEdit?: (() => void) | null;
 }
 
 const ViewWrapper = styled.div`
@@ -28,11 +31,28 @@ const ActionBar = styled.div`
 `;
 
 export const BriefReadOnlyView: React.FC<BriefReadOnlyViewProps> = (props) => {
+  const [isShareOpen, setIsShareOpen] = useState(false);
+  const isCompleted = props.brief.status === 'COMPLETED';
+
+  const handlePdf = async () => {
+    try {
+      const { downloadPdf } = await import('@/helpers/downloadPdf');
+      await downloadPdf(ApiRoute.BRIEF_AI_PDF(props.brief.id), 'Brief.pdf');
+    } catch {
+      // noop
+    }
+  };
+
   return (
     <ViewWrapper>
       <ActionBar>
-        <Button disabled>{t('BRIEF_V2_EXPORT_PDF')}</Button>
-        <Button type='primary'>{t('BRIEF_V2_EDIT')}</Button>
+        <Button onClick={handlePdf}>{t('BRIEF_V2_EXPORT_PDF')}</Button>
+        {isCompleted && <Button onClick={() => setIsShareOpen(true)}>{t('BRIEF_V2_SHARE')}</Button>}
+        {props.onEdit && (
+          <Button type='primary' onClick={props.onEdit}>
+            {t('BRIEF_V2_EDIT')}
+          </Button>
+        )}
       </ActionBar>
       <BriefEditor
         documentHtml={props.brief.documentHtml}
@@ -42,6 +62,9 @@ export const BriefReadOnlyView: React.FC<BriefReadOnlyViewProps> = (props) => {
         totalCostUsd={props.brief.totalCostUsd}
         onSectionEdit={null}
       />
+      {isCompleted && (
+        <BriefSharePopup open={isShareOpen} onClose={() => setIsShareOpen(false)} briefId={props.brief.id} />
+      )}
     </ViewWrapper>
   );
 };
