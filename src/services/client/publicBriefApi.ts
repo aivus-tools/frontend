@@ -57,13 +57,32 @@ export const removePublicBriefToken = (briefId: string): void => {
   }
 };
 
+const SUPPORTED_LANGUAGES = ['en', 'ru', 'es', 'fr', 'de', 'it', 'pt', 'zh', 'ja', 'ko'];
+
+export const getBrowserLanguage = (): string => {
+  if (typeof window === 'undefined') {
+    return 'en';
+  }
+
+  const languages = navigator.languages || [navigator.language || 'en'];
+
+  for (const lang of languages) {
+    const code = lang.split('-')[0].toLowerCase();
+    if (SUPPORTED_LANGUAGES.includes(code)) {
+      return code;
+    }
+  }
+
+  return 'en';
+};
+
 const publicBaseQuery = fetchBaseQuery({ baseUrl: '' });
 
 export const publicBriefApi = createApi({
   reducerPath: 'publicBriefApi',
   baseQuery: publicBaseQuery,
   endpoints: (builder) => ({
-    startPublicBrief: builder.mutation<PublicBriefStartResponse, { message: string }>({
+    startPublicBrief: builder.mutation<PublicBriefStartResponse, { message: string; documentLanguage?: string }>({
       query: (body) => ({
         url: ApiRoute.PUBLIC_BRIEF_AI_START,
         method: 'POST',
@@ -77,11 +96,14 @@ export const publicBriefApi = createApi({
         headers: { 'X-Brief-Token': args.token },
       }),
     }),
-    sendPublicBriefChat: builder.mutation<BriefV2ChatResponse, { briefId: string; message: string; token: string }>({
+    sendPublicBriefChat: builder.mutation<
+      BriefV2ChatResponse,
+      { briefId: string; message: string; token: string; documentLanguage?: string }
+    >({
       query: (args) => ({
         url: ApiRoute.PUBLIC_BRIEF_AI_CHAT(args.briefId),
         method: 'POST',
-        body: { message: args.message },
+        body: { message: args.message, documentLanguage: args.documentLanguage },
         headers: { 'X-Brief-Token': args.token },
       }),
     }),

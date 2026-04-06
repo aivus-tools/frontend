@@ -7,7 +7,11 @@ import { styled } from 'styled-components';
 import { useSession } from 'next-auth/react';
 import { t } from '@/lib/i18n';
 import { GROUPS } from '@/constants/constants';
-import { useStartPublicBriefMutation, savePublicBriefToken } from '@/services/client/publicBriefApi';
+import {
+  useStartPublicBriefMutation,
+  savePublicBriefToken,
+  getBrowserLanguage,
+} from '@/services/client/publicBriefApi';
 import { AppRoute } from '@/constants/appRoute';
 
 const PageWrapper = styled.div`
@@ -118,7 +122,10 @@ export default function PublicBriefPage() {
 
     setIsLoading(true);
     try {
-      const result = await startPublicBrief({ message: trimmed }).unwrap();
+      const result = await startPublicBrief({
+        message: trimmed,
+        documentLanguage: getBrowserLanguage(),
+      }).unwrap();
       savePublicBriefToken(result.briefId, result.token);
       router.push(`${AppRoute.PUBLIC_BRIEF_DETAIL(result.briefId)}?taskId=${result.taskId}`);
     } catch {

@@ -52,6 +52,8 @@ interface BriefChatPanelProps {
   onFeedback: ((messageId: string, rating: 'up' | 'down') => void) | null;
   onFeedbackComment: ((messageId: string, rating: 'up' | 'down', comment: string) => void) | null;
   onFinalize: (() => void) | null;
+  showRegistrationButton?: boolean;
+  onRegisterClick?: () => void;
 }
 
 const PHASE_LABELS: Record<ConversationPhase, string> = {
@@ -260,6 +262,18 @@ export const BriefChatPanel: React.FC<BriefChatPanelProps> = (props) => {
           </>
         )}
       </InputArea>
+      {props.showRegistrationButton && props.conversationPhase === 'complete' && (
+        <div style={{ padding: '12px 16px', borderTop: '1px solid #e5e7eb' }}>
+          <Button
+            type='primary'
+            onClick={props.onRegisterClick}
+            block
+            style={{ background: '#2288FF', borderColor: '#2288FF', fontWeight: 600, height: 44 }}
+          >
+            {t('BRIEF_V2_REGISTER_BUTTON')}
+          </Button>
+        </div>
+      )}
       <Modal
         title={t('BRIEF_V2_FEEDBACK_TITLE')}
         open={commentModalMessageId != null}

@@ -13,6 +13,7 @@ import {
   useSendPublicBriefChatMutation,
   useGetPublicBriefDetailQuery,
   getPublicBriefToken,
+  getBrowserLanguage,
 } from '@/services/client/publicBriefApi';
 import { ChatMessageV2, ConversationPhase, SectionStatus, BriefV2ChatResponse } from '@/types/briefV2.interface';
 import { AppRoute } from '@/constants/appRoute';
@@ -170,6 +171,7 @@ export default function PublicBriefDetailPage() {
         briefId,
         message: text,
         token,
+        documentLanguage: getBrowserLanguage(),
       }).unwrap();
 
       const assistantMessage: ChatMessageV2 = {
@@ -258,6 +260,11 @@ export default function PublicBriefDetailPage() {
           onFeedback={null}
           onFeedbackComment={null}
           onFinalize={null}
+          showRegistrationButton={true}
+          onRegisterClick={() => {
+            setPendingBrief(briefId, token!);
+            router.push('/auth');
+          }}
         />
       </LayoutWrapper>
       {conversationPhase === 'complete' && (
