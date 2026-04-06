@@ -11,7 +11,7 @@ export const userApi = createApi({
   reducerPath: 'userApi',
   baseQuery: fetchBaseQuery({ baseUrl: '' }),
   endpoints: (builder) => ({
-    changeGroup: builder.mutation<Partial<User>, ChangeGroup>({
+    changeGroup: builder.mutation<Partial<User> & { claimedBriefId?: string }, ChangeGroup>({
       query: ({ userId, newGroup }) => ({
         url: ApiRoute.CHANGE_ROLE(userId),
         method: 'PATCH',

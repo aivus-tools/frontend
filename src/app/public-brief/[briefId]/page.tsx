@@ -16,6 +16,7 @@ import {
 } from '@/services/client/publicBriefApi';
 import { ChatMessageV2, ConversationPhase, SectionStatus, BriefV2ChatResponse } from '@/types/briefV2.interface';
 import { AppRoute } from '@/constants/appRoute';
+import { setPendingBrief } from '@/helpers/pendingBrief';
 
 const LayoutWrapper = styled.div`
   display: flex;
@@ -264,7 +265,10 @@ export default function PublicBriefDetailPage() {
           <BannerText>{t('BRIEF_V2_REGISTER_CTA')}</BannerText>
           <Button
             type='primary'
-            onClick={() => router.push(`/auth?redirect=/app/brief/claim/${briefId}`)}
+            onClick={() => {
+              setPendingBrief(briefId, token!);
+              router.push('/auth');
+            }}
             style={{ background: '#2288FF', borderColor: '#2288FF', fontWeight: 600 }}
           >
             {t('BRIEF_V2_REGISTER_BUTTON')}

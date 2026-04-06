@@ -7,6 +7,7 @@ import Spinner from '@/components/Spinner';
 import { t } from '@/lib/i18n';
 import { AppRoute } from '@/constants/appRoute';
 import { useSession } from 'next-auth/react';
+import { clearPendingBrief } from '@/helpers/pendingBrief';
 
 const CONFIRM_DELAY_MS = 1500;
 
@@ -48,19 +49,22 @@ const ConfirmEmailPage = () => {
         setStatus('success');
 
         if (session?.user) {
-          // User is logged in - update session with fresh data
           await updateSession({
             user: {
               ...session.user,
               group: data.group,
+              clientId: data.clientId,
             },
           });
 
-          // Wait for NextAuth to write cookie and session to update in memory
-          await new Promise((resolve) => setTimeout(resolve, CONFIRM_DELAY_MS));
+          await new Promise((x) => setTimeout(x, CONFIRM_DELAY_MS));
 
-          // Redirect to role selection
-          window.location.href = AppRoute.GROUP;
+          if (data.claimedBriefId) {
+            clearPendingBrief();
+            window.location.href = AppRoute.BRIEF_V2_DETAIL(data.claimedBriefId);
+          } else {
+            window.location.href = AppRoute.GROUP;
+          }
         } else {
           // User is not logged in - wait and redirect to auth
           await new Promise((resolve) => setTimeout(resolve, CONFIRM_DELAY_MS));

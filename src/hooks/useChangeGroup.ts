@@ -2,6 +2,7 @@ import { useSession } from 'next-auth/react';
 import { Groups } from '@/types/user.interface';
 import { useChangeGroupMutation } from '@/services/client/userApi';
 import { AppRoute } from '@/constants/appRoute';
+import { clearPendingBrief } from '@/helpers/pendingBrief';
 
 export const useChangeGroup = () => {
   const session = useSession();
@@ -24,13 +25,11 @@ export const useChangeGroup = () => {
           },
         });
 
-        // Wait for cookie update
-        await new Promise((resolve) => setTimeout(resolve, 1000));
+        await new Promise((x) => setTimeout(x, 1000));
 
-        const postAuthRedirect = sessionStorage.getItem('aivus_post_auth_redirect');
-        if (postAuthRedirect) {
-          sessionStorage.removeItem('aivus_post_auth_redirect');
-          window.location.href = postAuthRedirect;
+        if (result.claimedBriefId) {
+          clearPendingBrief();
+          window.location.href = AppRoute.BRIEF_V2_DETAIL(result.claimedBriefId);
         } else {
           window.location.href = AppRoute.DASHBOARD;
         }

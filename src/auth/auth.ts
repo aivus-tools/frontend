@@ -1,10 +1,12 @@
 import NextAuth from 'next-auth';
 import Google from 'next-auth/providers/google';
 import Credentials from 'next-auth/providers/credentials';
+import { cookies } from 'next/headers';
 import { checkEmail, login, register } from '@/services/server/authService';
 import logger from '@/lib/logger';
 import { AUTH_TYPES, GROUPS } from '@/constants/constants';
 import { updateUserSession } from '@/services/server/userService';
+import { PENDING_BRIEF_COOKIE_NAME } from '@/helpers/pendingBrief';
 import type { Groups } from '@/types/user.interface';
 
 // Get environment variables for Google OAuth
@@ -30,10 +32,18 @@ providers.push(
     credentials: {
       email: {},
       password: {},
+      briefId: {},
+      briefToken: {},
     },
     authorize: async (credentials) => {
       try {
-        const user = await login({ ...credentials, authType: AUTH_TYPES.credentials });
+        const user = await login({
+          email: credentials.email as string,
+          password: credentials.password as string,
+          authType: AUTH_TYPES.credentials,
+          briefId: credentials.briefId as string | undefined,
+          briefToken: credentials.briefToken as string | undefined,
+        });
 
         return {
           id: `${user.id}`,
@@ -41,6 +51,7 @@ providers.push(
           email: user.email,
           group: user.group,
           vendorId: user.vendorId,
+          clientId: user.clientId,
           image: null,
         };
       } catch (error) {
@@ -75,14 +86,30 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
             return false;
           }
 
+          let briefId: string | undefined;
+          let briefToken: string | undefined;
+          try {
+            const cookieStore = await cookies();
+            const raw = cookieStore.get(PENDING_BRIEF_COOKIE_NAME)?.value;
+            if (raw) {
+              const decoded = decodeURIComponent(raw);
+              const idx = decoded.indexOf(':');
+              if (idx !== -1) {
+                briefId = decoded.slice(0, idx);
+                briefToken = decoded.slice(idx + 1);
+              }
+            }
+          } catch {
+            logger.warn('Google signIn: failed to read pending brief cookie');
+          }
+
           logger.info('Google signIn: checking email', { email });
           const result = await checkEmail({ email: email as string });
           logger.info('Google signIn: checkEmail result', result);
 
           if (result.exists) {
-            // User exists - log in via Google
             logger.info('Google signIn: user exists, logging in');
-            const aivusUser = await login({ email: email, password: '', authType: AUTH_TYPES.google });
+            const aivusUser = await login({ email, password: '', authType: AUTH_TYPES.google, briefId, briefToken });
             logger.info('Google signIn: login result', aivusUser);
             user.group = aivusUser.group;
             user.id = `${aivusUser.id}`;
@@ -91,10 +118,16 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
             return true;
           }
 
-          // User does not exist - register them
           if (name && email) {
             logger.info('Google signIn: user does not exist, registering', { name, email });
-            const aivusUser = await register({ name, email, authType: AUTH_TYPES.google, password: '' });
+            const aivusUser = await register({
+              name,
+              email,
+              authType: AUTH_TYPES.google,
+              password: '',
+              briefId,
+              briefToken,
+            });
             logger.info('Google signIn: register result', aivusUser);
             user.group = aivusUser.group ?? GROUPS.confirmed;
             user.id = `${aivusUser.id}`;

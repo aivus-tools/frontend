@@ -8,6 +8,7 @@ import styles from './styles.module.css';
 import { useState } from 'react';
 import { CALLBACK_URL } from '@/constants/apiRoute';
 import { AppRoute } from '@/constants/appRoute';
+import { getPendingBrief } from '@/helpers/pendingBrief';
 
 export const PasswordForm = ({ email, prevStepAction }: { email: string; prevStepAction: () => void }) => {
   const [messageApi, contextHolder] = message.useMessage();
@@ -20,16 +21,21 @@ export const PasswordForm = ({ email, prevStepAction }: { email: string; prevSte
     }
     setLoading(true);
     try {
-      const result = await signIn('credentials', { email, password, redirect: false });
+      const pending = getPendingBrief();
+      const result = await signIn('credentials', {
+        email,
+        password,
+        briefId: pending?.briefId,
+        briefToken: pending?.token,
+        redirect: false,
+      });
       if (result?.error) {
         messageApi.error(t('INVALID_CREDENTIALS'));
         form.resetFields();
         form.setFields([{ name: 'password', errors: [''] }]);
+      } else if (pending) {
+        window.location.href = AppRoute.BRIEF_V2_DETAIL(pending.briefId);
       } else {
-        const redirect = new URLSearchParams(window.location.search).get('redirect');
-        if (redirect) {
-          sessionStorage.setItem('aivus_post_auth_redirect', redirect);
-        }
         window.location.href = CALLBACK_URL || AppRoute.HOME;
       }
     } catch (error) {

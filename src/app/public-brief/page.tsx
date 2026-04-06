@@ -1,10 +1,12 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { Button, message } from 'antd';
 import { styled } from 'styled-components';
+import { useSession } from 'next-auth/react';
 import { t } from '@/lib/i18n';
+import { GROUPS } from '@/constants/constants';
 import { useStartPublicBriefMutation, savePublicBriefToken } from '@/services/client/publicBriefApi';
 import { AppRoute } from '@/constants/appRoute';
 
@@ -96,7 +98,17 @@ export default function PublicBriefPage() {
   const [inputValue, setInputValue] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const router = useRouter();
+  const { data: session, status: sessionStatus } = useSession();
   const [startPublicBrief] = useStartPublicBriefMutation();
+
+  useEffect(() => {
+    if (sessionStatus === 'loading') {
+      return;
+    }
+    if (session?.user?.group === GROUPS.client) {
+      router.replace(AppRoute.CREATE_BRIEF_V2);
+    }
+  }, [sessionStatus, session?.user?.group, router]);
 
   const handleCreate = async () => {
     const trimmed = inputValue.trim();

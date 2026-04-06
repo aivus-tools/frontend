@@ -9,6 +9,7 @@ import { useState } from 'react';
 import { AUTH_TYPES } from '@/constants/constants';
 import { AuthType } from '@/types/user.interface';
 import { AppRoute } from '@/constants/appRoute';
+import { getPendingBrief } from '@/helpers/pendingBrief';
 
 export interface ResponseData {
   statusCode: number;
@@ -24,17 +25,20 @@ export interface ErrorDetails {
   statusCode: number;
 }
 
-// TODO: Replace with register from src/services/server/authService.ts
 const register = async ({
   name,
   email,
   authType,
   password = '',
+  briefId,
+  briefToken,
 }: {
   name: string;
   email: string;
   authType: AuthType;
   password?: string;
+  briefId?: string;
+  briefToken?: string;
 }) =>
   await fetch('/service/auth/register', {
     method: 'POST',
@@ -46,6 +50,8 @@ const register = async ({
       name,
       authType,
       password,
+      briefId,
+      briefToken,
     }),
   });
 
@@ -72,11 +78,14 @@ export const RegisterForm = ({ email, prevStepAction }: { email: string; prevSte
     setLoading(true);
 
     try {
+      const pending = getPendingBrief();
       const response = await register({
         name,
         email,
         password,
         authType: AUTH_TYPES.credentials,
+        briefId: pending?.briefId,
+        briefToken: pending?.token,
       });
       if (!response.ok) {
         const data = await response.json().catch(() => null);
@@ -89,16 +98,16 @@ export const RegisterForm = ({ email, prevStepAction }: { email: string; prevSte
         return;
       }
       messageApi.success(t('REGISTRATION_SUCCESSFUL'));
-      const signInResult = await signIn('credentials', { email, password, redirect: false });
+      const signInResult = await signIn('credentials', {
+        email,
+        password,
+        redirect: false,
+      });
       if (signInResult?.error) {
         messageApi.error(t('INVALID_CREDENTIALS'));
         form.resetFields();
         form.setFields([{ name: 'password', errors: [''] }]);
       } else {
-        const redirect = new URLSearchParams(window.location.search).get('redirect');
-        if (redirect) {
-          sessionStorage.setItem('aivus_post_auth_redirect', redirect);
-        }
         window.location.href = AppRoute.CONFIRM;
       }
     } catch (error) {

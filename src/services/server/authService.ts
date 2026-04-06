@@ -4,8 +4,13 @@ import { AuthType, Groups } from '@/types/user.interface';
 
 /** Backend base URL for server-side calls (Node.js cannot use relative URLs). */
 const API_URL = process.env.API_URL || 'http://localhost:8000';
+const INTERNAL_SECRET = process.env.HMAC_SECRET || '';
 
-type Credentials = Partial<Record<'email' | 'password', unknown>> & { authType: AuthType };
+type Credentials = Partial<Record<'email' | 'password', unknown>> & {
+  authType: AuthType;
+  briefId?: string;
+  briefToken?: string;
+};
 /**
  * Authenticate user.
  * @returns User data
@@ -17,13 +22,18 @@ export async function login(credentials: Credentials): Promise<{
   group: Groups;
   vendorId?: string;
   clientId?: string;
+  claimedBriefId?: string;
 }> {
   try {
+    const headers: Record<string, string> = {
+      'Content-Type': 'application/json',
+    };
+    if (INTERNAL_SECRET) {
+      headers['X-Internal-Secret'] = INTERNAL_SECRET;
+    }
     const response = await fetch(`${API_URL}${ApiPathname.LOGIN}`, {
       method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
+      headers,
       body: JSON.stringify(credentials),
     });
     if (!response.ok) {
@@ -45,11 +55,15 @@ export async function register({
   email,
   authType,
   password,
+  briefId,
+  briefToken,
 }: {
   name: string;
   email: string;
   authType: AuthType;
   password?: string;
+  briefId?: string;
+  briefToken?: string;
 }): Promise<{
   message: string;
   group?: Groups;
@@ -59,16 +73,22 @@ export async function register({
 }> {
   try {
     logger.info('Registering user:', { name, email, authType });
+    const headers: Record<string, string> = {
+      'Content-Type': 'application/json',
+    };
+    if (INTERNAL_SECRET) {
+      headers['X-Internal-Secret'] = INTERNAL_SECRET;
+    }
     const response = await fetch(`${API_URL}${ApiPathname.REGISTER}`, {
       method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
+      headers,
       body: JSON.stringify({
         email,
         name,
         authType,
         password,
+        briefId,
+        briefToken,
       }),
     });
     logger.info('Register response:', response);
