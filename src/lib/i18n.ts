@@ -8,6 +8,11 @@ const DEFAULT_LOCALE: LocaleKey = 'ru';
 let cachedLocale: LocaleKey | null = null;
 
 function getLocaleFromCookie(): LocaleKey {
+  const envLocale = process.env.NEXT_PUBLIC_LOCALE;
+  if (envLocale === 'en' || envLocale === 'ru') {
+    return envLocale as LocaleKey;
+  }
+
   if (typeof window === 'undefined') {
     return DEFAULT_LOCALE;
   }
@@ -29,16 +34,30 @@ function getLocale(): LocaleKey {
   return cachedLocale;
 }
 
-export let locale: LocaleKey = DEFAULT_LOCALE;
+function getInitialLocale(): LocaleKey {
+  const envLocale = process.env.NEXT_PUBLIC_LOCALE;
+  if (envLocale === 'en' || envLocale === 'ru') {
+    return envLocale as LocaleKey;
+  }
 
-if (typeof window !== 'undefined') {
-  locale = getLocale();
+  if (typeof window !== 'undefined') {
+    return getLocale();
+  }
+
+  return DEFAULT_LOCALE;
+}
+
+export let locale: LocaleKey = getInitialLocale();
+
+export function resetLocaleCache(): void {
+  cachedLocale = null;
+  locale = getInitialLocale();
 }
 
 type MsgKey = keyof typeof catalog.en;
 
 export function t(key: MsgKey, parameter?: string): string {
-  const currentLocale = typeof window === 'undefined' ? DEFAULT_LOCALE : getLocale();
+  const currentLocale = getLocale();
   const messages = catalog[currentLocale];
   const value = messages[key];
 

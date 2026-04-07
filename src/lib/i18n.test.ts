@@ -1,11 +1,12 @@
 import { describe, it, expect, beforeAll } from 'vitest';
-import { t, tRich, locale } from './i18n';
+import { t, tRich, locale, resetLocaleCache } from './i18n';
 import React from 'react';
 
 describe('i18n', () => {
   beforeAll(() => {
     // Ensure we're using English locale for tests
     process.env.NEXT_PUBLIC_LOCALE = 'en';
+    resetLocaleCache();
   });
 
   describe('t() function', () => {
