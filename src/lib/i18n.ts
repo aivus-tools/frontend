@@ -3,7 +3,7 @@ import type { Element } from 'domhandler';
 import parse, { domToReact, DOMNode } from 'html-react-parser';
 import React from 'react';
 
-const DEFAULT_LOCALE: LocaleKey = 'ru';
+const DEFAULT_LOCALE: LocaleKey = 'en';
 
 let cachedLocale: LocaleKey | null = null;
 

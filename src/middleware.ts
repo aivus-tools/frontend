@@ -1,5 +1,5 @@
 import { auth } from '@/auth/auth';
-import { NextResponse } from 'next/server';
+import { NextRequest, NextResponse } from 'next/server';
 import { GROUPS } from '@/constants/constants';
 import logger from './lib/logger';
 import { createHmacSHA256 } from './lib/hmac';
@@ -9,6 +9,56 @@ const changePathname = (pathname: string) => pathname.replace(/^\/service\//, '/
 const MOCK_ENDPOINTS: string[] = []; // Removed briefs from mock
 const userGroups = new Set<string | undefined>([GROUPS.client, GROUPS.vendor]);
 const HMAC_SECRET = process.env.HMAC_SECRET;
+
+const SUPPORTED_LOCALES = ['en', 'ru'] as const;
+const DEFAULT_LOCALE = 'en';
+const LOCALE_COOKIE_MAX_AGE = 60 * 60 * 24 * 365;
+
+type SupportedLocale = (typeof SUPPORTED_LOCALES)[number];
+
+const isSupportedLocale = (value: string): value is SupportedLocale => {
+  return (SUPPORTED_LOCALES as readonly string[]).includes(value);
+};
+
+const detectLocaleFromHeader = (acceptLanguage: string | null): SupportedLocale => {
+  if (!acceptLanguage) {
+    return DEFAULT_LOCALE;
+  }
+
+  const entries = acceptLanguage
+    .split(',')
+    .map((x) => {
+      const [tag, ...rest] = x.trim().split(';');
+      const qPart = rest.find((r) => r.trim().startsWith('q='));
+      const q = qPart ? Number(qPart.trim().slice(2)) : 1;
+      return { tag: tag.toLowerCase(), q: Number.isFinite(q) ? q : 1 };
+    })
+    .sort((a, b) => b.q - a.q);
+
+  for (const entry of entries) {
+    const primary = entry.tag.split('-')[0];
+    if (isSupportedLocale(primary)) {
+      return primary;
+    }
+  }
+
+  return DEFAULT_LOCALE;
+};
+
+const ensureLocaleCookie = (req: NextRequest, response: NextResponse): NextResponse => {
+  const existing = req.cookies.get('locale')?.value;
+  if (existing && isSupportedLocale(existing)) {
+    return response;
+  }
+
+  const detected = detectLocaleFromHeader(req.headers.get('accept-language'));
+  response.cookies.set('locale', detected, {
+    path: '/',
+    maxAge: LOCALE_COOKIE_MAX_AGE,
+    sameSite: 'lax',
+  });
+  return response;
+};
 
 // Public paths within /auth, accessible to all (authenticated and not)
 const PUBLIC_AUTH_PATHS = ['/auth/confirm-email', '/auth/reset-password', '/auth/forgot-password'];
@@ -31,7 +81,7 @@ export default auth(async (req) => {
     // For /public routes, still proxy /service/ calls but skip auth requirements
     const response = NextResponse.next();
     response.headers.set('Content-Security-Policy', CSP);
-    return response;
+    return ensureLocaleCookie(req, response);
   }
 
   if (!HMAC_SECRET) {
@@ -55,27 +105,27 @@ export default auth(async (req) => {
         logger.info('redirecting to /app/dashboard (client/vendor)');
         const response = NextResponse.redirect(new URL(AppRoute.DASHBOARD, req.url));
         response.headers.set('Content-Security-Policy', CSP);
-        return response;
+        return ensureLocaleCookie(req, response);
       }
       // CONFIRMED -> role selection
       else if (group === GROUPS.confirmed) {
         logger.info('redirecting to /app/group (confirmed)');
         const response = NextResponse.redirect(new URL(AppRoute.GROUP, req.url));
         response.headers.set('Content-Security-Policy', CSP);
-        return response;
+        return ensureLocaleCookie(req, response);
       }
       // UNCONFIRMED -> email confirmation
       else {
         logger.info('redirecting to /app/confirm (unconfirmed)');
         const response = NextResponse.redirect(new URL(AppRoute.CONFIRM, req.url));
         response.headers.set('Content-Security-Policy', CSP);
-        return response;
+        return ensureLocaleCookie(req, response);
       }
     }
     logger.info('redirecting to /auth (no user)');
     const response = NextResponse.redirect(new URL(AppRoute.AUTH, req.url));
     response.headers.set('Content-Security-Policy', CSP);
-    return response;
+    return ensureLocaleCookie(req, response);
   }
 
   const { pathname, search } = req.nextUrl;
@@ -103,18 +153,18 @@ export default auth(async (req) => {
 
     if (MOCK_ENDPOINTS.some((path) => newPathname.startsWith(path)) && process.env.MOCK_API) {
       logger.info('mocking request', { pathname, newPathname });
-      const response = NextResponse.rewrite(new URL(newPathname, req.url));
-      response.headers.set('Content-Security-Policy', CSP);
-      return response;
+      const mockResponse = NextResponse.rewrite(new URL(newPathname, req.url));
+      mockResponse.headers.set('Content-Security-Policy', CSP);
+      return mockResponse;
     }
     logger.info('proxying request', { apiUrl: process.env.API_URL, newPathname, pathname });
-    const response = NextResponse.rewrite(new URL(newPathname, process.env.API_URL), {
+    const proxyResponse = NextResponse.rewrite(new URL(newPathname, process.env.API_URL), {
       request: {
         headers,
       },
     });
-    response.headers.set('Content-Security-Policy', CSP);
-    return response;
+    proxyResponse.headers.set('Content-Security-Policy', CSP);
+    return proxyResponse;
   }
 
   // If path is /auth but NOT public (confirm-email, reset-password, etc.)
@@ -124,28 +174,28 @@ export default auth(async (req) => {
       logger.info('redirecting to /app/dashboard (from /auth, client/vendor)');
       const response = NextResponse.redirect(new URL(AppRoute.DASHBOARD, req.url));
       response.headers.set('Content-Security-Policy', CSP);
-      return response;
+      return ensureLocaleCookie(req, response);
     }
     // CONFIRMED -> role selection
     else if (group === GROUPS.confirmed) {
       logger.info('redirecting to /app/group (from /auth, confirmed)');
       const response = NextResponse.redirect(new URL(AppRoute.GROUP, req.url));
       response.headers.set('Content-Security-Policy', CSP);
-      return response;
+      return ensureLocaleCookie(req, response);
     }
     // UNCONFIRMED -> email confirmation
     else {
       logger.info('redirecting to /app/confirm (from /auth, unconfirmed)');
       const response = NextResponse.redirect(new URL(AppRoute.CONFIRM, req.url));
       response.headers.set('Content-Security-Policy', CSP);
-      return response;
+      return ensureLocaleCookie(req, response);
     }
   }
 
   if (pathname.startsWith('/app') && (!id || !group)) {
     const response = NextResponse.redirect(new URL(AppRoute.AUTH, req.url));
     response.headers.set('Content-Security-Policy', CSP);
-    return response;
+    return ensureLocaleCookie(req, response);
   }
 
   // Protect /app pages based on user group
@@ -154,14 +204,14 @@ export default auth(async (req) => {
     if (group === GROUPS.unconfirmed && !pathname.startsWith(AppRoute.CONFIRM)) {
       const response = NextResponse.redirect(new URL(AppRoute.CONFIRM, req.url));
       response.headers.set('Content-Security-Policy', CSP);
-      return response;
+      return ensureLocaleCookie(req, response);
     }
 
     // If user is CONFIRMED, they can only be on /app/group
     if (group === GROUPS.confirmed && !pathname.startsWith(AppRoute.GROUP)) {
       const response = NextResponse.redirect(new URL(AppRoute.GROUP, req.url));
       response.headers.set('Content-Security-Policy', CSP);
-      return response;
+      return ensureLocaleCookie(req, response);
     }
 
     // If user is CLIENT/VENDOR, they CANNOT be on /app/confirm or /app/group
@@ -169,7 +219,7 @@ export default auth(async (req) => {
       if (pathname.startsWith(AppRoute.CONFIRM) || pathname.startsWith(AppRoute.GROUP)) {
         const response = NextResponse.redirect(new URL(AppRoute.DASHBOARD, req.url));
         response.headers.set('Content-Security-Policy', CSP);
-        return response;
+        return ensureLocaleCookie(req, response);
       }
     }
   }
@@ -179,13 +229,13 @@ export default auth(async (req) => {
     const response = NextResponse.next();
     response.headers.set('Content-Security-Policy', CSP);
     response.headers.set('Cache-Control', 'no-store, no-cache, must-revalidate');
-    return response;
+    return ensureLocaleCookie(req, response);
   }
 
   // Add CSP to all other requests
   const response = NextResponse.next();
   response.headers.set('Content-Security-Policy', CSP);
-  return response;
+  return ensureLocaleCookie(req, response);
 });
 
 export const config = {
