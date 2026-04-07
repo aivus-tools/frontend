@@ -26,7 +26,9 @@ export class BriefHelper {
 
   async waitForAIGenerationComplete(timeout = 60000): Promise<void> {
     await expect(this.page.locator('text=/Generating|Генерируется/i')).toBeHidden({ timeout });
-    await expect(this.page.locator('[contenteditable]').first()).toBeVisible({ timeout: 30000 });
+    const editor = this.page.locator('[contenteditable]').first();
+    await editor.waitFor({ state: 'visible', timeout: 30000 });
+    await this.page.waitForTimeout(2000);
   }
 
   async sendChatMessage(message: string): Promise<void> {
@@ -76,5 +78,34 @@ export class BriefHelper {
 
   async expectSharePopupVisible(): Promise<void> {
     await expect(this.page.locator('text=/Share|Поделиться/i')).toBeVisible();
+  }
+
+  async startAuthenticatedBrief(initialMessage: string): Promise<void> {
+    await this.page.goto('/app/brief/create-v2');
+
+    const textarea = this.page.locator('textarea').first();
+    await textarea.fill(initialMessage);
+
+    const createButton = this.page
+      .getByRole('main')
+      .getByRole('button', { name: /Create|Создать/i })
+      .last();
+    await createButton.click();
+
+    await this.waitForAIGenerationComplete();
+  }
+
+  async clickFinalize(): Promise<void> {
+    const finalizeButton = this.page.getByRole('button', { name: /Finalize|Завершить/i });
+    await finalizeButton.click();
+    await this.page.waitForTimeout(2000);
+  }
+
+  async expectBriefFinalized(): Promise<void> {
+    const exportPdfButton = this.page.getByRole('button', { name: /Export.*PDF|Экспорт/i });
+    const shareButton = this.page.getByRole('button', { name: /Share|Поделиться/i });
+
+    await expect(exportPdfButton).toBeVisible();
+    await expect(shareButton).toBeVisible();
   }
 }

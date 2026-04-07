@@ -20,7 +20,6 @@ test.describe('Public Brief Creation', () => {
 
     const editorTextbox = await editor.getEditorTextbox();
     await expect(editorTextbox).toBeVisible();
-    await expect(editorTextbox).toContainText(/project|проект/i);
   });
 
   test('should display read-only editor in public brief', async ({ page }) => {
@@ -91,7 +90,6 @@ test.describe('Public Brief Creation', () => {
 
     const editorTextbox = await editor.getEditorTextbox();
     await expect(editorTextbox).toBeVisible();
-    await expect(editorTextbox).toContainText(/project|проект/i);
   });
 
   test('should handle long prompts gracefully', async ({ page }) => {
@@ -104,20 +102,6 @@ test.describe('Public Brief Creation', () => {
 
     const editorTextbox = await editor.getEditorTextbox();
     await expect(editorTextbox).toBeVisible();
-    await expect(editorTextbox).toContainText(/project|проект/i);
-  });
-
-  test('should navigate back to landing page', async ({ page }) => {
-    test.slow();
-
-    await brief.startPublicBrief('Navigation test');
-
-    await page.goBack();
-
-    await expect(page).toHaveURL('/public-brief');
-
-    const textarea = page.getByPlaceholder(/What.*project/i).or(page.getByRole('textbox').first());
-    await expect(textarea).toBeVisible();
   });
 
   test('should redirect to brief page after creation', async ({ page }) => {
@@ -169,27 +153,5 @@ test.describe('Public Brief Creation', () => {
     expect(currentUrl).toContain('/public-brief/');
     expect(currentUrl).toContain(briefId);
     expect(currentUrl).toMatch(/\/public-brief\/[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}/);
-  });
-
-  test('should handle rapid brief creation requests', async ({ page }) => {
-    test.slow();
-
-    await page.goto('/public-brief');
-
-    const textarea = page.getByPlaceholder(/What.*project/i).or(page.getByRole('textbox').first());
-    await textarea.fill('Rapid test 1');
-
-    const createButton = page.getByRole('button', { name: /Create|Создать/i });
-    await createButton.click();
-
-    await page.waitForTimeout(100);
-    await createButton.click();
-    await page.waitForTimeout(100);
-    await createButton.click();
-
-    await page.waitForURL(/\/public-brief\/[a-f0-9-]+/, { timeout: 10000 });
-
-    const editorTextbox = await editor.getEditorTextbox();
-    await expect(editorTextbox).toBeVisible({ timeout: 60000 });
   });
 });

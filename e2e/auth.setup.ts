@@ -8,13 +8,22 @@ setup('authenticate', async ({ page }) => {
 
   await page.goto('/auth');
 
-  await page.getByPlaceholder('Your email address').fill(email!);
-  await page.getByRole('button', { name: 'Next', exact: true }).click();
+  const emailInput = page
+    .getByPlaceholder(/Your email address|Адрес.*электронной почты/i)
+    .or(page.getByRole('textbox').first());
+  await emailInput.fill(email!);
 
-  const passwordInput = page.getByPlaceholder('Enter your password');
+  const nextButton = page.getByRole('button', { name: /^(Next|Далее)$/i });
+  await nextButton.click();
+
+  const passwordInput = page
+    .getByPlaceholder(/Enter.*password|Введите.*пароль/i)
+    .or(page.getByRole('textbox', { name: /password/i }));
   await passwordInput.waitFor({ state: 'visible' });
   await passwordInput.fill(password!);
-  await page.getByRole('button', { name: 'Sign in', exact: true }).click();
+
+  const signInButton = page.getByRole('button', { name: /^(Sign in|Войти)$/i });
+  await signInButton.click();
 
   await expect(page).toHaveURL(/\/app/, { timeout: 15_000 });
 
