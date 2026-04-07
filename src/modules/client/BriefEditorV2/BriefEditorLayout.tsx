@@ -148,7 +148,10 @@ export const BriefEditorLayout: React.FC<BriefEditorLayoutProps> = (props) => {
   const [sendFeedback] = useSendBriefAiFeedbackMutation();
   const [finalizeBrief] = useFinalizeBriefAiMutation();
 
-  const { data: briefDetail } = useGetBriefAiDetailQuery(briefId!, { skip: !briefId || isGenerating });
+  const { data: briefDetail } = useGetBriefAiDetailQuery(briefId!, {
+    skip: !briefId || isGenerating,
+    refetchOnMountOrArgChange: true,
+  });
 
   useEffect(() => {
     if (!briefDetail) {
@@ -335,10 +338,31 @@ export const BriefEditorLayout: React.FC<BriefEditorLayoutProps> = (props) => {
         }).unwrap();
         setVersion(result.version);
         versionRef.current = result.version;
+
+        setDocumentHtml((prev) => {
+          const parser = new DOMParser();
+          const doc = parser.parseFromString(prev, 'text/html');
+          const sectionDiv = doc.querySelector(`[data-section="${sectionKey}"]`);
+
+          if (sectionDiv) {
+            sectionDiv.innerHTML = html;
+            return doc.body.innerHTML;
+          }
+
+          return prev;
+        });
       } catch (error: unknown) {
-        const apiError = error as { status?: number };
+        const apiError = error as { status?: number; data?: { error?: string } };
+
         if (apiError.status === 409) {
           message.warning(t('BRIEF_V2_VERSION_CONFLICT'));
+          window.location.reload();
+        } else if (apiError.status === 400) {
+          message.error(apiError.data?.error || t('UNEXPECTED_ERROR'));
+        } else if (apiError.status && apiError.status >= 500) {
+          message.error(t('UNEXPECTED_ERROR'));
+        } else {
+          message.error(t('UNEXPECTED_ERROR'));
         }
       }
     },

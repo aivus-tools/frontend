@@ -3,23 +3,43 @@ import type { Element } from 'domhandler';
 import parse, { domToReact, DOMNode } from 'html-react-parser';
 import React from 'react';
 
-function getLocale(): LocaleKey {
-  if (typeof document !== 'undefined') {
-    const match = document.cookie.match(/(?:^|;\s*)locale=(\w+)/);
-    if (match && (match[1] === 'en' || match[1] === 'ru')) {
-      return match[1] as LocaleKey;
-    }
+const DEFAULT_LOCALE: LocaleKey = 'ru';
+
+let cachedLocale: LocaleKey | null = null;
+
+function getLocaleFromCookie(): LocaleKey {
+  if (typeof window === 'undefined') {
+    return DEFAULT_LOCALE;
   }
-  return (process.env.NEXT_PUBLIC_LOCALE as LocaleKey) || 'en';
+
+  const match = document.cookie.match(/(?:^|;\s*)locale=(\w+)/);
+  if (match && (match[1] === 'en' || match[1] === 'ru')) {
+    return match[1] as LocaleKey;
+  }
+
+  return DEFAULT_LOCALE;
 }
 
-export const locale: LocaleKey = getLocale();
+function getLocale(): LocaleKey {
+  if (cachedLocale) {
+    return cachedLocale;
+  }
 
-const messages = catalog[locale];
+  cachedLocale = getLocaleFromCookie();
+  return cachedLocale;
+}
 
-type MsgKey = keyof typeof messages;
+export let locale: LocaleKey = DEFAULT_LOCALE;
+
+if (typeof window !== 'undefined') {
+  locale = getLocale();
+}
+
+type MsgKey = keyof typeof catalog.en;
 
 export function t(key: MsgKey, parameter?: string): string {
+  const currentLocale = typeof window === 'undefined' ? DEFAULT_LOCALE : getLocale();
+  const messages = catalog[currentLocale];
   const value = messages[key];
 
   if (typeof value === 'string') {
@@ -49,6 +69,7 @@ export function tRich(key: MsgKey, components: Record<string, React.ReactElement
 
         return React.cloneElement(components[domNode.tagName], {}, domToReact(validChildren));
       }
+      return undefined;
     },
   });
 }

@@ -5,6 +5,7 @@ import { useEditor, EditorContent as TipTapEditorContent } from '@tiptap/react';
 import StarterKit from '@tiptap/starter-kit';
 import Underline from '@tiptap/extension-underline';
 import Link from '@tiptap/extension-link';
+import { Section } from './SectionExtension';
 import { BriefToolbar } from './BriefToolbar';
 import { EditorWrapper, EditorContent, CostBadge } from './styled';
 import { t } from '@/lib/i18n';
@@ -21,13 +22,22 @@ interface BriefEditorProps {
 
 const DEBOUNCE_MS = 600;
 
+interface PendingSave {
+  sectionKey: string;
+  html: string;
+}
+
 const extractSectionHtml = (fullHtml: string, sectionKey: string): string | null => {
-  const regex = new RegExp(
-    `<div[^>]*data-section="${sectionKey}"[^>]*>([\\s\\S]*?)</div>(?=\\s*<hr|\\s*<div[^>]*data-section|\\s*$)`,
-    'i'
-  );
-  const match = fullHtml.match(regex);
-  return match ? match[0] : null;
+  const escapedKey = sectionKey.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+  const parser = new DOMParser();
+  const doc = parser.parseFromString(fullHtml, 'text/html');
+  const sectionDiv = doc.querySelector(`[data-section="${escapedKey}"]`);
+
+  if (!sectionDiv) {
+    return null;
+  }
+
+  return sectionDiv.innerHTML;
 };
 
 export const BriefEditor: React.FC<BriefEditorProps> = (props) => {
@@ -36,12 +46,15 @@ export const BriefEditor: React.FC<BriefEditorProps> = (props) => {
   const onSectionEditRef = useRef(props.onSectionEdit);
   const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const highlightTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const pendingSaveRef = useRef<PendingSave | null>(null);
+  const currentSectionRef = useRef<string | null>(null);
 
   onSectionEditRef.current = props.onSectionEdit;
 
   const editor = useEditor({
     immediatelyRender: false,
     extensions: [
+      Section,
       StarterKit.configure({
         heading: { levels: [2, 3, 4] },
       }),
@@ -61,24 +74,60 @@ export const BriefEditor: React.FC<BriefEditorProps> = (props) => {
         return;
       }
       const html = x.editor.getHTML();
-      const activeElement = document.activeElement;
-      if (activeElement) {
-        const sectionDiv = activeElement.closest('[data-section]');
-        if (sectionDiv) {
-          const sectionKey = sectionDiv.getAttribute('data-section');
-          if (sectionKey) {
-            const sectionHtml = extractSectionHtml(html, sectionKey);
-            if (sectionHtml) {
-              if (debounceRef.current) {
-                clearTimeout(debounceRef.current);
-              }
-              debounceRef.current = setTimeout(() => {
-                onSectionEditRef.current?.(sectionKey, sectionHtml);
-              }, DEBOUNCE_MS);
-            }
-          }
-        }
+
+      const selection = window.getSelection();
+      if (!selection || !selection.anchorNode) {
+        return;
       }
+
+      let node: Node | null = selection.anchorNode;
+      let sectionDiv: Element | null = null;
+
+      while (node) {
+        if (node instanceof Element && node.hasAttribute('data-section')) {
+          sectionDiv = node;
+          break;
+        }
+        node = node.parentNode;
+      }
+
+      if (!sectionDiv) {
+        return;
+      }
+
+      const sectionKey = sectionDiv.getAttribute('data-section');
+      if (!sectionKey) {
+        return;
+      }
+
+      const sectionHtml = extractSectionHtml(html, sectionKey);
+      if (!sectionHtml) {
+        return;
+      }
+
+      if (currentSectionRef.current !== sectionKey && pendingSaveRef.current) {
+        const pending = pendingSaveRef.current;
+        if (debounceRef.current) {
+          clearTimeout(debounceRef.current);
+        }
+        onSectionEditRef.current(pending.sectionKey, pending.html);
+        pendingSaveRef.current = null;
+      }
+
+      currentSectionRef.current = sectionKey;
+      pendingSaveRef.current = { sectionKey, html: sectionHtml };
+
+      if (debounceRef.current) {
+        clearTimeout(debounceRef.current);
+      }
+
+      debounceRef.current = setTimeout(() => {
+        if (pendingSaveRef.current) {
+          const save = pendingSaveRef.current;
+          pendingSaveRef.current = null;
+          onSectionEditRef.current?.(save.sectionKey, save.html);
+        }
+      }, DEBOUNCE_MS);
     },
   });
 
@@ -135,6 +184,10 @@ export const BriefEditor: React.FC<BriefEditorProps> = (props) => {
       }
       if (highlightTimerRef.current) {
         clearTimeout(highlightTimerRef.current);
+      }
+      if (pendingSaveRef.current && onSectionEditRef.current) {
+        const save = pendingSaveRef.current;
+        onSectionEditRef.current(save.sectionKey, save.html);
       }
     };
   }, []);
