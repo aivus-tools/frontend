@@ -287,6 +287,7 @@ export const BriefEditorLayout: React.FC<BriefEditorLayoutProps> = (props) => {
       const result: BriefV2ChatResponse = await sendChat({
         briefId,
         message: text,
+        documentHtml,
       }).unwrap();
 
       const assistantMessage: ChatMessageV2 = {

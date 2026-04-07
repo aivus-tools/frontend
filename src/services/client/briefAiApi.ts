@@ -29,14 +29,16 @@ export const briefAiApi = createApi({
         method: 'GET',
       }),
     }),
-    sendBriefAiChat: builder.mutation<BriefV2ChatResponse, { briefId: string; message: string }>({
-      query: (args) => ({
-        url: ApiRoute.BRIEF_AI_CHAT(args.briefId),
-        method: 'POST',
-        body: { message: args.message },
-      }),
-      invalidatesTags: ['BriefV2'],
-    }),
+    sendBriefAiChat: builder.mutation<BriefV2ChatResponse, { briefId: string; message: string; documentHtml?: string }>(
+      {
+        query: (args) => ({
+          url: ApiRoute.BRIEF_AI_CHAT(args.briefId),
+          method: 'POST',
+          body: { message: args.message, documentHtml: args.documentHtml },
+        }),
+        invalidatesTags: ['BriefV2'],
+      }
+    ),
     getBriefAiDetail: builder.query<BriefV2Detail, string>({
       query: (briefId) => ({
         url: ApiRoute.BRIEF_AI_DETAIL(briefId),

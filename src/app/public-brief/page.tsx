@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import { Button, message } from 'antd';
+import { App, Button } from 'antd';
 import { styled } from 'styled-components';
 import { useSession } from 'next-auth/react';
 import { t } from '@/lib/i18n';
@@ -99,6 +99,7 @@ const Example = styled.p`
 `;
 
 export default function PublicBriefPage() {
+  const { message } = App.useApp();
   const [inputValue, setInputValue] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const router = useRouter();

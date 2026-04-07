@@ -145,7 +145,8 @@ export default function PublicBriefDetailPage() {
     }, POLL_TIMEOUT);
 
     return stopPolling;
-  }, [briefId, initialTaskId, token, triggerStatus, stopPolling, message]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [briefId, initialTaskId, token]);
 
   const handleSendMessage = async (text: string) => {
     if (!token) {
@@ -172,6 +173,7 @@ export default function PublicBriefDetailPage() {
         message: text,
         token,
         documentLanguage: getBrowserLanguage(),
+        documentHtml,
       }).unwrap();
 
       const assistantMessage: ChatMessageV2 = {

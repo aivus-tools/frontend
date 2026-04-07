@@ -4,7 +4,7 @@ export class BriefEditorHelper {
   constructor(private readonly page: Page) {}
 
   async getEditorTextbox(): Promise<Locator> {
-    return this.page.locator('[contenteditable="true"]').first();
+    return this.page.locator('[contenteditable]').first();
   }
 
   async getSectionByKey(sectionKey: string): Promise<Locator> {

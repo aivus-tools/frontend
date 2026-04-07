@@ -98,12 +98,12 @@ export const publicBriefApi = createApi({
     }),
     sendPublicBriefChat: builder.mutation<
       BriefV2ChatResponse,
-      { briefId: string; message: string; token: string; documentLanguage?: string }
+      { briefId: string; message: string; token: string; documentLanguage?: string; documentHtml?: string }
     >({
       query: (args) => ({
         url: ApiRoute.PUBLIC_BRIEF_AI_CHAT(args.briefId),
         method: 'POST',
-        body: { message: args.message, documentLanguage: args.documentLanguage },
+        body: { message: args.message, documentLanguage: args.documentLanguage, documentHtml: args.documentHtml },
         headers: { 'X-Brief-Token': args.token },
       }),
     }),

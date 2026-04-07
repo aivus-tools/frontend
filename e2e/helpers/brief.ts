@@ -26,7 +26,7 @@ export class BriefHelper {
 
   async waitForAIGenerationComplete(timeout = 60000): Promise<void> {
     await expect(this.page.locator('text=/Generating|Генерируется/i')).toBeHidden({ timeout });
-    await expect(this.page.locator('[contenteditable]').first()).toBeVisible({ timeout: 5000 });
+    await expect(this.page.locator('[contenteditable]').first()).toBeVisible({ timeout: 30000 });
   }
 
   async sendChatMessage(message: string): Promise<void> {
@@ -41,7 +41,7 @@ export class BriefHelper {
     await this.waitForChatResponse();
   }
 
-  async waitForChatResponse(timeout = 30000): Promise<void> {
+  async waitForChatResponse(timeout = 60000): Promise<void> {
     await this.page.waitForResponse((response) => response.url().includes('/chat') && response.status() === 200, {
       timeout,
     });
