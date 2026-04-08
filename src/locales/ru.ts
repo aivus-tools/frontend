@@ -423,6 +423,8 @@ export const RU_LOCALES = {
   BRIEF_V2_CREATE_BUTTON: 'Создать бриф',
   BRIEF_V2_COST_LABEL: 'Стоимость',
   BRIEF_V2_FINALIZE: 'Завершить бриф',
+  BRIEF_V2_FILL_DEFAULTS_BUTTON: 'Заполнить все разделы по умолчанию для рынка РФ',
+  BRIEF_V2_FILL_DEFAULTS_PROMPT: 'Заполни все разделы значениями по умолчанию для российского рынка.',
   BRIEF_V2_BRIEF_READY: 'Ваш бриф готов!',
   BRIEF_V2_REGISTER_CTA: 'Зарегистрируйтесь, чтобы редактировать и скачать ваш бриф',
   BRIEF_V2_REGISTER_BUTTON: 'Создать бесплатный аккаунт',

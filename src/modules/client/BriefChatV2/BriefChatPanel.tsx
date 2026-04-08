@@ -139,6 +139,20 @@ export const BriefChatPanel: React.FC<BriefChatPanelProps> = (props) => {
 
   const isLimitReached = props.messageCount >= props.messageLimit;
   const firstAssistantIndex = props.messages.findIndex((x) => x.role === 'assistant');
+  const hasUserMessageAfterFirstAssistant =
+    firstAssistantIndex !== -1 && props.messages.slice(firstAssistantIndex + 1).some((x) => x.role === 'user');
+  const showFillDefaultsButton =
+    firstAssistantIndex !== -1 &&
+    !hasUserMessageAfterFirstAssistant &&
+    props.briefStatus !== 'COMPLETED' &&
+    !props.isLoading;
+
+  const handleFillDefaults = () => {
+    if (props.isLoading) {
+      return;
+    }
+    props.onSendMessage(t('BRIEF_V2_FILL_DEFAULTS_PROMPT'));
+  };
 
   const sectionValues = Object.values(props.sectionsStatus);
   const totalSections = sectionValues.length || 9;
@@ -197,6 +211,13 @@ export const BriefChatPanel: React.FC<BriefChatPanelProps> = (props) => {
                     <CommentOutlined />
                   </FeedbackButton>
                 )}
+              </FeedbackRow>
+            )}
+            {index === firstAssistantIndex && showFillDefaultsButton && (
+              <FeedbackRow>
+                <Button size='small' type='default' onClick={handleFillDefaults}>
+                  {t('BRIEF_V2_FILL_DEFAULTS_BUTTON')}
+                </Button>
               </FeedbackRow>
             )}
           </div>
