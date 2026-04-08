@@ -8,6 +8,7 @@ import { t } from '@/lib/i18n';
 import { AppRoute } from '@/constants/appRoute';
 import { useSession, signOut } from 'next-auth/react';
 import { clearPendingBrief } from '@/helpers/pendingBrief';
+import { isDifferentUser } from '@/lib/confirmEmail';
 
 const CONFIRM_DELAY_MS = 1500;
 
@@ -45,21 +46,19 @@ const ConfirmEmailPage = () => {
           throw new Error(errMsg);
         }
 
-        messageApi.success(t('EMAIL_CONFIRMED'));
-        setStatus('success');
-
-        const confirmedEmail = typeof data.email === 'string' ? data.email.toLowerCase() : null;
-        const sessionEmail = session?.user?.email != null ? session.user.email.toLowerCase() : null;
-        const isDifferentUser = !!sessionEmail && !!confirmedEmail && sessionEmail !== confirmedEmail;
-
-        if (isDifferentUser) {
+        if (isDifferentUser(session?.user?.email, data.email)) {
           if (data.claimedBriefId) {
             clearPendingBrief();
           }
+          messageApi.info(t('EMAIL_CONFIRMED_OTHER_ACCOUNT'));
+          setStatus('success');
           await new Promise((x) => setTimeout(x, CONFIRM_DELAY_MS));
           await signOut({ callbackUrl: AppRoute.AUTH });
           return;
         }
+
+        messageApi.success(t('EMAIL_CONFIRMED'));
+        setStatus('success');
 
         if (session?.user) {
           await updateSession({

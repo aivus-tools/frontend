@@ -425,6 +425,8 @@ export const EN_LOCALES = {
   BRIEF_V2_FINALIZE: 'Finalize Brief',
   BRIEF_V2_FILL_DEFAULTS_BUTTON: 'Fill all sections with USA market defaults',
   BRIEF_V2_FILL_DEFAULTS_PROMPT: 'Fill all sections with default values for the USA market.',
+  EMAIL_CONFIRMED_OTHER_ACCOUNT:
+    'Email confirmed. You were signed out from a different account, please sign in with the confirmed email.',
   BRIEF_V2_BRIEF_READY: 'Your brief is ready!',
   BRIEF_V2_REGISTER_CTA: 'Register to edit and download your brief',
   BRIEF_V2_REGISTER_BUTTON: 'Create Free Account',

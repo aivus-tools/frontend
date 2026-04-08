@@ -425,6 +425,8 @@ export const RU_LOCALES = {
   BRIEF_V2_FINALIZE: 'Завершить бриф',
   BRIEF_V2_FILL_DEFAULTS_BUTTON: 'Заполнить все разделы по умолчанию для рынка РФ',
   BRIEF_V2_FILL_DEFAULTS_PROMPT: 'Заполни все разделы значениями по умолчанию для российского рынка.',
+  EMAIL_CONFIRMED_OTHER_ACCOUNT:
+    'Почта подтверждена. Вы были разлогинены из другого аккаунта, войдите под подтвержденной почтой.',
   BRIEF_V2_BRIEF_READY: 'Ваш бриф готов!',
   BRIEF_V2_REGISTER_CTA: 'Зарегистрируйтесь, чтобы редактировать и скачать ваш бриф',
   BRIEF_V2_REGISTER_BUTTON: 'Создать бесплатный аккаунт',
