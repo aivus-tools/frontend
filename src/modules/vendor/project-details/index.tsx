@@ -7,7 +7,7 @@ import dynamic from 'next/dynamic';
 import ViewProjectDetails from './view/Details';
 import Spinner from '@/components/Spinner';
 import i18n from 'i18n-iso-countries';
-import { locale } from '@/lib/i18n';
+import { getLocale } from '@/lib/i18n';
 
 const FormProjectDetails = dynamic(() => import('./form/Details'), { ssr: false, loading: () => <Spinner /> });
 
@@ -18,7 +18,7 @@ export default function Page() {
   // Register locale and set isClient only on the client side
   useEffect(() => {
     // eslint-disable-next-line @typescript-eslint/no-require-imports
-    i18n.registerLocale(require(`i18n-iso-countries/langs/${locale}.json`));
+    i18n.registerLocale(require(`i18n-iso-countries/langs/${getLocale()}.json`));
     setIsClient(true);
   }, []);
 

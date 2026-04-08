@@ -2,7 +2,7 @@
 
 import React, { useEffect } from 'react';
 import { Form, Input, Button, Select, App, Spin } from 'antd';
-import { t, locale } from '@/lib/i18n';
+import { t, getLocale } from '@/lib/i18n';
 import {
   useGetSettingsQuery,
   useUpdateSettingsMutation,
@@ -52,7 +52,7 @@ export const SettingsForm = () => {
       await updateSettings(values).unwrap();
       message.success(t('SETTINGS_SAVED'));
       // Apply language change
-      if (values.language && values.language !== locale) {
+      if (values.language && values.language !== getLocale()) {
         document.cookie = `locale=${values.language};path=/;max-age=31536000`;
         window.location.reload();
       }

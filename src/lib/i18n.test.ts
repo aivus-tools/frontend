@@ -1,5 +1,5 @@
 import { describe, it, expect, beforeAll } from 'vitest';
-import { t, tRich, locale, resetLocaleCache } from './i18n';
+import { t, tRich, getLocale, resetLocaleCache } from './i18n';
 import React from 'react';
 
 describe('i18n', () => {
@@ -73,9 +73,9 @@ describe('i18n', () => {
     });
   });
 
-  describe('locale', () => {
+  describe('getLocale()', () => {
     it('should return the correct locale', () => {
-      expect(locale).toBe('en');
+      expect(getLocale()).toBe('en');
     });
   });
 });

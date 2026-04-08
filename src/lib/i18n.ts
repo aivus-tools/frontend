@@ -37,7 +37,7 @@ function getLocaleFromCookie(): LocaleKey {
   return DEFAULT_LOCALE;
 }
 
-function getLocale(): LocaleKey {
+export function getLocale(): LocaleKey {
   if (typeof window === 'undefined') {
     const fromStore = getServerLocaleFromGlobal();
     if (fromStore) {
@@ -63,24 +63,8 @@ function getLocale(): LocaleKey {
   return cachedLocale;
 }
 
-function getInitialLocale(): LocaleKey {
-  const envLocale = process.env.NEXT_PUBLIC_LOCALE;
-  if (envLocale === 'en' || envLocale === 'ru') {
-    return envLocale as LocaleKey;
-  }
-
-  if (typeof window !== 'undefined') {
-    return getLocale();
-  }
-
-  return DEFAULT_LOCALE;
-}
-
-export let locale: LocaleKey = getInitialLocale();
-
 export function resetLocaleCache(): void {
   cachedLocale = null;
-  locale = getInitialLocale();
 }
 
 type MsgKey = keyof typeof catalog.en;
