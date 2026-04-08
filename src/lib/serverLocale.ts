@@ -5,6 +5,10 @@ interface GlobalWithLocale {
 }
 
 export const setServerLocale = (value: LocaleKey): void => {
+  const previous = (globalThis as GlobalWithLocale).__aivusServerLocale;
+  if (previous && previous !== value) {
+    console.warn(`[serverLocale] concurrent flip ${previous} -> ${value}`);
+  }
   (globalThis as GlobalWithLocale).__aivusServerLocale = value;
 };
 
