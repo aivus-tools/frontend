@@ -113,7 +113,7 @@ jobs:
           cache: npm
       - run: npm ci
       - run: npx playwright install chromium
-      - run: npx playwright test --project=chromium
+      - run: npm run test:e2e:smoke
         env:
           SMOKE_TEST_URL: https://go.aivus.co
           SMOKE_TEST_EMAIL: ${{ secrets.SMOKE_TEST_EMAIL }}

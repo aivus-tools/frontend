@@ -1,5 +1,7 @@
 import { defineConfig, devices } from '@playwright/test';
 
+const isExternalTarget = !!process.env.SMOKE_TEST_URL;
+
 export default defineConfig({
   testDir: './e2e',
   timeout: 30_000,
@@ -25,7 +27,17 @@ export default defineConfig({
       testMatch: /auth\.setup\.ts/,
     },
     {
+      name: 'smoke',
+      testMatch: /smoke\.spec\.ts/,
+      use: {
+        ...devices['Desktop Chrome'],
+        storageState: 'e2e/.auth/user.json',
+      },
+      dependencies: ['setup'],
+    },
+    {
       name: 'chromium',
+      testIgnore: /smoke\.spec\.ts/,
       use: {
         ...devices['Desktop Chrome'],
         storageState: 'e2e/.auth/user.json',
@@ -41,10 +53,12 @@ export default defineConfig({
       },
     },
   ],
-  webServer: {
-    command: 'npm run dev',
-    url: 'http://localhost:3000',
-    reuseExistingServer: !process.env.CI,
-    timeout: 120_000,
-  },
+  webServer: isExternalTarget
+    ? undefined
+    : {
+        command: 'npm run dev',
+        url: 'http://localhost:3000',
+        reuseExistingServer: !process.env.CI,
+        timeout: 120_000,
+      },
 });
