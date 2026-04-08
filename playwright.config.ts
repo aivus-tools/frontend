@@ -14,7 +14,7 @@ export default defineConfig({
   ],
   use: {
     baseURL: process.env.SMOKE_TEST_URL || 'http://localhost:3000',
-    headless: process.env.CI ? true : false,
+    headless: true,
     screenshot: 'only-on-failure',
     video: 'retain-on-failure',
     trace: 'on-first-retry',
