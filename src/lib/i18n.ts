@@ -38,17 +38,21 @@ function getLocaleFromCookie(): LocaleKey {
 }
 
 function getLocale(): LocaleKey {
-  const envLocale = process.env.NEXT_PUBLIC_LOCALE;
-  if (envLocale === 'en' || envLocale === 'ru') {
-    return envLocale as LocaleKey;
-  }
-
   if (typeof window === 'undefined') {
     const fromStore = getServerLocaleFromGlobal();
     if (fromStore) {
       return fromStore;
     }
+    const envLocale = process.env.NEXT_PUBLIC_LOCALE;
+    if (envLocale === 'en' || envLocale === 'ru') {
+      return envLocale as LocaleKey;
+    }
     return DEFAULT_LOCALE;
+  }
+
+  const envLocale = process.env.NEXT_PUBLIC_LOCALE;
+  if (envLocale === 'en' || envLocale === 'ru') {
+    return envLocale as LocaleKey;
   }
 
   if (cachedLocale) {
