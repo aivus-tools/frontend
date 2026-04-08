@@ -4,6 +4,7 @@ import React, { useState, useRef, useEffect, useCallback } from 'react';
 import { Button, Input, Modal } from 'antd';
 import { SendOutlined, LikeOutlined, DislikeOutlined, CommentOutlined } from '@ant-design/icons';
 import { t } from '@/lib/i18n';
+import { catalog, LocaleKey } from '@/locales';
 import {
   ChatMessageV2,
   ConversationPhase,
@@ -147,11 +148,19 @@ export const BriefChatPanel: React.FC<BriefChatPanelProps> = (props) => {
     props.briefStatus !== 'COMPLETED' &&
     !props.isLoading;
 
-  const handleFillDefaults = () => {
-    if (props.isLoading) {
-      return;
+  const detectBriefLocale = (): LocaleKey => {
+    if (firstAssistantIndex === -1) {
+      return 'en';
     }
-    props.onSendMessage(t('BRIEF_V2_FILL_DEFAULTS_PROMPT'));
+    const text = props.messages[firstAssistantIndex].content;
+    return /[А-Яа-яЁё]/.test(text) ? 'ru' : 'en';
+  };
+
+  const fillDefaultsButtonLabel = catalog[detectBriefLocale()].BRIEF_V2_FILL_DEFAULTS_BUTTON;
+
+  const handleFillDefaults = () => {
+    const briefLocale = detectBriefLocale();
+    props.onSendMessage(catalog[briefLocale].BRIEF_V2_FILL_DEFAULTS_PROMPT);
   };
 
   const sectionValues = Object.values(props.sectionsStatus);
@@ -216,7 +225,7 @@ export const BriefChatPanel: React.FC<BriefChatPanelProps> = (props) => {
             {index === firstAssistantIndex && showFillDefaultsButton && (
               <FeedbackRow>
                 <Button size='small' type='default' onClick={handleFillDefaults}>
-                  {t('BRIEF_V2_FILL_DEFAULTS_BUTTON')}
+                  {fillDefaultsButtonLabel}
                 </Button>
               </FeedbackRow>
             )}
