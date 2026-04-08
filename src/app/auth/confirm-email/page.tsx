@@ -6,7 +6,7 @@ import { Flex, Typography, Button, message } from 'antd';
 import Spinner from '@/components/Spinner';
 import { t } from '@/lib/i18n';
 import { AppRoute } from '@/constants/appRoute';
-import { useSession } from 'next-auth/react';
+import { useSession, signOut } from 'next-auth/react';
 import { clearPendingBrief } from '@/helpers/pendingBrief';
 
 const CONFIRM_DELAY_MS = 1500;
@@ -47,6 +47,19 @@ const ConfirmEmailPage = () => {
 
         messageApi.success(t('EMAIL_CONFIRMED'));
         setStatus('success');
+
+        const confirmedEmail = typeof data.email === 'string' ? data.email.toLowerCase() : null;
+        const sessionEmail = session?.user?.email != null ? session.user.email.toLowerCase() : null;
+        const isDifferentUser = !!sessionEmail && !!confirmedEmail && sessionEmail !== confirmedEmail;
+
+        if (isDifferentUser) {
+          if (data.claimedBriefId) {
+            clearPendingBrief();
+          }
+          await new Promise((x) => setTimeout(x, CONFIRM_DELAY_MS));
+          await signOut({ callbackUrl: AppRoute.AUTH });
+          return;
+        }
 
         if (session?.user) {
           await updateSession({
