@@ -12,7 +12,9 @@ import fs from 'fs';
 import path from 'path';
 import theme from '@/lib/themeConfig';
 import React from 'react';
-import { locale } from '@/lib/i18n';
+import { headers } from 'next/headers';
+import { setServerLocale } from '@/lib/serverLocale';
+import type { LocaleKey } from '@/locales';
 import { AntdAppProvider } from '@/app/_components/AntdAppProvider';
 
 const montserrat = Montserrat({
@@ -36,8 +38,19 @@ export default async function RootLayout({
   const stats = fs.statSync(packageJsonPath);
   const creationDate = stats.birthtime.toISOString();
 
+  const headersList = await headers();
+  const headerLocale = headersList.get('x-locale');
+  const envLocale = process.env.NEXT_PUBLIC_LOCALE;
+  const resolvedLocale: LocaleKey =
+    headerLocale === 'ru' || headerLocale === 'en'
+      ? headerLocale
+      : envLocale === 'ru' || envLocale === 'en'
+        ? (envLocale as LocaleKey)
+        : 'en';
+  setServerLocale(resolvedLocale);
+
   return (
-    <html lang={locale} suppressHydrationWarning>
+    <html lang={resolvedLocale} suppressHydrationWarning>
       <body className={montserrat.className} suppressHydrationWarning>
         <VersionLogger creationDate={creationDate} />
         <StyledComponentsRegistry>

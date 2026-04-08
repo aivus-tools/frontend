@@ -5,6 +5,18 @@ import React from 'react';
 
 const DEFAULT_LOCALE: LocaleKey = 'en';
 
+interface GlobalWithLocale {
+  __aivusGetServerLocale?: () => LocaleKey | null;
+}
+
+function getServerLocaleFromGlobal(): LocaleKey | null {
+  if (typeof window !== 'undefined') {
+    return null;
+  }
+  const getter = (globalThis as GlobalWithLocale).__aivusGetServerLocale;
+  return typeof getter === 'function' ? getter() : null;
+}
+
 let cachedLocale: LocaleKey | null = null;
 
 function getLocaleFromCookie(): LocaleKey {
@@ -26,6 +38,19 @@ function getLocaleFromCookie(): LocaleKey {
 }
 
 function getLocale(): LocaleKey {
+  const envLocale = process.env.NEXT_PUBLIC_LOCALE;
+  if (envLocale === 'en' || envLocale === 'ru') {
+    return envLocale as LocaleKey;
+  }
+
+  if (typeof window === 'undefined') {
+    const fromStore = getServerLocaleFromGlobal();
+    if (fromStore) {
+      return fromStore;
+    }
+    return DEFAULT_LOCALE;
+  }
+
   if (cachedLocale) {
     return cachedLocale;
   }

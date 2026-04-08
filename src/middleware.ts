@@ -45,6 +45,14 @@ const detectLocaleFromHeader = (acceptLanguage: string | null): SupportedLocale 
   return DEFAULT_LOCALE;
 };
 
+const resolveLocale = (req: NextRequest): SupportedLocale => {
+  const existing = req.cookies.get('locale')?.value;
+  if (existing && isSupportedLocale(existing)) {
+    return existing;
+  }
+  return detectLocaleFromHeader(req.headers.get('accept-language'));
+};
+
 const ensureLocaleCookie = (req: NextRequest, response: NextResponse): NextResponse => {
   const existing = req.cookies.get('locale')?.value;
   if (existing && isSupportedLocale(existing)) {
@@ -58,6 +66,13 @@ const ensureLocaleCookie = (req: NextRequest, response: NextResponse): NextRespo
     sameSite: 'lax',
   });
   return response;
+};
+
+const createPageResponse = (req: NextRequest): NextResponse => {
+  const locale = resolveLocale(req);
+  const requestHeaders = new Headers(req.headers);
+  requestHeaders.set('x-locale', locale);
+  return NextResponse.next({ request: { headers: requestHeaders } });
 };
 
 // Public paths within /auth, accessible to all (authenticated and not)
@@ -79,7 +94,7 @@ const CSP = isDevelopment
 export default auth(async (req) => {
   if (req.nextUrl.pathname.startsWith('/external') || req.nextUrl.pathname.startsWith('/public')) {
     // For /public routes, still proxy /service/ calls but skip auth requirements
-    const response = NextResponse.next();
+    const response = createPageResponse(req);
     response.headers.set('Content-Security-Policy', CSP);
     return ensureLocaleCookie(req, response);
   }
@@ -226,14 +241,14 @@ export default auth(async (req) => {
 
   // Add Cache-Control headers for auth routes to prevent caching sensitive pages
   if (pathname.startsWith('/auth')) {
-    const response = NextResponse.next();
+    const response = createPageResponse(req);
     response.headers.set('Content-Security-Policy', CSP);
     response.headers.set('Cache-Control', 'no-store, no-cache, must-revalidate');
     return ensureLocaleCookie(req, response);
   }
 
   // Add CSP to all other requests
-  const response = NextResponse.next();
+  const response = createPageResponse(req);
   response.headers.set('Content-Security-Policy', CSP);
   return ensureLocaleCookie(req, response);
 });
