@@ -1,8 +1,9 @@
 'use client';
 
 import React, { useState, useRef, useEffect, useCallback } from 'react';
-import { Button, Input, Modal } from 'antd';
+import { Button, Input, Modal, Tooltip } from 'antd';
 import { SendOutlined, LikeOutlined, DislikeOutlined, CommentOutlined } from '@ant-design/icons';
+import { useSession } from 'next-auth/react';
 import { t } from '@/lib/i18n';
 import { catalog, LocaleKey } from '@/locales';
 import {
@@ -49,6 +50,7 @@ interface BriefChatPanelProps {
   isLoading: boolean;
   messageLimit: number;
   messageCount: number;
+  totalCostUsd?: string;
   onSendMessage: (message: string) => void;
   onFeedback: ((messageId: string, rating: 'up' | 'down') => void) | null;
   onFeedbackComment: ((messageId: string, rating: 'up' | 'down', comment: string) => void) | null;
@@ -74,6 +76,8 @@ const getSectionDisplayName = (key: string): string => {
 };
 
 export const BriefChatPanel: React.FC<BriefChatPanelProps> = (props) => {
+  const session = useSession();
+  const isStaff = !!session?.data?.user?.isStaff;
   const [inputValue, setInputValue] = useState('');
   const [feedbackGiven, setFeedbackGiven] = useState<Record<string, 'up' | 'down'>>({});
   const [commentModalMessageId, setCommentModalMessageId] = useState<string | null>(null);
@@ -169,12 +173,19 @@ export const BriefChatPanel: React.FC<BriefChatPanelProps> = (props) => {
   const draftSections = sectionValues.filter((x) => x === 'draft').length;
   const progressPercent = Math.round(((completedSections + draftSections * 0.5) / totalSections) * 100);
 
+  const formattedCost = isStaff && props.totalCostUsd != null ? `$${parseFloat(props.totalCostUsd).toFixed(4)}` : null;
+
   return (
     <ChatPanel>
       <ChatHeader>
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
           <ChatTitle>Chat</ChatTitle>
           <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+            {formattedCost != null && (
+              <Tooltip title={t('BRIEF_V2_AI_COST_TOOLTIP')}>
+                <span style={{ fontSize: 11, color: '#99A1B7', fontFamily: 'monospace' }}>{formattedCost}</span>
+              </Tooltip>
+            )}
             <ProgressText>
               {completedSections}/{totalSections}
             </ProgressText>

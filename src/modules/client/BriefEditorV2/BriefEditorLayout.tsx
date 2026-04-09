@@ -2,7 +2,7 @@
 
 import React, { useState, useCallback, useRef, useEffect } from 'react';
 import { styled } from 'styled-components';
-import { App, Button } from 'antd';
+import { App, Button, Modal } from 'antd';
 import { t } from '@/lib/i18n';
 import { ApiRoute } from '@/constants/apiRoute';
 import { BriefEditor } from './BriefEditor';
@@ -18,6 +18,7 @@ import {
   useSendBriefAiFeedbackMutation,
   useFinalizeBriefAiMutation,
 } from '@/services/client/briefAiApi';
+import { useGetBriefShareByBriefIdQuery } from '@/services/client/briefShareApi';
 import { ChatMessageV2, ConversationPhase, SectionStatus, BriefV2ChatResponse } from '@/types/briefV2.interface';
 
 const OuterWrapper = styled.div`
@@ -34,6 +35,35 @@ const ActionBar = styled.div`
   display: flex;
   justify-content: flex-end;
   gap: 12px;
+`;
+
+const HeroWrapper = styled.div`
+  padding: 24px 32px;
+  background: linear-gradient(90deg, #fff7f2 0%, #fff 100%);
+  border-bottom: 1px solid #eef0f4;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+`;
+
+const HeroText = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+`;
+
+const HeroTitle = styled.div`
+  font-family: 'Montserrat', sans-serif;
+  font-size: 18px;
+  font-weight: 700;
+  color: #1f2937;
+`;
+
+const HeroSubtitle = styled.div`
+  font-family: 'Montserrat', sans-serif;
+  font-size: 13px;
+  color: #6b7280;
 `;
 
 const ContentWrapper = styled.div`
@@ -136,6 +166,7 @@ export const BriefEditorLayout: React.FC<BriefEditorLayoutProps> = (props) => {
   const [isStarting, setIsStarting] = useState(false);
   const [startMessage, setStartMessage] = useState('');
   const [isShareOpen, setIsShareOpen] = useState(false);
+  const [isPreviewOpen, setIsPreviewOpen] = useState(false);
   const pollRef = useRef<ReturnType<typeof setInterval> | null>(null);
   const pollTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const highlightTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -151,6 +182,10 @@ export const BriefEditorLayout: React.FC<BriefEditorLayoutProps> = (props) => {
   const { data: briefDetail } = useGetBriefAiDetailQuery(briefId!, {
     skip: !briefId || isGenerating,
     refetchOnMountOrArgChange: true,
+  });
+
+  const { data: briefShare } = useGetBriefShareByBriefIdQuery(briefId!, {
+    skip: !briefId || briefStatus !== 'COMPLETED',
   });
 
   useEffect(() => {
@@ -480,14 +515,73 @@ export const BriefEditorLayout: React.FC<BriefEditorLayoutProps> = (props) => {
   }
 
   const isCompleted = briefStatus === 'COMPLETED';
+  const shareViewCount = briefShare?.viewCount ?? 0;
+  const hasActiveShare = !!briefShare && briefShare.isActive;
+  const heroVariant: 'cta' | 'views' | null = isCompleted
+    ? hasActiveShare && shareViewCount > 0
+      ? 'views'
+      : 'cta'
+    : null;
+
+  const handleHeroShareClick = () => {
+    setIsShareOpen(true);
+  };
+
+  const handleHeroCopyClick = async () => {
+    if (!briefShare?.token || typeof window === 'undefined') {
+      return;
+    }
+    const url = `${window.location.origin}/shared-brief/${briefShare.token}`;
+    try {
+      await navigator.clipboard.writeText(url);
+      message.success(t('COPIED'));
+    } catch {
+      message.error(t('UNEXPECTED_ERROR'));
+    }
+  };
 
   return (
     <OuterWrapper>
       {isCompleted && (
         <ActionBar>
+          <Button onClick={() => setIsPreviewOpen(true)}>{t('BRIEF_V2_PREVIEW_AS_VENDOR')}</Button>
           <Button onClick={handlePdf}>{t('BRIEF_V2_EXPORT_PDF')}</Button>
           <Button onClick={() => setIsShareOpen(true)}>{t('BRIEF_V2_SHARE')}</Button>
         </ActionBar>
+      )}
+      {heroVariant === 'cta' && (
+        <HeroWrapper>
+          <HeroText>
+            <HeroTitle>{t('BRIEF_V2_HERO_TITLE')}</HeroTitle>
+            <HeroSubtitle>{t('BRIEF_V2_HERO_SUBTITLE')}</HeroSubtitle>
+          </HeroText>
+          <Button
+            type='primary'
+            size='large'
+            onClick={handleHeroShareClick}
+            style={{ background: '#FD8258', borderColor: '#FD8258', fontWeight: 600, minWidth: 220 }}
+          >
+            {t('BRIEF_V2_HERO_SHARE_CTA')}
+          </Button>
+        </HeroWrapper>
+      )}
+      {heroVariant === 'views' && briefShare && (
+        <HeroWrapper>
+          <HeroText>
+            <HeroTitle>{t('BRIEF_V2_HERO_VIEWS_TITLE', String(shareViewCount))}</HeroTitle>
+            <HeroSubtitle>
+              {briefShare.lastViewedAt ? t('BRIEF_V2_HERO_VIEWS_SUBTITLE') : t('BRIEF_V2_HERO_SUBTITLE')}
+            </HeroSubtitle>
+          </HeroText>
+          <Button
+            type='primary'
+            size='large'
+            onClick={handleHeroCopyClick}
+            style={{ background: '#22c55e', borderColor: '#22c55e', fontWeight: 600, minWidth: 220 }}
+          >
+            {t('BRIEF_V2_HERO_COPY_CTA')}
+          </Button>
+        </HeroWrapper>
       )}
       <ContentWrapper>
         <BriefEditor
@@ -506,6 +600,7 @@ export const BriefEditorLayout: React.FC<BriefEditorLayoutProps> = (props) => {
           isLoading={isChatLoading}
           messageLimit={MESSAGE_LIMIT}
           messageCount={messageCount}
+          totalCostUsd={totalCostUsd}
           onSendMessage={handleSendMessage}
           onFeedback={handleFeedback}
           onFeedbackComment={handleFeedbackComment}
@@ -515,6 +610,27 @@ export const BriefEditorLayout: React.FC<BriefEditorLayoutProps> = (props) => {
       {isCompleted && briefId && (
         <BriefSharePopup open={isShareOpen} onClose={() => setIsShareOpen(false)} briefId={briefId} />
       )}
+      <Modal
+        title={t('BRIEF_V2_PREVIEW_TITLE')}
+        open={isPreviewOpen}
+        onCancel={() => setIsPreviewOpen(false)}
+        footer={null}
+        width={900}
+        styles={{ body: { padding: 0, maxHeight: '70vh', overflow: 'auto' } }}
+        destroyOnClose
+      >
+        <div style={{ padding: '12px 24px', background: '#fff7f2', fontSize: 12, color: '#6b7280' }}>
+          {t('BRIEF_V2_PREVIEW_DRAFT_NOTE')}
+        </div>
+        <BriefEditor
+          documentHtml={documentHtml}
+          sectionsStatus={sectionsStatus}
+          sectionsChanged={[]}
+          readOnly={true}
+          totalCostUsd='0'
+          onSectionEdit={null}
+        />
+      </Modal>
     </OuterWrapper>
   );
 };
