@@ -40,6 +40,27 @@ const extractSectionHtml = (fullHtml: string, sectionKey: string): string | null
   return sectionDiv.innerHTML;
 };
 
+const stripEmptyOrPlaceholderSections = (fullHtml: string): string => {
+  if (!fullHtml || typeof window === 'undefined') {
+    return fullHtml;
+  }
+  const parser = new DOMParser();
+  const doc = parser.parseFromString(fullHtml, 'text/html');
+  const sectionDivs = doc.querySelectorAll('[data-section]');
+  sectionDivs.forEach((node) => {
+    const text = (node.textContent || '').trim().toLowerCase();
+    const meaningful = text.replace(/[\d.\s]/g, '');
+    if (!meaningful || meaningful === 'na' || meaningful === 'n/a' || /^[1-9]\.?[a-z\s]*na?$/i.test(text)) {
+      const next = node.nextElementSibling;
+      if (next && next.tagName === 'HR') {
+        next.remove();
+      }
+      node.remove();
+    }
+  });
+  return doc.body.innerHTML;
+};
+
 export const BriefEditor: React.FC<BriefEditorProps> = (props) => {
   const prevHtmlRef = useRef(props.documentHtml);
   const isUpdatingRef = useRef(false);
@@ -67,7 +88,7 @@ export const BriefEditor: React.FC<BriefEditorProps> = (props) => {
         },
       }),
     ],
-    content: props.documentHtml,
+    content: stripEmptyOrPlaceholderSections(props.documentHtml),
     editable: !props.readOnly,
     onUpdate: (x) => {
       if (isUpdatingRef.current || !onSectionEditRef.current) {
@@ -143,7 +164,7 @@ export const BriefEditor: React.FC<BriefEditorProps> = (props) => {
       return;
     }
     isUpdatingRef.current = true;
-    editor.commands.setContent(props.documentHtml, { emitUpdate: false });
+    editor.commands.setContent(stripEmptyOrPlaceholderSections(props.documentHtml), { emitUpdate: false });
     isUpdatingRef.current = false;
     prevHtmlRef.current = props.documentHtml;
   }, [editor, props.documentHtml]);
