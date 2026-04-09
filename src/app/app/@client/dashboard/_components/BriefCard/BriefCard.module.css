@@ -13,15 +13,16 @@
 
 .row {
   display: grid;
-  grid-template-columns: 1.5fr 1.2fr 100px 100px 120px 130px 120px;
-  column-gap: 20px;
+  grid-template-columns: 1.7fr 110px 90px 90px 130px 140px 120px 60px;
+  column-gap: 16px;
   align-items: center;
   width: 100%;
-  padding: 20px 22px;
+  padding: 18px 22px;
 }
 
 .projectCell {
   position: relative;
+  min-width: 0;
   padding-left: 20px;
 }
 
@@ -35,11 +36,14 @@
 }
 
 .projectName {
+  overflow: hidden;
   font-family: Montserrat, sans-serif;
   font-size: 14px;
   font-weight: 700;
   color: #4b5675;
+  text-overflow: ellipsis;
   text-transform: uppercase;
+  white-space: nowrap;
 }
 
 .assignee {
@@ -50,50 +54,24 @@
   color: #99a1b7;
 }
 
-.activityCell {
-  overflow: hidden;
-}
-
-.activityText {
-  overflow: hidden;
-  font-family: Montserrat, sans-serif;
-  font-size: 12px;
-  font-weight: 500;
-  color: #4b5675;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-
-.statusCell {
+.statusCell,
+.messagesCell,
+.versionCell,
+.offersCell,
+.shareCell {
   display: flex;
   justify-content: center;
-}
-
-.proposalsCell {
-  display: flex;
-  justify-content: center;
-}
-
-.proposalCount {
-  font-family: Montserrat, sans-serif;
-  font-size: 14px;
-  font-weight: 600;
-  color: #4b5675;
-}
-
-.offerCell {
-  text-align: right;
-}
-
-.offerValue {
-  font-family: Montserrat, sans-serif;
-  font-size: 13px;
-  font-weight: 600;
-  color: #4b5675;
 }
 
 .dateCell {
   text-align: left;
+}
+
+.numericValue {
+  font-family: Montserrat, sans-serif;
+  font-size: 13px;
+  font-weight: 600;
+  color: #4b5675;
 }
 
 .dateValue {
@@ -101,4 +79,13 @@
   font-size: 13px;
   font-weight: 500;
   color: #4b5675;
+}
+
+.actionsCell {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.compareButton {
+  font-size: 12px;
 }
