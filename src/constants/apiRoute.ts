@@ -77,6 +77,8 @@ export const ApiRoute = {
   VENDOR_SETTINGS: '/service/vendor/settings',
   VENDOR_SETTINGS_LOGO: '/service/vendor/settings/logo',
   OFFER_EXPORT_DATA: (offerId: string | number) => `/service/offers/${offerId}/export-data`,
+  BRIEF_AI_LIST: '/service/client/briefs/ai',
+  BRIEF_AI_DUPLICATE: (briefId: string) => `/service/client/briefs/ai/${briefId}/duplicate`,
   BRIEF_AI_START: '/service/client/briefs/ai/start',
   BRIEF_AI_STATUS: (briefId: string) => `/service/client/briefs/ai/${briefId}/status`,
   BRIEF_AI_CHAT: (briefId: string) => `/service/client/briefs/ai/${briefId}/chat`,

@@ -7,6 +7,8 @@ interface BriefShareData {
   briefId: string;
   token: string;
   isActive: boolean;
+  viewCount: number;
+  lastViewedAt: string | null;
   createdBy: string | null;
   createdAt: string | null;
   updatedAt: string | null;

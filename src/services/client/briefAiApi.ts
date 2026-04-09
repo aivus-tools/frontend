@@ -1,11 +1,11 @@
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
 import { ApiRoute } from '@/constants/apiRoute';
 import {
-  BriefV2,
   BriefV2StartResponse,
   BriefV2TaskStatus,
   BriefV2ChatResponse,
   BriefV2Detail,
+  BriefV2ListItem,
   BriefV2SectionUpdateResponse,
   BriefFeedbackResponse,
   FeedbackRating,
@@ -89,6 +89,35 @@ export const briefAiApi = createApi({
       }),
       invalidatesTags: ['BriefV2'],
     }),
+    getBriefAiList: builder.query<BriefV2ListItem[], void>({
+      query: () => ({
+        url: ApiRoute.BRIEF_AI_LIST,
+        method: 'GET',
+      }),
+      providesTags: ['BriefV2'],
+    }),
+    duplicateBriefAi: builder.mutation<{ briefId: string }, string>({
+      query: (briefId) => ({
+        url: ApiRoute.BRIEF_AI_DUPLICATE(briefId),
+        method: 'POST',
+      }),
+      invalidatesTags: ['BriefV2'],
+    }),
+    deleteBriefAi: builder.mutation<{ deleted: boolean }, string>({
+      query: (briefId) => ({
+        url: ApiRoute.BRIEF_AI_DETAIL(briefId),
+        method: 'DELETE',
+      }),
+      invalidatesTags: ['BriefV2'],
+    }),
+    renameBriefAi: builder.mutation<BriefV2ListItem, { briefId: string; projectName: string }>({
+      query: (args) => ({
+        url: ApiRoute.BRIEF_AI_DETAIL(args.briefId),
+        method: 'PATCH',
+        body: { projectName: args.projectName },
+      }),
+      invalidatesTags: ['BriefV2'],
+    }),
   }),
 });
 
@@ -100,4 +129,8 @@ export const {
   useUpdateBriefAiSectionMutation,
   useSendBriefAiFeedbackMutation,
   useFinalizeBriefAiMutation,
+  useGetBriefAiListQuery,
+  useDuplicateBriefAiMutation,
+  useDeleteBriefAiMutation,
+  useRenameBriefAiMutation,
 } = briefAiApi;

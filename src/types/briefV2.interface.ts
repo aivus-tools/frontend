@@ -105,3 +105,34 @@ export interface PublicBriefStartResponse {
   token: string;
   taskId: string;
 }
+
+export type BriefShareStatus = 'none' | 'active' | 'inactive';
+
+export interface BriefV2ListItem {
+  id: string;
+  status: string;
+  projectName: string;
+  version: number;
+  messageCount: number;
+  totalCostUsd: string;
+  conversationPhase: ConversationPhase;
+  createdAt: string;
+  updatedAt: string | null;
+  claimedAt: string | null;
+  shareStatus: BriefShareStatus;
+  shareViewCount: number;
+  shareLastViewedAt: string | null;
+  offersCount: number;
+}
+
+export interface BriefShareInfo {
+  id: string;
+  briefId: string;
+  token: string;
+  isActive: boolean;
+  viewCount: number;
+  lastViewedAt: string | null;
+  createdBy: string | null;
+  createdAt: string | null;
+  updatedAt: string | null;
+}
