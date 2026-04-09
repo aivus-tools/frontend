@@ -1,10 +1,12 @@
 'use client';
 
 import React, { useState, useCallback, useRef, useEffect } from 'react';
+import { useRouter } from 'next/navigation';
 import { styled } from 'styled-components';
 import { App, Button, Modal } from 'antd';
 import { t } from '@/lib/i18n';
 import { ApiRoute } from '@/constants/apiRoute';
+import { AppRoute } from '@/constants/appRoute';
 import { BriefEditor } from './BriefEditor';
 import { BriefChatPanel } from '@/modules/client/BriefChatV2/BriefChatPanel';
 import { BriefSharePopup } from '@/modules/BriefSharePopup/BriefSharePopup';
@@ -150,6 +152,7 @@ interface BriefEditorLayoutProps {
 
 export const BriefEditorLayout: React.FC<BriefEditorLayoutProps> = (props) => {
   const { message } = App.useApp();
+  const router = useRouter();
   const [briefId, setBriefId] = useState<string | null>(props.briefId);
   const [taskId, setTaskId] = useState<string | null>(null);
   const [isGenerating, setIsGenerating] = useState(false);
@@ -276,6 +279,7 @@ export const BriefEditorLayout: React.FC<BriefEditorLayoutProps> = (props) => {
       const result = await startBriefAi({ message: trimmed }).unwrap();
       setBriefId(result.briefId);
       setTaskId(result.taskId);
+      router.replace(AppRoute.BRIEF_V2_DETAIL(result.briefId));
 
       const userMessage: ChatMessageV2 = {
         id: `user-${Date.now()}`,
