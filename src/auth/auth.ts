@@ -52,6 +52,7 @@ providers.push(
           group: user.group,
           vendorId: user.vendorId,
           clientId: user.clientId,
+          isStaff: user.isStaff,
           image: null,
         };
       } catch (error) {
@@ -115,6 +116,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
             user.id = `${aivusUser.id}`;
             user.vendorId = aivusUser.vendorId;
             user.clientId = aivusUser.clientId;
+            user.isStaff = aivusUser.isStaff;
             return true;
           }
 
@@ -133,6 +135,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
             user.id = `${aivusUser.id}`;
             user.vendorId = aivusUser.vendorId;
             user.clientId = aivusUser.clientId;
+            user.isStaff = false;
             return true;
           }
 
@@ -152,6 +155,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
         token.id = user.id;
         token.vendorId = user.vendorId;
         token.clientId = user.clientId;
+        token.isStaff = user.isStaff;
       }
 
       // If update() was called with data - use it immediately (takes priority)
@@ -160,6 +164,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
         if (session.user.vendorId) token.vendorId = session.user.vendorId;
         if (session.user.clientId) token.clientId = session.user.clientId;
         if (session.user.name) token.name = session.user.name;
+        if (typeof session.user.isStaff === 'boolean') token.isStaff = session.user.isStaff;
         return token;
       }
 
@@ -173,6 +178,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
           token.group = aivusUser.group;
           token.vendorId = aivusUser.vendorId;
           token.clientId = aivusUser.clientId;
+          if (typeof aivusUser.isStaff === 'boolean') token.isStaff = aivusUser.isStaff;
         } catch (error) {
           logger.warn('Failed to update JWT from API, keeping existing token data', error);
         }
@@ -186,6 +192,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
       session.user.id = (token.id as string) || (token.sub as string);
       session.user.vendorId = token.vendorId as string | undefined;
       session.user.clientId = token.clientId as string | undefined;
+      session.user.isStaff = token.isStaff as boolean | undefined;
       return session;
     },
     authorized: async ({ auth, request }) => {

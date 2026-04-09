@@ -23,6 +23,7 @@ export async function login(credentials: Credentials): Promise<{
   vendorId?: string;
   clientId?: string;
   claimedBriefId?: string;
+  isStaff?: boolean;
 }> {
   try {
     const headers: Record<string, string> = {

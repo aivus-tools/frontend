@@ -15,6 +15,7 @@ export type User = {
   authType: AuthType;
   vendorId?: string;
   clientId?: string;
+  isStaff?: boolean;
   createdAt: string;
   updatedAt: string;
 };

@@ -1,4 +1,4 @@
-import type { User as NextUser , DefaultSession } from 'next-auth';
+import type { User as NextUser, DefaultSession } from 'next-auth';
 import { Groups } from '@/types/user.interface';
 
 declare module 'next-auth' {
@@ -6,6 +6,7 @@ declare module 'next-auth' {
     group?: Groups;
     vendorId?: string;
     clientId?: string;
+    isStaff?: boolean;
   }
 
   interface Session {
@@ -14,6 +15,7 @@ declare module 'next-auth' {
       group?: Groups;
       vendorId?: string;
       clientId?: string;
+      isStaff?: boolean;
     } & DefaultSession['user'];
   }
 }
@@ -24,5 +26,6 @@ declare module 'next-auth/jwt' {
     group?: Groups;
     vendorId?: string;
     clientId?: string;
+    isStaff?: boolean;
   }
 }
