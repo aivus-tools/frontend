@@ -22,6 +22,7 @@ export const briefAiApi = createApi({
         method: 'POST',
         body,
       }),
+      invalidatesTags: ['BriefV2'],
     }),
     getBriefAiStatus: builder.query<BriefV2TaskStatus, { briefId: string; taskId: string }>({
       query: (args) => ({
