@@ -256,8 +256,8 @@ export const BriefChatPanel: React.FC<BriefChatPanelProps> = (props) => {
         <div ref={messagesEndRef} />
       </MessagesArea>
 
-      <InputArea>
-        {props.conversationPhase === 'complete' && props.briefStatus !== 'COMPLETED' && props.onFinalize ? (
+      {props.conversationPhase === 'complete' && props.briefStatus !== 'COMPLETED' && props.onFinalize && (
+        <div style={{ padding: '8px 16px', borderTop: '1px solid #e5e7eb' }}>
           <Button
             type='primary'
             onClick={props.onFinalize}
@@ -266,7 +266,10 @@ export const BriefChatPanel: React.FC<BriefChatPanelProps> = (props) => {
           >
             {t('BRIEF_V2_FINALIZE')}
           </Button>
-        ) : isLimitReached ? (
+        </div>
+      )}
+      <InputArea>
+        {isLimitReached || props.briefStatus === 'COMPLETED' ? (
           <LimitBadge>{t('BRIEF_V2_MESSAGE_LIMIT')}</LimitBadge>
         ) : (
           <>

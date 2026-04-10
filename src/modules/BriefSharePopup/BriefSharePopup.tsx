@@ -69,8 +69,6 @@ export const BriefSharePopup: React.FC<BriefSharePopupProps> = (props) => {
 
   useEffect(() => {
     if (!props.open) {
-      setShareToken(null);
-      setIsActive(null);
       setHasError(false);
       setCopied(false);
       createGuardRef.current = false;
