@@ -1,5 +1,8 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+  experimental: {
+    proxyTimeout: 180_000,
+  },
   logging: {
     fetches: {
       fullUrl: true,

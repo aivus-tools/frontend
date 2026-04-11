@@ -85,6 +85,8 @@ export const ApiRoute = {
   BRIEF_AI_DETAIL: (briefId: string) => `/service/client/briefs/ai/${briefId}`,
   BRIEF_AI_SECTION: (briefId: string) => `/service/client/briefs/ai/${briefId}/section`,
   BRIEF_AI_FEEDBACK: (briefId: string) => `/service/client/briefs/ai/${briefId}/feedback`,
+  BRIEF_AI_MESSAGE_TRACE: (briefId: string, messageId: string) =>
+    `/service/client/briefs/ai/${briefId}/messages/${messageId}/trace`,
   BRIEF_AI_FINALIZE: (briefId: string) => `/service/client/briefs/ai/${briefId}/finalize`,
   PUBLIC_BRIEF_AI_START: '/service/public/briefs/ai/start',
   PUBLIC_BRIEF_AI_STATUS: (briefId: string) => `/service/public/briefs/ai/${briefId}/status`,

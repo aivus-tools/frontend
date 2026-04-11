@@ -2,7 +2,8 @@
 
 import React, { useState, useRef, useEffect, useCallback } from 'react';
 import { Button, Input, Modal, Tooltip } from 'antd';
-import { SendOutlined, LikeOutlined, DislikeOutlined, CommentOutlined } from '@ant-design/icons';
+import { SendOutlined, LikeOutlined, DislikeOutlined, CommentOutlined, CodeOutlined } from '@ant-design/icons';
+import { LLMTraceDrawer } from './LLMTraceDrawer';
 import { useSession } from 'next-auth/react';
 import { t } from '@/lib/i18n';
 import { catalog, LocaleKey } from '@/locales';
@@ -43,6 +44,7 @@ import {
 const TextArea = Input.TextArea;
 
 interface BriefChatPanelProps {
+  briefId?: string;
   messages: ChatMessageV2[];
   conversationPhase: ConversationPhase;
   briefStatus: string;
@@ -83,6 +85,7 @@ export const BriefChatPanel: React.FC<BriefChatPanelProps> = (props) => {
   const [commentModalMessageId, setCommentModalMessageId] = useState<string | null>(null);
   const [commentText, setCommentText] = useState('');
   const [commentRating, setCommentRating] = useState<'up' | 'down'>('up');
+  const [traceMessageId, setTraceMessageId] = useState<string | null>(null);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLTextAreaElement>(null);
 
@@ -231,6 +234,13 @@ export const BriefChatPanel: React.FC<BriefChatPanelProps> = (props) => {
                     <CommentOutlined />
                   </FeedbackButton>
                 )}
+                {isStaff && props.briefId && message.hasTrace && (
+                  <Tooltip title='View raw LLM request/response'>
+                    <FeedbackButton onClick={() => setTraceMessageId(message.id)}>
+                      <CodeOutlined />
+                    </FeedbackButton>
+                  </Tooltip>
+                )}
               </FeedbackRow>
             )}
             {index === firstAssistantIndex && showFillDefaultsButton && (
@@ -359,6 +369,14 @@ export const BriefChatPanel: React.FC<BriefChatPanelProps> = (props) => {
           )}
         </CommentModalBody>
       </Modal>
+      {props.briefId && (
+        <LLMTraceDrawer
+          briefId={props.briefId}
+          messageId={traceMessageId}
+          open={traceMessageId != null}
+          onClose={() => setTraceMessageId(null)}
+        />
+      )}
     </ChatPanel>
   );
 };

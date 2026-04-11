@@ -595,6 +595,7 @@ export const BriefEditorLayout: React.FC<BriefEditorLayoutProps> = (props) => {
           onSectionEdit={handleSectionEdit}
         />
         <BriefChatPanel
+          briefId={briefId}
           messages={messages}
           conversationPhase={conversationPhase}
           briefStatus={briefStatus}

@@ -53,7 +53,33 @@ export interface ChatMessageV2 {
   inputTokens: number;
   outputTokens: number;
   costUsd: string;
+  hasTrace?: boolean;
   createdAt: string;
+}
+
+export interface LLMCallTraceEntry {
+  id: string;
+  sequence: number;
+  purpose: string;
+  model: string;
+  requestMessages: { role: string; content: string }[];
+  requestParams: Record<string, unknown>;
+  responseRaw: string;
+  inputTokens: number;
+  outputTokens: number;
+  costUsd: string;
+  latencyMs: number;
+  createdAt: string | null;
+}
+
+export interface LLMMessageTraceResponse {
+  messageId: string;
+  modelUsed: string;
+  inputTokens: number;
+  outputTokens: number;
+  costUsd: string;
+  createdAt: string | null;
+  traces: LLMCallTraceEntry[];
 }
 
 export interface BriefV2Detail extends BriefV2 {

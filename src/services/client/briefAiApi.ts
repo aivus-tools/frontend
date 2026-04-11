@@ -9,6 +9,7 @@ import {
   BriefV2SectionUpdateResponse,
   BriefFeedbackResponse,
   FeedbackRating,
+  LLMMessageTraceResponse,
 } from '@/types/briefV2.interface';
 
 export const briefAiApi = createApi({
@@ -83,6 +84,12 @@ export const briefAiApi = createApi({
         },
       }),
     }),
+    getBriefAiMessageTrace: builder.query<LLMMessageTraceResponse, { briefId: string; messageId: string }>({
+      query: (args) => ({
+        url: ApiRoute.BRIEF_AI_MESSAGE_TRACE(args.briefId, args.messageId),
+        method: 'GET',
+      }),
+    }),
     finalizeBriefAi: builder.mutation<{ taskId: string }, string>({
       query: (briefId) => ({
         url: ApiRoute.BRIEF_AI_FINALIZE(briefId),
@@ -129,6 +136,7 @@ export const {
   useGetBriefAiDetailQuery,
   useUpdateBriefAiSectionMutation,
   useSendBriefAiFeedbackMutation,
+  useLazyGetBriefAiMessageTraceQuery,
   useFinalizeBriefAiMutation,
   useGetBriefAiListQuery,
   useDuplicateBriefAiMutation,
