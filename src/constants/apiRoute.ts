@@ -77,25 +77,32 @@ export const ApiRoute = {
   VENDOR_SETTINGS: '/service/vendor/settings',
   VENDOR_SETTINGS_LOGO: '/service/vendor/settings/logo',
   OFFER_EXPORT_DATA: (offerId: string | number) => `/service/offers/${offerId}/export-data`,
+  // AI Brief v3
   BRIEF_AI_LIST: '/service/client/briefs/ai',
-  BRIEF_AI_DUPLICATE: (briefId: string) => `/service/client/briefs/ai/${briefId}/duplicate`,
-  BRIEF_AI_START: '/service/client/briefs/ai/start',
+  BRIEF_AI_DRAFT: '/service/client/briefs/ai/drafts',
+  BRIEF_AI_START: (briefId: string) => `/service/client/briefs/ai/${briefId}/start`,
   BRIEF_AI_STATUS: (briefId: string) => `/service/client/briefs/ai/${briefId}/status`,
   BRIEF_AI_CHAT: (briefId: string) => `/service/client/briefs/ai/${briefId}/chat`,
   BRIEF_AI_DETAIL: (briefId: string) => `/service/client/briefs/ai/${briefId}`,
-  BRIEF_AI_SECTION: (briefId: string) => `/service/client/briefs/ai/${briefId}/section`,
+  BRIEF_AI_ATTACHMENTS: (briefId: string) => `/service/client/briefs/ai/${briefId}/attachments`,
+  BRIEF_AI_ATTACHMENT_DELETE: (briefId: string, attachmentId: string) =>
+    `/service/client/briefs/ai/${briefId}/attachments/${attachmentId}`,
   BRIEF_AI_FEEDBACK: (briefId: string) => `/service/client/briefs/ai/${briefId}/feedback`,
   BRIEF_AI_MESSAGE_TRACE: (briefId: string, messageId: string) =>
     `/service/client/briefs/ai/${briefId}/messages/${messageId}/trace`,
   BRIEF_AI_FINALIZE: (briefId: string) => `/service/client/briefs/ai/${briefId}/finalize`,
-  PUBLIC_BRIEF_AI_START: '/service/public/briefs/ai/start',
+  BRIEF_AI_FINAL_DOCUMENTS: (briefId: string) => `/service/client/briefs/ai/${briefId}/final-documents`,
+  BRIEF_AI_FINAL_DOCUMENT: (briefId: string, documentId: string) =>
+    `/service/client/briefs/ai/${briefId}/final-documents/${documentId}`,
+  BRIEF_AI_FINAL_DOCUMENT_PDF: (briefId: string, documentId: string) =>
+    `/service/client/briefs/ai/${briefId}/final-documents/${documentId}/pdf`,
+  PUBLIC_BRIEF_AI_DRAFT: '/service/public/briefs/ai/drafts',
+  PUBLIC_BRIEF_AI_START: (briefId: string) => `/service/public/briefs/ai/${briefId}/start`,
   PUBLIC_BRIEF_AI_STATUS: (briefId: string) => `/service/public/briefs/ai/${briefId}/status`,
   PUBLIC_BRIEF_AI_CHAT: (briefId: string) => `/service/public/briefs/ai/${briefId}/chat`,
+  PUBLIC_BRIEF_AI_ATTACHMENTS: (briefId: string) => `/service/public/briefs/ai/${briefId}/attachments`,
+  PUBLIC_BRIEF_AI_ATTACHMENT_DELETE: (briefId: string, attachmentId: string) =>
+    `/service/public/briefs/ai/${briefId}/attachments/${attachmentId}`,
   PUBLIC_BRIEF_AI_DETAIL: (briefId: string) => `/service/public/briefs/ai/${briefId}`,
   PUBLIC_BRIEF_AI_CLAIM: (briefId: string) => `/service/public/briefs/ai/${briefId}/claim`,
-  BRIEF_AI_SHARE: (briefId: string) => `/service/client/briefs/ai/${briefId}/share`,
-  BRIEF_SHARE_PUBLIC: (token: string) => `/service/public/brief-shares/${token}`,
-  BRIEF_SHARE_MANAGE: (token: string) => `/service/client/brief-shares/${token}/manage`,
-  BRIEF_AI_PDF: (briefId: string) => `/service/client/briefs/ai/${briefId}/pdf`,
-  BRIEF_SHARE_PDF: (token: string) => `/service/public/brief-shares/${token}/pdf`,
 } as const;

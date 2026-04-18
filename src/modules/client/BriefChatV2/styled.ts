@@ -1,12 +1,12 @@
 import { styled, keyframes } from 'styled-components';
 
 export const ChatPanel = styled.div`
-  width: 420px;
-  min-width: 420px;
+  flex: 1;
+  width: 100%;
+  min-width: 0;
   display: flex;
   flex-direction: column;
-  background: #f8f9fb;
-  border-left: 1px solid #eef0f4;
+  background: #ffffff;
 `;
 
 export const ChatHeader = styled.div`
@@ -56,10 +56,10 @@ export const ProgressText = styled.span`
 export const MessagesArea = styled.div`
   flex: 1;
   overflow-y: auto;
-  padding: 16px 20px;
+  padding: 20px 28px;
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: 16px;
   scroll-behavior: smooth;
 `;
 
@@ -81,17 +81,78 @@ export const MessageRow = styled.div<{ $isUser: boolean }>`
 `;
 
 export const MessageBubble = styled.div<{ $isUser: boolean }>`
-  max-width: 85%;
-  padding: 10px 14px;
-  border-radius: ${(x) => (x.$isUser ? '14px 14px 4px 14px' : '14px 14px 14px 4px')};
-  background: ${(x) => (x.$isUser ? '#2288FF' : '#ffffff')};
-  color: ${(x) => (x.$isUser ? '#ffffff' : '#4b5675')};
-  box-shadow: ${(x) => (x.$isUser ? 'none' : '0 1px 4px rgba(0, 0, 0, 0.06)')};
+  max-width: 100%;
+  padding: 12px 16px;
+  border-radius: ${(x) => (x.$isUser ? '16px 16px 4px 16px' : '16px 16px 16px 4px')};
+  background: ${(x) => (x.$isUser ? '#2288FF' : '#f3f5f9')};
+  color: ${(x) => (x.$isUser ? '#ffffff' : '#1f2937')};
   font-family: 'Montserrat', sans-serif;
-  font-size: 13px;
+  font-size: 14px;
   line-height: 1.6;
-  white-space: pre-wrap;
   word-break: break-word;
+  overflow-wrap: anywhere;
+
+  p {
+    margin: 0 0 8px 0;
+  }
+  p:last-child {
+    margin-bottom: 0;
+  }
+  ul,
+  ol {
+    margin: 4px 0 8px 0;
+    padding-left: 20px;
+  }
+  li {
+    margin: 2px 0;
+  }
+  h1,
+  h2,
+  h3,
+  h4 {
+    margin: 10px 0 6px 0;
+    font-weight: 700;
+  }
+  h1 {
+    font-size: 16px;
+  }
+  h2 {
+    font-size: 15px;
+  }
+  h3 {
+    font-size: 14px;
+  }
+  code {
+    background: ${(x) => (x.$isUser ? 'rgba(255,255,255,0.2)' : '#e5e7eb')};
+    padding: 1px 4px;
+    border-radius: 3px;
+    font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+    font-size: 12px;
+  }
+  pre {
+    background: ${(x) => (x.$isUser ? 'rgba(0,0,0,0.15)' : '#e5e7eb')};
+    padding: 8px 10px;
+    border-radius: 6px;
+    overflow-x: auto;
+    margin: 6px 0;
+  }
+  pre code {
+    background: transparent;
+    padding: 0;
+  }
+  a {
+    color: ${(x) => (x.$isUser ? '#ffffff' : '#2288ff')};
+    text-decoration: underline;
+  }
+  strong {
+    font-weight: 700;
+  }
+  blockquote {
+    border-left: 3px solid ${(x) => (x.$isUser ? 'rgba(255,255,255,0.4)' : '#d0d5dd')};
+    padding-left: 10px;
+    margin: 6px 0;
+    color: ${(x) => (x.$isUser ? 'rgba(255,255,255,0.9)' : '#6b7280')};
+  }
 `;
 
 export const MessageMeta = styled.div<{ $isUser: boolean }>`
@@ -223,7 +284,7 @@ export const TypingDot = styled.span<{ $delay: number }>`
 `;
 
 export const InputArea = styled.div`
-  padding: 12px 20px 16px;
+  padding: 16px 28px 20px;
   background: #ffffff;
   border-top: 1px solid #eef0f4;
   display: flex;

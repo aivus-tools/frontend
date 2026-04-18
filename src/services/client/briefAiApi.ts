@@ -1,74 +1,98 @@
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
 import { ApiRoute } from '@/constants/apiRoute';
 import {
-  BriefV2StartResponse,
-  BriefV2TaskStatus,
-  BriefV2ChatResponse,
-  BriefV2Detail,
-  BriefV2ListItem,
-  BriefV2SectionUpdateResponse,
+  BriefAttachment,
   BriefFeedbackResponse,
+  BriefFinalDocument,
+  BriefFinalPackage,
+  BriefV3ChatResponse,
+  BriefV3Detail,
+  BriefV3ListItem,
+  BriefV3StartResponse,
+  BriefV3TaskStatus,
   FeedbackRating,
   LLMMessageTraceResponse,
-} from '@/types/briefV2.interface';
+} from '@/types/briefAi.interface';
 
 export const briefAiApi = createApi({
   reducerPath: 'briefAiApi',
   baseQuery: fetchBaseQuery({ baseUrl: '' }),
-  tagTypes: ['BriefV2'],
+  tagTypes: ['BriefV3'],
   endpoints: (builder) => ({
-    startBriefAi: builder.mutation<BriefV2StartResponse, { message: string }>({
-      query: (body) => ({
-        url: ApiRoute.BRIEF_AI_START,
+    createBriefAiDraft: builder.mutation<{ briefId: string }, void>({
+      query: () => ({
+        url: ApiRoute.BRIEF_AI_DRAFT,
         method: 'POST',
-        body,
       }),
-      invalidatesTags: ['BriefV2'],
+      invalidatesTags: ['BriefV3'],
     }),
-    getBriefAiStatus: builder.query<BriefV2TaskStatus, { briefId: string; taskId: string }>({
+
+    startBriefAi: builder.mutation<
+      BriefV3StartResponse,
+      { briefId: string; message: string; attachmentIds?: string[] }
+    >({
+      query: (args) => ({
+        url: ApiRoute.BRIEF_AI_START(args.briefId),
+        method: 'POST',
+        body: {
+          message: args.message,
+          attachmentIds: args.attachmentIds ?? [],
+        },
+      }),
+      invalidatesTags: ['BriefV3'],
+    }),
+
+    getBriefAiStatus: builder.query<BriefV3TaskStatus, { briefId: string; taskId: string }>({
       query: (args) => ({
         url: `${ApiRoute.BRIEF_AI_STATUS(args.briefId)}?taskId=${args.taskId}`,
         method: 'GET',
       }),
     }),
-    sendBriefAiChat: builder.mutation<BriefV2ChatResponse, { briefId: string; message: string; documentHtml?: string }>(
-      {
-        query: (args) => ({
-          url: ApiRoute.BRIEF_AI_CHAT(args.briefId),
-          method: 'POST',
-          body: { message: args.message, documentHtml: args.documentHtml },
-        }),
-        invalidatesTags: ['BriefV2'],
-      }
-    ),
-    getBriefAiDetail: builder.query<BriefV2Detail, string>({
+
+    sendBriefAiChat: builder.mutation<
+      BriefV3ChatResponse,
+      { briefId: string; message: string; attachmentIds?: string[] }
+    >({
+      query: (args) => ({
+        url: ApiRoute.BRIEF_AI_CHAT(args.briefId),
+        method: 'POST',
+        body: { message: args.message, attachmentIds: args.attachmentIds ?? [] },
+      }),
+      invalidatesTags: ['BriefV3'],
+    }),
+
+    getBriefAiDetail: builder.query<BriefV3Detail, string>({
       query: (briefId) => ({
         url: ApiRoute.BRIEF_AI_DETAIL(briefId),
         method: 'GET',
       }),
-      providesTags: ['BriefV2'],
+      providesTags: ['BriefV3'],
     }),
-    updateBriefAiSection: builder.mutation<
-      BriefV2SectionUpdateResponse,
-      { briefId: string; sectionKey: string; html: string; expectedVersion: number }
-    >({
+
+    uploadBriefAiAttachment: builder.mutation<BriefAttachment, { briefId: string; file: File }>({
+      query: (args) => {
+        const formData = new FormData();
+        formData.append('file', args.file);
+        return {
+          url: ApiRoute.BRIEF_AI_ATTACHMENTS(args.briefId),
+          method: 'POST',
+          body: formData,
+        };
+      },
+    }),
+
+    deleteBriefAiAttachment: builder.mutation<{ deleted: boolean }, { briefId: string; attachmentId: string }>({
       query: (args) => ({
-        url: ApiRoute.BRIEF_AI_SECTION(args.briefId),
-        method: 'PATCH',
-        body: {
-          sectionKey: args.sectionKey,
-          html: args.html,
-          expectedVersion: args.expectedVersion,
-        },
+        url: ApiRoute.BRIEF_AI_ATTACHMENT_DELETE(args.briefId, args.attachmentId),
+        method: 'DELETE',
       }),
-      invalidatesTags: ['BriefV2'],
     }),
+
     sendBriefAiFeedback: builder.mutation<
       BriefFeedbackResponse,
       {
         briefId: string;
-        messageId: string | null;
-        sectionKey: string;
+        messageId: string;
         rating: FeedbackRating;
         comment: string;
       }
@@ -78,68 +102,88 @@ export const briefAiApi = createApi({
         method: 'POST',
         body: {
           messageId: args.messageId,
-          sectionKey: args.sectionKey,
           rating: args.rating,
           comment: args.comment,
         },
       }),
     }),
+
     getBriefAiMessageTrace: builder.query<LLMMessageTraceResponse, { briefId: string; messageId: string }>({
       query: (args) => ({
         url: ApiRoute.BRIEF_AI_MESSAGE_TRACE(args.briefId, args.messageId),
         method: 'GET',
       }),
     }),
+
     finalizeBriefAi: builder.mutation<{ taskId: string }, string>({
       query: (briefId) => ({
         url: ApiRoute.BRIEF_AI_FINALIZE(briefId),
         method: 'POST',
       }),
-      invalidatesTags: ['BriefV2'],
+      invalidatesTags: ['BriefV3'],
     }),
-    getBriefAiList: builder.query<BriefV2ListItem[], void>({
+
+    getBriefAiFinalDocuments: builder.query<BriefFinalPackage, string>({
+      query: (briefId) => ({
+        url: ApiRoute.BRIEF_AI_FINAL_DOCUMENTS(briefId),
+        method: 'GET',
+      }),
+      providesTags: ['BriefV3'],
+    }),
+
+    updateBriefAiFinalDocument: builder.mutation<
+      BriefFinalDocument,
+      { briefId: string; documentId: string; html: string; plainText?: string }
+    >({
+      query: (args) => ({
+        url: ApiRoute.BRIEF_AI_FINAL_DOCUMENT(args.briefId, args.documentId),
+        method: 'PATCH',
+        body: { html: args.html, plainText: args.plainText },
+      }),
+    }),
+
+    getBriefAiList: builder.query<BriefV3ListItem[], void>({
       query: () => ({
         url: ApiRoute.BRIEF_AI_LIST,
         method: 'GET',
       }),
-      providesTags: ['BriefV2'],
+      providesTags: ['BriefV3'],
     }),
-    duplicateBriefAi: builder.mutation<{ briefId: string }, string>({
-      query: (briefId) => ({
-        url: ApiRoute.BRIEF_AI_DUPLICATE(briefId),
-        method: 'POST',
-      }),
-      invalidatesTags: ['BriefV2'],
-    }),
+
     deleteBriefAi: builder.mutation<{ deleted: boolean }, string>({
       query: (briefId) => ({
         url: ApiRoute.BRIEF_AI_DETAIL(briefId),
         method: 'DELETE',
       }),
-      invalidatesTags: ['BriefV2'],
+      invalidatesTags: ['BriefV3'],
     }),
-    renameBriefAi: builder.mutation<BriefV2ListItem, { briefId: string; projectName: string }>({
+
+    renameBriefAi: builder.mutation<BriefV3ListItem, { briefId: string; title: string }>({
       query: (args) => ({
         url: ApiRoute.BRIEF_AI_DETAIL(args.briefId),
         method: 'PATCH',
-        body: { projectName: args.projectName },
+        body: { title: args.title },
       }),
-      invalidatesTags: ['BriefV2'],
+      invalidatesTags: ['BriefV3'],
     }),
   }),
 });
 
 export const {
+  useCreateBriefAiDraftMutation,
   useStartBriefAiMutation,
   useLazyGetBriefAiStatusQuery,
   useSendBriefAiChatMutation,
   useGetBriefAiDetailQuery,
-  useUpdateBriefAiSectionMutation,
+  useUploadBriefAiAttachmentMutation,
+  useDeleteBriefAiAttachmentMutation,
   useSendBriefAiFeedbackMutation,
   useLazyGetBriefAiMessageTraceQuery,
   useFinalizeBriefAiMutation,
+  useLazyGetBriefAiFinalDocumentsQuery,
+  useGetBriefAiFinalDocumentsQuery,
+  useUpdateBriefAiFinalDocumentMutation,
   useGetBriefAiListQuery,
-  useDuplicateBriefAiMutation,
   useDeleteBriefAiMutation,
   useRenameBriefAiMutation,
 } = briefAiApi;

@@ -15,9 +15,7 @@ const clientDashboardTHeads = [
   { text: t('PROJECT'), showIcon: true },
   { text: t('DASHBOARD_STATUS') },
   { text: t('BRIEF_LIST_MESSAGES') },
-  { text: t('BRIEF_LIST_VERSION') },
   { text: t('BRIEF_LIST_OFFERS') },
-  { text: t('BRIEF_LIST_SHARE_STATUS') },
   { text: t('CREATED') },
   { text: '' },
 ];

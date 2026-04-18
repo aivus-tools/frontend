@@ -51,6 +51,7 @@
     "react": "^19",
     "react-dom": "^19",
     "react-hook-form": "^7.52.1",
+    "react-markdown": "^10.1.0",
     "react-redux": "^9.2.0",
     "react-tiny-popover": "^8.0.4",
     "react-world-flags": "^1.6.0",

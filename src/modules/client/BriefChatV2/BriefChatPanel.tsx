@@ -1,33 +1,24 @@
 'use client';
 
 import React, { useState, useRef, useEffect, useCallback } from 'react';
-import { Button, Input, Modal, Tooltip } from 'antd';
+import { Button, Input, Modal } from 'antd';
 import { SendOutlined, LikeOutlined, DislikeOutlined, CommentOutlined, CodeOutlined } from '@ant-design/icons';
-import { LLMTraceDrawer } from './LLMTraceDrawer';
 import { useSession } from 'next-auth/react';
+import ReactMarkdown from 'react-markdown';
+import { LLMTraceDrawer } from './LLMTraceDrawer';
+import { FileUploadZone } from '@/modules/client/BriefEditorV2/components/FileUploadZone';
 import { t } from '@/lib/i18n';
-import { catalog, LocaleKey } from '@/locales';
-import {
-  ChatMessageV2,
-  ConversationPhase,
-  SectionStatus,
-  SECTION_DISPLAY_NAMES,
-  BriefSectionKey,
-} from '@/types/briefV2.interface';
+import { BriefAttachment, ChatMessageV3, ConversationStatus } from '@/types/briefAi.interface';
 import {
   ChatPanel,
   ChatHeader,
   ChatTitle,
   ChatPhase,
-  ProgressBar,
-  ProgressFill,
-  ProgressText,
   MessagesArea,
   MessageRow,
   MessageBubble,
   MessageMeta,
   MessageTime,
-  SectionBadge,
   FeedbackRow,
   FeedbackButton,
   CommentModalBody,
@@ -45,72 +36,72 @@ const TextArea = Input.TextArea;
 
 interface BriefChatPanelProps {
   briefId?: string;
-  messages: ChatMessageV2[];
-  conversationPhase: ConversationPhase;
-  briefStatus: string;
-  sectionsStatus: Record<string, SectionStatus>;
+  messages: ChatMessageV3[];
+  conversationStatus: ConversationStatus;
   isLoading: boolean;
   messageLimit: number;
   messageCount: number;
   totalCostUsd?: string;
-  onSendMessage: (message: string) => void;
+  pendingAttachments: BriefAttachment[];
+  uploading: boolean;
+  maxAttachments: number;
+  onUploadAttachment: (file: File) => Promise<void> | void;
+  onDeleteAttachment: (attachmentId: string) => Promise<void> | void;
+  onSendMessage: (message: string, attachmentIds: string[]) => void;
   onFeedback: ((messageId: string, rating: 'up' | 'down') => void) | null;
   onFeedbackComment: ((messageId: string, rating: 'up' | 'down', comment: string) => void) | null;
   onFinalize: (() => void) | null;
+  onShowPackage?: (() => void) | null;
   showRegistrationButton?: boolean;
   onRegisterClick?: () => void;
 }
 
-const PHASE_LABELS: Record<ConversationPhase, string> = {
-  initial: 'Starting',
-  questioning: 'Asking questions',
-  refining: 'Refining',
-  complete: 'Complete',
+const STATUS_LABELS: Record<ConversationStatus, string> = {
+  in_progress: 'In progress',
+  ready_to_finalize: 'Ready to finalize',
+  finalized: 'Finalized',
 };
 
-const formatTime = (iso: string): string => {
+const formatTime = (iso: string | null): string => {
+  if (!iso) {
+    return '';
+  }
   const date = new Date(iso);
   return date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
 };
 
-const getSectionDisplayName = (key: string): string => {
-  return SECTION_DISPLAY_NAMES[key as BriefSectionKey] ?? key.replace(/_/g, ' ');
-};
-
 export const BriefChatPanel: React.FC<BriefChatPanelProps> = (props) => {
-  const session = useSession();
-  const isStaff = !!session?.data?.user?.isStaff;
-  const [inputValue, setInputValue] = useState('');
-  const [feedbackGiven, setFeedbackGiven] = useState<Record<string, 'up' | 'down'>>({});
-  const [commentModalMessageId, setCommentModalMessageId] = useState<string | null>(null);
-  const [commentText, setCommentText] = useState('');
-  const [commentRating, setCommentRating] = useState<'up' | 'down'>('up');
+  const { data: session } = useSession();
+  const isStaff = Boolean((session?.user as { isStaff?: boolean } | undefined)?.isStaff);
+
+  const [draft, setDraft] = useState('');
   const [traceMessageId, setTraceMessageId] = useState<string | null>(null);
+  const [commentModal, setCommentModal] = useState<{
+    messageId: string;
+    content: string;
+    rating: 'up' | 'down';
+    comment: string;
+  } | null>(null);
+
   const messagesEndRef = useRef<HTMLDivElement>(null);
-  const inputRef = useRef<HTMLTextAreaElement>(null);
 
-  const scrollToBottom = useCallback(() => {
+  useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
-  }, []);
+  }, [props.messages.length]);
 
-  useEffect(() => {
-    scrollToBottom();
-  }, [props.messages, props.isLoading, scrollToBottom]);
+  const pendingIds = props.pendingAttachments.map((x) => x.id);
 
-  useEffect(() => {
-    if (!props.isLoading) {
-      inputRef.current?.focus();
-    }
-  }, [props.isLoading]);
+  const limitReached = props.messageCount >= props.messageLimit;
+  const canSend = draft.trim().length > 0 && !props.isLoading && !props.uploading && !limitReached;
 
-  const handleSend = () => {
-    const trimmed = inputValue.trim();
-    if (!trimmed || props.isLoading) {
+  const handleSend = useCallback(() => {
+    if (!canSend) {
       return;
     }
-    props.onSendMessage(trimmed);
-    setInputValue('');
-  };
+    const text = draft.trim();
+    props.onSendMessage(text, pendingIds);
+    setDraft('');
+  }, [canSend, draft, pendingIds, props]);
 
   const handleKeyDown = (event: React.KeyboardEvent<HTMLTextAreaElement>) => {
     if (event.key === 'Enter' && !event.shiftKey) {
@@ -119,264 +110,225 @@ export const BriefChatPanel: React.FC<BriefChatPanelProps> = (props) => {
     }
   };
 
-  const handleFeedback = (messageId: string, rating: 'up' | 'down') => {
-    if (!props.onFeedback) {
+  const openCommentModal = (messageId: string, content: string, rating: 'up' | 'down') => {
+    setCommentModal({ messageId, content, rating, comment: '' });
+  };
+
+  const submitComment = () => {
+    if (!commentModal || !props.onFeedbackComment) {
       return;
     }
-    setFeedbackGiven((prev) => ({ ...prev, [messageId]: rating }));
-    props.onFeedback(messageId, rating);
+    props.onFeedbackComment(commentModal.messageId, commentModal.rating, commentModal.comment.trim());
+    setCommentModal(null);
   };
-
-  const openCommentModal = (messageId: string) => {
-    const existingRating = feedbackGiven[messageId];
-    setCommentModalMessageId(messageId);
-    setCommentText('');
-    setCommentRating(existingRating ?? 'up');
-  };
-
-  const handleCommentSubmit = () => {
-    if (!commentModalMessageId || !commentText.trim()) {
-      return;
-    }
-    props.onFeedbackComment?.(commentModalMessageId, commentRating, commentText.trim());
-    setFeedbackGiven((prev) => ({ ...prev, [commentModalMessageId]: commentRating }));
-    setCommentModalMessageId(null);
-  };
-
-  const commentModalMessage = commentModalMessageId ? props.messages.find((x) => x.id === commentModalMessageId) : null;
-
-  const isLimitReached = props.messageCount >= props.messageLimit;
-  const firstAssistantIndex = props.messages.findIndex((x) => x.role === 'assistant');
-  const hasUserMessageAfterFirstAssistant =
-    firstAssistantIndex !== -1 && props.messages.slice(firstAssistantIndex + 1).some((x) => x.role === 'user');
-  const showFillDefaultsButton =
-    firstAssistantIndex !== -1 &&
-    !hasUserMessageAfterFirstAssistant &&
-    props.briefStatus !== 'COMPLETED' &&
-    !props.isLoading;
-
-  const detectBriefLocale = (): LocaleKey => {
-    if (firstAssistantIndex === -1) {
-      return 'en';
-    }
-    const text = props.messages[firstAssistantIndex].content;
-    return /[А-Яа-яЁё]/.test(text) ? 'ru' : 'en';
-  };
-
-  const fillDefaultsButtonLabel = catalog[detectBriefLocale()].BRIEF_V2_FILL_DEFAULTS_BUTTON;
-
-  const handleFillDefaults = () => {
-    const briefLocale = detectBriefLocale();
-    props.onSendMessage(catalog[briefLocale].BRIEF_V2_FILL_DEFAULTS_PROMPT);
-  };
-
-  const sectionValues = Object.values(props.sectionsStatus);
-  const totalSections = sectionValues.length || 9;
-  const completedSections = sectionValues.filter((x) => x === 'complete').length;
-  const draftSections = sectionValues.filter((x) => x === 'draft').length;
-  const progressPercent = Math.round(((completedSections + draftSections * 0.5) / totalSections) * 100);
-
-  const formattedCost = isStaff && props.totalCostUsd != null ? `$${parseFloat(props.totalCostUsd).toFixed(4)}` : null;
 
   return (
     <ChatPanel>
       <ChatHeader>
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-          <ChatTitle>Chat</ChatTitle>
-          <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-            {formattedCost != null && (
-              <Tooltip title={t('BRIEF_V2_AI_COST_TOOLTIP')}>
-                <span style={{ fontSize: 11, color: '#99A1B7', fontFamily: 'monospace' }}>{formattedCost}</span>
-              </Tooltip>
-            )}
-            <ProgressText>
-              {completedSections}/{totalSections}
-            </ProgressText>
-            <ChatPhase>{PHASE_LABELS[props.conversationPhase]}</ChatPhase>
-          </div>
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+          <ChatTitle>{t('BRIEF_V3_CHAT_TITLE')}</ChatTitle>
+          <ChatPhase>{STATUS_LABELS[props.conversationStatus]}</ChatPhase>
         </div>
-        <ProgressBar>
-          <ProgressFill $percent={progressPercent} />
-        </ProgressBar>
+        {isStaff && props.totalCostUsd ? (
+          <div style={{ fontSize: 11, color: '#99a1b7', marginTop: 4 }}>cost: ${props.totalCostUsd}</div>
+        ) : null}
       </ChatHeader>
 
       <MessagesArea>
-        {props.messages.map((message, index) => (
-          <div key={message.id}>
-            <MessageRow $isUser={message.role === 'user'}>
-              <MessageBubble $isUser={message.role === 'user'}>{message.content}</MessageBubble>
-            </MessageRow>
-            <MessageMeta $isUser={message.role === 'user'}>
-              <MessageTime $isUser={message.role === 'user'}>{formatTime(message.createdAt)}</MessageTime>
-              {message.role === 'assistant' &&
-                message.sectionsChanged.length > 0 &&
-                index !== firstAssistantIndex &&
-                message.sectionsChanged.map((key) => (
-                  <SectionBadge key={key}>{getSectionDisplayName(key)}</SectionBadge>
-                ))}
-            </MessageMeta>
-            {message.role === 'assistant' && props.onFeedback && (
-              <FeedbackRow>
-                <FeedbackButton
-                  $active={feedbackGiven[message.id] === 'up'}
-                  onClick={() => handleFeedback(message.id, 'up')}
-                >
-                  <LikeOutlined />
-                </FeedbackButton>
-                <FeedbackButton
-                  $active={feedbackGiven[message.id] === 'down'}
-                  onClick={() => handleFeedback(message.id, 'down')}
-                >
-                  <DislikeOutlined />
-                </FeedbackButton>
-                {props.onFeedbackComment && (
-                  <FeedbackButton onClick={() => openCommentModal(message.id)}>
-                    <CommentOutlined />
-                  </FeedbackButton>
-                )}
-                {isStaff && props.briefId && message.hasTrace && (
-                  <Tooltip title='View raw LLM request/response'>
-                    <FeedbackButton onClick={() => setTraceMessageId(message.id)}>
-                      <CodeOutlined />
-                    </FeedbackButton>
-                  </Tooltip>
-                )}
-              </FeedbackRow>
-            )}
-            {index === firstAssistantIndex && showFillDefaultsButton && (
-              <FeedbackRow>
-                <Button size='small' type='default' onClick={handleFillDefaults}>
-                  {fillDefaultsButtonLabel}
-                </Button>
-              </FeedbackRow>
-            )}
-          </div>
-        ))}
+        {props.messages.map((message) => {
+          const isUser = message.role === 'user';
+          const feedback = message.feedback;
+          return (
+            <MessageRow key={message.id} $isUser={isUser}>
+              <div style={{ maxWidth: '85%', display: 'flex', flexDirection: 'column', gap: 4 }}>
+                <MessageBubble $isUser={isUser}>
+                  <ReactMarkdown>{message.content}</ReactMarkdown>
+                </MessageBubble>
 
-        {props.isLoading && (
-          <MessageRow $isUser={false}>
-            <TypingIndicator>
-              <TypingDot $delay={0} />
-              <TypingDot $delay={200} />
-              <TypingDot $delay={400} />
-            </TypingIndicator>
-          </MessageRow>
-        )}
+                {!isUser && message.attachments?.length > 0 ? (
+                  <div style={{ fontSize: 11, color: '#99a1b7' }}>
+                    {message.attachments.length} {t('BRIEF_V3_ATTACHMENTS')}
+                  </div>
+                ) : null}
+
+                <MessageMeta $isUser={isUser}>
+                  <MessageTime $isUser={isUser}>{formatTime(message.createdAt)}</MessageTime>
+                  {!isUser && props.onFeedback ? (
+                    <FeedbackRow>
+                      <FeedbackButton
+                        $active={feedback?.rating === 'up'}
+                        onClick={() => props.onFeedback?.(message.id, 'up')}
+                      >
+                        <LikeOutlined />
+                      </FeedbackButton>
+                      <FeedbackButton
+                        $active={feedback?.rating === 'down'}
+                        onClick={() => props.onFeedback?.(message.id, 'down')}
+                      >
+                        <DislikeOutlined />
+                      </FeedbackButton>
+                      {props.onFeedbackComment ? (
+                        <FeedbackButton
+                          onClick={() => openCommentModal(message.id, message.content, feedback?.rating ?? 'up')}
+                        >
+                          <CommentOutlined />
+                        </FeedbackButton>
+                      ) : null}
+                      {isStaff && message.hasTrace ? (
+                        <FeedbackButton onClick={() => setTraceMessageId(message.id)}>
+                          <CodeOutlined />
+                        </FeedbackButton>
+                      ) : null}
+                    </FeedbackRow>
+                  ) : null}
+                </MessageMeta>
+              </div>
+            </MessageRow>
+          );
+        })}
+
+        {props.isLoading ? (
+          <TypingIndicator>
+            <TypingDot $delay={0} />
+            <TypingDot $delay={200} />
+            <TypingDot $delay={400} />
+          </TypingIndicator>
+        ) : null}
 
         <div ref={messagesEndRef} />
       </MessagesArea>
 
-      {(props.conversationPhase === 'complete' || isLimitReached) &&
-        props.briefStatus !== 'COMPLETED' &&
-        props.onFinalize && (
-          <div style={{ padding: '8px 16px', borderTop: '1px solid #e5e7eb' }}>
-            <Button
-              type='primary'
-              onClick={props.onFinalize}
-              block
-              style={{ background: '#22c55e', borderColor: '#22c55e', fontWeight: 600, height: 44 }}
-            >
-              {t('BRIEF_V2_FINALIZE')}
-            </Button>
-          </div>
-        )}
-      <InputArea>
-        {isLimitReached || props.briefStatus === 'COMPLETED' ? (
-          <LimitBadge>{t('BRIEF_V2_MESSAGE_LIMIT')}</LimitBadge>
-        ) : (
-          <>
-            <ChatInputWrapper>
-              <TextArea
-                ref={inputRef}
-                value={inputValue}
-                onChange={(event) => setInputValue(event.target.value)}
-                onKeyDown={handleKeyDown}
-                placeholder={t('BRIEF_V2_SEND_PLACEHOLDER')}
-                autoSize={{ minRows: 1, maxRows: 4 }}
-                disabled={props.isLoading}
-                style={{
-                  fontFamily: "'Montserrat', sans-serif",
-                  fontSize: 13,
-                  borderRadius: 10,
-                  padding: '8px 12px',
-                }}
-              />
-            </ChatInputWrapper>
-            <Button
-              type='primary'
-              icon={<SendOutlined />}
-              onClick={handleSend}
-              disabled={!inputValue.trim() || props.isLoading}
-              style={{
-                background: '#FD8258',
-                borderColor: '#FD8258',
-                borderRadius: 10,
-                height: 38,
-                width: 38,
-              }}
-            />
-          </>
-        )}
-      </InputArea>
-      {props.showRegistrationButton && props.conversationPhase === 'complete' && (
-        <div style={{ padding: '12px 16px', borderTop: '1px solid #e5e7eb' }}>
-          <Button
-            type='primary'
-            onClick={props.onRegisterClick}
-            block
-            style={{ background: '#2288FF', borderColor: '#2288FF', fontWeight: 600, height: 44 }}
-          >
-            {t('BRIEF_V2_REGISTER_BUTTON')}
+      {props.conversationStatus === 'ready_to_finalize' && props.onFinalize ? (
+        <div
+          style={{
+            padding: '12px 20px',
+            borderTop: '1px solid #eef0f4',
+            background: '#f0fdf4',
+            display: 'flex',
+            justifyContent: 'space-between',
+            alignItems: 'center',
+            gap: 12,
+          }}
+        >
+          <span style={{ fontSize: 12, color: '#16a34a' }}>{t('BRIEF_V3_READY_TO_FINALIZE')}</span>
+          <Button type='primary' onClick={props.onFinalize}>
+            {t('BRIEF_V3_FINALIZE')}
           </Button>
         </div>
-      )}
-      <Modal
-        title={t('BRIEF_V2_FEEDBACK_TITLE')}
-        open={commentModalMessageId != null}
-        onCancel={() => setCommentModalMessageId(null)}
-        onOk={handleCommentSubmit}
-        okText={t('BRIEF_V2_FEEDBACK_SUBMIT')}
-        cancelText={t('BRIEF_V2_FEEDBACK_CANCEL')}
-        okButtonProps={{ disabled: !commentText.trim() }}
-        width={400}
-        destroyOnClose
-      >
-        <CommentModalBody>
-          <CommentRatingRow>
-            <CommentRatingButton $active={commentRating === 'up'} onClick={() => setCommentRating('up')}>
-              <LikeOutlined />
-            </CommentRatingButton>
-            <CommentRatingButton $active={commentRating === 'down'} onClick={() => setCommentRating('down')}>
-              <DislikeOutlined />
-            </CommentRatingButton>
-          </CommentRatingRow>
-          <Input.TextArea
-            value={commentText}
-            onChange={(event) => setCommentText(event.target.value)}
-            placeholder={t('BRIEF_V2_FEEDBACK_PLACEHOLDER')}
-            autoSize={{ minRows: 3, maxRows: 6 }}
-            maxLength={2000}
-            showCount
-            style={{ fontFamily: "'Montserrat', sans-serif", fontSize: 13 }}
+      ) : null}
+
+      {props.conversationStatus === 'finalized' && props.onShowPackage ? (
+        <div
+          style={{
+            padding: '12px 20px',
+            borderTop: '1px solid #eef0f4',
+            background: '#eff6ff',
+            display: 'flex',
+            justifyContent: 'flex-end',
+            alignItems: 'center',
+            gap: 12,
+          }}
+        >
+          <Button type='primary' onClick={props.onShowPackage}>
+            {t('BRIEF_V3_SHOW_PACKAGE')}
+          </Button>
+        </div>
+      ) : null}
+
+      {props.showRegistrationButton && props.onRegisterClick ? (
+        <div
+          style={{
+            padding: '12px 20px',
+            borderTop: '1px solid #eef0f4',
+            background: '#fffbea',
+            display: 'flex',
+            justifyContent: 'space-between',
+            alignItems: 'center',
+            gap: 12,
+          }}
+        >
+          <span style={{ fontSize: 12, color: '#a16207' }}>{t('BRIEF_V3_REGISTER_TO_SAVE')}</span>
+          <Button type='primary' onClick={props.onRegisterClick}>
+            {t('BRIEF_V3_REGISTER')}
+          </Button>
+        </div>
+      ) : null}
+
+      <InputArea>
+        <FileUploadZone
+          attachments={props.pendingAttachments}
+          uploading={props.uploading}
+          maxFiles={props.maxAttachments}
+          onUpload={props.onUploadAttachment}
+          onDelete={props.onDeleteAttachment}
+          disabled={limitReached}
+        />
+
+        <ChatInputWrapper>
+          <TextArea
+            value={draft}
+            onChange={(event) => setDraft(event.target.value)}
+            onKeyDown={handleKeyDown}
+            placeholder={t('BRIEF_V3_CHAT_PLACEHOLDER')}
+            autoSize={{ minRows: 2, maxRows: 6 }}
+            disabled={limitReached || props.isLoading}
           />
-          {commentModalMessage && commentModalMessage.sectionsChanged.length > 0 && (
-            <CommentContext>
-              <span>{t('BRIEF_V2_FEEDBACK_SECTIONS')}:</span>
-              {commentModalMessage.sectionsChanged.map((key) => (
-                <SectionBadge key={key}>{getSectionDisplayName(key)}</SectionBadge>
-              ))}
-            </CommentContext>
-          )}
-        </CommentModalBody>
-      </Modal>
-      {props.briefId && (
+          <Button type='primary' icon={<SendOutlined />} disabled={!canSend} onClick={handleSend}>
+            {t('SEND')}
+          </Button>
+        </ChatInputWrapper>
+
+        {Number.isFinite(props.messageLimit) ? (
+          <LimitBadge>
+            {props.messageCount}/{props.messageLimit} {t('BRIEF_V3_MESSAGES')}
+          </LimitBadge>
+        ) : null}
+      </InputArea>
+
+      {commentModal ? (
+        <Modal
+          open
+          title={t('BRIEF_V3_FEEDBACK_TITLE')}
+          onCancel={() => setCommentModal(null)}
+          onOk={submitComment}
+          okText={t('BRIEF_V3_FEEDBACK_SUBMIT')}
+          cancelText={t('CANCEL')}
+        >
+          <CommentModalBody>
+            <CommentContext>{commentModal.content}</CommentContext>
+            <CommentRatingRow>
+              <CommentRatingButton
+                $active={commentModal.rating === 'up'}
+                onClick={() => setCommentModal({ ...commentModal, rating: 'up' })}
+              >
+                <LikeOutlined />
+              </CommentRatingButton>
+              <CommentRatingButton
+                $active={commentModal.rating === 'down'}
+                onClick={() => setCommentModal({ ...commentModal, rating: 'down' })}
+              >
+                <DislikeOutlined />
+              </CommentRatingButton>
+            </CommentRatingRow>
+            <TextArea
+              value={commentModal.comment}
+              onChange={(event) => setCommentModal({ ...commentModal, comment: event.target.value })}
+              autoSize={{ minRows: 3, maxRows: 6 }}
+              maxLength={2000}
+              placeholder={t('BRIEF_V3_FEEDBACK_PLACEHOLDER')}
+            />
+          </CommentModalBody>
+        </Modal>
+      ) : null}
+
+      {props.briefId ? (
         <LLMTraceDrawer
           briefId={props.briefId}
           messageId={traceMessageId}
-          open={traceMessageId != null}
+          open={traceMessageId !== null}
           onClose={() => setTraceMessageId(null)}
         />
-      )}
+      ) : null}
     </ChatPanel>
   );
 };

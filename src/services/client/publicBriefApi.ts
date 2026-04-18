@@ -1,12 +1,13 @@
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
 import { ApiRoute } from '@/constants/apiRoute';
 import {
-  BriefV2,
-  BriefV2TaskStatus,
-  BriefV2ChatResponse,
-  BriefV2Detail,
-  PublicBriefStartResponse,
-} from '@/types/briefV2.interface';
+  BriefAttachment,
+  BriefV3,
+  BriefV3ChatResponse,
+  BriefV3Detail,
+  BriefV3StartResponse,
+  BriefV3TaskStatus,
+} from '@/types/briefAi.interface';
 
 const PUBLIC_BRIEF_STORAGE_KEY = 'aivus_briefs';
 
@@ -82,39 +83,96 @@ export const publicBriefApi = createApi({
   reducerPath: 'publicBriefApi',
   baseQuery: publicBaseQuery,
   endpoints: (builder) => ({
-    startPublicBrief: builder.mutation<PublicBriefStartResponse, { message: string; documentLanguage?: string }>({
-      query: (body) => ({
-        url: ApiRoute.PUBLIC_BRIEF_AI_START,
+    createPublicBriefDraft: builder.mutation<{ briefId: string; token: string }, void>({
+      query: () => ({
+        url: ApiRoute.PUBLIC_BRIEF_AI_DRAFT,
         method: 'POST',
-        body,
       }),
     }),
-    getPublicBriefStatus: builder.query<BriefV2TaskStatus, { briefId: string; taskId: string; token: string }>({
+
+    startPublicBrief: builder.mutation<
+      BriefV3StartResponse,
+      {
+        briefId: string;
+        token: string;
+        message: string;
+        attachmentIds?: string[];
+        documentLanguage?: string;
+      }
+    >({
+      query: (args) => ({
+        url: ApiRoute.PUBLIC_BRIEF_AI_START(args.briefId),
+        method: 'POST',
+        body: {
+          message: args.message,
+          attachmentIds: args.attachmentIds ?? [],
+          documentLanguage: args.documentLanguage,
+        },
+        headers: { 'X-Brief-Token': args.token },
+      }),
+    }),
+
+    getPublicBriefStatus: builder.query<BriefV3TaskStatus, { briefId: string; taskId: string; token: string }>({
       query: (args) => ({
         url: `${ApiRoute.PUBLIC_BRIEF_AI_STATUS(args.briefId)}?taskId=${args.taskId}`,
         method: 'GET',
         headers: { 'X-Brief-Token': args.token },
       }),
     }),
+
     sendPublicBriefChat: builder.mutation<
-      BriefV2ChatResponse,
-      { briefId: string; message: string; token: string; documentLanguage?: string; documentHtml?: string }
+      BriefV3ChatResponse,
+      {
+        briefId: string;
+        message: string;
+        token: string;
+        attachmentIds?: string[];
+      }
     >({
       query: (args) => ({
         url: ApiRoute.PUBLIC_BRIEF_AI_CHAT(args.briefId),
         method: 'POST',
-        body: { message: args.message, documentLanguage: args.documentLanguage, documentHtml: args.documentHtml },
+        body: {
+          message: args.message,
+          attachmentIds: args.attachmentIds ?? [],
+        },
         headers: { 'X-Brief-Token': args.token },
       }),
     }),
-    getPublicBriefDetail: builder.query<BriefV2Detail, { briefId: string; token: string }>({
+
+    uploadPublicBriefAttachment: builder.mutation<BriefAttachment, { briefId: string; token: string; file: File }>({
+      query: (args) => {
+        const formData = new FormData();
+        formData.append('file', args.file);
+        return {
+          url: ApiRoute.PUBLIC_BRIEF_AI_ATTACHMENTS(args.briefId),
+          method: 'POST',
+          body: formData,
+          headers: { 'X-Brief-Token': args.token },
+        };
+      },
+    }),
+
+    deletePublicBriefAttachment: builder.mutation<
+      { deleted: boolean },
+      { briefId: string; attachmentId: string; token: string }
+    >({
+      query: (args) => ({
+        url: ApiRoute.PUBLIC_BRIEF_AI_ATTACHMENT_DELETE(args.briefId, args.attachmentId),
+        method: 'DELETE',
+        headers: { 'X-Brief-Token': args.token },
+      }),
+    }),
+
+    getPublicBriefDetail: builder.query<BriefV3Detail, { briefId: string; token: string }>({
       query: (args) => ({
         url: ApiRoute.PUBLIC_BRIEF_AI_DETAIL(args.briefId),
         method: 'GET',
         headers: { 'X-Brief-Token': args.token },
       }),
     }),
-    claimPublicBrief: builder.mutation<BriefV2, { briefId: string; token: string }>({
+
+    claimPublicBrief: builder.mutation<BriefV3, { briefId: string; token: string }>({
       query: (args) => ({
         url: ApiRoute.PUBLIC_BRIEF_AI_CLAIM(args.briefId),
         method: 'POST',
@@ -125,9 +183,12 @@ export const publicBriefApi = createApi({
 });
 
 export const {
+  useCreatePublicBriefDraftMutation,
   useStartPublicBriefMutation,
   useLazyGetPublicBriefStatusQuery,
   useSendPublicBriefChatMutation,
+  useUploadPublicBriefAttachmentMutation,
+  useDeletePublicBriefAttachmentMutation,
   useGetPublicBriefDetailQuery,
   useLazyGetPublicBriefDetailQuery,
   useClaimPublicBriefMutation,

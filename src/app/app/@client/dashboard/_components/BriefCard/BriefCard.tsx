@@ -2,25 +2,21 @@
 
 import React, { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { App, Button, Dropdown, Input, Modal, Tooltip } from 'antd';
-import { MoreOutlined, EyeOutlined } from '@ant-design/icons';
+import { App, Button, Dropdown, Input, Modal } from 'antd';
+import { MoreOutlined } from '@ant-design/icons';
 import { format } from 'date-fns';
 import { PrStatus } from '@/components/PrStatus/PrStatus';
 import { t } from '@/lib/i18n';
 import { PROJECT_STATUS } from '@/constants/constants';
 import { AppRoute } from '@/constants/appRoute';
 import { ProjectStatus } from '@/types/project.interface';
-import {
-  useDeleteBriefAiMutation,
-  useDuplicateBriefAiMutation,
-  useRenameBriefAiMutation,
-} from '@/services/client/briefAiApi';
-import { BriefV2ListItem } from '@/types/briefV2.interface';
+import { useDeleteBriefAiMutation, useRenameBriefAiMutation } from '@/services/client/briefAiApi';
+import { BriefV3ListItem, ConversationStatus } from '@/types/briefAi.interface';
 
 import styles from './BriefCard.module.css';
 
 interface BriefCardProps {
-  brief: BriefV2ListItem;
+  brief: BriefV3ListItem;
 }
 
 const getAccentColor = (status?: string): string => {
@@ -50,28 +46,18 @@ const getRowBg = (status?: string): string => {
   }
 };
 
-const renderShareBadge = (brief: BriefV2ListItem): React.ReactNode => {
-  if (brief.shareStatus === 'none') {
-    return <span style={{ color: '#99A1B7', fontSize: 12 }}>{t('BRIEF_LIST_NOT_SHARED')}</span>;
+const renderConversationLabel = (status: ConversationStatus): string => {
+  if (status === 'finalized') {
+    return t('BRIEF_LIST_FINALIZED');
   }
-  if (brief.shareStatus === 'inactive') {
-    return <span style={{ color: '#99A1B7', fontSize: 12 }}>{t('BRIEF_LIST_SHARE_INACTIVE')}</span>;
+  if (status === 'ready_to_finalize') {
+    return t('BRIEF_LIST_READY_TO_FINALIZE');
   }
-  if (brief.shareViewCount > 0) {
-    const tooltip = brief.shareLastViewedAt ? format(new Date(brief.shareLastViewedAt), 'MMM dd, yyyy HH:mm') : '';
-    return (
-      <Tooltip title={tooltip}>
-        <span style={{ color: '#22c55e', fontSize: 12, fontWeight: 600 }}>
-          <EyeOutlined /> {brief.shareViewCount} {t('BRIEF_LIST_VIEWS')}
-        </span>
-      </Tooltip>
-    );
-  }
-  return <span style={{ color: '#22c55e', fontSize: 12, fontWeight: 600 }}>{t('BRIEF_LIST_SHARED')}</span>;
+  return t('BRIEF_LIST_IN_PROGRESS');
 };
 
 const renderOffersCell = (
-  brief: BriefV2ListItem,
+  brief: BriefV3ListItem,
   onCompareClick: (event: React.MouseEvent) => void
 ): React.ReactNode => {
   if (brief.offersCount === 0) {
@@ -90,13 +76,12 @@ const renderOffersCell = (
 export const BriefCard: React.FC<BriefCardProps> = ({ brief }) => {
   const { message, modal } = App.useApp();
   const router = useRouter();
-  const [duplicateBrief, { isLoading: isDuplicating }] = useDuplicateBriefAiMutation();
   const [deleteBrief, { isLoading: isDeleting }] = useDeleteBriefAiMutation();
   const [renameBrief, { isLoading: isRenaming }] = useRenameBriefAiMutation();
   const [renameModalOpen, setRenameModalOpen] = useState(false);
   const [renameValue, setRenameValue] = useState('');
 
-  const projectName = brief.projectName || t('UNTITLED_BRIEF');
+  const title = brief.title || t('UNTITLED_BRIEF');
   const formattedCreated = brief.createdAt ? format(new Date(brief.createdAt), 'MMM dd, yyyy') : '';
 
   const handleClick = () => {
@@ -109,7 +94,7 @@ export const BriefCard: React.FC<BriefCardProps> = ({ brief }) => {
   };
 
   const handleRenameOpen = () => {
-    setRenameValue(projectName);
+    setRenameValue(title);
     setRenameModalOpen(true);
   };
 
@@ -119,18 +104,9 @@ export const BriefCard: React.FC<BriefCardProps> = ({ brief }) => {
       return;
     }
     try {
-      await renameBrief({ briefId: brief.id, projectName: trimmed }).unwrap();
+      await renameBrief({ briefId: brief.id, title: trimmed }).unwrap();
       message.success(t('BRIEF_RENAME_SUCCESS'));
       setRenameModalOpen(false);
-    } catch {
-      message.error(t('UNEXPECTED_ERROR'));
-    }
-  };
-
-  const handleDuplicate = async () => {
-    try {
-      await duplicateBrief(brief.id).unwrap();
-      message.success(t('BRIEF_DUPLICATE_SUCCESS'));
     } catch {
       message.error(t('UNEXPECTED_ERROR'));
     }
@@ -165,12 +141,6 @@ export const BriefCard: React.FC<BriefCardProps> = ({ brief }) => {
       onClick: handleRenameOpen,
     },
     {
-      key: 'duplicate',
-      label: t('BRIEF_DUPLICATE'),
-      disabled: isDuplicating,
-      onClick: handleDuplicate,
-    },
-    {
       key: 'delete',
       label: t('BRIEF_DELETE'),
       danger: true,
@@ -185,8 +155,8 @@ export const BriefCard: React.FC<BriefCardProps> = ({ brief }) => {
         <div className={styles.projectCell}>
           <div className={styles.accent} style={{ backgroundColor: getAccentColor(brief.status) }} />
           <div>
-            <div className={styles.projectName}>{projectName.toUpperCase()}</div>
-            <div className={styles.assignee}>v{brief.version}</div>
+            <div className={styles.projectName}>{title.toUpperCase()}</div>
+            <div className={styles.assignee}>{renderConversationLabel(brief.conversationStatus)}</div>
           </div>
         </div>
 
@@ -198,13 +168,7 @@ export const BriefCard: React.FC<BriefCardProps> = ({ brief }) => {
           <span className={styles.numericValue}>{brief.messageCount}</span>
         </div>
 
-        <div className={styles.versionCell}>
-          <span className={styles.numericValue}>v{brief.version}</span>
-        </div>
-
         <div className={styles.offersCell}>{renderOffersCell(brief, handleCompareClick)}</div>
-
-        <div className={styles.shareCell}>{renderShareBadge(brief)}</div>
 
         <div className={styles.dateCell}>
           <div className={styles.dateValue}>{formattedCreated}</div>

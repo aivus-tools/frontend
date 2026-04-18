@@ -3,7 +3,7 @@
 import React, { useEffect } from 'react';
 import { Drawer, Tabs, Tag, Spin, Empty, Alert, Typography } from 'antd';
 import { useLazyGetBriefAiMessageTraceQuery } from '@/services/client/briefAiApi';
-import { LLMCallTraceEntry } from '@/types/briefV2.interface';
+import { LLMCallTraceEntry } from '@/types/briefAi.interface';
 
 interface LLMTraceDrawerProps {
   briefId: string;

@@ -29,7 +29,6 @@ export const AppRoute = {
   BRIEF_CLAIM: (briefId: string) => `/app/brief/claim/${briefId}`,
   PUBLIC_BRIEF: '/public-brief',
   PUBLIC_BRIEF_DETAIL: (briefId: string) => `/public-brief/${briefId}`,
-  SHARED_BRIEF: (token: string) => `/shared-brief/${token}`,
 } as const;
 
 export type AppRouteValue = (typeof AppRoute)[keyof typeof AppRoute];
