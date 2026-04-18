@@ -7,7 +7,14 @@ import { PropsWithChildren, useEffect } from 'react';
 import { usePathname } from 'next/navigation';
 
 // Public paths where logout should not be called on unauthenticated status
-const PUBLIC_PATHS = ['/auth/confirm-email', '/auth/reset-password', '/auth/forgot-password', '/external', '/public'];
+const PUBLIC_PATHS = [
+  '/auth/confirm-email',
+  '/auth/reset-password',
+  '/auth/forgot-password',
+  '/external',
+  '/public',
+  '/shared-brief',
+];
 
 const SessionGuard = ({ children }: PropsWithChildren) => {
   const session = useSession();

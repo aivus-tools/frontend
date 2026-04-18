@@ -225,10 +225,18 @@ export const BriefEditorLayout: React.FC<BriefEditorLayoutProps> = (props) => {
     (currentBriefId: string, taskId: string, currentToken?: string) => {
       const started = Date.now();
       clearPolling();
+      const session = { cancelled: false };
+      const stop = () => {
+        session.cancelled = true;
+        clearPolling();
+      };
 
       pollingRef.current = setInterval(async () => {
+        if (session.cancelled) {
+          return;
+        }
         if (Date.now() - started > POLL_TIMEOUT_MS) {
-          clearPolling();
+          stop();
           messageApi.error(t('BRIEF_V3_GENERATION_TIMEOUT'));
           setStage('chat');
           return;
@@ -243,17 +251,23 @@ export const BriefEditorLayout: React.FC<BriefEditorLayoutProps> = (props) => {
                 token: currentToken ?? '',
               }).unwrap();
 
+          if (session.cancelled) {
+            return;
+          }
           if (response.status === 'done' && response.result) {
-            clearPolling();
+            stop();
             hydrateFromDetail(response.result);
             setStage('chat');
           } else if (response.status === 'failed') {
-            clearPolling();
+            stop();
             messageApi.error(t('BRIEF_V3_GENERATION_FAILED'));
             setStage('start');
           }
         } catch {
-          clearPolling();
+          if (session.cancelled) {
+            return;
+          }
+          stop();
           messageApi.error(t('BRIEF_V3_GENERATION_FAILED'));
           setStage('start');
         }
@@ -277,10 +291,18 @@ export const BriefEditorLayout: React.FC<BriefEditorLayoutProps> = (props) => {
     (currentBriefId: string, taskId: string, currentToken?: string) => {
       const started = Date.now();
       clearPolling();
+      const session = { cancelled: false };
+      const stop = () => {
+        session.cancelled = true;
+        clearPolling();
+      };
 
       pollingRef.current = setInterval(async () => {
+        if (session.cancelled) {
+          return;
+        }
         if (Date.now() - started > POLL_TIMEOUT_MS) {
-          clearPolling();
+          stop();
           messageApi.error(t('BRIEF_V3_FINALIZE_TIMEOUT'));
           setStage('chat');
           return;
@@ -295,20 +317,26 @@ export const BriefEditorLayout: React.FC<BriefEditorLayoutProps> = (props) => {
                 token: currentToken ?? '',
               }).unwrap();
 
+          if (session.cancelled) {
+            return;
+          }
           if (response.status === 'done' && response.result) {
-            clearPolling();
+            stop();
             setConversationStatus('finalized');
             setStage('finalized');
             if (isAuth) {
               refetchAuthFinal();
             }
           } else if (response.status === 'failed') {
-            clearPolling();
+            stop();
             messageApi.error(t('BRIEF_V3_FINALIZE_FAILED'));
             setStage('chat');
           }
         } catch {
-          clearPolling();
+          if (session.cancelled) {
+            return;
+          }
+          stop();
           messageApi.error(t('BRIEF_V3_FINALIZE_FAILED'));
           setStage('chat');
         }
