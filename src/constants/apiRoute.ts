@@ -96,6 +96,10 @@ export const ApiRoute = {
     `/service/client/briefs/ai/${briefId}/final-documents/${documentId}`,
   BRIEF_AI_FINAL_DOCUMENT_PDF: (briefId: string, documentId: string) =>
     `/service/client/briefs/ai/${briefId}/final-documents/${documentId}/pdf`,
+  BRIEF_AI_SHARE: (briefId: string) => `/service/client/briefs/ai/${briefId}/share`,
+  PUBLIC_BRIEF_SHARE: (token: string) => `/service/public/brief-shares/${token}`,
+  PUBLIC_BRIEF_SHARE_DOCUMENT_PDF: (token: string, documentId: string) =>
+    `/service/public/brief-shares/${token}/documents/${documentId}/pdf`,
   PUBLIC_BRIEF_AI_DRAFT: '/service/public/briefs/ai/drafts',
   PUBLIC_BRIEF_AI_START: (briefId: string) => `/service/public/briefs/ai/${briefId}/start`,
   PUBLIC_BRIEF_AI_STATUS: (briefId: string) => `/service/public/briefs/ai/${briefId}/status`,

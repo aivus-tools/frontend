@@ -2,7 +2,15 @@
 
 import React, { useState, useRef, useEffect, useCallback } from 'react';
 import { Button, Input, Modal } from 'antd';
-import { SendOutlined, LikeOutlined, DislikeOutlined, CommentOutlined, CodeOutlined } from '@ant-design/icons';
+import {
+  SendOutlined,
+  LikeOutlined,
+  DislikeOutlined,
+  CommentOutlined,
+  CodeOutlined,
+  FileOutlined,
+  PaperClipOutlined,
+} from '@ant-design/icons';
 import { useSession } from 'next-auth/react';
 import ReactMarkdown from 'react-markdown';
 import { LLMTraceDrawer } from './LLMTraceDrawer';
@@ -11,9 +19,6 @@ import { t } from '@/lib/i18n';
 import { BriefAttachment, ChatMessageV3, ConversationStatus } from '@/types/briefAi.interface';
 import {
   ChatPanel,
-  ChatHeader,
-  ChatTitle,
-  ChatPhase,
   MessagesArea,
   MessageRow,
   MessageBubble,
@@ -29,7 +34,12 @@ import {
   TypingDot,
   InputArea,
   ChatInputWrapper,
+  ChatFooterRow,
   LimitBadge,
+  CostBadge,
+  DropOverlay,
+  AttachmentChipList,
+  AttachmentChip,
 } from './styled';
 
 const TextArea = Input.TextArea;
@@ -42,6 +52,7 @@ interface BriefChatPanelProps {
   messageLimit: number;
   messageCount: number;
   totalCostUsd?: string;
+  showCost?: boolean;
   pendingAttachments: BriefAttachment[];
   uploading: boolean;
   maxAttachments: number;
@@ -56,10 +67,35 @@ interface BriefChatPanelProps {
   onRegisterClick?: () => void;
 }
 
-const STATUS_LABELS: Record<ConversationStatus, string> = {
-  in_progress: 'In progress',
-  ready_to_finalize: 'Ready to finalize',
-  finalized: 'Finalized',
+const formatBytes = (bytes: number): string => {
+  if (bytes < 1024) return `${bytes} B`;
+  if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(1)} KB`;
+  return `${(bytes / (1024 * 1024)).toFixed(1)} MB`;
+};
+
+const AttachmentChipsRow: React.FC<{ attachments: BriefAttachment[] }> = ({ attachments }) => {
+  if (!attachments?.length) return null;
+  return (
+    <AttachmentChipList>
+      {attachments.map((x) => (
+        <AttachmentChip
+          key={x.id}
+          href={x.url ?? undefined}
+          target='_blank'
+          rel='noopener noreferrer'
+          onClick={(e) => {
+            if (!x.url) {
+              e.preventDefault();
+            }
+          }}
+        >
+          <FileOutlined />
+          <span className='name'>{x.filename}</span>
+          <span>· {formatBytes(x.sizeBytes)}</span>
+        </AttachmentChip>
+      ))}
+    </AttachmentChipList>
+  );
 };
 
 const formatTime = (iso: string | null): string => {
@@ -82,6 +118,8 @@ export const BriefChatPanel: React.FC<BriefChatPanelProps> = (props) => {
     rating: 'up' | 'down';
     comment: string;
   } | null>(null);
+  const [showAttachBox, setShowAttachBox] = useState(false);
+  const [isDragging, setIsDragging] = useState(false);
 
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
@@ -122,18 +160,31 @@ export const BriefChatPanel: React.FC<BriefChatPanelProps> = (props) => {
     setCommentModal(null);
   };
 
-  return (
-    <ChatPanel>
-      <ChatHeader>
-        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-          <ChatTitle>{t('BRIEF_V3_CHAT_TITLE')}</ChatTitle>
-          <ChatPhase>{STATUS_LABELS[props.conversationStatus]}</ChatPhase>
-        </div>
-        {isStaff && props.totalCostUsd ? (
-          <div style={{ fontSize: 11, color: '#99a1b7', marginTop: 4 }}>cost: ${props.totalCostUsd}</div>
-        ) : null}
-      </ChatHeader>
+  const handleDropFiles = async (files: FileList | File[]) => {
+    for (const file of Array.from(files)) {
+      try {
+        await props.onUploadAttachment(file);
+      } catch {
+        // FileUploadZone already logs/displays errors; avoid duplicates here.
+      }
+    }
+  };
 
+  return (
+    <ChatPanel
+      onDragOver={(event) => {
+        event.preventDefault();
+        setIsDragging(true);
+      }}
+      onDragLeave={() => setIsDragging(false)}
+      onDrop={(event) => {
+        event.preventDefault();
+        setIsDragging(false);
+        if (event.dataTransfer.files?.length) {
+          handleDropFiles(event.dataTransfer.files);
+        }
+      }}
+    >
       <MessagesArea>
         {props.messages.map((message) => {
           const isUser = message.role === 'user';
@@ -145,11 +196,7 @@ export const BriefChatPanel: React.FC<BriefChatPanelProps> = (props) => {
                   <ReactMarkdown>{message.content}</ReactMarkdown>
                 </MessageBubble>
 
-                {!isUser && message.attachments?.length > 0 ? (
-                  <div style={{ fontSize: 11, color: '#99a1b7' }}>
-                    {message.attachments.length} {t('BRIEF_V3_ATTACHMENTS')}
-                  </div>
-                ) : null}
+                {message.attachments?.length > 0 ? <AttachmentChipsRow attachments={message.attachments} /> : null}
 
                 <MessageMeta $isUser={isUser}>
                   <MessageTime $isUser={isUser}>{formatTime(message.createdAt)}</MessageTime>
@@ -255,15 +302,6 @@ export const BriefChatPanel: React.FC<BriefChatPanelProps> = (props) => {
       ) : null}
 
       <InputArea>
-        <FileUploadZone
-          attachments={props.pendingAttachments}
-          uploading={props.uploading}
-          maxFiles={props.maxAttachments}
-          onUpload={props.onUploadAttachment}
-          onDelete={props.onDeleteAttachment}
-          disabled={limitReached}
-        />
-
         <ChatInputWrapper>
           <TextArea
             value={draft}
@@ -278,12 +316,57 @@ export const BriefChatPanel: React.FC<BriefChatPanelProps> = (props) => {
           </Button>
         </ChatInputWrapper>
 
-        {Number.isFinite(props.messageLimit) ? (
-          <LimitBadge>
-            {props.messageCount}/{props.messageLimit} {t('BRIEF_V3_MESSAGES')}
-          </LimitBadge>
+        {showAttachBox || props.pendingAttachments.length > 0 ? (
+          <FileUploadZone
+            attachments={props.pendingAttachments}
+            uploading={props.uploading}
+            maxFiles={props.maxAttachments}
+            onUpload={props.onUploadAttachment}
+            onDelete={props.onDeleteAttachment}
+            disabled={limitReached}
+          />
         ) : null}
+
+        <ChatFooterRow>
+          <button
+            type='button'
+            onClick={() => setShowAttachBox((x) => !x)}
+            style={{
+              display: 'inline-flex',
+              alignItems: 'center',
+              gap: 4,
+              padding: '4px 8px',
+              border: '1px solid #eef0f4',
+              borderRadius: 6,
+              background: '#ffffff',
+              color: '#4b5675',
+              cursor: 'pointer',
+              fontFamily: 'Montserrat, sans-serif',
+              fontSize: 11,
+              fontWeight: 600,
+            }}
+          >
+            <PaperClipOutlined />
+            {showAttachBox ? t('BRIEF_V3_ATTACH_HIDE') : t('BRIEF_V3_ATTACH_SHOW')}
+          </button>
+
+          {(props.showCost || isStaff) && props.totalCostUsd ? (
+            <CostBadge $staff={isStaff}>
+              {t('BRIEF_V3_COST_BADGE')}: ${Number(props.totalCostUsd).toFixed(4)}
+            </CostBadge>
+          ) : null}
+
+          {Number.isFinite(props.messageLimit) ? (
+            <LimitBadge>
+              {props.messageCount}/{props.messageLimit} {t('BRIEF_V3_MESSAGES')}
+            </LimitBadge>
+          ) : null}
+
+          <span style={{ marginLeft: 'auto', fontSize: 10, color: '#99a1b7' }}>{t('BRIEF_V3_DRAG_HINT')}</span>
+        </ChatFooterRow>
       </InputArea>
+
+      {isDragging ? <DropOverlay>{t('BRIEF_V3_DROP_HERE')}</DropOverlay> : null}
 
       {commentModal ? (
         <Modal

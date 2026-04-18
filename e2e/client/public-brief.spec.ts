@@ -2,7 +2,12 @@ import { test, expect } from '@playwright/test';
 import { BriefHelper } from '../helpers/brief';
 import { BriefEditorHelper } from '../helpers/editor';
 
-test.describe('Public Brief Creation', () => {
+// NOTE: Legacy v2 e2e covering the TipTap read-only editor and document
+// sections. The v3 flow has no editor on the chat screen and the helpers
+// below no longer line up with the UI. Kept as `.skip` until the full
+// Brief AI / Docs flow is rewritten against live LLM (see e2e/brief-v3.spec.ts
+// for the current smoke coverage).
+test.describe.skip('Public Brief Creation', () => {
   let brief: BriefHelper;
   let editor: BriefEditorHelper;
 

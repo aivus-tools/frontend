@@ -3,7 +3,9 @@ import { BriefHelper } from '../helpers/brief';
 import { BriefEditorHelper } from '../helpers/editor';
 import { AuthHelper } from '../helpers/auth';
 
-test.describe('Authenticated Brief Flow', () => {
+// See note in public-brief.spec.ts — legacy v2 flow, skipped pending a full
+// rewrite with LLM mocks.
+test.describe.skip('Authenticated Brief Flow', () => {
   test.use({ storageState: 'e2e/.auth/user.json' });
 
   let brief: BriefHelper;

@@ -45,9 +45,29 @@ export interface BriefV3 {
   totalOutputTokens: number;
   totalCostUsd: string;
   messageCount: number;
+  showCost: boolean;
   createdAt: string | null;
   updatedAt: string | null;
   claimedAt: string | null;
+}
+
+export interface BriefShareInfo {
+  id: string;
+  briefId: string;
+  token: string;
+  isActive: boolean;
+  createdAt: string | null;
+  updatedAt: string | null;
+}
+
+export interface BriefShareView {
+  token: string;
+  briefId: string;
+  title: string;
+  documentLanguage: string;
+  conversationStatus: ConversationStatus;
+  documents: BriefFinalDocument[];
+  createdAt: string | null;
 }
 
 export interface BriefV3Detail extends BriefV3 {

@@ -5,6 +5,8 @@ import {
   BriefFeedbackResponse,
   BriefFinalDocument,
   BriefFinalPackage,
+  BriefShareInfo,
+  BriefShareView,
   BriefV3ChatResponse,
   BriefV3Detail,
   BriefV3ListItem,
@@ -17,7 +19,7 @@ import {
 export const briefAiApi = createApi({
   reducerPath: 'briefAiApi',
   baseQuery: fetchBaseQuery({ baseUrl: '' }),
-  tagTypes: ['BriefV3'],
+  tagTypes: ['BriefV3', 'BriefFinalDocuments', 'BriefShare', 'BriefShareView'],
   endpoints: (builder) => ({
     createBriefAiDraft: builder.mutation<{ briefId: string }, void>({
       query: () => ({
@@ -128,7 +130,7 @@ export const briefAiApi = createApi({
         url: ApiRoute.BRIEF_AI_FINAL_DOCUMENTS(briefId),
         method: 'GET',
       }),
-      providesTags: ['BriefV3'],
+      providesTags: (_r, _e, briefId) => [{ type: 'BriefFinalDocuments', id: briefId }],
     }),
 
     updateBriefAiFinalDocument: builder.mutation<
@@ -140,6 +142,67 @@ export const briefAiApi = createApi({
         method: 'PATCH',
         body: { html: args.html, plainText: args.plainText },
       }),
+      async onQueryStarted(args, { dispatch, queryFulfilled }) {
+        const patch = dispatch(
+          briefAiApi.util.updateQueryData('getBriefAiFinalDocuments', args.briefId, (draft) => {
+            const doc = draft.documents.find((x) => x.id === args.documentId);
+            if (doc) {
+              doc.html = args.html;
+              if (args.plainText !== undefined) {
+                doc.plainText = args.plainText;
+              }
+            }
+          })
+        );
+        try {
+          const { data } = await queryFulfilled;
+          dispatch(
+            briefAiApi.util.updateQueryData('getBriefAiFinalDocuments', args.briefId, (draft) => {
+              const doc = draft.documents.find((x) => x.id === args.documentId);
+              if (doc) {
+                doc.html = data.html;
+                doc.plainText = data.plainText;
+                doc.updatedAt = data.updatedAt;
+              }
+            })
+          );
+        } catch {
+          patch.undo();
+        }
+      },
+    }),
+
+    getBriefAiShare: builder.query<BriefShareInfo, string>({
+      query: (briefId) => ({
+        url: ApiRoute.BRIEF_AI_SHARE(briefId),
+        method: 'GET',
+      }),
+      providesTags: (_r, _e, briefId) => [{ type: 'BriefShare', id: briefId }],
+    }),
+
+    createBriefAiShare: builder.mutation<BriefShareInfo, string>({
+      query: (briefId) => ({
+        url: ApiRoute.BRIEF_AI_SHARE(briefId),
+        method: 'POST',
+      }),
+      invalidatesTags: (_r, _e, briefId) => [{ type: 'BriefShare', id: briefId }],
+    }),
+
+    updateBriefAiShare: builder.mutation<BriefShareInfo, { briefId: string; isActive: boolean }>({
+      query: (args) => ({
+        url: ApiRoute.BRIEF_AI_SHARE(args.briefId),
+        method: 'PATCH',
+        body: { isActive: args.isActive },
+      }),
+      invalidatesTags: (_r, _e, args) => [{ type: 'BriefShare', id: args.briefId }],
+    }),
+
+    getBriefAiShareView: builder.query<BriefShareView, string>({
+      query: (token) => ({
+        url: ApiRoute.PUBLIC_BRIEF_SHARE(token),
+        method: 'GET',
+      }),
+      providesTags: (_r, _e, token) => [{ type: 'BriefShareView', id: token }],
     }),
 
     getBriefAiList: builder.query<BriefV3ListItem[], void>({
@@ -183,6 +246,10 @@ export const {
   useLazyGetBriefAiFinalDocumentsQuery,
   useGetBriefAiFinalDocumentsQuery,
   useUpdateBriefAiFinalDocumentMutation,
+  useGetBriefAiShareQuery,
+  useCreateBriefAiShareMutation,
+  useUpdateBriefAiShareMutation,
+  useGetBriefAiShareViewQuery,
   useGetBriefAiListQuery,
   useDeleteBriefAiMutation,
   useRenameBriefAiMutation,

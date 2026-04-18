@@ -1,6 +1,7 @@
 import { styled, keyframes } from 'styled-components';
 
 export const ChatPanel = styled.div`
+  position: relative;
   flex: 1;
   width: 100%;
   min-width: 0;
@@ -284,27 +285,108 @@ export const TypingDot = styled.span<{ $delay: number }>`
 `;
 
 export const InputArea = styled.div`
+  position: relative;
   padding: 16px 28px 20px;
   background: #ffffff;
   border-top: 1px solid #eef0f4;
   display: flex;
+  flex-direction: column;
   gap: 8px;
-  align-items: flex-end;
 `;
 
 export const ChatInputWrapper = styled.div`
-  flex: 1;
-  position: relative;
+  display: flex;
+  flex-direction: row;
+  align-items: stretch;
+  gap: 8px;
+
+  > :first-child {
+    flex: 1;
+    min-width: 0;
+  }
+
+  > button {
+    align-self: stretch;
+    min-height: 56px;
+  }
+`;
+
+export const ChatFooterRow = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-family: 'Montserrat', sans-serif;
+  font-size: 11px;
+  color: #99a1b7;
+  flex-wrap: wrap;
 `;
 
 export const LimitBadge = styled.div`
-  padding: 8px 16px;
+  padding: 4px 10px;
   background: #fef3cd;
-  border-radius: 8px;
+  border-radius: 6px;
+  font-family: 'Montserrat', sans-serif;
+  font-size: 11px;
+  color: #856404;
+`;
+
+export const CostBadge = styled.div<{ $staff?: boolean }>`
+  padding: 4px 10px;
+  background: ${(x) => (x.$staff ? '#eef2ff' : '#f3f4f6')};
+  color: ${(x) => (x.$staff ? '#4338ca' : '#4b5675')};
+  border-radius: 6px;
+  font-family: 'Montserrat', sans-serif;
+  font-size: 11px;
+  font-weight: 600;
+`;
+
+export const DropOverlay = styled.div`
+  position: absolute;
+  inset: 8px;
+  pointer-events: none;
+  background: rgba(34, 136, 255, 0.08);
+  border: 2px dashed #2288ff;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #2288ff;
+  font-family: 'Montserrat', sans-serif;
+  font-size: 14px;
+  font-weight: 600;
+  z-index: 20;
+`;
+
+export const AttachmentChipList = styled.div`
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+`;
+
+export const AttachmentChip = styled.a`
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 10px;
+  background: #f3f5f9;
+  border: 1px solid #eef0f4;
+  border-radius: 999px;
   font-family: 'Montserrat', sans-serif;
   font-size: 12px;
-  color: #856404;
-  text-align: center;
+  color: #4b5675;
+  text-decoration: none;
+  max-width: 240px;
+
+  & > span.name {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  &:hover {
+    background: #e8ecf2;
+    color: #2288ff;
+  }
 `;
 
 export const GeneratingOverlay = styled.div`

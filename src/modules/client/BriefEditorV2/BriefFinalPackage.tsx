@@ -2,17 +2,23 @@
 
 import React, { useEffect, useRef, useState } from 'react';
 import { styled } from 'styled-components';
-import { App, Button, Tabs } from 'antd';
-import { ArrowLeftOutlined, CopyOutlined, DownloadOutlined } from '@ant-design/icons';
+import { App, Button, Popover, Switch, Tabs } from 'antd';
+import { CopyOutlined, DownloadOutlined, ShareAltOutlined } from '@ant-design/icons';
 import { useEditor, EditorContent } from '@tiptap/react';
 import StarterKit from '@tiptap/starter-kit';
 import Link from '@tiptap/extension-link';
 import Underline from '@tiptap/extension-underline';
 import Placeholder from '@tiptap/extension-placeholder';
 import { ApiRoute } from '@/constants/apiRoute';
+import { AppRoute } from '@/constants/appRoute';
 import { downloadPdf } from '@/helpers/downloadPdf';
 import { t } from '@/lib/i18n';
-import { useUpdateBriefAiFinalDocumentMutation } from '@/services/client/briefAiApi';
+import {
+  useCreateBriefAiShareMutation,
+  useGetBriefAiShareQuery,
+  useUpdateBriefAiFinalDocumentMutation,
+  useUpdateBriefAiShareMutation,
+} from '@/services/client/briefAiApi';
 import { BriefFinalDocument, BriefFinalPackage as BriefFinalPackageType } from '@/types/briefAi.interface';
 
 const AUTOSAVE_DEBOUNCE_MS = 1200;
@@ -183,7 +189,6 @@ const DOCUMENT_TITLES: Record<string, string> = {
 interface BriefFinalPackageProps {
   briefId: string;
   package: BriefFinalPackageType;
-  onBack: () => void;
 }
 
 const htmlToPlainText = (html: string): string => {
@@ -370,7 +375,95 @@ const DocumentEditor: React.FC<{
   );
 };
 
-export const BriefFinalPackage: React.FC<BriefFinalPackageProps> = ({ briefId, package: pkg, onBack }) => {
+const ShareControl: React.FC<{ briefId: string }> = ({ briefId }) => {
+  const { message: messageApi } = App.useApp();
+  const { data: share, isFetching } = useGetBriefAiShareQuery(briefId, {
+    refetchOnMountOrArgChange: true,
+  });
+  const [createShare, { isLoading: isCreating }] = useCreateBriefAiShareMutation();
+  const [updateShare, { isLoading: isUpdating }] = useUpdateBriefAiShareMutation();
+
+  const handleCreate = async () => {
+    try {
+      await createShare(briefId).unwrap();
+    } catch {
+      messageApi.error(t('UNEXPECTED_ERROR'));
+    }
+  };
+
+  const handleToggle = async (isActive: boolean) => {
+    try {
+      await updateShare({ briefId, isActive }).unwrap();
+    } catch {
+      messageApi.error(t('UNEXPECTED_ERROR'));
+    }
+  };
+
+  const handleCopy = async () => {
+    if (!share) return;
+    const url = `${window.location.origin}${AppRoute.SHARED_BRIEF(share.token)}`;
+    try {
+      await navigator.clipboard.writeText(url);
+      messageApi.success(t('BRIEF_V3_SHARE_COPIED'));
+    } catch {
+      messageApi.error(t('UNEXPECTED_ERROR'));
+    }
+  };
+
+  const shareUrl = share
+    ? `${typeof window !== 'undefined' ? window.location.origin : ''}${AppRoute.SHARED_BRIEF(share.token)}`
+    : '';
+
+  const content = (
+    <div style={{ width: 320, display: 'flex', flexDirection: 'column', gap: 10 }}>
+      <div style={{ fontSize: 12, color: '#6b7280' }}>{t('BRIEF_V3_SHARE_HINT')}</div>
+
+      {!share ? (
+        <Button type='primary' loading={isCreating} onClick={handleCreate} block>
+          {t('BRIEF_V3_SHARE')}
+        </Button>
+      ) : (
+        <>
+          <div
+            style={{
+              display: 'flex',
+              gap: 6,
+              alignItems: 'center',
+              border: '1px solid #eef0f4',
+              borderRadius: 8,
+              padding: '6px 8px',
+              background: '#fafbfc',
+              fontSize: 12,
+              color: '#4b5675',
+              overflow: 'hidden',
+            }}
+          >
+            <span style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', flex: 1 }}>
+              {shareUrl}
+            </span>
+            <Button size='small' icon={<CopyOutlined />} onClick={handleCopy}>
+              {t('BRIEF_V3_SHARE_COPY')}
+            </Button>
+          </div>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 8, fontSize: 12 }}>
+            <Switch size='small' checked={share.isActive} loading={isUpdating} onChange={handleToggle} />
+            <span>{t('BRIEF_V3_SHARE_ACTIVE')}</span>
+          </div>
+        </>
+      )}
+    </div>
+  );
+
+  return (
+    <Popover content={content} title={t('BRIEF_V3_SHARE_TITLE')} trigger='click' placement='bottomRight'>
+      <Button icon={<ShareAltOutlined />} loading={isFetching}>
+        {t('BRIEF_V3_SHARE')}
+      </Button>
+    </Popover>
+  );
+};
+
+export const BriefFinalPackage: React.FC<BriefFinalPackageProps> = ({ briefId, package: pkg }) => {
   const byKind = new Map(pkg.documents.map((x) => [x.kind, x]));
 
   const items = [
@@ -394,12 +487,8 @@ export const BriefFinalPackage: React.FC<BriefFinalPackageProps> = ({ briefId, p
   return (
     <Wrapper>
       <Header>
-        <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
-          <Button icon={<ArrowLeftOutlined />} onClick={onBack} type='text'>
-            {t('BRIEF_V3_BACK_TO_CHAT')}
-          </Button>
-          <Title>{t('BRIEF_V3_FINAL_PACKAGE_TITLE')}</Title>
-        </div>
+        <Title>{t('BRIEF_V3_FINAL_PACKAGE_TITLE')}</Title>
+        <ShareControl briefId={briefId} />
       </Header>
       <Body>
         <Tabs

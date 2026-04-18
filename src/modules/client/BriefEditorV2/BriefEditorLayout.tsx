@@ -7,6 +7,7 @@ import { t } from '@/lib/i18n';
 import { BriefChatPanel } from '@/modules/client/BriefChatV2/BriefChatPanel';
 import { FileUploadZone } from './components/FileUploadZone';
 import { BriefFinalPackage } from './BriefFinalPackage';
+import { BriefWorkspaceHeader, WorkspaceTab } from './components/BriefWorkspaceHeader';
 import { GeneratingOverlay, GeneratingSubtitle, GeneratingTitle, Spinner } from '@/modules/client/BriefChatV2/styled';
 import {
   useCreateBriefAiDraftMutation,
@@ -31,13 +32,7 @@ import {
   getBrowserLanguage,
   savePublicBriefToken,
 } from '@/services/client/publicBriefApi';
-import {
-  BriefAttachment,
-  BriefFinalPackage as BriefFinalPackageType,
-  BriefV3Detail,
-  ChatMessageV3,
-  ConversationStatus,
-} from '@/types/briefAi.interface';
+import { BriefAttachment, BriefV3Detail, ChatMessageV3, ConversationStatus } from '@/types/briefAi.interface';
 
 const POLL_INTERVAL_MS = 1500;
 const POLL_TIMEOUT_MS = 180000;
@@ -160,7 +155,7 @@ export const BriefEditorLayout: React.FC<BriefEditorLayoutProps> = (props) => {
   const [isChatLoading, setIsChatLoading] = useState(false);
   const [uploading, setUploading] = useState(false);
   const [isStarting, setIsStarting] = useState(false);
-  const [finalPackage, setFinalPackage] = useState<BriefFinalPackageType | null>(null);
+  const [showCost, setShowCost] = useState<boolean>(true);
 
   // Auth API hooks
   const [createDraftAuth] = useCreateBriefAiDraftMutation();
@@ -200,6 +195,7 @@ export const BriefEditorLayout: React.FC<BriefEditorLayoutProps> = (props) => {
     setConversationStatus(detail.conversationStatus);
     setTotalCostUsd(detail.totalCostUsd);
     setMessageCount(detail.messageCount);
+    setShowCost(Boolean(detail.showCost));
     // If the brief is already finalized (e.g. we landed on it after auth/claim
     // or after a page refresh while polling was in flight), jump straight to
     // the final package.
@@ -607,14 +603,25 @@ export const BriefEditorLayout: React.FC<BriefEditorLayoutProps> = (props) => {
     props.onRegisterClick?.(briefId, token);
   }, [briefId, props, token]);
 
-  useEffect(() => {
-    if (isAuth && authFinalDocs && stage === 'finalized') {
-      setFinalPackage(authFinalDocs);
-    }
-  }, [authFinalDocs, isAuth, stage]);
-
+  const finalPackage = isAuth ? authFinalDocs : null;
   const messageLimit = isAuth ? MESSAGE_LIMIT_AUTH : MESSAGE_LIMIT_ANON;
   const maxAttachments = isAuth ? MAX_ATTACHMENTS_AUTH : MAX_ATTACHMENTS_ANON;
+
+  const docsEnabled = conversationStatus === 'finalized';
+  const activeTab: WorkspaceTab = stage === 'finalized' ? 'docs' : 'chat';
+  const handleSelectTab = useCallback(
+    (tab: WorkspaceTab) => {
+      if (tab === 'docs') {
+        if (!docsEnabled) {
+          return;
+        }
+        setStage('finalized');
+      } else {
+        setStage('chat');
+      }
+    },
+    [docsEnabled]
+  );
 
   if (stage === 'start') {
     return (
@@ -669,20 +676,23 @@ export const BriefEditorLayout: React.FC<BriefEditorLayoutProps> = (props) => {
   }
 
   if (stage === 'finalized') {
-    if (!finalPackage) {
-      return (
-        <OuterWrapper>
+    return (
+      <OuterWrapper>
+        <BriefWorkspaceHeader
+          activeTab={activeTab}
+          conversationStatus={conversationStatus}
+          docsEnabled={docsEnabled}
+          onSelectTab={handleSelectTab}
+        />
+        {finalPackage ? (
+          <BriefFinalPackage briefId={briefId!} package={finalPackage} />
+        ) : (
           <GeneratingOverlay>
             <Spinner />
             <GeneratingTitle>{t('BRIEF_V3_FINALIZING_TITLE')}</GeneratingTitle>
             <GeneratingSubtitle>{t('BRIEF_V3_FINALIZING_SUBTITLE')}</GeneratingSubtitle>
           </GeneratingOverlay>
-        </OuterWrapper>
-      );
-    }
-    return (
-      <OuterWrapper>
-        <BriefFinalPackage briefId={briefId!} package={finalPackage} onBack={() => setStage('chat')} />
+        )}
       </OuterWrapper>
     );
   }
@@ -692,6 +702,12 @@ export const BriefEditorLayout: React.FC<BriefEditorLayoutProps> = (props) => {
 
   return (
     <OuterWrapper>
+      <BriefWorkspaceHeader
+        activeTab={activeTab}
+        conversationStatus={conversationStatus}
+        docsEnabled={docsEnabled}
+        onSelectTab={handleSelectTab}
+      />
       <ChatScreen>
         <ChatWrapper>
           <BriefChatPanel
@@ -702,6 +718,7 @@ export const BriefEditorLayout: React.FC<BriefEditorLayoutProps> = (props) => {
             messageLimit={messageLimit}
             messageCount={messageCount}
             totalCostUsd={totalCostUsd}
+            showCost={showCost}
             pendingAttachments={pendingAttachments}
             uploading={uploading}
             maxAttachments={maxAttachments}
@@ -711,7 +728,7 @@ export const BriefEditorLayout: React.FC<BriefEditorLayoutProps> = (props) => {
             onFeedback={isAuth ? handleFeedback : null}
             onFeedbackComment={isAuth ? handleFeedbackComment : null}
             onFinalize={isAuth ? handleFinalize : null}
-            onShowPackage={isAuth && conversationStatus === 'finalized' ? () => setStage('finalized') : null}
+            onShowPackage={isAuth && docsEnabled ? () => setStage('finalized') : null}
             showRegistrationButton={showRegistrationButton}
             onRegisterClick={!isAuth ? handleClaim : undefined}
           />
