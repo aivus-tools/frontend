@@ -5,7 +5,7 @@ import { styled } from 'styled-components';
 import { t } from '@/lib/i18n';
 import { ConversationStatus } from '@/types/briefAi.interface';
 
-export type WorkspaceTab = 'chat' | 'docs';
+export type WorkspaceTab = 'chat' | 'docs' | 'comparison' | 'settings';
 
 const Wrapper = styled.div`
   background: #ffffff;
@@ -71,6 +71,8 @@ interface BriefWorkspaceHeaderProps {
   activeTab: WorkspaceTab;
   conversationStatus: ConversationStatus;
   docsEnabled: boolean;
+  comparisonEnabled?: boolean;
+  settingsEnabled?: boolean;
   onSelectTab: (tab: WorkspaceTab) => void;
   rightSlot?: React.ReactNode;
 }
@@ -79,9 +81,13 @@ export const BriefWorkspaceHeader: React.FC<BriefWorkspaceHeaderProps> = ({
   activeTab,
   conversationStatus,
   docsEnabled,
+  comparisonEnabled,
+  settingsEnabled,
   onSelectTab,
   rightSlot,
 }) => {
+  const compareEnabled = comparisonEnabled ?? docsEnabled;
+  const settingsOn = settingsEnabled ?? true;
   return (
     <Wrapper>
       <Tabs>
@@ -96,6 +102,23 @@ export const BriefWorkspaceHeader: React.FC<BriefWorkspaceHeaderProps> = ({
           title={docsEnabled ? undefined : t('BRIEF_V3_DOCS_DISABLED_HINT')}
         >
           {t('BRIEF_V3_TAB_DOCS')}
+        </TabButton>
+        <TabButton
+          $active={activeTab === 'comparison'}
+          $disabled={!compareEnabled}
+          disabled={!compareEnabled}
+          onClick={() => compareEnabled && onSelectTab('comparison')}
+          title={compareEnabled ? undefined : t('BRIEF_V3_DOCS_DISABLED_HINT')}
+        >
+          {t('BRIEF_V3_TAB_COMPARISON')}
+        </TabButton>
+        <TabButton
+          $active={activeTab === 'settings'}
+          $disabled={!settingsOn}
+          disabled={!settingsOn}
+          onClick={() => settingsOn && onSelectTab('settings')}
+        >
+          {t('BRIEF_V3_TAB_SETTINGS')}
         </TabButton>
       </Tabs>
       <StatusBadge $status={conversationStatus}>{STATUS_LABELS[conversationStatus]()}</StatusBadge>

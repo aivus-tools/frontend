@@ -157,6 +157,7 @@ const SharedDocumentTab: React.FC<{ token: string; doc: BriefFinalDocument }> = 
 export const BriefSharedView: React.FC<{ data: BriefShareView }> = ({ data }) => {
   const byKind = new Map(data.documents.map((x) => [x.kind, x]));
 
+  // Deliverables are folded into Production Brief; hide legacy tab.
   const items = [
     {
       key: 'production_brief',
@@ -167,11 +168,6 @@ export const BriefSharedView: React.FC<{ data: BriefShareView }> = ({ data }) =>
       key: 'vendor_email',
       label: t('BRIEF_V3_TAB_VENDOR_EMAIL'),
       document: byKind.get('vendor_email'),
-    },
-    {
-      key: 'deliverables_checklist',
-      label: t('BRIEF_V3_TAB_DELIVERABLES'),
-      document: byKind.get('deliverables_checklist'),
     },
   ];
 

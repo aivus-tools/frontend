@@ -20,9 +20,12 @@ export interface BriefFeedback {
   createdAt: string | null;
 }
 
+export type ChatMessageKind = 'chat' | 'feedback_request' | 'feedback_reply_ack';
+
 export interface ChatMessageV3 {
   id: string;
   role: 'user' | 'assistant';
+  kind?: ChatMessageKind;
   content: string;
   readyToFinalize: boolean;
   modelUsed: string;

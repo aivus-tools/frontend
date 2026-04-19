@@ -5,8 +5,10 @@ import { styled } from 'styled-components';
 import { App, Button } from 'antd';
 import { t } from '@/lib/i18n';
 import { BriefChatPanel } from '@/modules/client/BriefChatV2/BriefChatPanel';
+import { ComparisonTable } from '@/modules/client/ComparisonTable/ComparisonTable';
 import { FileUploadZone } from './components/FileUploadZone';
 import { BriefFinalPackage } from './BriefFinalPackage';
+import { BriefSettings } from './BriefSettings';
 import { BriefWorkspaceHeader, WorkspaceTab } from './components/BriefWorkspaceHeader';
 import { GeneratingOverlay, GeneratingSubtitle, GeneratingTitle, Spinner } from '@/modules/client/BriefChatV2/styled';
 import {
@@ -42,7 +44,7 @@ const MESSAGE_LIMIT_ANON = 50;
 const MAX_ATTACHMENTS_AUTH = 10;
 const MAX_ATTACHMENTS_ANON = 3;
 
-type Stage = 'start' | 'generating' | 'chat' | 'finalizing' | 'finalized';
+type Stage = 'start' | 'generating' | 'chat' | 'finalizing' | 'finalized' | 'comparison' | 'settings';
 
 const OuterWrapper = styled.div`
   display: flex;
@@ -167,7 +169,7 @@ export const BriefEditorLayout: React.FC<BriefEditorLayoutProps> = (props) => {
   const [sendFeedbackAuth] = useSendBriefAiFeedbackMutation();
   const [finalizeAuth] = useFinalizeBriefAiMutation();
   const { data: authDetail } = useGetBriefAiDetailQuery(briefId ?? '', {
-    skip: !briefId || !isAuth || stage !== 'chat',
+    skip: !briefId || !isAuth || (stage !== 'chat' && stage !== 'settings'),
   });
   const { data: authFinalDocs, refetch: refetchAuthFinal } = useGetBriefAiFinalDocumentsQuery(briefId ?? '', {
     skip: !briefId || !isAuth || stage !== 'finalized',
@@ -636,7 +638,10 @@ export const BriefEditorLayout: React.FC<BriefEditorLayoutProps> = (props) => {
   const maxAttachments = isAuth ? MAX_ATTACHMENTS_AUTH : MAX_ATTACHMENTS_ANON;
 
   const docsEnabled = conversationStatus === 'finalized';
-  const activeTab: WorkspaceTab = stage === 'finalized' ? 'docs' : 'chat';
+  const settingsEnabled = isAuth && Boolean(briefId);
+  const comparisonEnabled = isAuth && docsEnabled;
+  const activeTab: WorkspaceTab =
+    stage === 'finalized' ? 'docs' : stage === 'comparison' ? 'comparison' : stage === 'settings' ? 'settings' : 'chat';
   const handleSelectTab = useCallback(
     (tab: WorkspaceTab) => {
       if (tab === 'docs') {
@@ -644,11 +649,25 @@ export const BriefEditorLayout: React.FC<BriefEditorLayoutProps> = (props) => {
           return;
         }
         setStage('finalized');
-      } else {
-        setStage('chat');
+        return;
       }
+      if (tab === 'comparison') {
+        if (!comparisonEnabled) {
+          return;
+        }
+        setStage('comparison');
+        return;
+      }
+      if (tab === 'settings') {
+        if (!settingsEnabled) {
+          return;
+        }
+        setStage('settings');
+        return;
+      }
+      setStage('chat');
     },
-    [docsEnabled]
+    [docsEnabled, comparisonEnabled, settingsEnabled]
   );
 
   if (stage === 'start') {
@@ -703,6 +722,38 @@ export const BriefEditorLayout: React.FC<BriefEditorLayoutProps> = (props) => {
     );
   }
 
+  if (stage === 'comparison' && briefId) {
+    return (
+      <OuterWrapper>
+        <BriefWorkspaceHeader
+          activeTab={activeTab}
+          conversationStatus={conversationStatus}
+          docsEnabled={docsEnabled}
+          comparisonEnabled={comparisonEnabled}
+          settingsEnabled={settingsEnabled}
+          onSelectTab={handleSelectTab}
+        />
+        <ComparisonTable briefId={briefId} />
+      </OuterWrapper>
+    );
+  }
+
+  if (stage === 'settings' && briefId && authDetail) {
+    return (
+      <OuterWrapper>
+        <BriefWorkspaceHeader
+          activeTab={activeTab}
+          conversationStatus={conversationStatus}
+          docsEnabled={docsEnabled}
+          comparisonEnabled={comparisonEnabled}
+          settingsEnabled={settingsEnabled}
+          onSelectTab={handleSelectTab}
+        />
+        <BriefSettings brief={authDetail} />
+      </OuterWrapper>
+    );
+  }
+
   if (stage === 'finalized') {
     return (
       <OuterWrapper>
@@ -710,6 +761,8 @@ export const BriefEditorLayout: React.FC<BriefEditorLayoutProps> = (props) => {
           activeTab={activeTab}
           conversationStatus={conversationStatus}
           docsEnabled={docsEnabled}
+          comparisonEnabled={comparisonEnabled}
+          settingsEnabled={settingsEnabled}
           onSelectTab={handleSelectTab}
         />
         {finalPackage ? (
@@ -734,6 +787,8 @@ export const BriefEditorLayout: React.FC<BriefEditorLayoutProps> = (props) => {
         activeTab={activeTab}
         conversationStatus={conversationStatus}
         docsEnabled={docsEnabled}
+        comparisonEnabled={comparisonEnabled}
+        settingsEnabled={settingsEnabled}
         onSelectTab={handleSelectTab}
       />
       <ChatScreen>

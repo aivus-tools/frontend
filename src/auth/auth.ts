@@ -198,6 +198,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
     authorized: async ({ auth, request }) => {
       const pathname = request.nextUrl.pathname;
       if (
+        pathname === '/' ||
         pathname.startsWith('/auth') ||
         pathname.startsWith('/external') ||
         pathname.startsWith('/public') ||

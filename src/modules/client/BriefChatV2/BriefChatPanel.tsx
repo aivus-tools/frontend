@@ -189,6 +189,7 @@ export const BriefChatPanel: React.FC<BriefChatPanelProps> = (props) => {
         {props.messages.map((message) => {
           const isUser = message.role === 'user';
           const feedback = message.feedback;
+          const isMetaMessage = message.kind === 'feedback_request' || message.kind === 'feedback_reply_ack';
           return (
             <MessageRow key={message.id} $isUser={isUser}>
               <div style={{ maxWidth: '85%', display: 'flex', flexDirection: 'column', gap: 4 }}>
@@ -200,7 +201,7 @@ export const BriefChatPanel: React.FC<BriefChatPanelProps> = (props) => {
 
                 <MessageMeta $isUser={isUser}>
                   <MessageTime $isUser={isUser}>{formatTime(message.createdAt)}</MessageTime>
-                  {!isUser && props.onFeedback ? (
+                  {!isUser && !isMetaMessage && props.onFeedback ? (
                     <FeedbackRow>
                       <FeedbackButton
                         $active={feedback?.rating === 'up'}

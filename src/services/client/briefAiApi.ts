@@ -229,6 +229,27 @@ export const briefAiApi = createApi({
       }),
       invalidatesTags: ['BriefV3'],
     }),
+
+    updateBriefAiSettings: builder.mutation<
+      BriefV3ListItem,
+      { briefId: string; title?: string; documentLanguage?: 'en' | 'ru' }
+    >({
+      query: (args) => {
+        const body: Record<string, string> = {};
+        if (args.title !== undefined) {
+          body.title = args.title;
+        }
+        if (args.documentLanguage !== undefined) {
+          body.documentLanguage = args.documentLanguage;
+        }
+        return {
+          url: ApiRoute.BRIEF_AI_DETAIL(args.briefId),
+          method: 'PATCH',
+          body,
+        };
+      },
+      invalidatesTags: ['BriefV3'],
+    }),
   }),
 });
 
@@ -253,4 +274,5 @@ export const {
   useGetBriefAiListQuery,
   useDeleteBriefAiMutation,
   useRenameBriefAiMutation,
+  useUpdateBriefAiSettingsMutation,
 } = briefAiApi;

@@ -466,6 +466,9 @@ const ShareControl: React.FC<{ briefId: string }> = ({ briefId }) => {
 export const BriefFinalPackage: React.FC<BriefFinalPackageProps> = ({ briefId, package: pkg }) => {
   const byKind = new Map(pkg.documents.map((x) => [x.kind, x]));
 
+  // Deliverables now live as a section inside Production Brief; legacy briefs
+  // may still have a separate deliverables_checklist document in the DB but it
+  // is intentionally hidden from the UI.
   const items = [
     {
       key: 'production_brief',
@@ -476,11 +479,6 @@ export const BriefFinalPackage: React.FC<BriefFinalPackageProps> = ({ briefId, p
       key: 'vendor_email',
       label: t('BRIEF_V3_TAB_VENDOR_EMAIL'),
       document: byKind.get('vendor_email'),
-    },
-    {
-      key: 'deliverables_checklist',
-      label: t('BRIEF_V3_TAB_DELIVERABLES'),
-      document: byKind.get('deliverables_checklist'),
     },
   ];
 
