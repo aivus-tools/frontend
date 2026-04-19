@@ -168,11 +168,17 @@ export const BriefEditorLayout: React.FC<BriefEditorLayoutProps> = (props) => {
   const [deleteAttachAuth] = useDeleteBriefAiAttachmentMutation();
   const [sendFeedbackAuth] = useSendBriefAiFeedbackMutation();
   const [finalizeAuth] = useFinalizeBriefAiMutation();
-  const { data: authDetail } = useGetBriefAiDetailQuery(briefId ?? '', {
+  const { data: authDetail, isFetching: isAuthDetailFetching } = useGetBriefAiDetailQuery(briefId ?? '', {
     skip: !briefId || !isAuth || (stage !== 'chat' && stage !== 'settings'),
+    refetchOnMountOrArgChange: true,
   });
-  const { data: authFinalDocs, refetch: refetchAuthFinal } = useGetBriefAiFinalDocumentsQuery(briefId ?? '', {
+  const {
+    data: authFinalDocs,
+    refetch: refetchAuthFinal,
+    isFetching: isAuthFinalFetching,
+  } = useGetBriefAiFinalDocumentsQuery(briefId ?? '', {
     skip: !briefId || !isAuth || stage !== 'finalized',
+    refetchOnMountOrArgChange: true,
   });
 
   // Public API hooks
@@ -770,8 +776,8 @@ export const BriefEditorLayout: React.FC<BriefEditorLayoutProps> = (props) => {
         ) : (
           <GeneratingOverlay>
             <Spinner />
-            <GeneratingTitle>{t('BRIEF_V3_FINALIZING_TITLE')}</GeneratingTitle>
-            <GeneratingSubtitle>{t('BRIEF_V3_FINALIZING_SUBTITLE')}</GeneratingSubtitle>
+            <GeneratingTitle>{t('BRIEF_V3_LOADING_DOCS_TITLE')}</GeneratingTitle>
+            <GeneratingSubtitle>{t('BRIEF_V3_LOADING_DOCS_SUBTITLE')}</GeneratingSubtitle>
           </GeneratingOverlay>
         )}
       </OuterWrapper>
@@ -780,6 +786,26 @@ export const BriefEditorLayout: React.FC<BriefEditorLayoutProps> = (props) => {
 
   const showRegistrationButton =
     !isAuth && (conversationStatus === 'ready_to_finalize' || conversationStatus === 'finalized');
+
+  // Avoid flashing an empty chat panel while the initial detail/status is
+  // still arriving from the server. This window is short, but for already
+  // finalized briefs it would otherwise look like the brief has no content
+  // until `hydrateFromDetail` flips the stage.
+  const isHydrating =
+    stage === 'chat' &&
+    briefId &&
+    ((isAuth && !authDetail && isAuthDetailFetching) || (!isAuth && token && !publicDetail));
+  if (isHydrating) {
+    return (
+      <OuterWrapper>
+        <GeneratingOverlay>
+          <Spinner />
+          <GeneratingTitle>{t('BRIEF_V3_LOADING_BRIEF_TITLE')}</GeneratingTitle>
+          <GeneratingSubtitle>{t('BRIEF_V3_LOADING_BRIEF_SUBTITLE')}</GeneratingSubtitle>
+        </GeneratingOverlay>
+      </OuterWrapper>
+    );
+  }
 
   return (
     <OuterWrapper>
