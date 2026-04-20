@@ -667,8 +667,10 @@ export const BriefEditorLayout: React.FC<BriefEditorLayoutProps> = (props) => {
           if (status.status === 'done') {
             session.cancelled = true;
             clearPolling();
-            refetchAuthFinal();
+            userOverrodeStageRef.current = false;
+            setStage('finalized');
             setIsRegenerating(false);
+            refetchAuthFinal();
           } else if (status.status === 'failed') {
             session.cancelled = true;
             clearPolling();
