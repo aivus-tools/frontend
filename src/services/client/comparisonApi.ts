@@ -11,11 +11,18 @@ export const comparisonApi = createApi({
       query: (briefId) => ApiRoute.BRIEF_COMPARISON(briefId),
       providesTags: ['Comparison'],
     }),
-    analyzeComparison: builder.mutation<AnalysisResponse, { briefId: string; question?: string }>({
-      query: ({ briefId, question }) => ({
+    analyzeComparison: builder.mutation<
+      AnalysisResponse,
+      {
+        briefId: string;
+        question?: string;
+        history?: { role: 'user' | 'assistant'; content: string }[];
+      }
+    >({
+      query: ({ briefId, question, history }) => ({
         url: ApiRoute.BRIEF_COMPARISON_ANALYZE(briefId),
         method: 'POST',
-        body: { question },
+        body: { question, history },
       }),
     }),
   }),

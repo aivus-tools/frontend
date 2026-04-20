@@ -39,7 +39,7 @@ import { BriefAttachment, BriefV3Detail, ChatMessageV3, ConversationStatus } fro
 const POLL_INTERVAL_MS = 1500;
 const POLL_TIMEOUT_MS = 180000;
 
-const MESSAGE_LIMIT_AUTH = Number.POSITIVE_INFINITY;
+const MESSAGE_LIMIT_AUTH = 100;
 const MESSAGE_LIMIT_ANON = 50;
 const MAX_ATTACHMENTS_AUTH = 10;
 const MAX_ATTACHMENTS_ANON = 3;
@@ -146,7 +146,12 @@ export const BriefEditorLayout: React.FC<BriefEditorLayoutProps> = (props) => {
   const isAuth = props.mode === 'authenticated';
 
   const [briefId, setBriefId] = useState<string | null>(props.briefId ?? null);
-  const [stage, setStage] = useState<Stage>(props.briefId ? (props.initialTaskId ? 'generating' : 'chat') : 'start');
+  const [stage, setStage] = useState<Stage>(props.briefId ? 'chat' : 'start');
+  const [hasMounted, setHasMounted] = useState(false);
+
+  useEffect(() => {
+    setHasMounted(true);
+  }, []);
   const [startText, setStartText] = useState('');
   const [pendingAttachments, setPendingAttachments] = useState<BriefAttachment[]>([]);
 
@@ -157,7 +162,7 @@ export const BriefEditorLayout: React.FC<BriefEditorLayoutProps> = (props) => {
   const [isChatLoading, setIsChatLoading] = useState(false);
   const [uploading, setUploading] = useState(false);
   const [isStarting, setIsStarting] = useState(false);
-  const [showCost, setShowCost] = useState<boolean>(true);
+  const [showCost, setShowCost] = useState<boolean>(false);
 
   // Auth API hooks
   const [createDraftAuth] = useCreateBriefAiDraftMutation();
@@ -195,6 +200,8 @@ export const BriefEditorLayout: React.FC<BriefEditorLayoutProps> = (props) => {
     { skip: !briefId || !token || isAuth || stage !== 'chat' }
   );
 
+  const userOverrodeStageRef = useRef(false);
+
   const hydrateFromDetail = useCallback((detail: BriefV3Detail | undefined) => {
     if (!detail) {
       return;
@@ -204,10 +211,7 @@ export const BriefEditorLayout: React.FC<BriefEditorLayoutProps> = (props) => {
     setTotalCostUsd(detail.totalCostUsd);
     setMessageCount(detail.messageCount);
     setShowCost(Boolean(detail.showCost));
-    // If the brief is already finalized (e.g. we landed on it after auth/claim
-    // or after a page refresh while polling was in flight), jump straight to
-    // the final package.
-    if (detail.conversationStatus === 'finalized') {
+    if (detail.conversationStatus === 'finalized' && !userOverrodeStageRef.current) {
       setStage((prev) => (prev === 'finalized' ? prev : 'finalized'));
     }
   }, []);
@@ -289,7 +293,8 @@ export const BriefEditorLayout: React.FC<BriefEditorLayoutProps> = (props) => {
   }, []);
 
   useEffect(() => {
-    if (props.briefId && props.initialTaskId && stage === 'generating' && !pollingRef.current) {
+    if (props.briefId && props.initialTaskId && !pollingRef.current) {
+      setStage('generating');
       pollFirstReply(props.briefId, props.initialTaskId, props.token ?? '');
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -632,6 +637,60 @@ export const BriefEditorLayout: React.FC<BriefEditorLayoutProps> = (props) => {
     }
   }, [briefId, finalizeAuth, isAuth, messageApi, pollFinalDocuments]);
 
+  const [isRegenerating, setIsRegenerating] = useState(false);
+  const handleRegenerate = useCallback(async () => {
+    if (!briefId || !isAuth || isRegenerating) {
+      return;
+    }
+    setIsRegenerating(true);
+    try {
+      const response = await finalizeAuth(briefId).unwrap();
+      const started = Date.now();
+      const session = { cancelled: false };
+      clearPolling();
+      pollingRef.current = setInterval(async () => {
+        if (session.cancelled) {
+          return;
+        }
+        if (Date.now() - started > POLL_TIMEOUT_MS) {
+          session.cancelled = true;
+          clearPolling();
+          messageApi.error(t('BRIEF_V3_REGENERATE_FAILED'));
+          setIsRegenerating(false);
+          return;
+        }
+        try {
+          const status = await fetchStatusAuth({ briefId, taskId: response.taskId }).unwrap();
+          if (session.cancelled) {
+            return;
+          }
+          if (status.status === 'done') {
+            session.cancelled = true;
+            clearPolling();
+            refetchAuthFinal();
+            setIsRegenerating(false);
+          } else if (status.status === 'failed') {
+            session.cancelled = true;
+            clearPolling();
+            messageApi.error(t('BRIEF_V3_REGENERATE_FAILED'));
+            setIsRegenerating(false);
+          }
+        } catch {
+          if (session.cancelled) {
+            return;
+          }
+          session.cancelled = true;
+          clearPolling();
+          messageApi.error(t('BRIEF_V3_REGENERATE_FAILED'));
+          setIsRegenerating(false);
+        }
+      }, POLL_INTERVAL_MS);
+    } catch {
+      messageApi.error(t('BRIEF_V3_REGENERATE_FAILED'));
+      setIsRegenerating(false);
+    }
+  }, [briefId, fetchStatusAuth, finalizeAuth, isAuth, isRegenerating, messageApi, refetchAuthFinal]);
+
   const handleClaim = useCallback(() => {
     // Anonymous users can't finalize; tapping "register" should redirect to
     // the auth flow. The actual claim call happens on the post-auth route
@@ -650,6 +709,7 @@ export const BriefEditorLayout: React.FC<BriefEditorLayoutProps> = (props) => {
     stage === 'finalized' ? 'docs' : stage === 'comparison' ? 'comparison' : stage === 'settings' ? 'settings' : 'chat';
   const handleSelectTab = useCallback(
     (tab: WorkspaceTab) => {
+      userOverrodeStageRef.current = true;
       if (tab === 'docs') {
         if (!docsEnabled) {
           return;
@@ -772,7 +832,12 @@ export const BriefEditorLayout: React.FC<BriefEditorLayoutProps> = (props) => {
           onSelectTab={handleSelectTab}
         />
         {finalPackage ? (
-          <BriefFinalPackage briefId={briefId!} package={finalPackage} />
+          <BriefFinalPackage
+            briefId={briefId!}
+            package={finalPackage}
+            onRegenerate={isAuth ? handleRegenerate : null}
+            isRegenerating={isRegenerating}
+          />
         ) : (
           <GeneratingOverlay>
             <Spinner />
@@ -792,6 +857,7 @@ export const BriefEditorLayout: React.FC<BriefEditorLayoutProps> = (props) => {
   // finalized briefs it would otherwise look like the brief has no content
   // until `hydrateFromDetail` flips the stage.
   const isHydrating =
+    hasMounted &&
     stage === 'chat' &&
     briefId &&
     ((isAuth && !authDetail && isAuthDetailFetching) || (!isAuth && token && !publicDetail));
@@ -837,6 +903,8 @@ export const BriefEditorLayout: React.FC<BriefEditorLayoutProps> = (props) => {
             onFeedback={isAuth ? handleFeedback : null}
             onFeedbackComment={isAuth ? handleFeedbackComment : null}
             onFinalize={isAuth ? handleFinalize : null}
+            onRegenerate={isAuth && docsEnabled ? handleRegenerate : null}
+            isRegenerating={isRegenerating}
             onShowPackage={isAuth && docsEnabled ? () => setStage('finalized') : null}
             showRegistrationButton={showRegistrationButton}
             onRegisterClick={!isAuth ? handleClaim : undefined}

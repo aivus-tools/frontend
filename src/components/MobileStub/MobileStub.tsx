@@ -1,6 +1,7 @@
 'use client';
 
 import React from 'react';
+import { t } from '@/lib/i18n';
 
 const overlayStyle: React.CSSProperties = {
   position: 'fixed',
@@ -53,8 +54,8 @@ export const MobileStub = () => {
       `}</style>
       <div className='aivus-mobile-stub' style={overlayStyle}>
         <div style={logoStyle}>Aivus</div>
-        <div style={titleStyle}>Aivus works best on desktop</div>
-        <div style={subtitleStyle}>Please open this page on a device with a larger screen to access all features</div>
+        <div style={titleStyle}>{t('MOBILE_STUB_TITLE')}</div>
+        <div style={subtitleStyle}>{t('MOBILE_STUB_SUBTITLE')}</div>
       </div>
     </>
   );

@@ -1,37 +1,13 @@
 'use client';
 
-import React from 'react';
-import { styled } from 'styled-components';
+import React, { use } from 'react';
+import { ComparisonTable } from '@/modules/client/ComparisonTable/ComparisonTable';
 
-const StubWrapper = styled.div`
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  height: calc(100vh - 120px);
-  flex-direction: column;
-  gap: 12px;
-`;
+interface BriefComparisonPageProps {
+  params: Promise<{ briefId: string }>;
+}
 
-const StubTitle = styled.h2`
-  font-family: 'Montserrat', sans-serif;
-  font-weight: 600;
-  font-size: 20px;
-  color: #4b5675;
-  margin: 0;
-`;
-
-const StubText = styled.p`
-  font-family: 'Montserrat', sans-serif;
-  font-size: 14px;
-  color: #99a1b7;
-  margin: 0;
-`;
-
-export default function BriefComparisonPage() {
-  return (
-    <StubWrapper>
-      <StubTitle>Comparison</StubTitle>
-      <StubText>Coming soon</StubText>
-    </StubWrapper>
-  );
+export default function BriefComparisonPage(props: BriefComparisonPageProps) {
+  const { briefId } = use(props.params);
+  return <ComparisonTable briefId={briefId} />;
 }

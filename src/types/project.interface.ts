@@ -72,13 +72,7 @@ export interface NewProject {
 export interface ProjectListItem {
   id: string;
   title: string;
-  assignee: string;
   clientName: string;
-  clientContact: string;
   status: ProjectStatus;
-  cost: string;
-  expenses: string;
-  profit: string;
-  deadline: string;
   createdAt: string;
 }

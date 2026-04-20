@@ -97,12 +97,12 @@ export const ProjectOfferCard: React.FC<ProjectOfferCardProps> = ({
         <ProjectInfo>
           <ProjectTitle>{item.title}</ProjectTitle>
           <ProjectMeta>
-            {item.clientName && item.clientName !== '-' && (
+            {item.clientName ? (
               <>
                 <span>{item.clientName}</span>
                 <MetaDot />
               </>
-            )}
+            ) : null}
             <span>{item.createdAt}</span>
           </ProjectMeta>
         </ProjectInfo>

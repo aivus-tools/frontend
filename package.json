@@ -41,6 +41,7 @@
     "file-saver": "^2.0.5",
     "html-react-parser": "^5.2.6",
     "i18n-iso-countries": "^7.13.0",
+    "isomorphic-dompurify": "^3.9.0",
     "lodash.clone": "^4.5.0",
     "lodash.clonedeep": "^4.5.0",
     "lodash.debounce": "^4.0.8",

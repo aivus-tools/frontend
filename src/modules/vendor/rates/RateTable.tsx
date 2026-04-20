@@ -7,6 +7,7 @@ import Spinner from '@/components/Spinner';
 import { RateHeader } from './components/Header';
 import { Section } from './components/Section';
 import { useRateCardData, CatalogSection } from './useRateCardData';
+import { t } from '@/lib/i18n';
 
 import styles from './RateTable.module.css';
 
@@ -99,7 +100,7 @@ export function RateTable() {
       <div style={{ marginBottom: 12 }}>
         <Input
           prefix={<SearchOutlined style={{ color: '#99A1B7' }} />}
-          placeholder='Search rates...'
+          placeholder={t('RATES_SEARCH_PLACEHOLDER')}
           value={searchQuery}
           onChange={(event) => setSearchQuery(event.target.value)}
           allowClear
@@ -122,7 +123,7 @@ export function RateTable() {
       ))}
       {filteredSections.length === 0 && searchQuery.trim() && (
         <div style={{ textAlign: 'center', padding: '32px 0', color: '#99A1B7', fontSize: 14 }}>
-          No rates found for &quot;{searchQuery}&quot;
+          {t('RATES_NO_RESULTS', searchQuery)}
         </div>
       )}
     </div>

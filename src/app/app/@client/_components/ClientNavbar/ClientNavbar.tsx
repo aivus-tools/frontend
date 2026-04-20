@@ -1,6 +1,6 @@
 'use client';
 
-import { Button, Tooltip } from 'antd';
+import { Button } from 'antd';
 import { useRouter, usePathname, useSelectedLayoutSegments } from 'next/navigation';
 import { t } from '@/lib/i18n';
 import { styled } from 'styled-components';
@@ -77,11 +77,6 @@ export const ClientNavbar: React.FC = () => {
         >
           {t('CREATE_A_BRIEF')}
         </Button>
-        <Tooltip title={t('COMING_SOON')}>
-          <Button type='primary' disabled>
-            {t('CREATE_A_CALCULATION')}
-          </Button>
-        </Tooltip>
       </div>
     </div>
   );

@@ -7,6 +7,7 @@ import { CopyOutlined, DownloadOutlined } from '@ant-design/icons';
 import { ApiRoute } from '@/constants/apiRoute';
 import { downloadPdf } from '@/helpers/downloadPdf';
 import { t } from '@/lib/i18n';
+import { sanitizeHtml } from '@/lib/sanitizeHtml';
 import { BriefFinalDocument, BriefShareView } from '@/types/briefAi.interface';
 
 const Wrapper = styled.div`
@@ -149,7 +150,7 @@ const SharedDocumentTab: React.FC<{ token: string; doc: BriefFinalDocument }> = 
           {t('BRIEF_V3_DOWNLOAD_PDF')}
         </Button>
       </ActionBar>
-      <PreviewCard dangerouslySetInnerHTML={{ __html: doc.html }} />
+      <PreviewCard dangerouslySetInnerHTML={{ __html: sanitizeHtml(doc.html) }} />
     </div>
   );
 };

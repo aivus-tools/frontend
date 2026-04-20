@@ -3,7 +3,7 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { styled } from 'styled-components';
 import { App, Button, Popover, Switch, Tabs } from 'antd';
-import { CopyOutlined, DownloadOutlined, ShareAltOutlined } from '@ant-design/icons';
+import { CopyOutlined, DownloadOutlined, ShareAltOutlined, ReloadOutlined } from '@ant-design/icons';
 import { useEditor, EditorContent } from '@tiptap/react';
 import StarterKit from '@tiptap/starter-kit';
 import Link from '@tiptap/extension-link';
@@ -189,6 +189,8 @@ const DOCUMENT_TITLES: Record<string, string> = {
 interface BriefFinalPackageProps {
   briefId: string;
   package: BriefFinalPackageType;
+  onRegenerate?: (() => void) | null;
+  isRegenerating?: boolean;
 }
 
 const htmlToPlainText = (html: string): string => {
@@ -463,12 +465,11 @@ const ShareControl: React.FC<{ briefId: string }> = ({ briefId }) => {
   );
 };
 
-export const BriefFinalPackage: React.FC<BriefFinalPackageProps> = ({ briefId, package: pkg }) => {
+export const BriefFinalPackage: React.FC<BriefFinalPackageProps> = (props) => {
+  const { briefId, package: pkg, onRegenerate, isRegenerating } = props;
+  const { modal } = App.useApp();
   const byKind = new Map(pkg.documents.map((x) => [x.kind, x]));
 
-  // Deliverables now live as a section inside Production Brief; legacy briefs
-  // may still have a separate deliverables_checklist document in the DB but it
-  // is intentionally hidden from the UI.
   const items = [
     {
       key: 'production_brief',
@@ -482,11 +483,32 @@ export const BriefFinalPackage: React.FC<BriefFinalPackageProps> = ({ briefId, p
     },
   ];
 
+  const handleRegenerateClick = () => {
+    if (!onRegenerate) {
+      return;
+    }
+    modal.confirm({
+      title: t('BRIEF_V3_REGENERATE_CONFIRM_TITLE'),
+      content: t('BRIEF_V3_REGENERATE_CONFIRM_BODY'),
+      okText: t('BRIEF_V3_REGENERATE_CONFIRM_OK'),
+      cancelText: t('BRIEF_V3_FINALIZE_CONFIRM_CANCEL'),
+      okButtonProps: { type: 'primary' },
+      onOk: onRegenerate,
+    });
+  };
+
   return (
     <Wrapper>
       <Header>
         <Title>{t('BRIEF_V3_FINAL_PACKAGE_TITLE')}</Title>
-        <ShareControl briefId={briefId} />
+        <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
+          {onRegenerate ? (
+            <Button icon={<ReloadOutlined />} onClick={handleRegenerateClick} loading={Boolean(isRegenerating)}>
+              {t('BRIEF_V3_REGENERATE_PACKAGE')}
+            </Button>
+          ) : null}
+          <ShareControl briefId={briefId} />
+        </div>
       </Header>
       <Body>
         <Tabs

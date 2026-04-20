@@ -9,7 +9,7 @@ import { styled } from 'styled-components';
 import { Theme } from '@/types/index.interface';
 import { THEME } from '@/constants/constants';
 import { AppRoute } from '@/constants/appRoute';
-import { SearchOutlined, FilterOutlined, UploadOutlined, LoadingOutlined } from '@ant-design/icons';
+import { UploadOutlined, LoadingOutlined } from '@ant-design/icons';
 import { Upload, message } from 'antd';
 import { t } from '@/lib/i18n';
 import { useUploadXlsxMutation } from '@/services/client/xlsxApi';
@@ -33,58 +33,6 @@ const IconGroup = styled.div`
 const SidebarContent = styled.div`
   padding: 16px 20px;
   color: #ffffff;
-`;
-
-const SearchRow = styled.div`
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  margin-bottom: 20px;
-`;
-
-const SearchLabel = styled.div`
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  font-family: 'Montserrat', sans-serif;
-  font-weight: 500;
-  font-size: 13px;
-  color: #ffffff;
-  opacity: 0.8;
-  cursor: pointer;
-`;
-
-const FilterIcon = styled.div`
-  cursor: pointer;
-  opacity: 0.6;
-  transition: opacity 0.15s ease;
-  &:hover {
-    opacity: 1;
-  }
-`;
-
-const SectionTitle = styled.div`
-  font-family: 'Montserrat', sans-serif;
-  font-weight: 500;
-  font-size: 12px;
-  color: #ffffff;
-  opacity: 0.5;
-  margin-bottom: 8px;
-  margin-top: 16px;
-`;
-
-const SidebarLink = styled.div<{ $active?: boolean }>`
-  font-family: 'Montserrat', sans-serif;
-  font-weight: 500;
-  font-size: 13px;
-  color: ${({ $active }) => ($active ? '#2288FF' : '#ffffff')};
-  opacity: ${({ $active }) => ($active ? 1 : 0.8)};
-  padding: 4px 0;
-  cursor: pointer;
-  transition: opacity 0.15s ease;
-  &:hover {
-    opacity: 1;
-  }
 `;
 
 const UploadArea = styled.div`
@@ -133,11 +81,6 @@ const UploadHint = styled.div`
   margin-top: 4px;
 `;
 
-const DashedDivider = styled.div`
-  border-top: 1px dashed rgba(255, 255, 255, 0.15);
-  margin: 12px 0;
-`;
-
 export const ClientSidebar = ({ theme }: { theme: Theme }) => {
   const router = useRouter();
   const [uploadXlsx, { isLoading: isUploading }] = useUploadXlsxMutation();
@@ -181,43 +124,12 @@ export const ClientSidebar = ({ theme }: { theme: Theme }) => {
         </IconWrapper>
       </Link>
 
-      <SidebarContent>
-        <SearchRow>
-          <SearchLabel>
-            <SearchOutlined /> {t('SEARCH')}
-          </SearchLabel>
-          <FilterIcon>
-            <FilterOutlined />
-          </FilterIcon>
-        </SearchRow>
+      <SidebarContent />
 
-        <SidebarLink>{t('RECENTLY_VIEWED')}</SidebarLink>
-        <SidebarLink>{t('FAVORITES')}</SidebarLink>
-
-        <DashedDivider />
-
-        <SectionTitle>{t('BY_STATUS')}</SectionTitle>
-        <SidebarLink>{t('DRAFTS')}</SidebarLink>
-        <SidebarLink>{t('COLLECTING_OFFERS')}</SidebarLink>
-        <SidebarLink>{t('REVIEWING')}</SidebarLink>
-        <SidebarLink>{t('LAUNCHED')}</SidebarLink>
-        <SidebarLink>{t('CANCELED')}</SidebarLink>
-        <SidebarLink>{t('DELETED')}</SidebarLink>
-      </SidebarContent>
-
-      <Upload
-        accept=".xlsx"
-        showUploadList={false}
-        customRequest={handleUpload}
-        disabled={isUploading}
-      >
+      <Upload accept='.xlsx' showUploadList={false} customRequest={handleUpload} disabled={isUploading}>
         <UploadArea>
-          <UploadIcon>
-            {isUploading ? <LoadingOutlined /> : <UploadOutlined />}
-          </UploadIcon>
-          <UploadText>
-            {isUploading ? t('UPLOADING') : t('UPLOAD_XLSX_TITLE')}
-          </UploadText>
+          <UploadIcon>{isUploading ? <LoadingOutlined /> : <UploadOutlined />}</UploadIcon>
+          <UploadText>{isUploading ? t('UPLOADING') : t('UPLOAD_XLSX_TITLE')}</UploadText>
           <UploadHint>{t('UPLOAD_XLSX_HINT')}</UploadHint>
         </UploadArea>
       </Upload>

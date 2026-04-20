@@ -26,14 +26,8 @@ const mapProjectsToListItems = (projects: Project[]): ProjectListItem[] => {
   return projects.map((project: Project) => ({
     id: project.id,
     title: project.name,
-    assignee: '-',
-    clientName: project.clientName || '-',
-    clientContact: '-',
+    clientName: project.clientName || '',
     status: project.status,
-    cost: '-',
-    expenses: '-',
-    profit: '-',
-    deadline: '-',
     createdAt: format(new Date(project.createdAt), 'MM/dd/yyyy'),
   }));
 };
@@ -57,7 +51,9 @@ export const ProjectList = () => {
     allOffers.forEach((offer) => {
       const pid = offer.projectId;
       if (pid) {
-        if (!map[pid]) { map[pid] = []; }
+        if (!map[pid]) {
+          map[pid] = [];
+        }
         map[pid].push(offer);
       }
     });
@@ -125,9 +121,8 @@ export const ProjectList = () => {
       <div className={cn(styles.content)}>
         {filteredData.map((item: ProjectListItem) => {
           const projectOffers = offersByProject[item.id] || [];
-          const visibleOffers = statusFilter && !isArchiveView
-            ? projectOffers.filter((o) => o.status === statusFilter)
-            : projectOffers;
+          const visibleOffers =
+            statusFilter && !isArchiveView ? projectOffers.filter((o) => o.status === statusFilter) : projectOffers;
           return (
             <ProjectOfferCard
               key={`project_${item.id}`}

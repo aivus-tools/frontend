@@ -1,6 +1,7 @@
 import React from 'react';
 import { QRCodeSVG } from 'qrcode.react';
 import { OfferExportData } from '@/types/exportData.interface';
+import { sanitizeHtml } from '@/lib/sanitizeHtml';
 
 interface CoverPageProps {
   data: OfferExportData;
@@ -22,20 +23,15 @@ const formatDate = (value: string | null): string => {
   });
 };
 
-export const CoverPage: React.FC<CoverPageProps> = props => {
-  const producer = props.data.collaborators.find(x => x.role === 'producer') ?? null;
-  const agencyProducer = props.data.collaborators.find(x => x.role === 'agency_producer') ?? null;
-  const firstClientManager = props.data.project.clientManagers.length > 0
-    ? props.data.project.clientManagers[0]
-    : null;
+export const CoverPage: React.FC<CoverPageProps> = (props) => {
+  const producer = props.data.collaborators.find((x) => x.role === 'producer') ?? null;
+  const agencyProducer = props.data.collaborators.find((x) => x.role === 'agency_producer') ?? null;
+  const firstClientManager = props.data.project.clientManagers.length > 0 ? props.data.project.clientManagers[0] : null;
 
-  const shareUrl = props.data.shareToken != null
-    ? `${window.location.origin}/public/${props.data.shareToken}`
-    : null;
+  const shareUrl = props.data.shareToken != null ? `${window.location.origin}/public/${props.data.shareToken}` : null;
 
-  const clientBrand = [props.data.project.clientName, props.data.project.brandName]
-    .filter(x => x != null)
-    .join(' / ') || '';
+  const clientBrand =
+    [props.data.project.clientName, props.data.project.brandName].filter((x) => x != null).join(' / ') || '';
 
   return (
     <div
@@ -69,63 +65,60 @@ export const CoverPage: React.FC<CoverPageProps> = props => {
 
         <div style={{ display: 'flex', alignItems: 'flex-start', gap: 16, flex: '0 0 50%' }}>
           <div style={{ flex: 1, fontSize: 14, lineHeight: 2 }}>
-            <InfoRow label="Job Name:" value={props.data.project.name} />
-            <InfoRow label="Bid Date:" value={formatDate(props.data.offer.bidDate)} />
-            <InfoRow label="Bid Version:" value={props.data.offer.revision ?? 'Initial Bidding'} />
-            <InfoRow label="AIVUS ID:" value={props.data.offer.uuid} />
+            <InfoRow label='Job Name:' value={props.data.project.name} />
+            <InfoRow label='Bid Date:' value={formatDate(props.data.offer.bidDate)} />
+            <InfoRow label='Bid Version:' value={props.data.offer.revision ?? 'Initial Bidding'} />
+            <InfoRow label='AIVUS ID:' value={props.data.offer.uuid} />
           </div>
-          {shareUrl != null && (
-            <QRCodeSVG value={shareUrl} size={100} level="M" />
-          )}
+          {shareUrl != null && <QRCodeSVG value={shareUrl} size={100} level='M' />}
         </div>
       </div>
 
       <div style={{ display: 'flex', gap: 0, marginBottom: 12, fontSize: 14 }}>
         <div style={{ flex: '0 0 50%' }}>
           <div>
-            <InfoRow label="Production:" value={props.data.vendor.companyName ?? props.data.vendor.name} />
-            <InfoRow label="Producer:" value={producer != null ? producer.name : ''} />
+            <InfoRow label='Production:' value={props.data.vendor.companyName ?? props.data.vendor.name} />
+            <InfoRow label='Producer:' value={producer != null ? producer.name : ''} />
           </div>
           <div style={{ marginTop: 12 }}>
-            <InfoRow label="Term:" value={props.data.offer.term ?? ''} />
+            <InfoRow label='Term:' value={props.data.offer.term ?? ''} />
             <InfoRow
-              label="Territory:"
+              label='Territory:'
               value={props.data.offer.territory.length > 0 ? props.data.offer.territory.join(', ') : ''}
             />
             <InfoRow
-              label="Media / Placements:"
+              label='Media / Placements:'
               value={props.data.offer.mediaPlacements.length > 0 ? props.data.offer.mediaPlacements.join(', ') : ''}
             />
           </div>
         </div>
         <div style={{ flex: '0 0 50%' }}>
           <div>
-            <InfoRow label="Client / Brand:" value={clientBrand} />
+            <InfoRow label='Client / Brand:' value={clientBrand} />
             <InfoRow
-              label="Client Manager:"
-              value={firstClientManager != null
-                ? `${firstClientManager.name}${firstClientManager.position ? ', ' + firstClientManager.position : ''}`
-                : ''}
+              label='Client Manager:'
+              value={
+                firstClientManager != null
+                  ? `${firstClientManager.name}${firstClientManager.position ? ', ' + firstClientManager.position : ''}`
+                  : ''
+              }
             />
           </div>
           <div style={{ marginTop: 12 }}>
-            <InfoRow label="Agency:" value={props.data.project.agencyName ?? ''} />
-            <InfoRow label="Agency Producer:" value={agencyProducer != null ? agencyProducer.name : ''} />
+            <InfoRow label='Agency:' value={props.data.project.agencyName ?? ''} />
+            <InfoRow label='Agency Producer:' value={agencyProducer != null ? agencyProducer.name : ''} />
           </div>
         </div>
       </div>
 
       {props.data.offer.deliverables.length > 0 && (
         <div style={{ marginBottom: 12 }}>
-          <div style={sectionTitleStyle}>
-            Deliverables:
-          </div>
+          <div style={sectionTitleStyle}>Deliverables:</div>
           <div>
             {props.data.offer.deliverables.map((x, i) => {
-              const parts = [
-                `${x.quantity} x :${x.duration} ${x.durationUnit}.`,
-                x.notes ? `\u2013 ${x.notes}` : null,
-              ].filter(x => x != null).join(' ');
+              const parts = [`${x.quantity} x :${x.duration} ${x.durationUnit}.`, x.notes ? `\u2013 ${x.notes}` : null]
+                .filter((x) => x != null)
+                .join(' ');
 
               return (
                 <div
@@ -147,9 +140,7 @@ export const CoverPage: React.FC<CoverPageProps> = props => {
 
       {!!props.data.offer.coverPageNotes && (
         <div style={{ marginBottom: 12 }}>
-          <div style={sectionTitleStyle}>
-            Notes:
-          </div>
+          <div style={sectionTitleStyle}>Notes:</div>
           <div
             style={{
               padding: '4px 10px',
@@ -157,7 +148,7 @@ export const CoverPage: React.FC<CoverPageProps> = props => {
               lineHeight: 1.6,
               color: TEXT_COLOR,
             }}
-            dangerouslySetInnerHTML={{ __html: props.data.offer.coverPageNotes }}
+            dangerouslySetInnerHTML={{ __html: sanitizeHtml(props.data.offer.coverPageNotes) }}
           />
         </div>
       )}
@@ -170,15 +161,11 @@ interface InfoRowProps {
   value: string;
 }
 
-const InfoRow: React.FC<InfoRowProps> = props => {
+const InfoRow: React.FC<InfoRowProps> = (props) => {
   return (
     <div style={{ display: 'flex', gap: 4, lineHeight: '29px' }}>
-      <span style={{ fontWeight: 400, color: TEXT_COLOR, minWidth: 150, fontSize: 14 }}>
-        {props.label}
-      </span>
-      <span style={{ fontWeight: 600, color: TEXT_COLOR, fontSize: 14 }}>
-        {props.value}
-      </span>
+      <span style={{ fontWeight: 400, color: TEXT_COLOR, minWidth: 150, fontSize: 14 }}>{props.label}</span>
+      <span style={{ fontWeight: 600, color: TEXT_COLOR, fontSize: 14 }}>{props.value}</span>
     </div>
   );
 };

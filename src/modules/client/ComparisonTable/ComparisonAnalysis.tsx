@@ -25,7 +25,7 @@ export const ComparisonAnalysis: React.FC<ComparisonAnalysisProps> = ({ briefId 
   const [activeTab, setActiveTab] = useState<'guidance' | 'comments'>('guidance');
   const [question, setQuestion] = useState('');
   const [analysis, setAnalysis] = useState<AnalysisResponse | null>(null);
-  const [chatHistory, setChatHistory] = useState<{ role: string; content: string }[]>([]);
+  const [chatHistory, setChatHistory] = useState<{ role: 'user' | 'assistant'; content: string }[]>([]);
 
   const [analyzeComparison, { isLoading }] = useAnalyzeComparisonMutation();
 
@@ -33,18 +33,20 @@ export const ComparisonAnalysis: React.FC<ComparisonAnalysisProps> = ({ briefId 
     const trimmed = question.trim();
     if (!trimmed || isLoading) return;
 
+    const historyForRequest = chatHistory;
     setChatHistory((prev) => [...prev, { role: 'user', content: trimmed }]);
     setQuestion('');
 
     try {
-      const result = await analyzeComparison({ briefId, question: trimmed }).unwrap();
+      const result = await analyzeComparison({
+        briefId,
+        question: trimmed,
+        history: historyForRequest,
+      }).unwrap();
       setAnalysis(result);
       setChatHistory((prev) => [...prev, { role: 'assistant', content: result.analysis }]);
     } catch {
-      setChatHistory((prev) => [
-        ...prev,
-        { role: 'assistant', content: t('UNEXPECTED_ERROR') },
-      ]);
+      setChatHistory((prev) => [...prev, { role: 'assistant', content: t('UNEXPECTED_ERROR') }]);
     }
   };
 
@@ -58,16 +60,10 @@ export const ComparisonAnalysis: React.FC<ComparisonAnalysisProps> = ({ briefId 
   return (
     <AnalysisPanel>
       <AnalysisTabs>
-        <AnalysisTab
-          $active={activeTab === 'guidance'}
-          onClick={() => setActiveTab('guidance')}
-        >
+        <AnalysisTab $active={activeTab === 'guidance'} onClick={() => setActiveTab('guidance')}>
           {t('GUIDANCE')}
         </AnalysisTab>
-        <AnalysisTab
-          $active={activeTab === 'comments'}
-          onClick={() => setActiveTab('comments')}
-        >
+        <AnalysisTab $active={activeTab === 'comments'} onClick={() => setActiveTab('comments')}>
           {t('AI_ANALYSIS')}
         </AnalysisTab>
       </AnalysisTabs>
@@ -121,9 +117,7 @@ export const ComparisonAnalysis: React.FC<ComparisonAnalysisProps> = ({ briefId 
             ))}
 
             {chatHistory.length === 0 && !analysis && (
-              <AnalysisText style={{ color: '#99a1b7', fontStyle: 'italic' }}>
-                {t('ASK_ABOUT_OFFERS')}
-              </AnalysisText>
+              <AnalysisText style={{ color: '#99a1b7', fontStyle: 'italic' }}>{t('ASK_ABOUT_OFFERS')}</AnalysisText>
             )}
           </>
         )}
@@ -144,7 +138,7 @@ export const ComparisonAnalysis: React.FC<ComparisonAnalysisProps> = ({ briefId 
             }}
           />
           <Button
-            type="primary"
+            type='primary'
             icon={<SendOutlined />}
             onClick={handleAskQuestion}
             disabled={!question.trim() || isLoading}

@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState, useRef, useEffect, useCallback } from 'react';
-import { Button, Input, Modal } from 'antd';
+import { App, Button, Input, Modal } from 'antd';
 import {
   SendOutlined,
   LikeOutlined,
@@ -62,6 +62,8 @@ interface BriefChatPanelProps {
   onFeedback: ((messageId: string, rating: 'up' | 'down') => void) | null;
   onFeedbackComment: ((messageId: string, rating: 'up' | 'down', comment: string) => void) | null;
   onFinalize: (() => void) | null;
+  onRegenerate?: (() => void) | null;
+  isRegenerating?: boolean;
   onShowPackage?: (() => void) | null;
   showRegistrationButton?: boolean;
   onRegisterClick?: () => void;
@@ -109,6 +111,7 @@ const formatTime = (iso: string | null): string => {
 export const BriefChatPanel: React.FC<BriefChatPanelProps> = (props) => {
   const { data: session } = useSession();
   const isStaff = Boolean((session?.user as { isStaff?: boolean } | undefined)?.isStaff);
+  const { modal } = App.useApp();
 
   const [draft, setDraft] = useState('');
   const [traceMessageId, setTraceMessageId] = useState<string | null>(null);
@@ -259,13 +262,29 @@ export const BriefChatPanel: React.FC<BriefChatPanelProps> = (props) => {
           }}
         >
           <span style={{ fontSize: 12, color: '#16a34a' }}>{t('BRIEF_V3_READY_TO_FINALIZE')}</span>
-          <Button type='primary' onClick={props.onFinalize}>
+          <Button
+            type='primary'
+            onClick={() => {
+              const confirmCallback = props.onFinalize;
+              if (!confirmCallback) {
+                return;
+              }
+              modal.confirm({
+                title: t('BRIEF_V3_FINALIZE_CONFIRM_TITLE'),
+                content: t('BRIEF_V3_FINALIZE_CONFIRM_BODY'),
+                okText: t('BRIEF_V3_FINALIZE_CONFIRM_OK'),
+                cancelText: t('BRIEF_V3_FINALIZE_CONFIRM_CANCEL'),
+                okButtonProps: { type: 'primary' },
+                onOk: confirmCallback,
+              });
+            }}
+          >
             {t('BRIEF_V3_FINALIZE')}
           </Button>
         </div>
       ) : null}
 
-      {props.conversationStatus === 'finalized' && props.onShowPackage ? (
+      {props.conversationStatus === 'finalized' ? (
         <div
           style={{
             padding: '12px 20px',
@@ -277,9 +296,32 @@ export const BriefChatPanel: React.FC<BriefChatPanelProps> = (props) => {
             gap: 12,
           }}
         >
-          <Button type='primary' onClick={props.onShowPackage}>
-            {t('BRIEF_V3_SHOW_PACKAGE')}
-          </Button>
+          {props.onRegenerate ? (
+            <Button
+              loading={Boolean(props.isRegenerating)}
+              onClick={() => {
+                const regen = props.onRegenerate;
+                if (!regen) {
+                  return;
+                }
+                modal.confirm({
+                  title: t('BRIEF_V3_REGENERATE_CONFIRM_TITLE'),
+                  content: t('BRIEF_V3_REGENERATE_CONFIRM_BODY'),
+                  okText: t('BRIEF_V3_REGENERATE_CONFIRM_OK'),
+                  cancelText: t('BRIEF_V3_FINALIZE_CONFIRM_CANCEL'),
+                  okButtonProps: { type: 'primary' },
+                  onOk: regen,
+                });
+              }}
+            >
+              {t('BRIEF_V3_REGENERATE_PACKAGE')}
+            </Button>
+          ) : null}
+          {props.onShowPackage ? (
+            <Button type='primary' onClick={props.onShowPackage}>
+              {t('BRIEF_V3_SHOW_PACKAGE')}
+            </Button>
+          ) : null}
         </div>
       ) : null}
 
