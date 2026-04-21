@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import HomeIcon from '@/icons/home-icon.svg';
 import LogoIcon from '@/icons/aivus-logo.svg';
+import { BetaBadge } from '@/components/BetaBadge/BetaBadge';
 import { styled } from 'styled-components';
 import { Theme } from '@/types/index.interface';
 import { THEME } from '@/constants/constants';
@@ -120,6 +121,7 @@ export const ClientSidebar = ({ theme }: { theme: Theme }) => {
           <IconGroup>
             <HomeIcon />
             <LogoIcon />
+            <BetaBadge size='sm' />
           </IconGroup>
         </IconWrapper>
       </Link>

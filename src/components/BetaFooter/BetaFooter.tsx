@@ -1,0 +1,132 @@
+'use client';
+
+import React, { useState } from 'react';
+import { styled } from 'styled-components';
+import { ExperimentOutlined, CloseOutlined } from '@ant-design/icons';
+import { t } from '@/lib/i18n';
+
+export const BETA_FOOTER_HEIGHT = 84;
+
+interface BetaFooterProps {
+  variant?: 'compact' | 'full';
+  className?: string;
+}
+
+const Wrapper = styled.footer<{ $variant: 'compact' | 'full' }>`
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 50;
+  width: 100%;
+  box-sizing: border-box;
+  padding: ${(x) => (x.$variant === 'compact' ? '10px 20px' : '14px 24px')};
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  background: linear-gradient(135deg, #fff4ef 0%, #fff0f6 55%, #f4edff 100%);
+  border-top: 1px solid rgba(253, 130, 88, 0.2);
+  backdrop-filter: saturate(160%);
+  font-family: 'Montserrat', sans-serif;
+  color: #4b5675;
+  box-shadow: 0 -6px 20px rgba(124, 58, 237, 0.08);
+`;
+
+const CloseBtn = styled.button`
+  flex-shrink: 0;
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  border: 1px solid rgba(124, 58, 237, 0.25);
+  background: rgba(255, 255, 255, 0.75);
+  color: #7c3aed;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition:
+    background 0.15s ease,
+    transform 0.15s ease;
+
+  &:hover {
+    background: #ffffff;
+    transform: scale(1.05);
+  }
+`;
+
+const IconBubble = styled.div`
+  flex-shrink: 0;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, #fd8258 0%, #ff5c9c 55%, #7c3aed 100%);
+  color: #ffffff;
+  font-size: 18px;
+  box-shadow: 0 6px 14px rgba(253, 130, 88, 0.3);
+`;
+
+const Text = styled.div`
+  flex: 1;
+  min-width: 0;
+  font-size: 12px;
+  line-height: 1.55;
+`;
+
+const Title = styled.div`
+  font-size: 13px;
+  font-weight: 700;
+  color: #1f2937;
+  margin-bottom: 2px;
+  background: linear-gradient(135deg, #fd8258, #ff5c9c, #7c3aed);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+`;
+
+const DISMISS_STORAGE_KEY = 'aivus_beta_footer_dismissed';
+
+export const BetaFooter: React.FC<BetaFooterProps> = (props) => {
+  const variant = props.variant ?? 'full';
+  const [dismissed, setDismissed] = useState<boolean>(() => {
+    if (typeof window === 'undefined') {
+      return false;
+    }
+    try {
+      return window.localStorage.getItem(DISMISS_STORAGE_KEY) === '1';
+    } catch {
+      return false;
+    }
+  });
+
+  if (dismissed) {
+    return null;
+  }
+
+  const handleDismiss = () => {
+    try {
+      window.localStorage.setItem(DISMISS_STORAGE_KEY, '1');
+    } catch {
+      /* ignore storage errors */
+    }
+    setDismissed(true);
+  };
+
+  return (
+    <Wrapper $variant={variant} className={props.className}>
+      <IconBubble>
+        <ExperimentOutlined />
+      </IconBubble>
+      <Text>
+        <Title>{t('BETA_FOOTER_TITLE')}</Title>
+        <div>{t('BETA_FOOTER_BODY')}</div>
+        <div style={{ marginTop: 4 }}>{t('BETA_FOOTER_FEEDBACK')}</div>
+      </Text>
+      <CloseBtn aria-label='dismiss' onClick={handleDismiss}>
+        <CloseOutlined style={{ fontSize: 12 }} />
+      </CloseBtn>
+    </Wrapper>
+  );
+};

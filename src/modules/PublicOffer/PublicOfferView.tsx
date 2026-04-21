@@ -8,7 +8,11 @@ import { useSession } from 'next-auth/react';
 import { t } from '@/lib/i18n';
 import { AppRoute } from '@/constants/appRoute';
 import { GROUPS } from '@/constants/constants';
-import { useGetShareByTokenQuery, useGetShareExportDataQuery, useLinkShareToBriefMutation } from '@/services/client/sharesApi';
+import {
+  useGetShareByTokenQuery,
+  useGetShareExportDataQuery,
+  useLinkShareToBriefMutation,
+} from '@/services/client/sharesApi';
 import { useGetBriefsQuery, useCreateBriefMutation } from '@/services/client/briefApi';
 import { CoverPage } from '@/modules/vendor/export/CoverPage';
 import { TopSheet } from '@/modules/vendor/export/TopSheet';
@@ -17,6 +21,8 @@ import { BudgetDetail } from '@/modules/vendor/export/BudgetDetail';
 import { NewBrief } from '@/types/brief.interface';
 import logger from '@/lib/logger';
 import LogoIcon from '@/icons/aivus-logo.svg';
+import { BetaBadge } from '@/components/BetaBadge/BetaBadge';
+import { BetaFooter, BETA_FOOTER_HEIGHT } from '@/components/BetaFooter/BetaFooter';
 import {
   PageContainer,
   PublicHeader,
@@ -121,6 +127,7 @@ export const PublicOfferView: React.FC<PublicOfferViewProps> = ({ params }) => {
         <PublicHeader>
           <LogoArea>
             <LogoIcon />
+            <BetaBadge size='sm' />
           </LogoArea>
         </PublicHeader>
         <MainContent>
@@ -157,13 +164,14 @@ export const PublicOfferView: React.FC<PublicOfferViewProps> = ({ params }) => {
     <PageContainer>
       <PublicHeader>
         <LogoArea>
-          <Link href={AppRoute.HOME} style={{ display: 'flex', alignItems: 'center' }}>
+          <Link href={AppRoute.HOME} style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
             <LogoIcon />
+            <BetaBadge size='sm' />
           </Link>
         </LogoArea>
         {isAuthenticated && (
           <Link href={AppRoute.DASHBOARD}>
-            <Button type="default" style={{ fontWeight: 600 }}>
+            <Button type='default' style={{ fontWeight: 600 }}>
               {t('DASHBOARD')}
             </Button>
           </Link>
@@ -182,7 +190,7 @@ export const PublicOfferView: React.FC<PublicOfferViewProps> = ({ params }) => {
             <BannerText>{t('SIGN_UP_TO_SAVE_ESTIMATE')}</BannerText>
             <BannerActions>
               <Button
-                type="primary"
+                type='primary'
                 onClick={handleSignUp}
                 style={{
                   height: 36,
@@ -194,9 +202,7 @@ export const PublicOfferView: React.FC<PublicOfferViewProps> = ({ params }) => {
               >
                 {t('SIGN_UP_FREE')}
               </Button>
-              <LoginLink href={`${AppRoute.AUTH}?redirect=/public/${token}`}>
-                {t('LOG_IN')}
-              </LoginLink>
+              <LoginLink href={`${AppRoute.AUTH}?redirect=/public/${token}`}>{t('LOG_IN')}</LoginLink>
             </BannerActions>
           </GuestBanner>
         )}
@@ -224,7 +230,7 @@ export const PublicOfferView: React.FC<PublicOfferViewProps> = ({ params }) => {
               options={briefOptions}
             />
             <Button
-              type="primary"
+              type='primary'
               onClick={handleAddToBrief}
               loading={isLinking}
               disabled={!selectedBriefId || addedBriefId === selectedBriefId}
@@ -243,13 +249,15 @@ export const PublicOfferView: React.FC<PublicOfferViewProps> = ({ params }) => {
 
         <OfferTableWrapper>
           {exportError ? (
-            <div style={{
-              padding: '40px',
-              textAlign: 'center',
-              fontFamily: "'Montserrat', sans-serif",
-              fontSize: 14,
-              color: '#99A1B7',
-            }}>
+            <div
+              style={{
+                padding: '40px',
+                textAlign: 'center',
+                fontFamily: "'Montserrat', sans-serif",
+                fontSize: 14,
+                color: '#99A1B7',
+              }}
+            >
               {t('FAILED_TO_LOAD_ESTIMATE')}
             </div>
           ) : isExportLoading || !exportData ? (
@@ -268,6 +276,8 @@ export const PublicOfferView: React.FC<PublicOfferViewProps> = ({ params }) => {
           )}
         </OfferTableWrapper>
       </MainContent>
+      <div style={{ height: BETA_FOOTER_HEIGHT }} />
+      <BetaFooter />
     </PageContainer>
   );
 };

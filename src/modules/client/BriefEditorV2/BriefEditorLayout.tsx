@@ -3,7 +3,7 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { styled } from 'styled-components';
 import { App, Button } from 'antd';
-import { t } from '@/lib/i18n';
+import { t, getLocale } from '@/lib/i18n';
 import { BriefChatPanel } from '@/modules/client/BriefChatV2/BriefChatPanel';
 import { ComparisonTable } from '@/modules/client/ComparisonTable/ComparisonTable';
 import { FileUploadZone } from './components/FileUploadZone';
@@ -31,7 +31,6 @@ import {
   useSendPublicBriefChatMutation,
   useStartPublicBriefMutation,
   useUploadPublicBriefAttachmentMutation,
-  getBrowserLanguage,
   savePublicBriefToken,
 } from '@/services/client/publicBriefApi';
 import { BriefAttachment, BriefV3Detail, ChatMessageV3, ConversationStatus } from '@/types/briefAi.interface';
@@ -447,11 +446,13 @@ export const BriefEditorLayout: React.FC<BriefEditorLayoutProps> = (props) => {
       }
 
       const attachmentIds = pendingAttachments.map((x) => x.id);
+      const documentLanguage = getLocale();
       if (isAuth) {
         const response = await startBriefAuth({
           briefId: draft.briefId,
           message: trimmed,
           attachmentIds,
+          documentLanguage,
         }).unwrap();
         setStage('generating');
         pollFirstReply(draft.briefId, response.taskId);
@@ -461,7 +462,7 @@ export const BriefEditorLayout: React.FC<BriefEditorLayoutProps> = (props) => {
           token: draft.token ?? '',
           message: trimmed,
           attachmentIds,
-          documentLanguage: getBrowserLanguage(),
+          documentLanguage,
         }).unwrap();
         setStage('generating');
         pollFirstReply(draft.briefId, response.taskId, draft.token ?? '');
@@ -629,7 +630,10 @@ export const BriefEditorLayout: React.FC<BriefEditorLayoutProps> = (props) => {
       return;
     }
     try {
-      const response = await finalizeAuth(briefId).unwrap();
+      const response = await finalizeAuth({
+        briefId,
+        documentLanguage: getLocale(),
+      }).unwrap();
       setStage('finalizing');
       pollFinalDocuments(briefId, response.taskId);
     } catch {
@@ -644,7 +648,10 @@ export const BriefEditorLayout: React.FC<BriefEditorLayoutProps> = (props) => {
     }
     setIsRegenerating(true);
     try {
-      const response = await finalizeAuth(briefId).unwrap();
+      const response = await finalizeAuth({
+        briefId,
+        documentLanguage: getLocale(),
+      }).unwrap();
       const started = Date.now();
       const session = { cancelled: false };
       clearPolling();

@@ -11,6 +11,7 @@ import { ProjectNavbar } from './components/ProjectNavbar/ProjectNavbar';
 import { VendorNavbar } from './components/VendorNavbar/VendorNavbar';
 import { GrandTotalSider } from '@/modules/vendor/sider/GrandTotalSider/GrandTotalSider';
 import { DashboardSidebar } from '@/modules/vendor/dashboard/DashboardSidebar/DashboardSidebar';
+import { BetaFooter, BETA_FOOTER_HEIGHT } from '@/components/BetaFooter/BetaFooter';
 
 const { Header, Content } = Layout;
 
@@ -57,11 +58,13 @@ const VendorLayout = ({ children }: PropsWithChildren) => {
             overflowY: 'auto',
             maxHeight: 'calc(100vh - 70px)',
             backgroundColor: isRoot ? undefined : 'var(--bg-gray-page)',
+            paddingBottom: BETA_FOOTER_HEIGHT,
           }}
         >
           {children}
         </ContentLayout>
       </Layout>
+      <BetaFooter />
     </Layout>
   );
 };

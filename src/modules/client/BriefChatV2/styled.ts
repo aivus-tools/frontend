@@ -367,7 +367,7 @@ export const AttachmentChip = styled.a`
   display: inline-flex;
   align-items: center;
   gap: 6px;
-  padding: 4px 10px;
+  padding: 4px 12px;
   background: #f3f5f9;
   border: 1px solid #eef0f4;
   border-radius: 999px;
@@ -375,11 +375,23 @@ export const AttachmentChip = styled.a`
   font-size: 12px;
   color: #4b5675;
   text-decoration: none;
-  max-width: 240px;
+  max-width: min(420px, 100%);
+  min-width: 0;
+
+  & > .anticon {
+    flex-shrink: 0;
+  }
 
   & > span.name {
+    flex: 1 1 auto;
+    min-width: 0;
     overflow: hidden;
     text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  & > span:last-child {
+    flex-shrink: 0;
     white-space: nowrap;
   }
 

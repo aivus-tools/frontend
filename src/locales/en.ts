@@ -577,6 +577,10 @@ export const EN_LOCALES = {
   BRIEF_V3_TAB_VENDOR_EMAIL: 'Vendor Email',
   BRIEF_V3_TAB_DELIVERABLES: 'Deliverables',
   BRIEF_V3_DOCUMENT_MISSING: 'This document is not available.',
+  BETA_FOOTER_TITLE: "Aivus is in beta — don't lose your work",
+  BETA_FOOTER_BODY:
+    'Save the generated documents as PDF on your device — we are still polishing the platform and cannot fully guarantee storage just yet.',
+  BETA_FOOTER_FEEDBACK: "Spotted a bug or have an idea? Drop us a line — we'd love to hear from you hi@aivus.co",
   BRIEF_V3_COPIED: 'Copied to clipboard.',
   BRIEF_V3_COPY_TEXT: 'Copy text',
   BRIEF_V3_COPY_HTML: 'Copy HTML',

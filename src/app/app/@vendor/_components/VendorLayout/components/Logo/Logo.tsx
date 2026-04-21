@@ -6,6 +6,7 @@ import { styled } from 'styled-components';
 import { Theme } from '@/types/index.interface';
 import { THEME } from '@/constants/constants';
 import { AppRoute } from '@/constants/appRoute';
+import { BetaBadge } from '@/components/BetaBadge/BetaBadge';
 
 const IconWrapper = styled.div<{ $themeType: Theme }>`
   display: flex;
@@ -29,6 +30,7 @@ export const Logo = ({ theme }: { theme: Theme }) => {
         <IconGroup>
           <HomeIcon />
           <LogoIcon />
+          <BetaBadge size='sm' />
         </IconGroup>
       </IconWrapper>
     </Link>

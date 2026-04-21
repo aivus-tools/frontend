@@ -11,6 +11,7 @@ import { ClientNavbar } from '../ClientNavbar/ClientNavbar';
 import { ClientSidebar } from '../ClientSidebar/ClientSidebar';
 import { getPendingBrief, clearPendingBrief } from '@/helpers/pendingBrief';
 import { AppRoute } from '@/constants/appRoute';
+import { BetaFooter, BETA_FOOTER_HEIGHT } from '@/components/BetaFooter/BetaFooter';
 
 const { Header, Content } = Layout;
 
@@ -67,11 +68,13 @@ const ClientLayout = ({ children }: PropsWithChildren) => {
           style={{
             overflowY: 'auto',
             maxHeight: 'calc(100vh - 70px)',
+            paddingBottom: BETA_FOOTER_HEIGHT,
           }}
         >
           {children}
         </ContentLayout>
       </Layout>
+      <BetaFooter />
     </Layout>
   );
 };

@@ -2,14 +2,16 @@ import styles from './styles.module.css';
 import LogoIcon from '@/icons/aivus-logo.svg';
 import { Google } from '@/components/Auth/Google';
 import { ManageAuth } from './components/MangeAuth/ManageAuth';
+import { BetaBadge } from '@/components/BetaBadge/BetaBadge';
 import { t } from '@/lib/i18n';
 
 export function AuthForm() {
   return (
     <main className={styles.main}>
       <div className={styles.container}>
-        <h1 className={styles.heading}>
+        <h1 className={styles.heading} style={{ display: 'inline-flex', alignItems: 'center', gap: 10 }}>
           <LogoIcon />
+          <BetaBadge size='sm' />
         </h1>
         <ManageAuth />
         <p className={styles.text}>{t('ACCOUNT_CREATION_INFO')}</p>

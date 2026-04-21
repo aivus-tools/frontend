@@ -578,6 +578,10 @@ export const RU_LOCALES = {
   BRIEF_V3_TAB_VENDOR_EMAIL: 'Письмо вендорам',
   BRIEF_V3_TAB_DELIVERABLES: 'Deliverables',
   BRIEF_V3_DOCUMENT_MISSING: 'Документ пока недоступен.',
+  BETA_FOOTER_TITLE: 'Aivus в бета-версии — не потеряй свою работу',
+  BETA_FOOTER_BODY:
+    'Сохраняй сгенерированные документы в PDF у себя — мы ещё допиливаем платформу и пока не можем полностью гарантировать хранение.',
+  BETA_FOOTER_FEEDBACK: 'Нашёл баг или есть идея? Напиши нам — будем очень благодарны за фидбек - hi@aivus.co',
   BRIEF_V3_COPIED: 'Скопировано в буфер.',
   BRIEF_V3_COPY_TEXT: 'Копировать текст',
   BRIEF_V3_COPY_HTML: 'Копировать HTML',
