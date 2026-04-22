@@ -1,7 +1,7 @@
 'use client';
 import { Button, Form, Input, message } from 'antd';
 import { signIn } from 'next-auth/react';
-import { t } from '@/lib/i18n';
+import { getLocale, t } from '@/lib/i18n';
 import logger from '@/lib/logger';
 
 import styles from './styles.module.css';
@@ -52,6 +52,7 @@ const register = async ({
       password,
       briefId,
       briefToken,
+      language: getLocale(),
     }),
   });
 
