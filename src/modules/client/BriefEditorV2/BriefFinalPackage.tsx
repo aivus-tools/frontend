@@ -1,10 +1,10 @@
 'use client';
 
-import React, { useEffect, useRef, useState } from 'react';
+import React, { forwardRef, useEffect, useImperativeHandle, useRef, useState } from 'react';
 import { styled } from 'styled-components';
-import { App, Button, Popover, Switch, Tabs } from 'antd';
+import { App, Button, Popover, Switch } from 'antd';
 import { CopyOutlined, DownloadOutlined, ShareAltOutlined, ReloadOutlined } from '@ant-design/icons';
-import { useEditor, EditorContent } from '@tiptap/react';
+import { useEditor, EditorContent, Editor } from '@tiptap/react';
 import StarterKit from '@tiptap/starter-kit';
 import Link from '@tiptap/extension-link';
 import Underline from '@tiptap/extension-underline';
@@ -23,35 +23,85 @@ import { BriefFinalDocument, BriefFinalPackage as BriefFinalPackageType } from '
 
 const AUTOSAVE_DEBOUNCE_MS = 1200;
 
+type SaveState = 'idle' | 'saving' | 'saved' | 'error';
+
+interface DocumentEditorHandle {
+  copy: (mode: 'html' | 'text') => Promise<void>;
+  download: () => Promise<void>;
+}
+
 const Wrapper = styled.div`
   flex: 1;
   display: flex;
   flex-direction: column;
+  min-height: 0;
   overflow: hidden;
   background: #f8f9fb;
 `;
 
-const Header = styled.div`
-  padding: 16px 24px;
-  border-bottom: 1px solid #eef0f4;
-  background: #ffffff;
+const TabsHeader = styled.div`
+  flex-shrink: 0;
   display: flex;
   align-items: center;
-  justify-content: space-between;
+  gap: 16px;
+  padding: 8px 24px;
+  background: #f8f9fb;
+  border-bottom: 1px solid #eef0f4;
+`;
+
+const TabsList = styled.div`
+  display: flex;
+  gap: 4px;
+  flex-shrink: 0;
+`;
+
+const TabButton = styled.button<{ $active: boolean }>`
+  border: none;
+  background: transparent;
+  padding: 10px 4px;
+  font-family: 'Montserrat', sans-serif;
+  font-size: 14px;
+  font-weight: 600;
+  color: ${(x) => (x.$active ? '#2288ff' : '#4b5675')};
+  border-bottom: 2px solid ${(x) => (x.$active ? '#2288ff' : 'transparent')};
+  cursor: pointer;
+
+  &:hover {
+    color: #2288ff;
+  }
+`;
+
+const HeaderActions = styled.div`
+  margin-left: auto;
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  flex-wrap: wrap;
+`;
+
+const DocumentPane = styled.div`
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  overflow: hidden;
+`;
+
+const StickyBar = styled.div`
+  flex-shrink: 0;
+  padding: 8px 24px;
+  background: #f8f9fb;
+  border-bottom: 1px solid #eef0f4;
+  display: flex;
+  align-items: center;
   gap: 12px;
 `;
 
-const Title = styled.div`
-  font-family: 'Montserrat', sans-serif;
-  font-size: 16px;
-  font-weight: 700;
-  color: #1f2937;
-`;
-
-const Body = styled.div`
+const ScrollArea = styled.div`
   flex: 1;
-  padding: 16px 24px 32px;
+  min-height: 0;
   overflow-y: auto;
+  padding: 16px 24px 32px;
 `;
 
 const EditorCard = styled.div`
@@ -132,12 +182,8 @@ const EditorCard = styled.div`
 const Toolbar = styled.div`
   display: flex;
   gap: 4px;
-  padding: 6px 8px;
-  margin-bottom: 8px;
-  background: #fafbfc;
-  border: 1px solid #eef0f4;
-  border-radius: 8px;
   flex-wrap: wrap;
+  flex: 1;
 `;
 
 const ToolButton = styled.button<{ $active?: boolean }>`
@@ -160,18 +206,9 @@ const ToolButton = styled.button<{ $active?: boolean }>`
   }
 `;
 
-const ActionBar = styled.div`
-  display: flex;
-  gap: 8px;
-  justify-content: flex-end;
-  align-items: center;
-  margin-bottom: 12px;
-`;
-
-const SaveStatus = styled.span<{ $state: 'idle' | 'saving' | 'saved' | 'error' }>`
+const SaveStatus = styled.span<{ $state: SaveState }>`
   font-family: 'Montserrat', sans-serif;
   font-size: 12px;
-  margin-right: auto;
   color: ${(x) => {
     if (x.$state === 'saving') return '#99a1b7';
     if (x.$state === 'saved') return '#16a34a';
@@ -202,15 +239,24 @@ const htmlToPlainText = (html: string): string => {
   return temp.innerText;
 };
 
-const DocumentEditor: React.FC<{
+interface DocumentEditorProps {
   briefId: string;
   document: BriefFinalDocument;
-}> = ({ briefId, document: doc }) => {
+  onSaveStateChange: (state: SaveState) => void;
+}
+
+const DocumentEditor = forwardRef<DocumentEditorHandle, DocumentEditorProps>((props, ref) => {
+  const { briefId, document: doc, onSaveStateChange } = props;
   const { message: messageApi } = App.useApp();
   const [updateDoc] = useUpdateBriefAiFinalDocumentMutation();
-  const [saveState, setSaveState] = useState<'idle' | 'saving' | 'saved' | 'error'>('idle');
   const saveTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const latestHtmlRef = useRef<string>(doc.html);
+  const onSaveStateChangeRef = useRef(onSaveStateChange);
+  onSaveStateChangeRef.current = onSaveStateChange;
+
+  const setSaveState = (state: SaveState) => {
+    onSaveStateChangeRef.current(state);
+  };
 
   const editor = useEditor({
     immediatelyRender: false,
@@ -268,125 +314,110 @@ const DocumentEditor: React.FC<{
     latestHtmlRef.current = doc.html;
   }, [doc.html, doc.id, editor]);
 
-  const handleCopy = async (mode: 'html' | 'text') => {
-    try {
-      const html = latestHtmlRef.current;
-      const value = mode === 'html' ? html : htmlToPlainText(html);
-      await navigator.clipboard.writeText(value);
-      messageApi.success(t('BRIEF_V3_COPIED'));
-    } catch {
-      messageApi.error(t('UNEXPECTED_ERROR'));
-    }
-  };
-
-  const handleDownload = async () => {
-    try {
-      if (saveTimerRef.current) {
-        clearTimeout(saveTimerRef.current);
-        await updateDoc({
-          briefId,
-          documentId: doc.id,
-          html: latestHtmlRef.current,
-          plainText: htmlToPlainText(latestHtmlRef.current),
-        }).unwrap();
-      }
-      const url = ApiRoute.BRIEF_AI_FINAL_DOCUMENT_PDF(briefId, doc.id);
-      await downloadPdf(url, `${DOCUMENT_TITLES[doc.kind] ?? 'Brief'}.pdf`);
-    } catch {
-      messageApi.error(t('UNEXPECTED_ERROR'));
-    }
-  };
+  useImperativeHandle(
+    ref,
+    () => ({
+      copy: async (mode: 'html' | 'text') => {
+        try {
+          const html = latestHtmlRef.current;
+          const value = mode === 'html' ? html : htmlToPlainText(html);
+          await navigator.clipboard.writeText(value);
+          messageApi.success(t('BRIEF_V3_COPIED'));
+        } catch {
+          messageApi.error(t('UNEXPECTED_ERROR'));
+        }
+      },
+      download: async () => {
+        try {
+          if (saveTimerRef.current) {
+            clearTimeout(saveTimerRef.current);
+            await updateDoc({
+              briefId,
+              documentId: doc.id,
+              html: latestHtmlRef.current,
+              plainText: htmlToPlainText(latestHtmlRef.current),
+            }).unwrap();
+          }
+          const url = ApiRoute.BRIEF_AI_FINAL_DOCUMENT_PDF(briefId, doc.id);
+          await downloadPdf(url, `${DOCUMENT_TITLES[doc.kind] ?? 'Brief'}.pdf`);
+        } catch {
+          messageApi.error(t('UNEXPECTED_ERROR'));
+        }
+      },
+    }),
+    [briefId, doc.id, doc.kind, messageApi, updateDoc]
+  );
 
   if (!editor) {
     return null;
   }
 
-  const saveLabel =
-    saveState === 'saving'
-      ? t('BRIEF_V3_SAVING')
-      : saveState === 'saved'
-        ? t('BRIEF_V3_SAVED')
-        : saveState === 'error'
-          ? t('BRIEF_V3_SAVE_FAILED')
-          : '';
-
   return (
-    <div>
-      <ActionBar>
-        <SaveStatus $state={saveState}>{saveLabel}</SaveStatus>
-        <Button icon={<CopyOutlined />} onClick={() => handleCopy('text')}>
-          {t('BRIEF_V3_COPY_TEXT')}
-        </Button>
-        <Button icon={<CopyOutlined />} onClick={() => handleCopy('html')}>
-          {t('BRIEF_V3_COPY_HTML')}
-        </Button>
-        <Button type='primary' icon={<DownloadOutlined />} onClick={handleDownload}>
-          {t('BRIEF_V3_DOWNLOAD_PDF')}
-        </Button>
-      </ActionBar>
-      <Toolbar>
-        <ToolButton $active={editor.isActive('bold')} onClick={() => editor.chain().focus().toggleBold().run()}>
-          Bold
-        </ToolButton>
-        <ToolButton $active={editor.isActive('italic')} onClick={() => editor.chain().focus().toggleItalic().run()}>
-          Italic
-        </ToolButton>
-        <ToolButton
-          $active={editor.isActive('underline')}
-          onClick={() => editor.chain().focus().toggleUnderline().run()}
-        >
-          Underline
-        </ToolButton>
-        <ToolButton
-          $active={editor.isActive('heading', { level: 1 })}
-          onClick={() => editor.chain().focus().toggleHeading({ level: 1 }).run()}
-        >
-          H1
-        </ToolButton>
-        <ToolButton
-          $active={editor.isActive('heading', { level: 2 })}
-          onClick={() => editor.chain().focus().toggleHeading({ level: 2 }).run()}
-        >
-          H2
-        </ToolButton>
-        <ToolButton
-          $active={editor.isActive('heading', { level: 3 })}
-          onClick={() => editor.chain().focus().toggleHeading({ level: 3 }).run()}
-        >
-          H3
-        </ToolButton>
-        <ToolButton
-          $active={editor.isActive('bulletList')}
-          onClick={() => editor.chain().focus().toggleBulletList().run()}
-        >
-          • List
-        </ToolButton>
-        <ToolButton
-          $active={editor.isActive('orderedList')}
-          onClick={() => editor.chain().focus().toggleOrderedList().run()}
-        >
-          1. List
-        </ToolButton>
-        <ToolButton
-          $active={editor.isActive('blockquote')}
-          onClick={() => editor.chain().focus().toggleBlockquote().run()}
-        >
-          Quote
-        </ToolButton>
-        <ToolButton onClick={() => editor.chain().focus().setHorizontalRule().run()}>—</ToolButton>
-        <ToolButton onClick={() => editor.chain().focus().undo().run()} disabled={!editor.can().undo()}>
-          Undo
-        </ToolButton>
-        <ToolButton onClick={() => editor.chain().focus().redo().run()} disabled={!editor.can().redo()}>
-          Redo
-        </ToolButton>
-      </Toolbar>
-      <EditorCard>
-        <EditorContent editor={editor} />
-      </EditorCard>
-    </div>
+    <DocumentPane>
+      <StickyBar>
+        <EditorToolbar editor={editor} />
+      </StickyBar>
+      <ScrollArea>
+        <EditorCard>
+          <EditorContent editor={editor} />
+        </EditorCard>
+      </ScrollArea>
+    </DocumentPane>
   );
-};
+});
+
+DocumentEditor.displayName = 'DocumentEditor';
+
+const EditorToolbar: React.FC<{ editor: Editor }> = ({ editor }) => (
+  <Toolbar>
+    <ToolButton $active={editor.isActive('bold')} onClick={() => editor.chain().focus().toggleBold().run()}>
+      Bold
+    </ToolButton>
+    <ToolButton $active={editor.isActive('italic')} onClick={() => editor.chain().focus().toggleItalic().run()}>
+      Italic
+    </ToolButton>
+    <ToolButton $active={editor.isActive('underline')} onClick={() => editor.chain().focus().toggleUnderline().run()}>
+      Underline
+    </ToolButton>
+    <ToolButton
+      $active={editor.isActive('heading', { level: 1 })}
+      onClick={() => editor.chain().focus().toggleHeading({ level: 1 }).run()}
+    >
+      H1
+    </ToolButton>
+    <ToolButton
+      $active={editor.isActive('heading', { level: 2 })}
+      onClick={() => editor.chain().focus().toggleHeading({ level: 2 }).run()}
+    >
+      H2
+    </ToolButton>
+    <ToolButton
+      $active={editor.isActive('heading', { level: 3 })}
+      onClick={() => editor.chain().focus().toggleHeading({ level: 3 }).run()}
+    >
+      H3
+    </ToolButton>
+    <ToolButton $active={editor.isActive('bulletList')} onClick={() => editor.chain().focus().toggleBulletList().run()}>
+      • List
+    </ToolButton>
+    <ToolButton
+      $active={editor.isActive('orderedList')}
+      onClick={() => editor.chain().focus().toggleOrderedList().run()}
+    >
+      1. List
+    </ToolButton>
+    <ToolButton $active={editor.isActive('blockquote')} onClick={() => editor.chain().focus().toggleBlockquote().run()}>
+      Quote
+    </ToolButton>
+    <ToolButton onClick={() => editor.chain().focus().setHorizontalRule().run()}>—</ToolButton>
+    <ToolButton onClick={() => editor.chain().focus().undo().run()} disabled={!editor.can().undo()}>
+      Undo
+    </ToolButton>
+    <ToolButton onClick={() => editor.chain().focus().redo().run()} disabled={!editor.can().redo()}>
+      Redo
+    </ToolButton>
+  </Toolbar>
+);
 
 const ShareControl: React.FC<{ briefId: string }> = ({ briefId }) => {
   const { message: messageApi } = App.useApp();
@@ -481,7 +512,7 @@ export const BriefFinalPackage: React.FC<BriefFinalPackageProps> = (props) => {
   const { modal } = App.useApp();
   const byKind = new Map(pkg.documents.map((x) => [x.kind, x]));
 
-  const items = [
+  const tabs: { key: 'production_brief' | 'vendor_email'; label: string; document?: BriefFinalDocument }[] = [
     {
       key: 'production_brief',
       label: t('BRIEF_V3_TAB_PRODUCTION_BRIEF'),
@@ -493,6 +524,13 @@ export const BriefFinalPackage: React.FC<BriefFinalPackageProps> = (props) => {
       document: byKind.get('vendor_email'),
     },
   ];
+
+  const [activeKey, setActiveKey] = useState<'production_brief' | 'vendor_email'>('production_brief');
+  const [saveState, setSaveState] = useState<SaveState>('idle');
+  const editorRef = useRef<DocumentEditorHandle | null>(null);
+
+  const activeTab = tabs.find((x) => x.key === activeKey) ?? tabs[0];
+  const activeDoc = activeTab.document;
 
   const handleRegenerateClick = () => {
     if (!onRegenerate) {
@@ -508,33 +546,69 @@ export const BriefFinalPackage: React.FC<BriefFinalPackageProps> = (props) => {
     });
   };
 
+  const handleSelectTab = (key: 'production_brief' | 'vendor_email') => {
+    if (key === activeKey) {
+      return;
+    }
+    setActiveKey(key);
+    setSaveState('idle');
+  };
+
+  const saveLabel =
+    saveState === 'saving'
+      ? t('BRIEF_V3_SAVING')
+      : saveState === 'saved'
+        ? t('BRIEF_V3_SAVED')
+        : saveState === 'error'
+          ? t('BRIEF_V3_SAVE_FAILED')
+          : '';
+
   return (
     <Wrapper>
-      <Header>
-        <Title>{t('BRIEF_V3_FINAL_PACKAGE_TITLE')}</Title>
-        <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
+      <TabsHeader>
+        <TabsList>
+          {tabs.map((tab) => (
+            <TabButton key={tab.key} $active={tab.key === activeKey} onClick={() => handleSelectTab(tab.key)}>
+              {tab.label}
+            </TabButton>
+          ))}
+        </TabsList>
+        <HeaderActions>
+          <SaveStatus $state={saveState}>{saveLabel}</SaveStatus>
           {onRegenerate ? (
             <Button icon={<ReloadOutlined />} onClick={handleRegenerateClick} loading={Boolean(isRegenerating)}>
               {t('BRIEF_V3_REGENERATE_PACKAGE')}
             </Button>
           ) : null}
           <ShareControl briefId={briefId} />
-        </div>
-      </Header>
-      <Body>
-        <Tabs
-          defaultActiveKey='production_brief'
-          items={items.map((item) => ({
-            key: item.key,
-            label: item.label,
-            children: item.document ? (
-              <DocumentEditor key={item.document.id} briefId={briefId} document={item.document} />
-            ) : (
-              <div style={{ color: '#99a1b7', padding: 24 }}>{t('BRIEF_V3_DOCUMENT_MISSING')}</div>
-            ),
-          }))}
+          <Button icon={<CopyOutlined />} onClick={() => editorRef.current?.copy('text')} disabled={!activeDoc}>
+            {t('BRIEF_V3_COPY_TEXT')}
+          </Button>
+          <Button icon={<CopyOutlined />} onClick={() => editorRef.current?.copy('html')} disabled={!activeDoc}>
+            {t('BRIEF_V3_COPY_HTML')}
+          </Button>
+          <Button
+            type='primary'
+            icon={<DownloadOutlined />}
+            onClick={() => editorRef.current?.download()}
+            disabled={!activeDoc}
+          >
+            {t('BRIEF_V3_DOWNLOAD_PDF')}
+          </Button>
+        </HeaderActions>
+      </TabsHeader>
+
+      {activeDoc ? (
+        <DocumentEditor
+          key={activeDoc.id}
+          ref={editorRef}
+          briefId={briefId}
+          document={activeDoc}
+          onSaveStateChange={setSaveState}
         />
-      </Body>
+      ) : (
+        <div style={{ color: '#99a1b7', padding: 24 }}>{t('BRIEF_V3_DOCUMENT_MISSING')}</div>
+      )}
     </Wrapper>
   );
 };

@@ -39,6 +39,15 @@ const HeaderLeft = styled.div`
   align-items: center;
   gap: 24px;
   min-width: 0;
+  flex: 1;
+`;
+
+const BriefHeaderSlot = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-width: 0;
+  flex: 1;
 `;
 
 const ContentLayout = styled(Content)`
@@ -73,7 +82,16 @@ const ClientLayout = ({ children }: PropsWithChildren) => {
       )}
       <Layout>
         <HeaderLayout style={{ padding: '0 36px' }}>
-          <HeaderLeft>{hideSider ? <ClientHomeLogo theme={theme} compact /> : <ClientNavbar />}</HeaderLeft>
+          <HeaderLeft>
+            {hideSider ? (
+              <>
+                <ClientHomeLogo theme={theme} compact />
+                <BriefHeaderSlot id='brief-header-slot' />
+              </>
+            ) : (
+              <ClientNavbar />
+            )}
+          </HeaderLeft>
           <Profile />
         </HeaderLayout>
         <ContentLayout

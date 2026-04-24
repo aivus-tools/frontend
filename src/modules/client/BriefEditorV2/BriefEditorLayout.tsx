@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useCallback, useEffect, useRef, useState } from 'react';
+import { createPortal } from 'react-dom';
 import { styled } from 'styled-components';
 import { App, Button } from 'antd';
 import { t, getLocale } from '@/lib/i18n';
@@ -140,7 +141,7 @@ const FinalSplit = styled.div`
 `;
 
 const FinalDocsColumn = styled.div`
-  flex: 1 1 68%;
+  flex: 1 1 0;
   min-width: 0;
   display: flex;
   flex-direction: column;
@@ -148,11 +149,11 @@ const FinalDocsColumn = styled.div`
 `;
 
 const FinalChatColumn = styled.div`
-  flex: 0 0 32%;
+  flex: 0 1 480px;
   min-width: 360px;
-  max-width: 480px;
   display: flex;
   flex-direction: column;
+  border-top: 1px solid #eef0f4;
   border-left: 1px solid #eef0f4;
   background: #ffffff;
   overflow: hidden;
@@ -174,9 +175,11 @@ export const BriefEditorLayout: React.FC<BriefEditorLayoutProps> = (props) => {
   const [briefId, setBriefId] = useState<string | null>(props.briefId ?? null);
   const [stage, setStage] = useState<Stage>(props.briefId ? 'chat' : 'start');
   const [hasMounted, setHasMounted] = useState(false);
+  const [headerSlot, setHeaderSlot] = useState<HTMLElement | null>(null);
 
   useEffect(() => {
     setHasMounted(true);
+    setHeaderSlot(document.getElementById('brief-header-slot'));
   }, []);
   const [startText, setStartText] = useState('');
   const [pendingAttachments, setPendingAttachments] = useState<BriefAttachment[]>([]);
@@ -794,7 +797,9 @@ export const BriefEditorLayout: React.FC<BriefEditorLayoutProps> = (props) => {
   }
 
   const pageTitleHeader =
-    isAuth && briefId ? <EditableBriefTitle briefId={briefId} title={authDetail?.title ?? ''} editable /> : null;
+    isAuth && briefId && headerSlot
+      ? createPortal(<EditableBriefTitle briefId={briefId} title={authDetail?.title ?? ''} editable />, headerSlot)
+      : null;
 
   if (stage === 'comparison' && briefId) {
     return (

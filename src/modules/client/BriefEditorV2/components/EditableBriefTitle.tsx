@@ -19,10 +19,10 @@ const Wrapper = styled.div`
   display: flex;
   align-items: center;
   gap: 8px;
-  padding: 12px 24px;
-  background: #ffffff;
+  min-width: 0;
   font-family: 'Montserrat', sans-serif;
-  font-size: 16px;
+  font-size: 15px;
+  line-height: 1.4;
 `;
 
 const BackLink = styled(Link)`
@@ -46,6 +46,7 @@ const TitleDisplay = styled.button<{ $isEmpty: boolean }>`
   font-family: 'Montserrat', sans-serif;
   font-size: 16px;
   font-weight: 600;
+  line-height: 1.3;
   padding: 4px 8px;
   border-radius: 6px;
   cursor: pointer;
@@ -75,6 +76,7 @@ const TitleInput = styled.input`
   font-family: 'Montserrat', sans-serif;
   font-size: 16px;
   font-weight: 600;
+  line-height: 1.3;
   padding: 4px 8px;
   border-radius: 6px;
   min-width: 320px;
