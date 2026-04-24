@@ -4,6 +4,7 @@ import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
 import { styled } from 'styled-components';
 import { App, Button } from 'antd';
+import { useAppDispatch } from '@/store/hooks';
 import { t, getLocale } from '@/lib/i18n';
 import { BriefChatPanel } from '@/modules/client/BriefChatV2/BriefChatPanel';
 import { ComparisonTable } from '@/modules/client/ComparisonTable/ComparisonTable';
@@ -13,6 +14,7 @@ import { BriefSettings } from './BriefSettings';
 import { EditableBriefTitle } from './components/EditableBriefTitle';
 import { GeneratingOverlay, GeneratingSubtitle, GeneratingTitle, Spinner } from '@/modules/client/BriefChatV2/styled';
 import {
+  briefAiApi,
   useCreateBriefAiDraftMutation,
   useDeleteBriefAiAttachmentMutation,
   useFinalizeBriefAiMutation,
@@ -171,6 +173,7 @@ interface BriefEditorLayoutProps {
 
 export const BriefEditorLayout: React.FC<BriefEditorLayoutProps> = (props) => {
   const { message: messageApi } = App.useApp();
+  const dispatch = useAppDispatch();
   const isAuth = props.mode === 'authenticated';
 
   const [briefId, setBriefId] = useState<string | null>(props.briefId ?? null);
@@ -369,10 +372,16 @@ export const BriefEditorLayout: React.FC<BriefEditorLayoutProps> = (props) => {
           }
           if (response.status === 'done' && response.result) {
             stop();
-            hydrateFromDetail(response.result);
+            const finalDetail = response.result;
+            hydrateFromDetail(finalDetail);
             setConversationStatus('finalized');
             setStage('finalized');
-            if (isAuth) {
+            if (isAuth && briefId) {
+              dispatch(
+                briefAiApi.util.updateQueryData('getBriefAiDetail', briefId, (draft) => {
+                  Object.assign(draft, finalDetail);
+                })
+              );
               refetchAuthFinal();
               refetchAuthDetail();
             }
@@ -391,7 +400,17 @@ export const BriefEditorLayout: React.FC<BriefEditorLayoutProps> = (props) => {
         }
       }, POLL_INTERVAL_MS);
     },
-    [fetchStatusAuth, fetchStatusPublic, hydrateFromDetail, isAuth, messageApi, refetchAuthDetail, refetchAuthFinal]
+    [
+      briefId,
+      dispatch,
+      fetchStatusAuth,
+      fetchStatusPublic,
+      hydrateFromDetail,
+      isAuth,
+      messageApi,
+      refetchAuthDetail,
+      refetchAuthFinal,
+    ]
   );
 
   const ensureDraft = useCallback(async (): Promise<{
