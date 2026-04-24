@@ -36,6 +36,7 @@ import {
 } from '@/services/client/publicBriefApi';
 import { BriefAttachment, BriefV3Detail, ChatMessageV3, ConversationStatus } from '@/types/briefAi.interface';
 import { BETA_FOOTER_HEIGHT } from '@/components/BetaFooter/BetaFooter';
+import { useBetaFooter } from '@/components/BetaFooter/BetaFooterContext';
 
 const POLL_INTERVAL_MS = 1500;
 const POLL_TIMEOUT_MS = 180000;
@@ -47,10 +48,10 @@ const MAX_ATTACHMENTS_ANON = 3;
 
 type Stage = 'start' | 'generating' | 'chat' | 'finalizing' | 'finalized' | 'comparison' | 'settings';
 
-const OuterWrapper = styled.div`
+const OuterWrapper = styled.div<{ $footerVisible: boolean }>`
   display: flex;
   flex-direction: column;
-  height: calc(100vh - 70px - ${BETA_FOOTER_HEIGHT}px);
+  height: ${(x) => (x.$footerVisible ? `calc(100vh - 70px - ${BETA_FOOTER_HEIGHT}px)` : 'calc(100vh - 70px)')};
   background: #f8f9fb;
 `;
 
@@ -176,6 +177,8 @@ export const BriefEditorLayout: React.FC<BriefEditorLayoutProps> = (props) => {
   const [stage, setStage] = useState<Stage>(props.briefId ? 'chat' : 'start');
   const [hasMounted, setHasMounted] = useState(false);
   const [headerSlot, setHeaderSlot] = useState<HTMLElement | null>(null);
+  const { dismissed: footerDismissed } = useBetaFooter();
+  const footerVisible = !footerDismissed;
 
   useEffect(() => {
     setHasMounted(true);
@@ -366,6 +369,7 @@ export const BriefEditorLayout: React.FC<BriefEditorLayoutProps> = (props) => {
           }
           if (response.status === 'done' && response.result) {
             stop();
+            hydrateFromDetail(response.result);
             setConversationStatus('finalized');
             setStage('finalized');
             if (isAuth) {
@@ -387,7 +391,7 @@ export const BriefEditorLayout: React.FC<BriefEditorLayoutProps> = (props) => {
         }
       }, POLL_INTERVAL_MS);
     },
-    [fetchStatusAuth, fetchStatusPublic, isAuth, messageApi, refetchAuthDetail, refetchAuthFinal]
+    [fetchStatusAuth, fetchStatusPublic, hydrateFromDetail, isAuth, messageApi, refetchAuthDetail, refetchAuthFinal]
   );
 
   const ensureDraft = useCallback(async (): Promise<{
@@ -707,6 +711,9 @@ export const BriefEditorLayout: React.FC<BriefEditorLayoutProps> = (props) => {
           if (status.status === 'done') {
             session.cancelled = true;
             clearPolling();
+            if (status.result) {
+              hydrateFromDetail(status.result);
+            }
             setStage('finalized');
             setIsRegenerating(false);
             refetchAuthFinal();
@@ -731,7 +738,17 @@ export const BriefEditorLayout: React.FC<BriefEditorLayoutProps> = (props) => {
       messageApi.error(t('BRIEF_V3_REGENERATE_FAILED'));
       setIsRegenerating(false);
     }
-  }, [briefId, fetchStatusAuth, finalizeAuth, isAuth, isRegenerating, messageApi, refetchAuthDetail, refetchAuthFinal]);
+  }, [
+    briefId,
+    fetchStatusAuth,
+    finalizeAuth,
+    hydrateFromDetail,
+    isAuth,
+    isRegenerating,
+    messageApi,
+    refetchAuthDetail,
+    refetchAuthFinal,
+  ]);
 
   const handleClaim = useCallback(() => {
     // Anonymous users can't finalize; tapping "register" should redirect to
@@ -746,7 +763,7 @@ export const BriefEditorLayout: React.FC<BriefEditorLayoutProps> = (props) => {
 
   if (stage === 'start') {
     return (
-      <OuterWrapper>
+      <OuterWrapper $footerVisible={footerVisible}>
         <StartScreen>
           <StartCard>
             <StartTitle>{t('BRIEF_V3_START_TITLE')}</StartTitle>
@@ -782,7 +799,7 @@ export const BriefEditorLayout: React.FC<BriefEditorLayoutProps> = (props) => {
 
   if (stage === 'generating' || stage === 'finalizing') {
     return (
-      <OuterWrapper>
+      <OuterWrapper $footerVisible={footerVisible}>
         <GeneratingOverlay>
           <Spinner />
           <GeneratingTitle>
@@ -803,7 +820,7 @@ export const BriefEditorLayout: React.FC<BriefEditorLayoutProps> = (props) => {
 
   if (stage === 'comparison' && briefId) {
     return (
-      <OuterWrapper>
+      <OuterWrapper $footerVisible={footerVisible}>
         {pageTitleHeader}
         <ComparisonTable briefId={briefId} />
       </OuterWrapper>
@@ -812,7 +829,7 @@ export const BriefEditorLayout: React.FC<BriefEditorLayoutProps> = (props) => {
 
   if (stage === 'settings' && briefId && authDetail) {
     return (
-      <OuterWrapper>
+      <OuterWrapper $footerVisible={footerVisible}>
         {pageTitleHeader}
         <BriefSettings brief={authDetail} />
       </OuterWrapper>
@@ -821,7 +838,7 @@ export const BriefEditorLayout: React.FC<BriefEditorLayoutProps> = (props) => {
 
   if (stage === 'finalized') {
     return (
-      <OuterWrapper>
+      <OuterWrapper $footerVisible={footerVisible}>
         {pageTitleHeader}
         {finalPackage ? (
           <FinalSplit>
@@ -884,7 +901,7 @@ export const BriefEditorLayout: React.FC<BriefEditorLayoutProps> = (props) => {
     ((isAuth && !authDetail && isAuthDetailFetching) || (!isAuth && token && !publicDetail));
   if (isHydrating) {
     return (
-      <OuterWrapper>
+      <OuterWrapper $footerVisible={footerVisible}>
         <GeneratingOverlay>
           <Spinner />
           <GeneratingTitle>{t('BRIEF_V3_LOADING_BRIEF_TITLE')}</GeneratingTitle>
@@ -895,7 +912,7 @@ export const BriefEditorLayout: React.FC<BriefEditorLayoutProps> = (props) => {
   }
 
   return (
-    <OuterWrapper>
+    <OuterWrapper $footerVisible={footerVisible}>
       {pageTitleHeader}
       <ChatScreen>
         <ChatWrapper>

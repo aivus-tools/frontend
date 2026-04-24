@@ -4,6 +4,7 @@ import React, { useEffect, useState } from 'react';
 import { styled } from 'styled-components';
 import { ExperimentOutlined, CloseOutlined } from '@ant-design/icons';
 import { t } from '@/lib/i18n';
+import { useBetaFooter } from './BetaFooterContext';
 
 export const BETA_FOOTER_HEIGHT = 84;
 
@@ -89,7 +90,7 @@ const Title = styled.div`
 export const BetaFooter: React.FC<BetaFooterProps> = (props) => {
   const variant = props.variant ?? 'full';
   const [mounted, setMounted] = useState(false);
-  const [dismissed, setDismissed] = useState(false);
+  const { dismissed, dismiss } = useBetaFooter();
 
   useEffect(() => {
     setMounted(true);
@@ -100,7 +101,7 @@ export const BetaFooter: React.FC<BetaFooterProps> = (props) => {
   }
 
   const handleDismiss = () => {
-    setDismissed(true);
+    dismiss();
   };
 
   return (

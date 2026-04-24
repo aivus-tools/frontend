@@ -12,6 +12,7 @@ import { VendorNavbar } from './components/VendorNavbar/VendorNavbar';
 import { GrandTotalSider } from '@/modules/vendor/sider/GrandTotalSider/GrandTotalSider';
 import { DashboardSidebar } from '@/modules/vendor/dashboard/DashboardSidebar/DashboardSidebar';
 import { BetaFooter, BETA_FOOTER_HEIGHT } from '@/components/BetaFooter/BetaFooter';
+import { BetaFooterProvider, useBetaFooter } from '@/components/BetaFooter/BetaFooterContext';
 
 const { Header, Content } = Layout;
 
@@ -37,10 +38,11 @@ const ContentLayout = styled(Content)`
   box-shadow: inset 0 5px 16.5px -11px rgb(0 0 0 / 25%);
 `;
 
-const VendorLayout = ({ children }: PropsWithChildren) => {
+const VendorLayoutInner = ({ children }: PropsWithChildren) => {
   const theme = useLayoutTheme();
   const segments = useSelectedLayoutSegments();
   const isRoot = segments.length === 1;
+  const { dismissed: footerDismissed } = useBetaFooter();
 
   return (
     <Layout hasSider>
@@ -58,7 +60,7 @@ const VendorLayout = ({ children }: PropsWithChildren) => {
             overflowY: 'auto',
             maxHeight: 'calc(100vh - 70px)',
             backgroundColor: isRoot ? undefined : 'var(--bg-gray-page)',
-            paddingBottom: BETA_FOOTER_HEIGHT,
+            paddingBottom: footerDismissed ? 0 : BETA_FOOTER_HEIGHT,
           }}
         >
           {children}
@@ -68,5 +70,11 @@ const VendorLayout = ({ children }: PropsWithChildren) => {
     </Layout>
   );
 };
+
+const VendorLayout = ({ children }: PropsWithChildren) => (
+  <BetaFooterProvider>
+    <VendorLayoutInner>{children}</VendorLayoutInner>
+  </BetaFooterProvider>
+);
 
 export default VendorLayout;

@@ -13,6 +13,7 @@ import { ClientHomeLogo } from '../ClientHomeLogo/ClientHomeLogo';
 import { getPendingBrief, clearPendingBrief } from '@/helpers/pendingBrief';
 import { AppRoute } from '@/constants/appRoute';
 import { BetaFooter, BETA_FOOTER_HEIGHT } from '@/components/BetaFooter/BetaFooter';
+import { BetaFooterProvider, useBetaFooter } from '@/components/BetaFooter/BetaFooterContext';
 
 const { Header, Content } = Layout;
 
@@ -54,12 +55,13 @@ const ContentLayout = styled(Content)`
   box-shadow: inset 0 5px 16.5px -11px rgb(0 0 0 / 25%);
 `;
 
-const ClientLayout = ({ children }: PropsWithChildren) => {
+const ClientLayoutInner = ({ children }: PropsWithChildren) => {
   const theme = useLayoutTheme();
   const router = useRouter();
   const pathname = usePathname();
   const hideSider = !!pathname && /(^|\/)app\/brief\//.test(pathname);
   const checked = useRef(false);
+  const { dismissed: footerDismissed } = useBetaFooter();
 
   useEffect(() => {
     if (checked.current) {
@@ -98,7 +100,7 @@ const ClientLayout = ({ children }: PropsWithChildren) => {
           style={{
             overflowY: 'auto',
             maxHeight: 'calc(100vh - 70px)',
-            paddingBottom: BETA_FOOTER_HEIGHT,
+            paddingBottom: footerDismissed ? 0 : BETA_FOOTER_HEIGHT,
           }}
         >
           {children}
@@ -108,5 +110,11 @@ const ClientLayout = ({ children }: PropsWithChildren) => {
     </Layout>
   );
 };
+
+const ClientLayout = ({ children }: PropsWithChildren) => (
+  <BetaFooterProvider>
+    <ClientLayoutInner>{children}</ClientLayoutInner>
+  </BetaFooterProvider>
+);
 
 export default ClientLayout;

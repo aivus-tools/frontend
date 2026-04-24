@@ -51,7 +51,7 @@ const TabsHeader = styled.div`
 
 const TabsList = styled.div`
   display: flex;
-  gap: 4px;
+  gap: 24px;
   flex-shrink: 0;
 `;
 
