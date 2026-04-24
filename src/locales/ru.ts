@@ -486,6 +486,9 @@ export const RU_LOCALES = {
   SELECT_UNIT: 'Выбрать единицу',
   GENERAL: 'Общее',
   UNTITLED_BRIEF: 'Бриф без названия',
+  ALL_PROJECTS: 'Все проекты',
+  EDIT_BRIEF_TITLE: 'Изменить название брифа',
+  BRIEF_TITLE_RENAME_FAILED: 'Не удалось переименовать бриф',
 
   // Public Offer - details
   NO_ESTIMATE_DETAILS: 'Нет доступных деталей сметы.',

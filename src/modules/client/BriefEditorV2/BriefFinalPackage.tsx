@@ -257,6 +257,17 @@ const DocumentEditor: React.FC<{
     };
   }, []);
 
+  useEffect(() => {
+    if (!editor) {
+      return;
+    }
+    if (editor.getHTML() === doc.html) {
+      return;
+    }
+    editor.commands.setContent(doc.html, { emitUpdate: false });
+    latestHtmlRef.current = doc.html;
+  }, [doc.html, doc.id, editor]);
+
   const handleCopy = async (mode: 'html' | 'text') => {
     try {
       const html = latestHtmlRef.current;

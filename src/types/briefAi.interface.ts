@@ -112,6 +112,7 @@ export interface BriefV3ChatResponse {
   outputTokens: number;
   costUsd: string;
   messageCount: number;
+  updatedDocuments: BriefFinalDocument[];
 }
 
 export interface BriefFeedbackResponse {

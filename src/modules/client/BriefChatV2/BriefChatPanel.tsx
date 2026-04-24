@@ -124,11 +124,27 @@ export const BriefChatPanel: React.FC<BriefChatPanelProps> = (props) => {
   const [showAttachBox, setShowAttachBox] = useState(false);
   const [isDragging, setIsDragging] = useState(false);
 
-  const messagesEndRef = useRef<HTMLDivElement>(null);
+  const messagesAreaRef = useRef<HTMLDivElement>(null);
+  const stickToBottomRef = useRef(true);
+
+  const handleMessagesScroll = useCallback(() => {
+    const el = messagesAreaRef.current;
+    if (!el) {
+      return;
+    }
+    const distanceFromBottom = el.scrollHeight - el.scrollTop - el.clientHeight;
+    stickToBottomRef.current = distanceFromBottom < 80;
+  }, []);
 
   useEffect(() => {
-    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
-  }, [props.messages.length]);
+    if (!stickToBottomRef.current) {
+      return;
+    }
+    const el = messagesAreaRef.current;
+    if (el) {
+      el.scrollTop = el.scrollHeight;
+    }
+  }, [props.messages.length, props.isLoading]);
 
   const pendingIds = props.pendingAttachments.map((x) => x.id);
 
@@ -188,7 +204,7 @@ export const BriefChatPanel: React.FC<BriefChatPanelProps> = (props) => {
         }
       }}
     >
-      <MessagesArea>
+      <MessagesArea ref={messagesAreaRef} onScroll={handleMessagesScroll}>
         {props.messages.map((message) => {
           const isUser = message.role === 'user';
           const feedback = message.feedback;
@@ -245,8 +261,6 @@ export const BriefChatPanel: React.FC<BriefChatPanelProps> = (props) => {
             <TypingDot $delay={400} />
           </TypingIndicator>
         ) : null}
-
-        <div ref={messagesEndRef} />
       </MessagesArea>
 
       {props.conversationStatus === 'ready_to_finalize' && props.onFinalize ? (
@@ -284,7 +298,7 @@ export const BriefChatPanel: React.FC<BriefChatPanelProps> = (props) => {
         </div>
       ) : null}
 
-      {props.conversationStatus === 'finalized' ? (
+      {props.conversationStatus === 'finalized' && (props.onRegenerate || props.onShowPackage) ? (
         <div
           style={{
             padding: '12px 20px',

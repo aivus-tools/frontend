@@ -1,35 +1,16 @@
 'use client';
 
 import React, { useCallback } from 'react';
-import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import HomeIcon from '@/icons/home-icon.svg';
-import LogoIcon from '@/icons/aivus-logo.svg';
-import { BetaBadge } from '@/components/BetaBadge/BetaBadge';
 import { styled } from 'styled-components';
 import { Theme } from '@/types/index.interface';
-import { THEME } from '@/constants/constants';
 import { AppRoute } from '@/constants/appRoute';
 import { UploadOutlined, LoadingOutlined } from '@ant-design/icons';
 import { Upload, message } from 'antd';
 import { t } from '@/lib/i18n';
 import { useUploadXlsxMutation } from '@/services/client/xlsxApi';
 import type { UploadRequestOption } from 'rc-upload/lib/interface';
-
-const IconWrapper = styled.div<{ $themeType: Theme }>`
-  display: flex;
-  align-items: center;
-  justify-content: start;
-  height: 70px;
-  color: ${({ $themeType }) => ($themeType === THEME.light ? 'var(--main-dark)' : '#fff')};
-`;
-
-const IconGroup = styled.div`
-  display: flex;
-  align-items: center;
-  padding: 30px;
-  gap: 12px;
-`;
+import { ClientHomeLogo } from '../ClientHomeLogo/ClientHomeLogo';
 
 const SidebarContent = styled.div`
   padding: 16px 20px;
@@ -116,15 +97,7 @@ export const ClientSidebar = ({ theme }: { theme: Theme }) => {
 
   return (
     <div style={{ position: 'relative', height: '100%' }}>
-      <Link href={AppRoute.DASHBOARD} prefetch={false}>
-        <IconWrapper $themeType={theme}>
-          <IconGroup>
-            <HomeIcon />
-            <LogoIcon />
-            <BetaBadge size='sm' />
-          </IconGroup>
-        </IconWrapper>
-      </Link>
+      <ClientHomeLogo theme={theme} />
 
       <SidebarContent />
 

@@ -62,6 +62,28 @@ export const briefAiApi = createApi({
         body: { message: args.message, attachmentIds: args.attachmentIds ?? [] },
       }),
       invalidatesTags: ['BriefV3'],
+      async onQueryStarted(args, { dispatch, queryFulfilled }) {
+        try {
+          const { data } = await queryFulfilled;
+          if (!data.updatedDocuments?.length) {
+            return;
+          }
+          dispatch(
+            briefAiApi.util.updateQueryData('getBriefAiFinalDocuments', args.briefId, (draft) => {
+              for (const updated of data.updatedDocuments) {
+                const existing = draft.documents.find((x) => x.id === updated.id);
+                if (existing) {
+                  existing.html = updated.html;
+                  existing.plainText = updated.plainText;
+                  existing.updatedAt = updated.updatedAt;
+                }
+              }
+            })
+          );
+        } catch {
+          /* mutation failure — nothing to sync */
+        }
+      },
     }),
 
     getBriefAiDetail: builder.query<BriefV3Detail, string>({

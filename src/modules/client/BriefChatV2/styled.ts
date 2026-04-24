@@ -5,9 +5,12 @@ export const ChatPanel = styled.div`
   flex: 1;
   width: 100%;
   min-width: 0;
+  min-height: 0;
+  height: 100%;
   display: flex;
   flex-direction: column;
   background: #ffffff;
+  overflow: hidden;
 `;
 
 export const ChatHeader = styled.div`
@@ -55,13 +58,14 @@ export const ProgressText = styled.span`
 `;
 
 export const MessagesArea = styled.div`
-  flex: 1;
+  flex: 1 1 auto;
+  min-height: 0;
   overflow-y: auto;
+  overscroll-behavior: contain;
   padding: 20px 28px;
   display: flex;
   flex-direction: column;
   gap: 16px;
-  scroll-behavior: smooth;
 `;
 
 export const MessageRow = styled.div<{ $isUser: boolean }>`

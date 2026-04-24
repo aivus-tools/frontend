@@ -34,7 +34,7 @@ const Tab = styled.button<{ $isActive: boolean }>`
 
 const BRIEF_TABS = [
   { key: 'brief', label: 'Brief', suffix: '' },
-  { key: 'comparison', label: 'Comparison', suffix: '/comparison' },
+  // { key: 'comparison', label: 'Comparison', suffix: '/comparison' },
 ];
 
 export const ClientNavbar: React.FC = () => {

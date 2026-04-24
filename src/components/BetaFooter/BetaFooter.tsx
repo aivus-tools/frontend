@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { styled } from 'styled-components';
 import { ExperimentOutlined, CloseOutlined } from '@ant-design/icons';
 import { t } from '@/lib/i18n';
@@ -86,31 +86,20 @@ const Title = styled.div`
   -webkit-text-fill-color: transparent;
 `;
 
-const DISMISS_STORAGE_KEY = 'aivus_beta_footer_dismissed';
-
 export const BetaFooter: React.FC<BetaFooterProps> = (props) => {
   const variant = props.variant ?? 'full';
-  const [dismissed, setDismissed] = useState<boolean>(() => {
-    if (typeof window === 'undefined') {
-      return false;
-    }
-    try {
-      return window.localStorage.getItem(DISMISS_STORAGE_KEY) === '1';
-    } catch {
-      return false;
-    }
-  });
+  const [mounted, setMounted] = useState(false);
+  const [dismissed, setDismissed] = useState(false);
 
-  if (dismissed) {
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  if (!mounted || dismissed) {
     return null;
   }
 
   const handleDismiss = () => {
-    try {
-      window.localStorage.setItem(DISMISS_STORAGE_KEY, '1');
-    } catch {
-      /* ignore storage errors */
-    }
     setDismissed(true);
   };
 

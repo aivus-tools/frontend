@@ -9,7 +9,7 @@ import { ComparisonTable } from '@/modules/client/ComparisonTable/ComparisonTabl
 import { FileUploadZone } from './components/FileUploadZone';
 import { BriefFinalPackage } from './BriefFinalPackage';
 import { BriefSettings } from './BriefSettings';
-import { BriefWorkspaceHeader, WorkspaceTab } from './components/BriefWorkspaceHeader';
+import { EditableBriefTitle } from './components/EditableBriefTitle';
 import { GeneratingOverlay, GeneratingSubtitle, GeneratingTitle, Spinner } from '@/modules/client/BriefChatV2/styled';
 import {
   useCreateBriefAiDraftMutation,
@@ -34,6 +34,7 @@ import {
   savePublicBriefToken,
 } from '@/services/client/publicBriefApi';
 import { BriefAttachment, BriefV3Detail, ChatMessageV3, ConversationStatus } from '@/types/briefAi.interface';
+import { BETA_FOOTER_HEIGHT } from '@/components/BetaFooter/BetaFooter';
 
 const POLL_INTERVAL_MS = 1500;
 const POLL_TIMEOUT_MS = 180000;
@@ -48,7 +49,7 @@ type Stage = 'start' | 'generating' | 'chat' | 'finalizing' | 'finalized' | 'com
 const OuterWrapper = styled.div`
   display: flex;
   flex-direction: column;
-  height: calc(100vh - 70px);
+  height: calc(100vh - 70px - ${BETA_FOOTER_HEIGHT}px);
   background: #f8f9fb;
 `;
 
@@ -131,6 +132,32 @@ const ChatWrapper = styled.div`
   box-shadow: 0 2px 12px rgba(0, 0, 0, 0.04);
 `;
 
+const FinalSplit = styled.div`
+  flex: 1;
+  display: flex;
+  min-height: 0;
+  overflow: hidden;
+`;
+
+const FinalDocsColumn = styled.div`
+  flex: 1 1 68%;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+`;
+
+const FinalChatColumn = styled.div`
+  flex: 0 0 32%;
+  min-width: 360px;
+  max-width: 480px;
+  display: flex;
+  flex-direction: column;
+  border-left: 1px solid #eef0f4;
+  background: #ffffff;
+  overflow: hidden;
+`;
+
 interface BriefEditorLayoutProps {
   mode: 'authenticated' | 'anonymous';
   briefId?: string | null;
@@ -172,8 +199,12 @@ export const BriefEditorLayout: React.FC<BriefEditorLayoutProps> = (props) => {
   const [deleteAttachAuth] = useDeleteBriefAiAttachmentMutation();
   const [sendFeedbackAuth] = useSendBriefAiFeedbackMutation();
   const [finalizeAuth] = useFinalizeBriefAiMutation();
-  const { data: authDetail, isFetching: isAuthDetailFetching } = useGetBriefAiDetailQuery(briefId ?? '', {
-    skip: !briefId || !isAuth || (stage !== 'chat' && stage !== 'settings'),
+  const {
+    data: authDetail,
+    isFetching: isAuthDetailFetching,
+    refetch: refetchAuthDetail,
+  } = useGetBriefAiDetailQuery(briefId ?? '', {
+    skip: !briefId || !isAuth || stage === 'start' || stage === 'generating',
     refetchOnMountOrArgChange: true,
   });
   const {
@@ -196,10 +227,8 @@ export const BriefEditorLayout: React.FC<BriefEditorLayoutProps> = (props) => {
   const [deleteAttachPublic] = useDeletePublicBriefAttachmentMutation();
   const { data: publicDetail } = useGetPublicBriefDetailQuery(
     { briefId: briefId ?? '', token: token ?? '' },
-    { skip: !briefId || !token || isAuth || stage !== 'chat' }
+    { skip: !briefId || !token || isAuth || stage === 'start' || stage === 'generating' }
   );
-
-  const userOverrodeStageRef = useRef(false);
 
   const hydrateFromDetail = useCallback((detail: BriefV3Detail | undefined) => {
     if (!detail) {
@@ -210,7 +239,7 @@ export const BriefEditorLayout: React.FC<BriefEditorLayoutProps> = (props) => {
     setTotalCostUsd(detail.totalCostUsd);
     setMessageCount(detail.messageCount);
     setShowCost(Boolean(detail.showCost));
-    if (detail.conversationStatus === 'finalized' && !userOverrodeStageRef.current) {
+    if (detail.conversationStatus === 'finalized') {
       setStage((prev) => (prev === 'finalized' ? prev : 'finalized'));
     }
   }, []);
@@ -338,6 +367,7 @@ export const BriefEditorLayout: React.FC<BriefEditorLayoutProps> = (props) => {
             setStage('finalized');
             if (isAuth) {
               refetchAuthFinal();
+              refetchAuthDetail();
             }
           } else if (response.status === 'failed') {
             stop();
@@ -354,7 +384,7 @@ export const BriefEditorLayout: React.FC<BriefEditorLayoutProps> = (props) => {
         }
       }, POLL_INTERVAL_MS);
     },
-    [fetchStatusAuth, fetchStatusPublic, isAuth, messageApi, refetchAuthFinal]
+    [fetchStatusAuth, fetchStatusPublic, isAuth, messageApi, refetchAuthDetail, refetchAuthFinal]
   );
 
   const ensureDraft = useCallback(async (): Promise<{
@@ -674,10 +704,10 @@ export const BriefEditorLayout: React.FC<BriefEditorLayoutProps> = (props) => {
           if (status.status === 'done') {
             session.cancelled = true;
             clearPolling();
-            userOverrodeStageRef.current = false;
             setStage('finalized');
             setIsRegenerating(false);
             refetchAuthFinal();
+            refetchAuthDetail();
           } else if (status.status === 'failed') {
             session.cancelled = true;
             clearPolling();
@@ -698,7 +728,7 @@ export const BriefEditorLayout: React.FC<BriefEditorLayoutProps> = (props) => {
       messageApi.error(t('BRIEF_V3_REGENERATE_FAILED'));
       setIsRegenerating(false);
     }
-  }, [briefId, fetchStatusAuth, finalizeAuth, isAuth, isRegenerating, messageApi, refetchAuthFinal]);
+  }, [briefId, fetchStatusAuth, finalizeAuth, isAuth, isRegenerating, messageApi, refetchAuthDetail, refetchAuthFinal]);
 
   const handleClaim = useCallback(() => {
     // Anonymous users can't finalize; tapping "register" should redirect to
@@ -710,40 +740,6 @@ export const BriefEditorLayout: React.FC<BriefEditorLayoutProps> = (props) => {
   const finalPackage = isAuth ? authFinalDocs : null;
   const messageLimit = isAuth ? MESSAGE_LIMIT_AUTH : MESSAGE_LIMIT_ANON;
   const maxAttachments = isAuth ? MAX_ATTACHMENTS_AUTH : MAX_ATTACHMENTS_ANON;
-
-  const docsEnabled = conversationStatus === 'finalized';
-  const settingsEnabled = isAuth && Boolean(briefId);
-  const comparisonEnabled = isAuth && docsEnabled;
-  const activeTab: WorkspaceTab =
-    stage === 'finalized' ? 'docs' : stage === 'comparison' ? 'comparison' : stage === 'settings' ? 'settings' : 'chat';
-  const handleSelectTab = useCallback(
-    (tab: WorkspaceTab) => {
-      userOverrodeStageRef.current = true;
-      if (tab === 'docs') {
-        if (!docsEnabled) {
-          return;
-        }
-        setStage('finalized');
-        return;
-      }
-      if (tab === 'comparison') {
-        if (!comparisonEnabled) {
-          return;
-        }
-        setStage('comparison');
-        return;
-      }
-      if (tab === 'settings') {
-        if (!settingsEnabled) {
-          return;
-        }
-        setStage('settings');
-        return;
-      }
-      setStage('chat');
-    },
-    [docsEnabled, comparisonEnabled, settingsEnabled]
-  );
 
   if (stage === 'start') {
     return (
@@ -797,17 +793,13 @@ export const BriefEditorLayout: React.FC<BriefEditorLayoutProps> = (props) => {
     );
   }
 
+  const pageTitleHeader =
+    isAuth && briefId ? <EditableBriefTitle briefId={briefId} title={authDetail?.title ?? ''} editable /> : null;
+
   if (stage === 'comparison' && briefId) {
     return (
       <OuterWrapper>
-        <BriefWorkspaceHeader
-          activeTab={activeTab}
-          conversationStatus={conversationStatus}
-          docsEnabled={docsEnabled}
-          comparisonEnabled={comparisonEnabled}
-          settingsEnabled={settingsEnabled}
-          onSelectTab={handleSelectTab}
-        />
+        {pageTitleHeader}
         <ComparisonTable briefId={briefId} />
       </OuterWrapper>
     );
@@ -816,14 +808,7 @@ export const BriefEditorLayout: React.FC<BriefEditorLayoutProps> = (props) => {
   if (stage === 'settings' && briefId && authDetail) {
     return (
       <OuterWrapper>
-        <BriefWorkspaceHeader
-          activeTab={activeTab}
-          conversationStatus={conversationStatus}
-          docsEnabled={docsEnabled}
-          comparisonEnabled={comparisonEnabled}
-          settingsEnabled={settingsEnabled}
-          onSelectTab={handleSelectTab}
-        />
+        {pageTitleHeader}
         <BriefSettings brief={authDetail} />
       </OuterWrapper>
     );
@@ -832,21 +817,43 @@ export const BriefEditorLayout: React.FC<BriefEditorLayoutProps> = (props) => {
   if (stage === 'finalized') {
     return (
       <OuterWrapper>
-        <BriefWorkspaceHeader
-          activeTab={activeTab}
-          conversationStatus={conversationStatus}
-          docsEnabled={docsEnabled}
-          comparisonEnabled={comparisonEnabled}
-          settingsEnabled={settingsEnabled}
-          onSelectTab={handleSelectTab}
-        />
+        {pageTitleHeader}
         {finalPackage ? (
-          <BriefFinalPackage
-            briefId={briefId!}
-            package={finalPackage}
-            onRegenerate={isAuth ? handleRegenerate : null}
-            isRegenerating={isRegenerating}
-          />
+          <FinalSplit>
+            <FinalDocsColumn>
+              <BriefFinalPackage
+                briefId={briefId!}
+                package={finalPackage}
+                onRegenerate={isAuth ? handleRegenerate : null}
+                isRegenerating={isRegenerating}
+              />
+            </FinalDocsColumn>
+            <FinalChatColumn>
+              <BriefChatPanel
+                briefId={briefId ?? undefined}
+                messages={messages}
+                conversationStatus={conversationStatus}
+                isLoading={isChatLoading}
+                messageLimit={messageLimit}
+                messageCount={messageCount}
+                totalCostUsd={totalCostUsd}
+                showCost={showCost}
+                pendingAttachments={pendingAttachments}
+                uploading={uploading}
+                maxAttachments={maxAttachments}
+                onUploadAttachment={handleUploadAttachment}
+                onDeleteAttachment={handleDeleteAttachment}
+                onSendMessage={handleSendMessage}
+                onFeedback={isAuth ? handleFeedback : null}
+                onFeedbackComment={isAuth ? handleFeedbackComment : null}
+                onFinalize={null}
+                onRegenerate={null}
+                isRegenerating={isRegenerating}
+                onShowPackage={null}
+                showRegistrationButton={false}
+              />
+            </FinalChatColumn>
+          </FinalSplit>
         ) : (
           <GeneratingOverlay>
             <Spinner />
@@ -884,14 +891,7 @@ export const BriefEditorLayout: React.FC<BriefEditorLayoutProps> = (props) => {
 
   return (
     <OuterWrapper>
-      <BriefWorkspaceHeader
-        activeTab={activeTab}
-        conversationStatus={conversationStatus}
-        docsEnabled={docsEnabled}
-        comparisonEnabled={comparisonEnabled}
-        settingsEnabled={settingsEnabled}
-        onSelectTab={handleSelectTab}
-      />
+      {pageTitleHeader}
       <ChatScreen>
         <ChatWrapper>
           <BriefChatPanel
@@ -912,9 +912,9 @@ export const BriefEditorLayout: React.FC<BriefEditorLayoutProps> = (props) => {
             onFeedback={isAuth ? handleFeedback : null}
             onFeedbackComment={isAuth ? handleFeedbackComment : null}
             onFinalize={isAuth ? handleFinalize : null}
-            onRegenerate={isAuth && docsEnabled ? handleRegenerate : null}
+            onRegenerate={isAuth && conversationStatus === 'finalized' ? handleRegenerate : null}
             isRegenerating={isRegenerating}
-            onShowPackage={isAuth && docsEnabled ? () => setStage('finalized') : null}
+            onShowPackage={isAuth && conversationStatus === 'finalized' ? () => setStage('finalized') : null}
             showRegistrationButton={showRegistrationButton}
             onRegisterClick={!isAuth ? handleClaim : undefined}
           />

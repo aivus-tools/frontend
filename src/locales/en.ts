@@ -485,6 +485,9 @@ export const EN_LOCALES = {
   SELECT_UNIT: 'Select unit',
   GENERAL: 'General',
   UNTITLED_BRIEF: 'Untitled Brief',
+  ALL_PROJECTS: 'All projects',
+  EDIT_BRIEF_TITLE: 'Edit brief title',
+  BRIEF_TITLE_RENAME_FAILED: 'Failed to rename the brief',
 
   // Public Offer - details
   NO_ESTIMATE_DETAILS: 'No estimate details available.',

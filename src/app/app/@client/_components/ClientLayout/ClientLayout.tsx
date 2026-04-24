@@ -1,7 +1,7 @@
 'use client';
 
 import { PropsWithChildren, useEffect, useRef } from 'react';
-import { useRouter } from 'next/navigation';
+import { useRouter, usePathname } from 'next/navigation';
 import { Layout } from 'antd';
 import Sider from 'antd/es/layout/Sider';
 import { useLayoutTheme } from '@/hooks/useLayoutTheme';
@@ -9,6 +9,7 @@ import { Profile } from '@/components/Profile/Profile';
 import { styled } from 'styled-components';
 import { ClientNavbar } from '../ClientNavbar/ClientNavbar';
 import { ClientSidebar } from '../ClientSidebar/ClientSidebar';
+import { ClientHomeLogo } from '../ClientHomeLogo/ClientHomeLogo';
 import { getPendingBrief, clearPendingBrief } from '@/helpers/pendingBrief';
 import { AppRoute } from '@/constants/appRoute';
 import { BetaFooter, BETA_FOOTER_HEIGHT } from '@/components/BetaFooter/BetaFooter';
@@ -33,6 +34,13 @@ const HeaderLayout = styled(Header)`
   gap: 16px;
 `;
 
+const HeaderLeft = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 24px;
+  min-width: 0;
+`;
+
 const ContentLayout = styled(Content)`
   box-shadow: inset 0 5px 16.5px -11px rgb(0 0 0 / 25%);
 `;
@@ -40,6 +48,8 @@ const ContentLayout = styled(Content)`
 const ClientLayout = ({ children }: PropsWithChildren) => {
   const theme = useLayoutTheme();
   const router = useRouter();
+  const pathname = usePathname();
+  const hideSider = !!pathname && /(^|\/)app\/brief\//.test(pathname);
   const checked = useRef(false);
 
   useEffect(() => {
@@ -55,13 +65,18 @@ const ClientLayout = ({ children }: PropsWithChildren) => {
   }, [router]);
 
   return (
-    <Layout hasSider>
-      <Sider style={siderStyle} width={250} theme={theme}>
-        <ClientSidebar theme={theme} />
-      </Sider>
+    <Layout hasSider={!hideSider}>
+      {!hideSider && (
+        <Sider style={siderStyle} width={250} theme={theme}>
+          <ClientSidebar theme={theme} />
+        </Sider>
+      )}
       <Layout>
         <HeaderLayout style={{ padding: '0 36px' }}>
-          <ClientNavbar />
+          <HeaderLeft>
+            {hideSider ? <ClientHomeLogo theme={theme} compact /> : null}
+            <ClientNavbar />
+          </HeaderLeft>
           <Profile />
         </HeaderLayout>
         <ContentLayout
