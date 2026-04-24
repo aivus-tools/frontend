@@ -19,7 +19,8 @@ const Wrapper = styled.div`
   display: flex;
   align-items: center;
   gap: 8px;
-  padding: 12px 24px 0;
+  padding: 12px 24px;
+  background: #ffffff;
   font-family: 'Montserrat', sans-serif;
   font-size: 16px;
 `;

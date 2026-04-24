@@ -73,10 +73,7 @@ const ClientLayout = ({ children }: PropsWithChildren) => {
       )}
       <Layout>
         <HeaderLayout style={{ padding: '0 36px' }}>
-          <HeaderLeft>
-            {hideSider ? <ClientHomeLogo theme={theme} compact /> : null}
-            <ClientNavbar />
-          </HeaderLeft>
+          <HeaderLeft>{hideSider ? <ClientHomeLogo theme={theme} compact /> : <ClientNavbar />}</HeaderLeft>
           <Profile />
         </HeaderLayout>
         <ContentLayout
