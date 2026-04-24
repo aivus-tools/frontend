@@ -667,10 +667,7 @@ export const BriefEditorLayout: React.FC<BriefEditorLayoutProps> = (props) => {
       return;
     }
     try {
-      const response = await finalizeAuth({
-        briefId,
-        documentLanguage: getLocale(),
-      }).unwrap();
+      const response = await finalizeAuth({ briefId }).unwrap();
       setStage('finalizing');
       pollFinalDocuments(briefId, response.taskId);
     } catch {
@@ -685,10 +682,7 @@ export const BriefEditorLayout: React.FC<BriefEditorLayoutProps> = (props) => {
     }
     setIsRegenerating(true);
     try {
-      const response = await finalizeAuth({
-        briefId,
-        documentLanguage: getLocale(),
-      }).unwrap();
+      const response = await finalizeAuth({ briefId }).unwrap();
       const started = Date.now();
       const session = { cancelled: false };
       clearPolling();

@@ -14,6 +14,8 @@ import { getPendingBrief, clearPendingBrief } from '@/helpers/pendingBrief';
 import { AppRoute } from '@/constants/appRoute';
 import { BetaFooter, BETA_FOOTER_HEIGHT } from '@/components/BetaFooter/BetaFooter';
 import { BetaFooterProvider, useBetaFooter } from '@/components/BetaFooter/BetaFooterContext';
+import { getLocale, resetLocaleCache } from '@/lib/i18n';
+import { useGetSettingsQuery } from '@/services/client/profileApi';
 
 const { Header, Content } = Layout;
 
@@ -62,6 +64,20 @@ const ClientLayoutInner = ({ children }: PropsWithChildren) => {
   const hideSider = !!pathname && /(^|\/)app\/brief\//.test(pathname);
   const checked = useRef(false);
   const { dismissed: footerDismissed } = useBetaFooter();
+  const { data: userSettings } = useGetSettingsQuery();
+
+  useEffect(() => {
+    if (!userSettings?.language) {
+      return;
+    }
+    const settingsLocale = userSettings.language === 'ru' ? 'ru' : 'en';
+    if (settingsLocale === getLocale()) {
+      return;
+    }
+    document.cookie = `locale=${settingsLocale};path=/;max-age=31536000`;
+    resetLocaleCache();
+    window.location.reload();
+  }, [userSettings?.language]);
 
   useEffect(() => {
     if (checked.current) {
