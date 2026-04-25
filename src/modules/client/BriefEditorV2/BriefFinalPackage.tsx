@@ -575,18 +575,18 @@ export const BriefFinalPackage: React.FC<BriefFinalPackageProps> = (props) => {
         </TabsList>
         <HeaderActions>
           <SaveStatus $state={saveState}>{saveLabel}</SaveStatus>
-          {onRegenerate ? (
+          {/* {onRegenerate ? (
             <Button icon={<ReloadOutlined />} onClick={handleRegenerateClick} loading={Boolean(isRegenerating)}>
               {t('BRIEF_V3_REGENERATE_PACKAGE')}
             </Button>
-          ) : null}
+          ) : null} */}
           <ShareControl briefId={briefId} />
           <Button icon={<CopyOutlined />} onClick={() => editorRef.current?.copy('text')} disabled={!activeDoc}>
             {t('BRIEF_V3_COPY_TEXT')}
           </Button>
-          <Button icon={<CopyOutlined />} onClick={() => editorRef.current?.copy('html')} disabled={!activeDoc}>
+          {/* <Button icon={<CopyOutlined />} onClick={() => editorRef.current?.copy('html')} disabled={!activeDoc}>
             {t('BRIEF_V3_COPY_HTML')}
-          </Button>
+          </Button> */}
           <Button
             type='primary'
             icon={<DownloadOutlined />}
