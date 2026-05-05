@@ -20,6 +20,8 @@ interface PreVendorsBlockProps {
   briefTitle: string;
   shareUrl: string;
   sendDisabled: boolean;
+  disabledPopoverContent?: React.ReactNode;
+  disabledPopoverTitle?: React.ReactNode;
 }
 
 export const PreVendorsBlock = forwardRef<HTMLElement, PreVendorsBlockProps>((props, ref) => {
@@ -61,6 +63,8 @@ export const PreVendorsBlock = forwardRef<HTMLElement, PreVendorsBlockProps>((pr
             briefTitle={props.briefTitle}
             shareUrl={props.shareUrl}
             sendDisabled={props.sendDisabled}
+            disabledPopoverContent={props.disabledPopoverContent}
+            disabledPopoverTitle={props.disabledPopoverTitle}
           />
         ))}
       </Grid>

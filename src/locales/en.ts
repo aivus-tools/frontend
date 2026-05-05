@@ -634,5 +634,6 @@ export const EN_LOCALES = {
   PRE_VENDORS_PORTFOLIO_LABEL: 'Portfolio',
   PRE_VENDORS_SEND_BRIEF_BUTTON: 'Send brief',
   PRE_VENDORS_SEND_BRIEF_DISABLED_HINT: 'Enable the public brief link first to send it by email.',
+  PRE_VENDORS_SHARE_REQUIRED_NOTICE: 'To send the brief to a vendor, the public link must be enabled.',
   PRE_VENDORS_EMAIL_BODY: (url: string) => `Hello,\n\nWe would like to share our project brief with you:\n${url}\n`,
 };

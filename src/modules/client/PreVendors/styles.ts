@@ -296,7 +296,6 @@ export const SendBriefButton = styled.a<{ $disabled?: boolean }>`
   width: 100%;
   display: block;
   cursor: ${(x) => (x.$disabled ? 'not-allowed' : 'pointer')};
-  pointer-events: ${(x) => (x.$disabled ? 'none' : 'auto')};
 
   &:hover {
     background: ${(x) => (x.$disabled ? '#c5c4c8' : '#6536e0')};

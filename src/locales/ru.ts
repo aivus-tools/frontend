@@ -635,5 +635,6 @@ export const RU_LOCALES = {
   PRE_VENDORS_PORTFOLIO_LABEL: 'Портфолио',
   PRE_VENDORS_SEND_BRIEF_BUTTON: 'Отправить бриф',
   PRE_VENDORS_SEND_BRIEF_DISABLED_HINT: 'Сначала включи публичную ссылку на бриф, чтобы отправить письмо.',
+  PRE_VENDORS_SHARE_REQUIRED_NOTICE: 'Чтобы отправить бриф вендору, нужна активная публичная ссылка.',
   PRE_VENDORS_EMAIL_BODY: (url: string) => `Здравствуйте,\n\nДелимся с вами брифом проекта:\n${url}\n`,
 };

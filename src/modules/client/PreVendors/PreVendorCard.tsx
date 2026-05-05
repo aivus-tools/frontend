@@ -1,5 +1,5 @@
 import React from 'react';
-import { Tooltip } from 'antd';
+import { Popover, Tooltip } from 'antd';
 import { t } from '@/lib/i18n';
 import { PreVendor } from '@/types/preVendor.interface';
 import {
@@ -26,6 +26,8 @@ interface PreVendorCardProps {
   briefTitle: string;
   shareUrl: string;
   sendDisabled: boolean;
+  disabledPopoverContent?: React.ReactNode;
+  disabledPopoverTitle?: React.ReactNode;
 }
 
 const LocationIcon: React.FC = () => {
@@ -51,12 +53,31 @@ export const PreVendorCard: React.FC<PreVendorCardProps> = (props) => {
     <SendBriefButton
       $disabled={props.sendDisabled}
       href={props.sendDisabled ? undefined : mailto}
-      onClick={props.sendDisabled ? (event) => event.preventDefault() : undefined}
+      onClick={props.sendDisabled && !props.disabledPopoverContent ? (event) => event.preventDefault() : undefined}
       aria-disabled={props.sendDisabled}
     >
       {t('PRE_VENDORS_SEND_BRIEF_BUTTON')}
     </SendBriefButton>
   );
+
+  const renderSendButton = () => {
+    if (!props.sendDisabled) {
+      return sendButton;
+    }
+    if (props.disabledPopoverContent) {
+      return (
+        <Popover
+          content={props.disabledPopoverContent}
+          title={props.disabledPopoverTitle}
+          trigger='click'
+          placement='top'
+        >
+          {sendButton}
+        </Popover>
+      );
+    }
+    return <Tooltip title={t('PRE_VENDORS_SEND_BRIEF_DISABLED_HINT')}>{sendButton}</Tooltip>;
+  };
 
   return (
     <Card>
@@ -86,11 +107,7 @@ export const PreVendorCard: React.FC<PreVendorCardProps> = (props) => {
       </CardBody>
 
       <CardFooter>
-        {props.sendDisabled ? (
-          <Tooltip title={t('PRE_VENDORS_SEND_BRIEF_DISABLED_HINT')}>{sendButton}</Tooltip>
-        ) : (
-          sendButton
-        )}
+        {renderSendButton()}
         {x.address ? (
           <CardAddress>
             <LocationIcon />

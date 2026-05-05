@@ -432,11 +432,15 @@ const EditorToolbar: React.FC<{ editor: Editor }> = ({ editor }) => (
   </Toolbar>
 );
 
-const ShareControl: React.FC<{ briefId: string }> = ({ briefId }) => {
+interface ShareControlPanelProps {
+  briefId: string;
+  header?: React.ReactNode;
+}
+
+const ShareControlPanel: React.FC<ShareControlPanelProps> = (props) => {
+  const { briefId, header } = props;
   const { message: messageApi } = App.useApp();
-  const { data: share, isFetching } = useGetBriefAiShareQuery(briefId, {
-    refetchOnMountOrArgChange: true,
-  });
+  const { data: share } = useGetBriefAiShareQuery(briefId);
   const [createShare, { isLoading: isCreating }] = useCreateBriefAiShareMutation();
   const [updateShare, { isLoading: isUpdating }] = useUpdateBriefAiShareMutation();
 
@@ -471,8 +475,9 @@ const ShareControl: React.FC<{ briefId: string }> = ({ briefId }) => {
     ? `${typeof window !== 'undefined' ? window.location.origin : ''}${AppRoute.SHARED_BRIEF(share.token)}`
     : '';
 
-  const content = (
+  return (
     <div style={{ width: 320, display: 'flex', flexDirection: 'column', gap: 10 }}>
+      {header}
       <div style={{ fontSize: 12, color: '#6b7280' }}>{t('BRIEF_V3_SHARE_HINT')}</div>
 
       {!share ? (
@@ -510,9 +515,20 @@ const ShareControl: React.FC<{ briefId: string }> = ({ briefId }) => {
       )}
     </div>
   );
+};
+
+const ShareControl: React.FC<{ briefId: string }> = ({ briefId }) => {
+  const { isFetching } = useGetBriefAiShareQuery(briefId, {
+    refetchOnMountOrArgChange: true,
+  });
 
   return (
-    <Popover content={content} title={t('BRIEF_V3_SHARE_TITLE')} trigger='click' placement='bottomRight'>
+    <Popover
+      content={<ShareControlPanel briefId={briefId} />}
+      title={t('BRIEF_V3_SHARE_TITLE')}
+      trigger='click'
+      placement='bottomRight'
+    >
       <Button icon={<ShareAltOutlined />} loading={isFetching}>
         {t('BRIEF_V3_SHARE')}
       </Button>
@@ -654,6 +670,17 @@ export const BriefFinalPackage: React.FC<BriefFinalPackageProps> = (props) => {
           briefTitle={briefTitle}
           shareUrl={shareUrl}
           sendDisabled={sendDisabled}
+          disabledPopoverTitle={t('BRIEF_V3_SHARE_TITLE')}
+          disabledPopoverContent={
+            <ShareControlPanel
+              briefId={briefId}
+              header={
+                <div style={{ fontSize: 13, color: '#dc2626', fontWeight: 600 }}>
+                  {t('PRE_VENDORS_SHARE_REQUIRED_NOTICE')}
+                </div>
+              }
+            />
+          }
         />
       ) : null}
     </OuterScroll>
