@@ -109,4 +109,6 @@ export const ApiRoute = {
     `/service/public/briefs/ai/${briefId}/attachments/${attachmentId}`,
   PUBLIC_BRIEF_AI_DETAIL: (briefId: string) => `/service/public/briefs/ai/${briefId}`,
   PUBLIC_BRIEF_AI_CLAIM: (briefId: string) => `/service/public/briefs/ai/${briefId}/claim`,
+  // Pre-Vendors
+  PRE_VENDORS: '/service/pre-vendors',
 } as const;

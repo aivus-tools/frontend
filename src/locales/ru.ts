@@ -626,4 +626,14 @@ export const RU_LOCALES = {
   BRIEF_V3_SHARE_COPIED: 'Ссылка скопирована',
   BRIEF_V3_SHARED_HEADER: 'Публичный бриф',
   SHARED_BRIEF_NOT_FOUND: 'Эта ссылка больше не активна.',
+  PRE_VENDORS_PICK_VENDOR_BUTTON: 'Выбрать подрядчика',
+  PRE_VENDORS_BLOCK_TITLE: 'Выберите подрядчика',
+  PRE_VENDORS_RATING_HEADING: 'Рейтинг видеопродакшнов и агентств видеосъемки 2025',
+  PRE_VENDORS_RATING_DESCRIPTION:
+    'В рейтинге представлены проверенные компании, специализирующиеся на съемке видео и решение коммуникационных задач. Все участники подтвердили свою специализацию и опыт. Оценка компаний основана на глубоком анализе их проектов, услуг, отраслевой экспертизы и достижений за 2023-2024 гг. (см. <a>методику</a>).',
+  PRE_VENDORS_METHODOLOGY_URL: 'https://ratingruneta.ru/video/#methodology',
+  PRE_VENDORS_PORTFOLIO_LABEL: 'Портфолио',
+  PRE_VENDORS_SEND_BRIEF_BUTTON: 'Отправить бриф',
+  PRE_VENDORS_SEND_BRIEF_DISABLED_HINT: 'Сначала включи публичную ссылку на бриф, чтобы отправить письмо.',
+  PRE_VENDORS_EMAIL_BODY: (url: string) => `Здравствуйте,\n\nДелимся с вами брифом проекта:\n${url}\n`,
 };

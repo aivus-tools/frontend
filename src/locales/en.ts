@@ -625,4 +625,14 @@ export const EN_LOCALES = {
   BRIEF_V3_SHARE_COPIED: 'Link copied',
   BRIEF_V3_SHARED_HEADER: 'Shared brief',
   SHARED_BRIEF_NOT_FOUND: 'This link is no longer active.',
+  PRE_VENDORS_PICK_VENDOR_BUTTON: 'Pick a vendor',
+  PRE_VENDORS_BLOCK_TITLE: 'Pick a vendor',
+  PRE_VENDORS_RATING_HEADING: 'Russian video production and shooting agencies rating 2025',
+  PRE_VENDORS_RATING_DESCRIPTION:
+    'The rating features verified companies specializing in video production and communications. All participants confirmed their expertise and experience. Companies are evaluated through a deep analysis of their projects, services, industry expertise and achievements during 2023-2024 (see <a>methodology</a>).',
+  PRE_VENDORS_METHODOLOGY_URL: 'https://ratingruneta.ru/video/#methodology',
+  PRE_VENDORS_PORTFOLIO_LABEL: 'Portfolio',
+  PRE_VENDORS_SEND_BRIEF_BUTTON: 'Send brief',
+  PRE_VENDORS_SEND_BRIEF_DISABLED_HINT: 'Enable the public brief link first to send it by email.',
+  PRE_VENDORS_EMAIL_BODY: (url: string) => `Hello,\n\nWe would like to share our project brief with you:\n${url}\n`,
 };

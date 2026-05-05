@@ -12,14 +12,18 @@ import Placeholder from '@tiptap/extension-placeholder';
 import { ApiRoute } from '@/constants/apiRoute';
 import { AppRoute } from '@/constants/appRoute';
 import { downloadPdf } from '@/helpers/downloadPdf';
-import { t } from '@/lib/i18n';
+import { getLocale, t } from '@/lib/i18n';
 import {
   useCreateBriefAiShareMutation,
+  useGetBriefAiDetailQuery,
   useGetBriefAiShareQuery,
   useUpdateBriefAiFinalDocumentMutation,
   useUpdateBriefAiShareMutation,
 } from '@/services/client/briefAiApi';
+import { useGetPreVendorsQuery } from '@/services/client/preVendorsApi';
 import { BriefFinalDocument, BriefFinalPackage as BriefFinalPackageType } from '@/types/briefAi.interface';
+import { PreVendorLanguage } from '@/types/preVendor.interface';
+import { PickVendorButton, PreVendorsBlock } from '@/modules/client/PreVendors';
 
 const AUTOSAVE_DEBOUNCE_MS = 1200;
 
@@ -30,11 +34,20 @@ interface DocumentEditorHandle {
   download: () => Promise<void>;
 }
 
-const Wrapper = styled.div`
+const OuterScroll = styled.div`
   flex: 1;
   display: flex;
   flex-direction: column;
   min-height: 0;
+  overflow-y: auto;
+  background: #f8f9fb;
+`;
+
+const Wrapper = styled.div`
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  min-height: 100%;
   overflow: hidden;
   background: #f8f9fb;
 `;
@@ -528,6 +541,27 @@ export const BriefFinalPackage: React.FC<BriefFinalPackageProps> = (props) => {
   const [activeKey, setActiveKey] = useState<'production_brief' | 'vendor_email'>('production_brief');
   const [saveState, setSaveState] = useState<SaveState>('idle');
   const editorRef = useRef<DocumentEditorHandle | null>(null);
+  const preVendorsRef = useRef<HTMLElement | null>(null);
+
+  const { data: briefDetail } = useGetBriefAiDetailQuery(briefId);
+  const { data: shareInfo } = useGetBriefAiShareQuery(briefId);
+
+  const preVendorsLanguage: PreVendorLanguage = getLocale() === 'ru' ? 'ru' : 'en';
+
+  const { data: preVendorsResponse } = useGetPreVendorsQuery({ language: preVendorsLanguage });
+  const preVendors = preVendorsResponse?.preVendors ?? [];
+  const hasPreVendors = preVendors.length > 0;
+
+  const shareUrl =
+    shareInfo && typeof window !== 'undefined'
+      ? `${window.location.origin}${AppRoute.SHARED_BRIEF(shareInfo.token)}`
+      : '';
+  const sendDisabled = !shareInfo?.isActive;
+  const briefTitle = briefDetail?.title ?? '';
+
+  const handlePickVendor = () => {
+    preVendorsRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  };
 
   const activeTab = tabs.find((x) => x.key === activeKey) ?? tabs[0];
   const activeDoc = activeTab.document;
@@ -564,51 +598,64 @@ export const BriefFinalPackage: React.FC<BriefFinalPackageProps> = (props) => {
           : '';
 
   return (
-    <Wrapper>
-      <TabsHeader>
-        <TabsList>
-          {tabs.map((tab) => (
-            <TabButton key={tab.key} $active={tab.key === activeKey} onClick={() => handleSelectTab(tab.key)}>
-              {tab.label}
-            </TabButton>
-          ))}
-        </TabsList>
-        <HeaderActions>
-          <SaveStatus $state={saveState}>{saveLabel}</SaveStatus>
-          {/* {onRegenerate ? (
-            <Button icon={<ReloadOutlined />} onClick={handleRegenerateClick} loading={Boolean(isRegenerating)}>
-              {t('BRIEF_V3_REGENERATE_PACKAGE')}
+    <OuterScroll>
+      <Wrapper>
+        <TabsHeader>
+          <TabsList>
+            {tabs.map((tab) => (
+              <TabButton key={tab.key} $active={tab.key === activeKey} onClick={() => handleSelectTab(tab.key)}>
+                {tab.label}
+              </TabButton>
+            ))}
+          </TabsList>
+          <HeaderActions>
+            <SaveStatus $state={saveState}>{saveLabel}</SaveStatus>
+            {/* {onRegenerate ? (
+              <Button icon={<ReloadOutlined />} onClick={handleRegenerateClick} loading={Boolean(isRegenerating)}>
+                {t('BRIEF_V3_REGENERATE_PACKAGE')}
+              </Button>
+            ) : null} */}
+            {hasPreVendors ? <PickVendorButton onClick={handlePickVendor} /> : null}
+            <ShareControl briefId={briefId} />
+            {/* <Button icon={<CopyOutlined />} onClick={() => editorRef.current?.copy('text')} disabled={!activeDoc}>
+              {t('BRIEF_V3_COPY_TEXT')}
             </Button>
-          ) : null} */}
-          <ShareControl briefId={briefId} />
-          <Button icon={<CopyOutlined />} onClick={() => editorRef.current?.copy('text')} disabled={!activeDoc}>
-            {t('BRIEF_V3_COPY_TEXT')}
-          </Button>
-          {/* <Button icon={<CopyOutlined />} onClick={() => editorRef.current?.copy('html')} disabled={!activeDoc}>
-            {t('BRIEF_V3_COPY_HTML')}
-          </Button> */}
-          <Button
-            type='primary'
-            icon={<DownloadOutlined />}
-            onClick={() => editorRef.current?.download()}
-            disabled={!activeDoc}
-          >
-            {t('BRIEF_V3_DOWNLOAD_PDF')}
-          </Button>
-        </HeaderActions>
-      </TabsHeader>
+            <Button icon={<CopyOutlined />} onClick={() => editorRef.current?.copy('html')} disabled={!activeDoc}>
+              {t('BRIEF_V3_COPY_HTML')}
+            </Button> */}
+            <Button
+              type='primary'
+              icon={<DownloadOutlined />}
+              onClick={() => editorRef.current?.download()}
+              disabled={!activeDoc}
+            >
+              {t('BRIEF_V3_DOWNLOAD_PDF')}
+            </Button>
+          </HeaderActions>
+        </TabsHeader>
 
-      {activeDoc ? (
-        <DocumentEditor
-          key={activeDoc.id}
-          ref={editorRef}
-          briefId={briefId}
-          document={activeDoc}
-          onSaveStateChange={setSaveState}
+        {activeDoc ? (
+          <DocumentEditor
+            key={activeDoc.id}
+            ref={editorRef}
+            briefId={briefId}
+            document={activeDoc}
+            onSaveStateChange={setSaveState}
+          />
+        ) : (
+          <div style={{ color: '#99a1b7', padding: 24 }}>{t('BRIEF_V3_DOCUMENT_MISSING')}</div>
+        )}
+      </Wrapper>
+
+      {hasPreVendors ? (
+        <PreVendorsBlock
+          ref={preVendorsRef}
+          preVendors={preVendors}
+          briefTitle={briefTitle}
+          shareUrl={shareUrl}
+          sendDisabled={sendDisabled}
         />
-      ) : (
-        <div style={{ color: '#99a1b7', padding: 24 }}>{t('BRIEF_V3_DOCUMENT_MISSING')}</div>
-      )}
-    </Wrapper>
+      ) : null}
+    </OuterScroll>
   );
 };
