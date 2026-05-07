@@ -14,6 +14,7 @@ import {
 import { useSession } from 'next-auth/react';
 import ReactMarkdown from 'react-markdown';
 import { LLMTraceDrawer } from './LLMTraceDrawer';
+import { VoiceRecorderButton } from './VoiceRecorderButton';
 import { FileUploadZone } from '@/modules/client/BriefEditorV2/components/FileUploadZone';
 import { t } from '@/lib/i18n';
 import { BriefAttachment, ChatMessageV3, ConversationStatus } from '@/types/briefAi.interface';
@@ -46,6 +47,8 @@ const TextArea = Input.TextArea;
 
 interface BriefChatPanelProps {
   briefId?: string;
+  isPublic: boolean;
+  publicToken: string | null;
   messages: ChatMessageV3[];
   conversationStatus: ConversationStatus;
   isLoading: boolean;
@@ -123,6 +126,7 @@ export const BriefChatPanel: React.FC<BriefChatPanelProps> = (props) => {
   } | null>(null);
   const [showAttachBox, setShowAttachBox] = useState(false);
   const [isDragging, setIsDragging] = useState(false);
+  const [isVoiceBusy, setIsVoiceBusy] = useState(false);
 
   const messagesAreaRef = useRef<HTMLDivElement>(null);
   const stickToBottomRef = useRef(true);
@@ -149,7 +153,14 @@ export const BriefChatPanel: React.FC<BriefChatPanelProps> = (props) => {
   const pendingIds = props.pendingAttachments.map((x) => x.id);
 
   const limitReached = props.messageCount >= props.messageLimit;
-  const canSend = draft.trim().length > 0 && !props.isLoading && !props.uploading && !limitReached;
+  const canSend = draft.trim().length > 0 && !props.isLoading && !props.uploading && !limitReached && !isVoiceBusy;
+
+  const appendToDraft = useCallback((text: string) => {
+    if (!text) {
+      return;
+    }
+    setDraft((prev) => (prev.trim().length > 0 ? `${prev.trim()} ${text}` : text));
+  }, []);
 
   const handleSend = useCallback(() => {
     if (!canSend) {
@@ -366,8 +377,18 @@ export const BriefChatPanel: React.FC<BriefChatPanelProps> = (props) => {
             onKeyDown={handleKeyDown}
             placeholder={t('BRIEF_V3_CHAT_PLACEHOLDER')}
             autoSize={{ minRows: 2, maxRows: 6 }}
-            disabled={limitReached || props.isLoading}
+            disabled={limitReached || props.isLoading || isVoiceBusy}
           />
+          {props.briefId ? (
+            <VoiceRecorderButton
+              briefId={props.briefId}
+              isPublic={props.isPublic}
+              publicToken={props.publicToken}
+              disabled={limitReached || props.isLoading}
+              onTranscript={appendToDraft}
+              onBusyChange={setIsVoiceBusy}
+            />
+          ) : null}
           <Button type='primary' icon={<SendOutlined />} disabled={!canSend} onClick={handleSend}>
             {t('SEND')}
           </Button>

@@ -16,6 +16,26 @@ import {
   LLMMessageTraceResponse,
 } from '@/types/briefAi.interface';
 
+export const guessAudioExtension = (mimeType: string): string => {
+  const base = (mimeType || '').split(';')[0].trim().toLowerCase();
+  if (base === 'audio/webm') {
+    return 'webm';
+  }
+  if (base === 'audio/ogg') {
+    return 'ogg';
+  }
+  if (base === 'audio/mp4' || base === 'audio/mp4a-latm' || base === 'audio/x-m4a') {
+    return 'm4a';
+  }
+  if (base === 'audio/aac') {
+    return 'aac';
+  }
+  if (base === 'audio/mpeg') {
+    return 'mp3';
+  }
+  return 'bin';
+};
+
 export const briefAiApi = createApi({
   reducerPath: 'briefAiApi',
   baseQuery: fetchBaseQuery({ baseUrl: '' }),
@@ -111,6 +131,25 @@ export const briefAiApi = createApi({
         url: ApiRoute.BRIEF_AI_ATTACHMENT_DELETE(args.briefId, args.attachmentId),
         method: 'DELETE',
       }),
+    }),
+
+    transcribeBriefAi: builder.mutation<
+      { text: string; language: string; model: string },
+      { briefId: string; audio: Blob; mimeType: string; language?: string }
+    >({
+      query: (args) => {
+        const formData = new FormData();
+        const filename = `voice.${guessAudioExtension(args.mimeType)}`;
+        formData.append('audio', args.audio, filename);
+        if (args.language) {
+          formData.append('language', args.language);
+        }
+        return {
+          url: ApiRoute.BRIEF_AI_TRANSCRIBE(args.briefId),
+          method: 'POST',
+          body: formData,
+        };
+      },
     }),
 
     sendBriefAiFeedback: builder.mutation<
@@ -289,6 +328,7 @@ export const {
   useGetBriefAiDetailQuery,
   useUploadBriefAiAttachmentMutation,
   useDeleteBriefAiAttachmentMutation,
+  useTranscribeBriefAiMutation,
   useSendBriefAiFeedbackMutation,
   useLazyGetBriefAiMessageTraceQuery,
   useFinalizeBriefAiMutation,

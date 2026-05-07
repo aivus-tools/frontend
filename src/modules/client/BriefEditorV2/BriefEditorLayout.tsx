@@ -7,6 +7,7 @@ import { App, Button } from 'antd';
 import { useAppDispatch } from '@/store/hooks';
 import { t, getLocale } from '@/lib/i18n';
 import { BriefChatPanel } from '@/modules/client/BriefChatV2/BriefChatPanel';
+import { VoiceRecorderButton } from '@/modules/client/BriefChatV2/VoiceRecorderButton';
 import { ComparisonTable } from '@/modules/client/ComparisonTable/ComparisonTable';
 import { FileUploadZone } from './components/FileUploadZone';
 import { BriefFinalPackage } from './BriefFinalPackage';
@@ -113,7 +114,22 @@ const StartTextarea = styled.textarea`
 
 const StartActions = styled.div`
   display: flex;
-  justify-content: flex-end;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
+`;
+
+const StartVoiceGroup = styled.div`
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+`;
+
+const StartVoiceHint = styled.span`
+  font-family: 'Montserrat', sans-serif;
+  font-size: 12px;
+  color: #99a1b7;
 `;
 
 const ChatScreen = styled.div`
@@ -794,6 +810,20 @@ export const BriefEditorLayout: React.FC<BriefEditorLayoutProps> = (props) => {
               onDelete={handleDeleteAttachment}
             />
             <StartActions>
+              <StartVoiceGroup>
+                <VoiceRecorderButton
+                  briefId={briefId}
+                  isPublic={!isAuth}
+                  publicToken={token ?? null}
+                  disabled={isStarting || uploading}
+                  onTranscript={(text) =>
+                    setStartText((prev) => (prev.trim().length > 0 ? `${prev.trim()} ${text}` : text))
+                  }
+                  onEnsureBrief={ensureDraft}
+                  compact
+                />
+                <StartVoiceHint>{t('BRIEF_V3_VOICE_START_HINT')}</StartVoiceHint>
+              </StartVoiceGroup>
               <Button
                 type='primary'
                 size='large'
@@ -866,6 +896,8 @@ export const BriefEditorLayout: React.FC<BriefEditorLayoutProps> = (props) => {
             <FinalChatColumn>
               <BriefChatPanel
                 briefId={briefId ?? undefined}
+                isPublic={!isAuth}
+                publicToken={token ?? null}
                 messages={messages}
                 conversationStatus={conversationStatus}
                 isLoading={isChatLoading}
@@ -931,6 +963,8 @@ export const BriefEditorLayout: React.FC<BriefEditorLayoutProps> = (props) => {
         <ChatWrapper>
           <BriefChatPanel
             briefId={briefId ?? undefined}
+            isPublic={!isAuth}
+            publicToken={token ?? null}
             messages={messages}
             conversationStatus={conversationStatus}
             isLoading={isChatLoading}

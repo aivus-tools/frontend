@@ -1,5 +1,6 @@
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
 import { ApiRoute } from '@/constants/apiRoute';
+import { guessAudioExtension } from '@/services/client/briefAiApi';
 import {
   BriefAttachment,
   BriefV3,
@@ -164,6 +165,26 @@ export const publicBriefApi = createApi({
       }),
     }),
 
+    transcribePublicBrief: builder.mutation<
+      { text: string; language: string; model: string },
+      { briefId: string; token: string; audio: Blob; mimeType: string; language?: string }
+    >({
+      query: (args) => {
+        const formData = new FormData();
+        const filename = `voice.${guessAudioExtension(args.mimeType)}`;
+        formData.append('audio', args.audio, filename);
+        if (args.language) {
+          formData.append('language', args.language);
+        }
+        return {
+          url: ApiRoute.PUBLIC_BRIEF_AI_TRANSCRIBE(args.briefId),
+          method: 'POST',
+          body: formData,
+          headers: { 'X-Brief-Token': args.token },
+        };
+      },
+    }),
+
     getPublicBriefDetail: builder.query<BriefV3Detail, { briefId: string; token: string }>({
       query: (args) => ({
         url: ApiRoute.PUBLIC_BRIEF_AI_DETAIL(args.briefId),
@@ -189,6 +210,7 @@ export const {
   useSendPublicBriefChatMutation,
   useUploadPublicBriefAttachmentMutation,
   useDeletePublicBriefAttachmentMutation,
+  useTranscribePublicBriefMutation,
   useGetPublicBriefDetailQuery,
   useLazyGetPublicBriefDetailQuery,
   useClaimPublicBriefMutation,

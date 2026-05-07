@@ -315,6 +315,134 @@ export const ChatInputWrapper = styled.div`
   }
 `;
 
+const voicePulse = keyframes`
+  0% { box-shadow: 0 0 0 0 rgba(220, 38, 38, 0.55); }
+  70% { box-shadow: 0 0 0 12px rgba(220, 38, 38, 0); }
+  100% { box-shadow: 0 0 0 0 rgba(220, 38, 38, 0); }
+`;
+
+export const VoiceButton = styled.button<{
+  $variant: 'idle' | 'recording' | 'processing' | 'error';
+  $compact?: boolean;
+}>`
+  align-self: stretch;
+  min-width: ${(x) => (x.$compact ? 44 : 56)}px;
+  min-height: ${(x) => (x.$compact ? 44 : 56)}px;
+  width: ${(x) => (x.$compact ? 44 : 56)}px;
+  border: none;
+  border-radius: ${(x) => (x.$compact ? 10 : 12)}px;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
+  transition:
+    background 0.15s ease,
+    color 0.15s ease;
+  position: relative;
+  background: ${(x) =>
+    x.$variant === 'recording'
+      ? '#dc2626'
+      : x.$variant === 'processing'
+        ? '#eef0f4'
+        : x.$variant === 'error'
+          ? '#fee2e2'
+          : '#eef0f4'};
+  color: ${(x) => (x.$variant === 'recording' ? '#ffffff' : x.$variant === 'error' ? '#dc2626' : '#4b5675')};
+  animation: ${(x) => (x.$variant === 'recording' ? voicePulse : 'none')} 1.6s infinite;
+
+  &:hover:not(:disabled) {
+    background: ${(x) =>
+      x.$variant === 'recording'
+        ? '#b91c1c'
+        : x.$variant === 'idle'
+          ? '#e1e5ec'
+          : x.$variant === 'error'
+            ? '#fecaca'
+            : '#eef0f4'};
+  }
+
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+
+  @media (max-width: 480px) {
+    min-width: 44px;
+    min-height: 44px;
+    width: 44px;
+    border-radius: 10px;
+  }
+`;
+
+export const VoicePanel = styled.div`
+  position: absolute;
+  left: 16px;
+  right: 16px;
+  bottom: calc(100% + 8px);
+  background: #ffffff;
+  border: 1px solid #eef0f4;
+  border-radius: 12px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
+  padding: 12px 14px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-family: 'Montserrat', sans-serif;
+  z-index: 30;
+`;
+
+export const VoiceWave = styled.div`
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 3px;
+  height: 32px;
+  min-width: 0;
+`;
+
+export const VoiceWaveBar = styled.span<{ $level: number }>`
+  width: 3px;
+  background: #2288ff;
+  border-radius: 2px;
+  height: ${(x) => Math.max(4, Math.min(28, x.$level * 28))}px;
+  transition: height 0.06s linear;
+`;
+
+export const VoiceTimer = styled.span`
+  font-family: 'Montserrat', sans-serif;
+  font-variant-numeric: tabular-nums;
+  font-size: 13px;
+  font-weight: 600;
+  color: #4b5675;
+  min-width: 38px;
+  text-align: center;
+`;
+
+export const VoiceIconBtn = styled.button<{ $tone: 'stop' | 'cancel' }>`
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  border: none;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+  background: ${(x) => (x.$tone === 'stop' ? '#dc2626' : '#eef0f4')};
+  color: ${(x) => (x.$tone === 'stop' ? '#ffffff' : '#4b5675')};
+
+  &:hover {
+    background: ${(x) => (x.$tone === 'stop' ? '#b91c1c' : '#e1e5ec')};
+  }
+
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+`;
+
 export const ChatFooterRow = styled.div`
   display: flex;
   align-items: center;

@@ -83,6 +83,7 @@ export const ApiRoute = {
   BRIEF_AI_START: (briefId: string) => `/service/client/briefs/ai/${briefId}/start`,
   BRIEF_AI_STATUS: (briefId: string) => `/service/client/briefs/ai/${briefId}/status`,
   BRIEF_AI_CHAT: (briefId: string) => `/service/client/briefs/ai/${briefId}/chat`,
+  BRIEF_AI_TRANSCRIBE: (briefId: string) => `/service/client/briefs/ai/${briefId}/transcribe`,
   BRIEF_AI_DETAIL: (briefId: string) => `/service/client/briefs/ai/${briefId}`,
   BRIEF_AI_ATTACHMENTS: (briefId: string) => `/service/client/briefs/ai/${briefId}/attachments`,
   BRIEF_AI_ATTACHMENT_DELETE: (briefId: string, attachmentId: string) =>
@@ -104,6 +105,7 @@ export const ApiRoute = {
   PUBLIC_BRIEF_AI_START: (briefId: string) => `/service/public/briefs/ai/${briefId}/start`,
   PUBLIC_BRIEF_AI_STATUS: (briefId: string) => `/service/public/briefs/ai/${briefId}/status`,
   PUBLIC_BRIEF_AI_CHAT: (briefId: string) => `/service/public/briefs/ai/${briefId}/chat`,
+  PUBLIC_BRIEF_AI_TRANSCRIBE: (briefId: string) => `/service/public/briefs/ai/${briefId}/transcribe`,
   PUBLIC_BRIEF_AI_ATTACHMENTS: (briefId: string) => `/service/public/briefs/ai/${briefId}/attachments`,
   PUBLIC_BRIEF_AI_ATTACHMENT_DELETE: (briefId: string, attachmentId: string) =>
     `/service/public/briefs/ai/${briefId}/attachments/${attachmentId}`,
