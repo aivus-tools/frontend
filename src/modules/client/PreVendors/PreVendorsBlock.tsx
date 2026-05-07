@@ -19,6 +19,7 @@ interface PreVendorsBlockProps {
   preVendors: PreVendor[];
   briefTitle: string;
   shareUrl: string;
+  vendorEmailHtml: string | null;
   sendDisabled: boolean;
   disabledPopoverContent?: React.ReactNode;
   disabledPopoverTitle?: React.ReactNode;
@@ -62,6 +63,7 @@ export const PreVendorsBlock = forwardRef<HTMLElement, PreVendorsBlockProps>((pr
             preVendor={x}
             briefTitle={props.briefTitle}
             shareUrl={props.shareUrl}
+            vendorEmailHtml={props.vendorEmailHtml}
             sendDisabled={props.sendDisabled}
             disabledPopoverContent={props.disabledPopoverContent}
             disabledPopoverTitle={props.disabledPopoverTitle}

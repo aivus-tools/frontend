@@ -1,5 +1,5 @@
-import React from 'react';
-import { Popover, Tooltip } from 'antd';
+import React, { useState } from 'react';
+import { App, Button, Modal, Popover, Tooltip } from 'antd';
 import { t } from '@/lib/i18n';
 import { PreVendor } from '@/types/preVendor.interface';
 import {
@@ -16,18 +16,49 @@ import {
   CardTop,
   CardTopSpacer,
   CardTopText,
+  EmailModalDescription,
+  EmailModalPreview,
   PortfolioButton,
   SendBriefButton,
 } from './styles';
-import { buildMailto } from './buildMailto';
+import { buildMailto, MailtoPlan } from './buildMailto';
 
 interface PreVendorCardProps {
   preVendor: PreVendor;
   briefTitle: string;
   shareUrl: string;
+  vendorEmailHtml: string | null;
   sendDisabled: boolean;
   disabledPopoverContent?: React.ReactNode;
   disabledPopoverTitle?: React.ReactNode;
+}
+
+async function copyToClipboard(text: string): Promise<boolean> {
+  if (typeof navigator !== 'undefined' && navigator.clipboard?.writeText) {
+    try {
+      await navigator.clipboard.writeText(text);
+      return true;
+    } catch {
+      // fall through to legacy path
+    }
+  }
+  if (typeof document === 'undefined') {
+    return false;
+  }
+  const textarea = document.createElement('textarea');
+  textarea.value = text;
+  textarea.style.position = 'fixed';
+  textarea.style.opacity = '0';
+  document.body.appendChild(textarea);
+  textarea.select();
+  let ok = false;
+  try {
+    ok = document.execCommand('copy');
+  } catch {
+    ok = false;
+  }
+  document.body.removeChild(textarea);
+  return ok;
 }
 
 const LocationIcon: React.FC = () => {
@@ -43,17 +74,65 @@ const LocationIcon: React.FC = () => {
 
 export const PreVendorCard: React.FC<PreVendorCardProps> = (props) => {
   const x = props.preVendor;
-  const mailto = buildMailto({
+  const { message } = App.useApp();
+  const [modalPlan, setModalPlan] = useState<MailtoPlan | null>(null);
+
+  const plan = buildMailto({
     to: x.email,
     briefTitle: props.briefTitle,
     shareUrl: props.shareUrl,
+    vendorEmailHtml: props.vendorEmailHtml,
   });
+
+  const href = props.sendDisabled || plan.needsClipboard ? undefined : plan.fullUrl;
+
+  const handleClick = (event: React.MouseEvent<HTMLAnchorElement>) => {
+    if (props.sendDisabled) {
+      if (!props.disabledPopoverContent) {
+        event.preventDefault();
+      }
+      return;
+    }
+    if (!plan.needsClipboard) {
+      return;
+    }
+    event.preventDefault();
+    void copyToClipboard(plan.body).then((success) => {
+      if (!success) {
+        message.error(t('PRE_VENDORS_EMAIL_COPY_FAILED'));
+      }
+    });
+    setModalPlan(plan);
+  };
+
+  const handleCopyAgain = () => {
+    if (!modalPlan) {
+      return;
+    }
+    void copyToClipboard(modalPlan.body).then((success) => {
+      if (success) {
+        message.success(t('PRE_VENDORS_EMAIL_BODY_COPIED'));
+      } else {
+        message.error(t('PRE_VENDORS_EMAIL_COPY_FAILED'));
+      }
+    });
+  };
+
+  const handleOpenMail = () => {
+    if (!modalPlan) {
+      return;
+    }
+    window.open(modalPlan.shortUrl, '_blank', 'noopener,noreferrer');
+    setModalPlan(null);
+  };
 
   const sendButton = (
     <SendBriefButton
       $disabled={props.sendDisabled}
-      href={props.sendDisabled ? undefined : mailto}
-      onClick={props.sendDisabled && !props.disabledPopoverContent ? (event) => event.preventDefault() : undefined}
+      href={href}
+      target='_blank'
+      rel='noopener noreferrer'
+      onClick={handleClick}
       aria-disabled={props.sendDisabled}
     >
       {t('PRE_VENDORS_SEND_BRIEF_BUTTON')}
@@ -115,6 +194,27 @@ export const PreVendorCard: React.FC<PreVendorCardProps> = (props) => {
           </CardAddress>
         ) : null}
       </CardFooter>
+
+      <Modal
+        open={modalPlan !== null}
+        title={t('PRE_VENDORS_EMAIL_MODAL_TITLE')}
+        onCancel={() => setModalPlan(null)}
+        width={640}
+        footer={[
+          <Button key='close' onClick={() => setModalPlan(null)}>
+            {t('PRE_VENDORS_EMAIL_MODAL_CLOSE')}
+          </Button>,
+          <Button key='copy' onClick={handleCopyAgain}>
+            {t('PRE_VENDORS_EMAIL_MODAL_COPY_AGAIN')}
+          </Button>,
+          <Button key='open' type='primary' onClick={handleOpenMail}>
+            {t('PRE_VENDORS_EMAIL_MODAL_OPEN')}
+          </Button>,
+        ]}
+      >
+        <EmailModalDescription>{t('PRE_VENDORS_EMAIL_MODAL_DESCRIPTION')}</EmailModalDescription>
+        <EmailModalPreview>{modalPlan?.body ?? ''}</EmailModalPreview>
+      </Modal>
     </Card>
   );
 };

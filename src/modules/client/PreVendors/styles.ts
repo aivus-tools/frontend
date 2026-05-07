@@ -344,3 +344,26 @@ export const PickVendorButtonRu = styled.button`
     cursor: not-allowed;
   }
 `;
+
+export const EmailModalDescription = styled.p`
+  margin: 0 0 16px;
+  color: #4a5568;
+  font-size: 14px;
+  line-height: 1.5;
+`;
+
+export const EmailModalPreview = styled.pre`
+  margin: 0;
+  padding: 16px;
+  background: #f7fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  font-family: 'Roboto Mono', ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-size: 13px;
+  line-height: 1.5;
+  color: #1a202c;
+  white-space: pre-wrap;
+  word-break: break-word;
+  max-height: 380px;
+  overflow-y: auto;
+`;

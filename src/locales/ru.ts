@@ -652,4 +652,13 @@ export const RU_LOCALES = {
   PRE_VENDORS_SEND_BRIEF_DISABLED_HINT: 'Сначала включи публичную ссылку на бриф, чтобы отправить письмо.',
   PRE_VENDORS_SHARE_REQUIRED_NOTICE: 'Чтобы отправить бриф вендору, нужна активная публичная ссылка.',
   PRE_VENDORS_EMAIL_BODY: (url: string) => `Здравствуйте,\n\nДелимся с вами брифом проекта:\n${url}\n`,
+  PRE_VENDORS_EMAIL_BODY_COPIED: 'Текст письма скопирован — вставь его в тело письма.',
+  PRE_VENDORS_EMAIL_COPY_FAILED: 'Не удалось скопировать текст в буфер обмена.',
+  PRE_VENDORS_EMAIL_DEFAULT_SUBJECT: 'Бриф проекта',
+  PRE_VENDORS_EMAIL_MODAL_TITLE: 'Текст письма готов',
+  PRE_VENDORS_EMAIL_MODAL_DESCRIPTION:
+    'Текст уже скопирован в буфер обмена. Открой письмо и вставь его в тело сообщения.',
+  PRE_VENDORS_EMAIL_MODAL_OPEN: 'Далее',
+  PRE_VENDORS_EMAIL_MODAL_COPY_AGAIN: 'Скопировать ещё раз',
+  PRE_VENDORS_EMAIL_MODAL_CLOSE: 'Закрыть',
 };

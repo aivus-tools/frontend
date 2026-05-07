@@ -574,6 +574,7 @@ export const BriefFinalPackage: React.FC<BriefFinalPackageProps> = (props) => {
       : '';
   const sendDisabled = !shareInfo?.isActive;
   const briefTitle = briefDetail?.title ?? '';
+  const vendorEmailHtml = byKind.get('vendor_email')?.html ?? null;
 
   const handlePickVendor = () => {
     preVendorsRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
@@ -669,6 +670,7 @@ export const BriefFinalPackage: React.FC<BriefFinalPackageProps> = (props) => {
           preVendors={preVendors}
           briefTitle={briefTitle}
           shareUrl={shareUrl}
+          vendorEmailHtml={vendorEmailHtml}
           sendDisabled={sendDisabled}
           disabledPopoverTitle={t('BRIEF_V3_SHARE_TITLE')}
           disabledPopoverContent={

@@ -651,4 +651,13 @@ export const EN_LOCALES = {
   PRE_VENDORS_SEND_BRIEF_DISABLED_HINT: 'Enable the public brief link first to send it by email.',
   PRE_VENDORS_SHARE_REQUIRED_NOTICE: 'To send the brief to a vendor, the public link must be enabled.',
   PRE_VENDORS_EMAIL_BODY: (url: string) => `Hello,\n\nWe would like to share our project brief with you:\n${url}\n`,
+  PRE_VENDORS_EMAIL_BODY_COPIED: 'Email body copied — paste it into the message.',
+  PRE_VENDORS_EMAIL_COPY_FAILED: 'Could not copy the email body to clipboard.',
+  PRE_VENDORS_EMAIL_DEFAULT_SUBJECT: 'Project brief',
+  PRE_VENDORS_EMAIL_MODAL_TITLE: 'Email body is ready',
+  PRE_VENDORS_EMAIL_MODAL_DESCRIPTION:
+    'The text is already copied to your clipboard. Open the email and paste it into the message body.',
+  PRE_VENDORS_EMAIL_MODAL_OPEN: 'Next',
+  PRE_VENDORS_EMAIL_MODAL_COPY_AGAIN: 'Copy again',
+  PRE_VENDORS_EMAIL_MODAL_CLOSE: 'Close',
 };
