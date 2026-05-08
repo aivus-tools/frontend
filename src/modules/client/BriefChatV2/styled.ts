@@ -316,9 +316,9 @@ export const ChatInputWrapper = styled.div`
 `;
 
 const voicePulse = keyframes`
-  0% { box-shadow: 0 0 0 0 rgba(220, 38, 38, 0.55); }
-  70% { box-shadow: 0 0 0 12px rgba(220, 38, 38, 0); }
-  100% { box-shadow: 0 0 0 0 rgba(220, 38, 38, 0); }
+  0% { box-shadow: 0 0 0 0 rgba(248, 113, 113, 0.45); }
+  70% { box-shadow: 0 0 0 10px rgba(248, 113, 113, 0); }
+  100% { box-shadow: 0 0 0 0 rgba(248, 113, 113, 0); }
 `;
 
 export const VoiceButton = styled.button<{
@@ -342,7 +342,7 @@ export const VoiceButton = styled.button<{
   position: relative;
   background: ${(x) =>
     x.$variant === 'recording'
-      ? '#dc2626'
+      ? '#f87171'
       : x.$variant === 'processing'
         ? '#eef0f4'
         : x.$variant === 'error'
@@ -354,7 +354,7 @@ export const VoiceButton = styled.button<{
   &:hover:not(:disabled) {
     background: ${(x) =>
       x.$variant === 'recording'
-        ? '#b91c1c'
+        ? '#ef4444'
         : x.$variant === 'idle'
           ? '#e1e5ec'
           : x.$variant === 'error'
@@ -420,7 +420,49 @@ export const VoiceTimer = styled.span`
   text-align: center;
 `;
 
-export const VoiceIconBtn = styled.button<{ $tone: 'stop' | 'cancel' }>`
+export const StopGlyph = styled.span`
+  display: inline-block;
+  width: 12px;
+  height: 12px;
+  background: currentColor;
+  border-radius: 2px;
+`;
+
+export const VoiceInlinePanel = styled.div`
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  padding: 6px 10px 6px 14px;
+  background: #ffffff;
+  border: 1px solid #eef0f4;
+  border-radius: 999px;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.04);
+  min-width: 280px;
+  max-width: 100%;
+
+  @media (max-width: 480px) {
+    min-width: 0;
+    flex: 1 1 auto;
+    padding: 4px 8px 4px 10px;
+    gap: 6px;
+  }
+`;
+
+const recordingDotPulse = keyframes`
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.45; transform: scale(0.85); }
+`;
+
+export const VoiceRecordingDot = styled.span`
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #dc2626;
+  flex-shrink: 0;
+  animation: ${recordingDotPulse} 1.2s ease-in-out infinite;
+`;
+
+export const VoiceIconBtn = styled.button<{ $tone: 'send' | 'cancel' }>`
   width: 36px;
   height: 36px;
   border-radius: 50%;
@@ -430,11 +472,11 @@ export const VoiceIconBtn = styled.button<{ $tone: 'stop' | 'cancel' }>`
   align-items: center;
   justify-content: center;
   font-size: 14px;
-  background: ${(x) => (x.$tone === 'stop' ? '#dc2626' : '#eef0f4')};
-  color: ${(x) => (x.$tone === 'stop' ? '#ffffff' : '#4b5675')};
+  background: ${(x) => (x.$tone === 'send' ? '#2288ff' : '#eef0f4')};
+  color: ${(x) => (x.$tone === 'send' ? '#ffffff' : '#4b5675')};
 
   &:hover {
-    background: ${(x) => (x.$tone === 'stop' ? '#b91c1c' : '#e1e5ec')};
+    background: ${(x) => (x.$tone === 'send' ? '#1a6fd6' : '#e1e5ec')};
   }
 
   &:disabled {

@@ -213,6 +213,7 @@ export const BriefEditorLayout: React.FC<BriefEditorLayoutProps> = (props) => {
   const [isChatLoading, setIsChatLoading] = useState(false);
   const [uploading, setUploading] = useState(false);
   const [isStarting, setIsStarting] = useState(false);
+  const [isStartVoiceBusy, setIsStartVoiceBusy] = useState(false);
   const [showCost, setShowCost] = useState<boolean>(false);
 
   // Auth API hooks
@@ -820,15 +821,16 @@ export const BriefEditorLayout: React.FC<BriefEditorLayoutProps> = (props) => {
                     setStartText((prev) => (prev.trim().length > 0 ? `${prev.trim()} ${text}` : text))
                   }
                   onEnsureBrief={ensureDraft}
+                  onBusyChange={setIsStartVoiceBusy}
                   compact
                 />
-                <StartVoiceHint>{t('BRIEF_V3_VOICE_START_HINT')}</StartVoiceHint>
+                {!isStartVoiceBusy ? <StartVoiceHint>{t('BRIEF_V3_VOICE_START_HINT')}</StartVoiceHint> : null}
               </StartVoiceGroup>
               <Button
                 type='primary'
                 size='large'
                 loading={isStarting}
-                disabled={!startText.trim() || uploading}
+                disabled={!startText.trim() || uploading || isStartVoiceBusy}
                 onClick={handleStart}
               >
                 {t('BRIEF_V3_START_BUTTON')}

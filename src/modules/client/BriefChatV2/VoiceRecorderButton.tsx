@@ -2,12 +2,22 @@
 
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { App, Tooltip } from 'antd';
-import { AudioOutlined, CloseOutlined, LoadingOutlined, StopOutlined } from '@ant-design/icons';
+import { AudioOutlined, CheckOutlined, CloseOutlined, LoadingOutlined } from '@ant-design/icons';
 import { getLocale, t } from '@/lib/i18n';
 import { useVoiceRecorder, VoiceRecorderError } from '@/hooks/useVoiceRecorder';
 import { useTranscribeBriefAiMutation } from '@/services/client/briefAiApi';
 import { useTranscribePublicBriefMutation } from '@/services/client/publicBriefApi';
-import { VoiceButton, VoiceIconBtn, VoicePanel, VoiceTimer, VoiceWave, VoiceWaveBar } from './styled';
+import {
+  StopGlyph,
+  VoiceButton,
+  VoiceIconBtn,
+  VoiceInlinePanel,
+  VoicePanel,
+  VoiceRecordingDot,
+  VoiceTimer,
+  VoiceWave,
+  VoiceWaveBar,
+} from './styled';
 
 interface VoiceRecorderButtonProps {
   briefId: string | null;
@@ -209,10 +219,36 @@ export const VoiceRecorderButton: React.FC<VoiceRecorderButtonProps> = (props) =
 
   const remainingMs = Math.max(0, MAX_DURATION_MS - recorder.elapsedMs);
 
+  if (props.compact && (isRecording || isProcessing)) {
+    return (
+      <VoiceInlinePanel>
+        <VoiceRecordingDot />
+        <VoiceTimer aria-live='polite'>{formatTime(remainingMs)}</VoiceTimer>
+        <VoiceWave>
+          {waveSamples.map((level, i) => (
+            <VoiceWaveBar key={i} $level={level} />
+          ))}
+        </VoiceWave>
+        <VoiceIconBtn
+          $tone='cancel'
+          onClick={handleCancel}
+          disabled={isProcessing}
+          aria-label={t('BRIEF_V3_VOICE_CANCEL')}
+        >
+          <CloseOutlined />
+        </VoiceIconBtn>
+        <VoiceIconBtn $tone='send' onClick={handleStop} disabled={isProcessing} aria-label={t('BRIEF_V3_VOICE_STOP')}>
+          {isProcessing ? <LoadingOutlined /> : <CheckOutlined />}
+        </VoiceIconBtn>
+      </VoiceInlinePanel>
+    );
+  }
+
   return (
     <>
-      {recorder.state === 'recording' ? (
+      {!props.compact && recorder.state === 'recording' ? (
         <VoicePanel>
+          <VoiceRecordingDot />
           <VoiceTimer aria-live='polite'>{formatTime(remainingMs)}</VoiceTimer>
           <VoiceWave>
             {waveSamples.map((level, i) => (
@@ -222,8 +258,8 @@ export const VoiceRecorderButton: React.FC<VoiceRecorderButtonProps> = (props) =
           <VoiceIconBtn $tone='cancel' onClick={handleCancel} aria-label={t('BRIEF_V3_VOICE_CANCEL')}>
             <CloseOutlined />
           </VoiceIconBtn>
-          <VoiceIconBtn $tone='stop' onClick={handleStop} aria-label={t('BRIEF_V3_VOICE_STOP')}>
-            <StopOutlined />
+          <VoiceIconBtn $tone='send' onClick={handleStop} aria-label={t('BRIEF_V3_VOICE_STOP')}>
+            <CheckOutlined />
           </VoiceIconBtn>
         </VoicePanel>
       ) : null}
@@ -245,7 +281,7 @@ export const VoiceRecorderButton: React.FC<VoiceRecorderButtonProps> = (props) =
           disabled={props.disabled || isProcessing}
           aria-label={t('BRIEF_V3_VOICE_HINT')}
         >
-          {isProcessing ? <LoadingOutlined /> : isRecording ? <StopOutlined /> : <AudioOutlined />}
+          {isProcessing ? <LoadingOutlined /> : isRecording ? <StopGlyph /> : <AudioOutlined />}
         </VoiceButton>
       </Tooltip>
     </>
