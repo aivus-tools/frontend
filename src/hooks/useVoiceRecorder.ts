@@ -155,6 +155,7 @@ export const useVoiceRecorder = (options: UseVoiceRecorderOptions = {}): UseVoic
       return null;
     }
     cancelledRef.current = false;
+    stateRef.current = 'stopping';
     setState('stopping');
     return new Promise<VoiceRecorderResult | null>((resolve) => {
       stopResolverRef.current = resolve;
@@ -163,6 +164,7 @@ export const useVoiceRecorder = (options: UseVoiceRecorderOptions = {}): UseVoic
       } catch {
         stopResolverRef.current = null;
         cleanup();
+        stateRef.current = 'idle';
         setState('idle');
         resolve(null);
       }
@@ -183,6 +185,7 @@ export const useVoiceRecorder = (options: UseVoiceRecorderOptions = {}): UseVoic
       }
     }
     cleanup();
+    stateRef.current = 'idle';
     setState('idle');
     setAudioLevel(0);
     setElapsedMs(0);
@@ -201,8 +204,10 @@ export const useVoiceRecorder = (options: UseVoiceRecorderOptions = {}): UseVoic
       const bufferLength = analyser.fftSize;
       const buffer = new Uint8Array(bufferLength);
       analyser.getByteTimeDomainData(buffer);
-      const level = computeRms(buffer);
-      if (Math.abs(level - lastLevelRef.current) > 0.05) {
+      const rawLevel = computeRms(buffer);
+      const idleBreath = 0.08 + 0.04 * Math.sin(elapsed / 220);
+      const level = Math.max(rawLevel, idleBreath);
+      if (Math.abs(level - lastLevelRef.current) > 0.01) {
         lastLevelRef.current = level;
         setAudioLevel(level);
       }
@@ -288,6 +293,7 @@ export const useVoiceRecorder = (options: UseVoiceRecorderOptions = {}): UseVoic
       cleanup();
       setAudioLevel(0);
       setElapsedMs(0);
+      stateRef.current = 'idle';
       setState('idle');
       const resolver = stopResolverRef.current;
       stopResolverRef.current = null;
@@ -304,6 +310,7 @@ export const useVoiceRecorder = (options: UseVoiceRecorderOptions = {}): UseVoic
     recorder.onerror = () => {
       setErrorCode('unknown');
       cleanup();
+      stateRef.current = 'error';
       setState('error');
       stopResolverRef.current?.(null);
       stopResolverRef.current = null;
@@ -334,9 +341,11 @@ export const useVoiceRecorder = (options: UseVoiceRecorderOptions = {}): UseVoic
       console.error('[useVoiceRecorder] recorder.start failed:', ex);
       setErrorCode(mapMediaError(ex));
       cleanup();
+      stateRef.current = 'error';
       setState('error');
       return;
     }
+    stateRef.current = 'recording';
     setState('recording');
     rafRef.current = requestAnimationFrame(tickRaf);
   }, [cleanup, tickRaf]);

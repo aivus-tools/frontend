@@ -95,7 +95,7 @@ export const VoiceRecorderButton: React.FC<VoiceRecorderButtonProps> = (props) =
     }
     sampleBufferRef.current = [...sampleBufferRef.current.slice(1), recorder.audioLevel];
     setWaveSamples(sampleBufferRef.current);
-  }, [recorder.audioLevel, recorder.state]);
+  }, [recorder.audioLevel, recorder.elapsedMs, recorder.state]);
 
   const isRecording = recorder.state === 'recording' || recorder.state === 'stopping';
   const isBusy = isRecording || isProcessing;
