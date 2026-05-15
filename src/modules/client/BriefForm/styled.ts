@@ -1,16 +1,26 @@
 import { styled } from 'styled-components';
+import { media } from '@/styles/breakpoints';
 
 export const FormPageWrapper = styled.div`
   display: flex;
-  min-height: calc(100vh - 70px);
+  min-height: calc(100dvh - var(--aivus-header-h));
   background: #f8f9fb;
+
+  ${media.mobile} {
+    flex-direction: column;
+  }
 `;
 
 export const FormArea = styled.div`
   flex: 1;
   overflow-y: auto;
-  max-height: calc(100vh - 70px);
+  max-height: calc(100dvh - var(--aivus-header-h));
   padding: 24px 32px 80px;
+
+  ${media.mobile} {
+    padding: 16px 14px 96px;
+    max-height: none;
+  }
 `;
 
 export const FormHeader = styled.div`
@@ -39,6 +49,11 @@ export const SectionCard = styled.div`
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
   padding: 24px;
   margin-bottom: 20px;
+
+  ${media.mobile} {
+    padding: 16px;
+    margin-bottom: 14px;
+  }
 `;
 
 export const SectionTitle = styled.h2`
@@ -58,6 +73,11 @@ export const FieldRow = styled.div`
   & > * {
     flex: 1;
   }
+
+  ${media.mobile} {
+    flex-direction: column;
+    gap: 12px;
+  }
 `;
 
 export const FormFooter = styled.div`
@@ -70,6 +90,11 @@ export const FormFooter = styled.div`
   align-items: center;
   justify-content: space-between;
   z-index: 10;
+
+  ${media.mobile} {
+    padding: 12px 14px calc(12px + env(safe-area-inset-bottom, 0px));
+    gap: 8px;
+  }
 `;
 
 export const FooterLeft = styled.div`
@@ -110,7 +135,16 @@ export const GuidancePanel = styled.div`
   border-left: 1px solid #eef0f4;
   padding: 24px;
   overflow-y: auto;
-  max-height: calc(100vh - 70px);
+  max-height: calc(100dvh - var(--aivus-header-h));
+
+  ${media.mobile} {
+    width: 100%;
+    min-width: 0;
+    border-left: 0;
+    border-top: 1px solid #eef0f4;
+    max-height: none;
+    padding: 16px 14px;
+  }
 `;
 
 export const GuidanceTitle = styled.h3`

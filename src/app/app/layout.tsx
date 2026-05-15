@@ -4,7 +4,6 @@ import { ReduxStore } from '@/context/ReduxProvider';
 import { GROUPS } from '@/constants/constants';
 import React from 'react';
 import { Sidebar } from '@/modules/Sidebar/Sidebar';
-import { MobileStub } from '@/components/MobileStub/MobileStub';
 
 export default async function Layout({
   vendor,
@@ -36,11 +35,8 @@ export default async function Layout({
 
   return (
     <ReduxStore>
-      <MobileStub />
-      <div className="aivus-desktop-content">
-        {getComponent()}
-        <Sidebar />
-      </div>
+      {getComponent()}
+      <Sidebar />
     </ReduxStore>
   );
 }

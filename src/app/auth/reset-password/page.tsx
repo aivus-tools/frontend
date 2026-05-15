@@ -63,7 +63,13 @@ const ResetPasswordPage = () => {
   const renderContent = () => {
     if (status === 'success') {
       return (
-        <Flex align='center' justify='center' vertical gap={16} style={{ height: '100vh', width: '100%' }}>
+        <Flex
+          align='center'
+          justify='center'
+          vertical
+          gap={16}
+          style={{ minHeight: '100dvh', width: '100%', padding: '16px' }}
+        >
           <Typography.Title level={3}>{t('PASSWORD_RESET_SUCCESS_TITLE')}</Typography.Title>
           <Typography.Text type='secondary' style={{ textAlign: 'center', maxWidth: 400 }}>
             {t('PASSWORD_RESET_SUCCESS_MESSAGE')}
@@ -77,7 +83,13 @@ const ResetPasswordPage = () => {
 
     if (status === 'error' || !token) {
       return (
-        <Flex align='center' justify='center' vertical gap={16} style={{ height: '100vh', width: '100%' }}>
+        <Flex
+          align='center'
+          justify='center'
+          vertical
+          gap={16}
+          style={{ minHeight: '100dvh', width: '100%', padding: '16px' }}
+        >
           <Typography.Title level={3}>{t('PASSWORD_RESET_FAILED_TITLE')}</Typography.Title>
           <Typography.Text type='danger' style={{ textAlign: 'center', maxWidth: 400 }}>
             {errorMessage ?? t('PASSWORD_RESET_FAILED')}
@@ -95,7 +107,13 @@ const ResetPasswordPage = () => {
     }
 
     return (
-      <Flex align='center' justify='center' vertical gap={16} style={{ height: '100vh', width: '100%' }}>
+      <Flex
+        align='center'
+        justify='center'
+        vertical
+        gap={16}
+        style={{ minHeight: '100dvh', width: '100%', padding: '16px' }}
+      >
         <Typography.Title level={3}>{t('RESET_PASSWORD_TITLE')}</Typography.Title>
         <Typography.Text type='secondary' style={{ textAlign: 'center', maxWidth: 400 }}>
           {t('RESET_PASSWORD_MESSAGE')}
@@ -158,4 +176,3 @@ const ResetPasswordPage = () => {
 };
 
 export default ResetPasswordPage;
-

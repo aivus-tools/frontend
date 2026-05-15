@@ -1,4 +1,4 @@
-import type { Metadata } from 'next';
+import type { Metadata, Viewport } from 'next';
 import Script from 'next/script';
 import { AntdRegistry } from '@ant-design/nextjs-registry';
 import { ConfigProvider } from 'antd';
@@ -25,6 +25,13 @@ const montserrat = Montserrat({
 export const metadata: Metadata = {
   title: 'Aivus Web',
   description: 'Aivus Web',
+};
+
+export const viewport: Viewport = {
+  width: 'device-width',
+  initialScale: 1,
+  minimumScale: 1,
+  viewportFit: 'cover',
 };
 
 export default async function RootLayout({

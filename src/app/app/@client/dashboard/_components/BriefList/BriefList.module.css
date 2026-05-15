@@ -20,3 +20,17 @@
 .alignRight {
   text-align: right;
 }
+
+@media (width <= 1023.98px) {
+  .dashboard {
+    padding: 16px;
+  }
+
+  .header {
+    display: none;
+  }
+
+  .content {
+    margin-top: 0;
+  }
+}

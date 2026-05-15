@@ -11,13 +11,31 @@ import { t } from '@/lib/i18n';
 import { useUploadXlsxMutation } from '@/services/client/xlsxApi';
 import type { UploadRequestOption } from 'rc-upload/lib/interface';
 import { ClientHomeLogo } from '../ClientHomeLogo/ClientHomeLogo';
+import { ClientNavbar } from '../ClientNavbar/ClientNavbar';
 
-const SidebarContent = styled.div`
-  padding: 16px 20px;
-  color: #ffffff;
+interface ClientSidebarProps {
+  theme: Theme;
+  variant?: 'desktop' | 'mobile';
+  onNavigate?: () => void;
+}
+
+const SidebarRoot = styled.div<{ $variant: 'desktop' | 'mobile' }>`
+  position: relative;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  ${(x) => x.$variant === 'mobile' && 'gap: 12px; padding: 8px 12px 16px; box-sizing: border-box;'}
 `;
 
-const UploadArea = styled.div`
+const DesktopFiller = styled.div`
+  flex: 1;
+`;
+
+const MobileNavSection = styled.div`
+  width: 100%;
+`;
+
+const UploadAreaDesktop = styled.div`
   margin-top: auto;
   padding: 20px;
   position: absolute;
@@ -33,6 +51,25 @@ const UploadArea = styled.div`
   text-align: center;
   cursor: pointer;
   transition: border-color 0.15s ease;
+
+  &:hover {
+    border-color: rgba(255, 255, 255, 0.6);
+  }
+`;
+
+const UploadAreaMobile = styled.div`
+  margin-top: auto;
+  padding: 16px;
+  border: 2px dashed rgba(255, 255, 255, 0.3);
+  border-radius: 6px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  cursor: pointer;
+  transition: border-color 0.15s ease;
+
   &:hover {
     border-color: rgba(255, 255, 255, 0.6);
   }
@@ -63,7 +100,8 @@ const UploadHint = styled.div`
   margin-top: 4px;
 `;
 
-export const ClientSidebar = ({ theme }: { theme: Theme }) => {
+export const ClientSidebar: React.FC<ClientSidebarProps> = (props) => {
+  const variant = props.variant ?? 'desktop';
   const router = useRouter();
   const [uploadXlsx, { isLoading: isUploading }] = useUploadXlsxMutation();
 
@@ -91,23 +129,35 @@ export const ClientSidebar = ({ theme }: { theme: Theme }) => {
       } catch {
         message.error(t('UPLOAD_FAILED'));
       }
+      props.onNavigate?.();
     },
-    [uploadXlsx, router]
+    [uploadXlsx, router, props]
+  );
+
+  const uploadInner = (
+    <>
+      <UploadIcon>{isUploading ? <LoadingOutlined /> : <UploadOutlined />}</UploadIcon>
+      <UploadText>{isUploading ? t('UPLOADING') : t('UPLOAD_XLSX_TITLE')}</UploadText>
+      <UploadHint>{t('UPLOAD_XLSX_HINT')}</UploadHint>
+    </>
   );
 
   return (
-    <div style={{ position: 'relative', height: '100%' }}>
-      <ClientHomeLogo theme={theme} />
-
-      <SidebarContent />
-
+    <SidebarRoot $variant={variant}>
+      <ClientHomeLogo theme={props.theme} />
+      {variant === 'mobile' && (
+        <MobileNavSection>
+          <ClientNavbar variant='mobile' onNavigate={props.onNavigate} />
+        </MobileNavSection>
+      )}
+      <DesktopFiller />
       <Upload accept='.xlsx' showUploadList={false} customRequest={handleUpload} disabled={isUploading}>
-        <UploadArea>
-          <UploadIcon>{isUploading ? <LoadingOutlined /> : <UploadOutlined />}</UploadIcon>
-          <UploadText>{isUploading ? t('UPLOADING') : t('UPLOAD_XLSX_TITLE')}</UploadText>
-          <UploadHint>{t('UPLOAD_XLSX_HINT')}</UploadHint>
-        </UploadArea>
+        {variant === 'mobile' ? (
+          <UploadAreaMobile>{uploadInner}</UploadAreaMobile>
+        ) : (
+          <UploadAreaDesktop>{uploadInner}</UploadAreaDesktop>
+        )}
       </Upload>
-    </div>
+    </SidebarRoot>
   );
 };

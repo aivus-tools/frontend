@@ -661,4 +661,9 @@ export const RU_LOCALES = {
   PRE_VENDORS_EMAIL_MODAL_OPEN: 'Далее',
   PRE_VENDORS_EMAIL_MODAL_COPY_AGAIN: 'Скопировать ещё раз',
   PRE_VENDORS_EMAIL_MODAL_CLOSE: 'Закрыть',
+  OPEN_NAVIGATION: 'Открыть навигацию',
+  CLOSE_NAVIGATION: 'Закрыть навигацию',
+  BRIEF_TAB_BRIEF: 'Бриф',
+  BRIEF_TAB_CHAT: 'Чат',
+  COMPARISON_OPEN_AI_ANALYSIS: 'Открыть AI анализ',
 };

@@ -43,7 +43,13 @@ const ForgotPasswordPage = () => {
 
   if (emailSent) {
     return (
-      <Flex align='center' justify='center' vertical gap={16} style={{ height: '100vh', width: '100%' }}>
+      <Flex
+        align='center'
+        justify='center'
+        vertical
+        gap={16}
+        style={{ minHeight: '100dvh', width: '100%', padding: '16px' }}
+      >
         {contextHolder}
         <Typography.Title level={3}>{t('PASSWORD_RESET_EMAIL_SENT_TITLE')}</Typography.Title>
         <Typography.Text type='secondary' style={{ textAlign: 'center', maxWidth: 400 }}>
@@ -57,7 +63,13 @@ const ForgotPasswordPage = () => {
   }
 
   return (
-    <Flex align='center' justify='center' vertical gap={16} style={{ height: '100vh', width: '100%' }}>
+    <Flex
+      align='center'
+      justify='center'
+      vertical
+      gap={16}
+      style={{ minHeight: '100dvh', width: '100%', padding: '16px' }}
+    >
       {contextHolder}
       <Typography.Title level={3}>{t('FORGOT_PASSWORD_TITLE')}</Typography.Title>
       <Typography.Text type='secondary' style={{ textAlign: 'center', maxWidth: 400 }}>
@@ -96,4 +108,3 @@ const ForgotPasswordPage = () => {
 };
 
 export default ForgotPasswordPage;
-

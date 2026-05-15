@@ -660,4 +660,9 @@ export const EN_LOCALES = {
   PRE_VENDORS_EMAIL_MODAL_OPEN: 'Next',
   PRE_VENDORS_EMAIL_MODAL_COPY_AGAIN: 'Copy again',
   PRE_VENDORS_EMAIL_MODAL_CLOSE: 'Close',
+  OPEN_NAVIGATION: 'Open navigation',
+  CLOSE_NAVIGATION: 'Close navigation',
+  BRIEF_TAB_BRIEF: 'Brief',
+  BRIEF_TAB_CHAT: 'Chat',
+  COMPARISON_OPEN_AI_ANALYSIS: 'Open AI Analysis',
 };

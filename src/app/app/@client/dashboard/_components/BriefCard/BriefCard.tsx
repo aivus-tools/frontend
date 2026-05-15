@@ -119,6 +119,8 @@ export const BriefCard: React.FC<BriefCardProps> = ({ brief }) => {
       okText: t('BRIEF_DELETE'),
       okType: 'danger',
       cancelText: t('CANCEL'),
+      width: 'min(520px, calc(100vw - 24px))',
+      centered: true,
       onOk: async () => {
         try {
           await deleteBrief(brief.id).unwrap();
@@ -160,17 +162,19 @@ export const BriefCard: React.FC<BriefCardProps> = ({ brief }) => {
           </div>
         </div>
 
-        <div className={styles.statusCell}>
+        <div className={styles.statusCell} data-label={t('DASHBOARD_STATUS')}>
           <PrStatus status={brief.status as ProjectStatus} />
         </div>
 
-        <div className={styles.messagesCell}>
+        <div className={styles.messagesCell} data-label={t('BRIEF_LIST_MESSAGES')}>
           <span className={styles.numericValue}>{brief.messageCount}</span>
         </div>
 
-        <div className={styles.offersCell}>{renderOffersCell(brief, handleCompareClick)}</div>
+        <div className={styles.offersCell} data-label={t('BRIEF_LIST_OFFERS')}>
+          {renderOffersCell(brief, handleCompareClick)}
+        </div>
 
-        <div className={styles.dateCell}>
+        <div className={styles.dateCell} data-label={t('CREATED')}>
           <div className={styles.dateValue}>{formattedCreated}</div>
         </div>
 
@@ -191,6 +195,8 @@ export const BriefCard: React.FC<BriefCardProps> = ({ brief }) => {
         confirmLoading={isRenaming}
         okButtonProps={{ disabled: !renameValue.trim() }}
         destroyOnClose
+        width='min(520px, calc(100vw - 24px))'
+        centered
       >
         <Input
           value={renameValue}

@@ -9,6 +9,7 @@ import { BetaBadge } from '@/components/BetaBadge/BetaBadge';
 import { AppRoute } from '@/constants/appRoute';
 import { Theme } from '@/types/index.interface';
 import { THEME } from '@/constants/constants';
+import { media } from '@/styles/breakpoints';
 
 interface ClientHomeLogoProps {
   theme?: Theme;
@@ -21,6 +22,10 @@ const Wrapper = styled.div<{ $theme: Theme; $compact: boolean }>`
   justify-content: start;
   height: ${(x) => (x.$compact ? '40px' : '70px')};
   color: ${(x) => (x.$theme === THEME.light ? 'var(--main-dark)' : '#fff')};
+
+  ${media.mobile} {
+    height: ${(x) => (x.$compact ? '40px' : '56px')};
+  }
 `;
 
 const Group = styled.div<{ $compact: boolean }>`
@@ -28,6 +33,11 @@ const Group = styled.div<{ $compact: boolean }>`
   align-items: center;
   padding: ${(x) => (x.$compact ? '0' : '30px')};
   gap: 12px;
+
+  ${media.mobile} {
+    padding: ${(x) => (x.$compact ? '0' : '12px 16px')};
+    gap: 10px;
+  }
 `;
 
 export const ClientHomeLogo: React.FC<ClientHomeLogoProps> = (props) => {

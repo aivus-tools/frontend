@@ -454,6 +454,8 @@ export const BriefChatPanel: React.FC<BriefChatPanelProps> = (props) => {
           onOk={submitComment}
           okText={t('BRIEF_V3_FEEDBACK_SUBMIT')}
           cancelText={t('CANCEL')}
+          width='min(520px, calc(100vw - 24px))'
+          centered
         >
           <CommentModalBody>
             <CommentContext>{commentModal.content}</CommentContext>

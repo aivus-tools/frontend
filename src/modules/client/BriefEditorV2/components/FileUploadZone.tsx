@@ -6,6 +6,7 @@ import { Button, App } from 'antd';
 import { DeleteOutlined, FileOutlined, PaperClipOutlined } from '@ant-design/icons';
 import { t } from '@/lib/i18n';
 import { BriefAttachment } from '@/types/briefAi.interface';
+import { media } from '@/styles/breakpoints';
 
 const ACCEPT = 'application/pdf,image/jpeg,image/png,image/webp,image/gif,text/plain';
 const ALLOWED = new Set(ACCEPT.split(','));
@@ -28,6 +29,18 @@ const Zone = styled.div<{ $dragging: boolean }>`
   &:hover {
     border-color: #2288ff;
     background: #f6faff;
+  }
+
+  ${media.mobile} {
+    padding: 14px 16px;
+  }
+`;
+
+const ZoneHintWrapper = styled.div`
+  display: contents;
+
+  ${media.mobile} {
+    display: none;
   }
 `;
 
@@ -176,7 +189,9 @@ export const FileUploadZone: React.FC<FileUploadZoneProps> = (props) => {
         <ZoneTitle>
           <PaperClipOutlined /> {t('BRIEF_V3_ATTACH_TITLE')}
         </ZoneTitle>
-        <ZoneHint>{t('BRIEF_V3_ATTACH_HINT')}</ZoneHint>
+        <ZoneHintWrapper>
+          <ZoneHint>{t('BRIEF_V3_ATTACH_HINT')}</ZoneHint>
+        </ZoneHintWrapper>
         <input
           ref={inputRef}
           type='file'

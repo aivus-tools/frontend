@@ -1,9 +1,11 @@
 'use client';
 
 import { styled } from 'styled-components';
+import { media } from '@/styles/breakpoints';
 
 export const PageContainer = styled.div`
   min-height: 100vh;
+  min-height: 100dvh;
   background: #ffffff;
 `;
 
@@ -16,6 +18,11 @@ export const PublicHeader = styled.header`
   align-items: center;
   justify-content: space-between;
   padding: 0 37px;
+
+  ${media.mobile} {
+    height: 56px;
+    padding: 0 14px;
+  }
 `;
 
 export const LogoArea = styled.div`
@@ -28,6 +35,11 @@ export const MainContent = styled.main`
   max-width: 1130px;
   margin: 0 auto;
   padding: 30px;
+
+  ${media.mobile} {
+    max-width: 100%;
+    padding: 16px 14px;
+  }
 `;
 
 // Guest CTA Banner
@@ -41,6 +53,13 @@ export const GuestBanner = styled.div`
   align-items: center;
   justify-content: space-between;
   margin-bottom: 24px;
+
+  ${media.mobile} {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 12px;
+    padding: 14px 16px;
+  }
 `;
 
 export const BannerText = styled.span`
@@ -54,6 +73,14 @@ export const BannerActions = styled.div`
   display: flex;
   align-items: center;
   gap: 16px;
+
+  ${media.mobile} {
+    flex-wrap: wrap;
+    gap: 8px;
+    & > .ant-btn {
+      flex: 1 1 auto;
+    }
+  }
 `;
 
 export const LoginLink = styled.a`
@@ -76,6 +103,12 @@ export const AuthorBanner = styled.div`
   align-items: center;
   gap: 10px;
   margin-bottom: 24px;
+
+  ${media.mobile} {
+    flex-direction: column;
+    align-items: stretch;
+    padding: 12px 16px;
+  }
 `;
 
 export const AuthorBannerText = styled.span`
@@ -105,6 +138,10 @@ export const InfoBar = styled.div`
   background: #f9f9f9;
   padding: 8px 37px;
   border-bottom: 1px solid #e5e5e5;
+
+  ${media.mobile} {
+    padding: 8px 14px;
+  }
 `;
 
 export const InfoBarText = styled.span`
@@ -125,6 +162,13 @@ export const ClientPanel = styled.div`
   align-items: center;
   gap: 16px;
   margin-bottom: 24px;
+
+  ${media.mobile} {
+    flex-direction: column;
+    align-items: stretch;
+    padding: 14px 16px;
+    gap: 10px;
+  }
 `;
 
 export const ClientLabel = styled.span`
@@ -167,4 +211,9 @@ export const ErrorSubtitle = styled.p`
 export const OfferTableWrapper = styled.div`
   background: #ffffff;
   border-radius: 6px;
+
+  ${media.mobile} {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
 `;

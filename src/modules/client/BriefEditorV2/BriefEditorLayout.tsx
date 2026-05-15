@@ -3,7 +3,7 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
 import { styled } from 'styled-components';
-import { App, Button } from 'antd';
+import { App, Button, Badge } from 'antd';
 import { useAppDispatch } from '@/store/hooks';
 import { t, getLocale } from '@/lib/i18n';
 import { BriefChatPanel } from '@/modules/client/BriefChatV2/BriefChatPanel';
@@ -38,8 +38,9 @@ import {
   savePublicBriefToken,
 } from '@/services/client/publicBriefApi';
 import { BriefAttachment, BriefV3Detail, ChatMessageV3, ConversationStatus } from '@/types/briefAi.interface';
-import { BETA_FOOTER_HEIGHT } from '@/components/BetaFooter/BetaFooter';
+import { useBetaFooterHeight } from '@/components/BetaFooter/BetaFooter';
 import { useBetaFooter } from '@/components/BetaFooter/BetaFooterContext';
+import { media } from '@/styles/breakpoints';
 
 const POLL_INTERVAL_MS = 1500;
 const POLL_TIMEOUT_MS = 180000;
@@ -51,10 +52,13 @@ const MAX_ATTACHMENTS_ANON = 3;
 
 type Stage = 'start' | 'generating' | 'chat' | 'finalizing' | 'finalized' | 'comparison' | 'settings';
 
-const OuterWrapper = styled.div<{ $footerVisible: boolean }>`
+const OuterWrapper = styled.div<{ $footerVisible: boolean; $footerHeight: number }>`
   display: flex;
   flex-direction: column;
-  height: ${(x) => (x.$footerVisible ? `calc(100vh - 70px - ${BETA_FOOTER_HEIGHT}px)` : 'calc(100vh - 70px)')};
+  height: ${(x) =>
+    x.$footerVisible
+      ? `calc(100dvh - var(--aivus-header-h) - ${x.$footerHeight}px)`
+      : 'calc(100dvh - var(--aivus-header-h))'};
   background: #f8f9fb;
 `;
 
@@ -64,6 +68,10 @@ const StartScreen = styled.div`
   align-items: center;
   justify-content: center;
   padding: 24px;
+
+  ${media.mobile} {
+    padding: 16px;
+  }
 `;
 
 const StartCard = styled.div`
@@ -76,6 +84,11 @@ const StartCard = styled.div`
   display: flex;
   flex-direction: column;
   gap: 16px;
+
+  ${media.mobile} {
+    padding: 20px;
+    border-radius: 12px;
+  }
 `;
 
 const StartTitle = styled.h2`
@@ -118,6 +131,12 @@ const StartActions = styled.div`
   justify-content: space-between;
   gap: 12px;
   flex-wrap: wrap;
+
+  ${media.mobile} {
+    & > .ant-btn {
+      flex: 1 1 100%;
+    }
+  }
 `;
 
 const StartVoiceGroup = styled.div`
@@ -139,6 +158,10 @@ const ChatScreen = styled.div`
   overflow: hidden;
   background: #f8f9fb;
   padding: 16px 0;
+
+  ${media.mobile} {
+    padding: 0;
+  }
 `;
 
 const ChatWrapper = styled.div`
@@ -150,6 +173,61 @@ const ChatWrapper = styled.div`
   border-radius: 12px;
   overflow: hidden;
   box-shadow: 0 2px 12px rgba(0, 0, 0, 0.04);
+
+  ${media.mobile} {
+    width: 100%;
+    max-width: none;
+    border: 0;
+    border-radius: 0;
+    box-shadow: none;
+  }
+`;
+
+const FinalContainer = styled.div`
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  overflow: hidden;
+`;
+
+const MobileTabBar = styled.div`
+  display: none;
+
+  ${media.mobile} {
+    display: flex;
+    position: sticky;
+    top: 0;
+    z-index: 4;
+    width: 100%;
+    background: #ffffff;
+    border-bottom: 1px solid #eef0f4;
+    flex-shrink: 0;
+  }
+`;
+
+const MobileTabButton = styled.button<{ $active: boolean }>`
+  flex: 1;
+  min-height: 48px;
+  border: 0;
+  background: transparent;
+  cursor: pointer;
+  font-family: 'Montserrat', sans-serif;
+  font-size: 14px;
+  font-weight: 600;
+  color: ${(x) => (x.$active ? '#2288ff' : '#4b5675')};
+  border-bottom: 2px solid ${(x) => (x.$active ? '#2288ff' : 'transparent')};
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  transition:
+    color 0.15s ease,
+    border-color 0.15s ease;
+
+  &:hover {
+    color: #2288ff;
+  }
 `;
 
 const FinalSplit = styled.div`
@@ -157,17 +235,26 @@ const FinalSplit = styled.div`
   display: flex;
   min-height: 0;
   overflow: hidden;
+
+  ${media.mobile} {
+    flex-direction: column;
+  }
 `;
 
-const FinalDocsColumn = styled.div`
+const FinalDocsColumn = styled.div<{ $mobileTab: 'brief' | 'chat' }>`
   flex: 1 1 0;
   min-width: 0;
   display: flex;
   flex-direction: column;
   overflow: hidden;
+
+  ${media.mobile} {
+    display: ${(x) => (x.$mobileTab === 'brief' ? 'flex' : 'none')};
+    flex: 1 1 auto;
+  }
 `;
 
-const FinalChatColumn = styled.div`
+const FinalChatColumn = styled.div<{ $mobileTab: 'brief' | 'chat' }>`
   flex: 0 1 480px;
   min-width: 360px;
   display: flex;
@@ -176,6 +263,14 @@ const FinalChatColumn = styled.div`
   border-left: 1px solid #eef0f4;
   background: #ffffff;
   overflow: hidden;
+
+  ${media.mobile} {
+    flex: 1 1 auto;
+    min-width: 0;
+    border-left: 0;
+    border-top: 0;
+    display: ${(x) => (x.$mobileTab === 'chat' ? 'flex' : 'none')};
+  }
 `;
 
 interface BriefEditorLayoutProps {
@@ -198,6 +293,9 @@ export const BriefEditorLayout: React.FC<BriefEditorLayoutProps> = (props) => {
   const [headerSlot, setHeaderSlot] = useState<HTMLElement | null>(null);
   const { dismissed: footerDismissed } = useBetaFooter();
   const footerVisible = !footerDismissed;
+  const footerHeight = useBetaFooterHeight();
+  const [mobileTab, setMobileTab] = useState<'brief' | 'chat'>('brief');
+  const [chatBadge, setChatBadge] = useState(false);
 
   useEffect(() => {
     setHasMounted(true);
@@ -277,6 +375,24 @@ export const BriefEditorLayout: React.FC<BriefEditorLayoutProps> = (props) => {
       hydrateFromDetail(publicDetail);
     }
   }, [authDetail, publicDetail, isAuth, hydrateFromDetail]);
+
+  useEffect(() => {
+    if (mobileTab === 'chat') {
+      setChatBadge(false);
+      return;
+    }
+    const last = messages[messages.length - 1];
+    if (last?.role === 'assistant') {
+      setChatBadge(true);
+    }
+  }, [messages, mobileTab]);
+
+  const handleSelectMobileTab = (tab: 'brief' | 'chat') => {
+    setMobileTab(tab);
+    if (tab === 'chat') {
+      setChatBadge(false);
+    }
+  };
 
   const pollingRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
@@ -793,7 +909,7 @@ export const BriefEditorLayout: React.FC<BriefEditorLayoutProps> = (props) => {
 
   if (stage === 'start') {
     return (
-      <OuterWrapper $footerVisible={footerVisible}>
+      <OuterWrapper $footerVisible={footerVisible} $footerHeight={footerHeight}>
         <StartScreen>
           <StartCard>
             <StartTitle>{t('BRIEF_V3_START_TITLE')}</StartTitle>
@@ -844,7 +960,7 @@ export const BriefEditorLayout: React.FC<BriefEditorLayoutProps> = (props) => {
 
   if (stage === 'generating' || stage === 'finalizing') {
     return (
-      <OuterWrapper $footerVisible={footerVisible}>
+      <OuterWrapper $footerVisible={footerVisible} $footerHeight={footerHeight}>
         <GeneratingOverlay>
           <Spinner />
           <GeneratingTitle>
@@ -865,7 +981,7 @@ export const BriefEditorLayout: React.FC<BriefEditorLayoutProps> = (props) => {
 
   if (stage === 'comparison' && briefId) {
     return (
-      <OuterWrapper $footerVisible={footerVisible}>
+      <OuterWrapper $footerVisible={footerVisible} $footerHeight={footerHeight}>
         {pageTitleHeader}
         <ComparisonTable briefId={briefId} />
       </OuterWrapper>
@@ -874,7 +990,7 @@ export const BriefEditorLayout: React.FC<BriefEditorLayoutProps> = (props) => {
 
   if (stage === 'settings' && briefId && authDetail) {
     return (
-      <OuterWrapper $footerVisible={footerVisible}>
+      <OuterWrapper $footerVisible={footerVisible} $footerHeight={footerHeight}>
         {pageTitleHeader}
         <BriefSettings brief={authDetail} />
       </OuterWrapper>
@@ -883,46 +999,67 @@ export const BriefEditorLayout: React.FC<BriefEditorLayoutProps> = (props) => {
 
   if (stage === 'finalized') {
     return (
-      <OuterWrapper $footerVisible={footerVisible}>
+      <OuterWrapper $footerVisible={footerVisible} $footerHeight={footerHeight}>
         {pageTitleHeader}
         {finalPackage ? (
-          <FinalSplit>
-            <FinalDocsColumn>
-              <BriefFinalPackage
-                briefId={briefId!}
-                package={finalPackage}
-                onRegenerate={isAuth ? handleRegenerate : null}
-                isRegenerating={isRegenerating}
-              />
-            </FinalDocsColumn>
-            <FinalChatColumn>
-              <BriefChatPanel
-                briefId={briefId ?? undefined}
-                isPublic={!isAuth}
-                publicToken={token ?? null}
-                messages={messages}
-                conversationStatus={conversationStatus}
-                isLoading={isChatLoading}
-                messageLimit={messageLimit}
-                messageCount={messageCount}
-                totalCostUsd={totalCostUsd}
-                showCost={showCost}
-                pendingAttachments={pendingAttachments}
-                uploading={uploading}
-                maxAttachments={maxAttachments}
-                onUploadAttachment={handleUploadAttachment}
-                onDeleteAttachment={handleDeleteAttachment}
-                onSendMessage={handleSendMessage}
-                onFeedback={isAuth ? handleFeedback : null}
-                onFeedbackComment={isAuth ? handleFeedbackComment : null}
-                onFinalize={null}
-                onRegenerate={null}
-                isRegenerating={isRegenerating}
-                onShowPackage={null}
-                showRegistrationButton={false}
-              />
-            </FinalChatColumn>
-          </FinalSplit>
+          <FinalContainer>
+            <MobileTabBar role='tablist'>
+              <MobileTabButton
+                role='tab'
+                aria-selected={mobileTab === 'brief'}
+                $active={mobileTab === 'brief'}
+                onClick={() => handleSelectMobileTab('brief')}
+              >
+                {t('BRIEF_TAB_BRIEF')}
+              </MobileTabButton>
+              <MobileTabButton
+                role='tab'
+                aria-selected={mobileTab === 'chat'}
+                $active={mobileTab === 'chat'}
+                onClick={() => handleSelectMobileTab('chat')}
+              >
+                {t('BRIEF_TAB_CHAT')}
+                {chatBadge && mobileTab !== 'chat' ? <Badge dot offset={[2, -2]} /> : null}
+              </MobileTabButton>
+            </MobileTabBar>
+            <FinalSplit>
+              <FinalDocsColumn $mobileTab={mobileTab}>
+                <BriefFinalPackage
+                  briefId={briefId!}
+                  package={finalPackage}
+                  onRegenerate={isAuth ? handleRegenerate : null}
+                  isRegenerating={isRegenerating}
+                />
+              </FinalDocsColumn>
+              <FinalChatColumn $mobileTab={mobileTab}>
+                <BriefChatPanel
+                  briefId={briefId ?? undefined}
+                  isPublic={!isAuth}
+                  publicToken={token ?? null}
+                  messages={messages}
+                  conversationStatus={conversationStatus}
+                  isLoading={isChatLoading}
+                  messageLimit={messageLimit}
+                  messageCount={messageCount}
+                  totalCostUsd={totalCostUsd}
+                  showCost={showCost}
+                  pendingAttachments={pendingAttachments}
+                  uploading={uploading}
+                  maxAttachments={maxAttachments}
+                  onUploadAttachment={handleUploadAttachment}
+                  onDeleteAttachment={handleDeleteAttachment}
+                  onSendMessage={handleSendMessage}
+                  onFeedback={isAuth ? handleFeedback : null}
+                  onFeedbackComment={isAuth ? handleFeedbackComment : null}
+                  onFinalize={null}
+                  onRegenerate={null}
+                  isRegenerating={isRegenerating}
+                  onShowPackage={null}
+                  showRegistrationButton={false}
+                />
+              </FinalChatColumn>
+            </FinalSplit>
+          </FinalContainer>
         ) : (
           <GeneratingOverlay>
             <Spinner />
@@ -948,7 +1085,7 @@ export const BriefEditorLayout: React.FC<BriefEditorLayoutProps> = (props) => {
     ((isAuth && !authDetail && isAuthDetailFetching) || (!isAuth && token && !publicDetail));
   if (isHydrating) {
     return (
-      <OuterWrapper $footerVisible={footerVisible}>
+      <OuterWrapper $footerVisible={footerVisible} $footerHeight={footerHeight}>
         <GeneratingOverlay>
           <Spinner />
           <GeneratingTitle>{t('BRIEF_V3_LOADING_BRIEF_TITLE')}</GeneratingTitle>
@@ -959,7 +1096,7 @@ export const BriefEditorLayout: React.FC<BriefEditorLayoutProps> = (props) => {
   }
 
   return (
-    <OuterWrapper $footerVisible={footerVisible}>
+    <OuterWrapper $footerVisible={footerVisible} $footerHeight={footerHeight}>
       {pageTitleHeader}
       <ChatScreen>
         <ChatWrapper>

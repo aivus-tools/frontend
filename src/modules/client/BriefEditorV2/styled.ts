@@ -1,4 +1,5 @@
 import { styled, keyframes } from 'styled-components';
+import { media } from '@/styles/breakpoints';
 
 export const EditorWrapper = styled.div`
   flex: 1;
@@ -7,6 +8,10 @@ export const EditorWrapper = styled.div`
   min-width: 0;
   background: #ffffff;
   border-right: 1px solid #eef0f4;
+
+  ${media.mobile} {
+    border-right: 0;
+  }
 `;
 
 export const EditorToolbar = styled.div`
@@ -17,6 +22,18 @@ export const EditorToolbar = styled.div`
   border-bottom: 1px solid #eef0f4;
   background: #fafbfc;
   flex-wrap: wrap;
+
+  ${media.mobile} {
+    padding: 6px 10px;
+    gap: 2px;
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    scrollbar-width: none;
+
+    &::-webkit-scrollbar {
+      display: none;
+    }
+  }
 `;
 
 export const ToolbarButton = styled.button<{ $active?: boolean }>`
@@ -55,6 +72,10 @@ export const EditorContent = styled.div`
   flex: 1;
   overflow-y: auto;
   padding: 24px 32px;
+
+  ${media.mobile} {
+    padding: 16px 14px;
+  }
 
   .tiptap {
     outline: none;

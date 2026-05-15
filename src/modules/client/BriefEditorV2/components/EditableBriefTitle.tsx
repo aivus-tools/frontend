@@ -8,6 +8,7 @@ import { styled } from 'styled-components';
 import { t } from '@/lib/i18n';
 import { AppRoute } from '@/constants/appRoute';
 import { useRenameBriefAiMutation } from '@/services/client/briefAiApi';
+import { media } from '@/styles/breakpoints';
 
 interface EditableBriefTitleProps {
   briefId: string;
@@ -33,10 +34,18 @@ const BackLink = styled(Link)`
     color: #2288ff;
     text-decoration: underline;
   }
+
+  ${media.mobile} {
+    display: none;
+  }
 `;
 
 const Separator = styled.span`
   color: #d0d5dd;
+
+  ${media.mobile} {
+    display: none;
+  }
 `;
 
 const TitleDisplay = styled.button<{ $isEmpty: boolean }>`
@@ -54,9 +63,22 @@ const TitleDisplay = styled.button<{ $isEmpty: boolean }>`
   align-items: center;
   gap: 6px;
   max-width: 560px;
+  min-width: 0;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
+
+  ${media.mobile} {
+    font-size: 14px;
+    max-width: calc(100vw - 156px);
+  }
+
+  & > span {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    min-width: 0;
+  }
 
   &:hover {
     border-color: #d0d5dd;
@@ -82,6 +104,13 @@ const TitleInput = styled.input`
   min-width: 320px;
   outline: none;
   box-shadow: 0 0 0 3px rgba(34, 136, 255, 0.15);
+
+  ${media.mobile} {
+    min-width: 0;
+    width: 100%;
+    max-width: calc(100vw - 156px);
+    font-size: 14px;
+  }
 `;
 
 export const EditableBriefTitle: React.FC<EditableBriefTitleProps> = (props) => {

@@ -1,4 +1,5 @@
 import { styled, keyframes } from 'styled-components';
+import { media } from '@/styles/breakpoints';
 
 export const ChatPanel = styled.div`
   position: relative;
@@ -17,6 +18,10 @@ export const ChatHeader = styled.div`
   padding: 16px 20px;
   border-bottom: 1px solid #eef0f4;
   background: #ffffff;
+
+  ${media.mobile} {
+    padding: 12px 14px;
+  }
 `;
 
 export const ChatTitle = styled.h3`
@@ -66,6 +71,11 @@ export const MessagesArea = styled.div`
   display: flex;
   flex-direction: column;
   gap: 16px;
+
+  ${media.mobile} {
+    padding: 12px 14px;
+    gap: 12px;
+  }
 `;
 
 export const MessageRow = styled.div<{ $isUser: boolean }>`
@@ -296,6 +306,10 @@ export const InputArea = styled.div`
   display: flex;
   flex-direction: column;
   gap: 8px;
+
+  ${media.mobile} {
+    padding: 12px 14px calc(12px + env(safe-area-inset-bottom, 0px));
+  }
 `;
 
 export const ChatInputWrapper = styled.div`
@@ -312,6 +326,12 @@ export const ChatInputWrapper = styled.div`
   > button {
     align-self: stretch;
     min-height: 56px;
+  }
+
+  ${media.mobile} {
+    > button {
+      min-height: 44px;
+    }
   }
 `;
 
@@ -529,6 +549,10 @@ export const DropOverlay = styled.div`
   font-size: 14px;
   font-weight: 600;
   z-index: 20;
+
+  ${media.mobile} {
+    display: none;
+  }
 `;
 
 export const AttachmentChipList = styled.div`

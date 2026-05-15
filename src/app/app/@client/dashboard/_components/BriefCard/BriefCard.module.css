@@ -89,3 +89,68 @@
 .compareButton {
   font-size: 12px;
 }
+
+@media (width <= 1023.98px) {
+  .card {
+    position: relative;
+  }
+
+  .row {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    align-items: stretch;
+    padding: 14px 16px 14px 18px;
+  }
+
+  .projectCell {
+    padding-right: 36px;
+    padding-left: 14px;
+  }
+
+  .accent {
+    top: 0;
+    left: 0;
+    width: 4px;
+    height: 100%;
+    border-radius: 0;
+  }
+
+  .statusCell,
+  .messagesCell,
+  .offersCell,
+  .dateCell {
+    display: flex;
+    gap: 12px;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .statusCell[data-label]::before,
+  .messagesCell[data-label]::before,
+  .offersCell[data-label]::before,
+  .dateCell[data-label]::before {
+    font-family: Montserrat, sans-serif;
+    font-size: 11px;
+    font-weight: 500;
+    color: #99a1b7;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    content: attr(data-label);
+  }
+
+  .actionsCell {
+    position: absolute;
+    top: 6px;
+    right: 6px;
+  }
+
+  .compareButton {
+    width: 100%;
+    max-width: 220px;
+  }
+
+  .offersCell .compareButton {
+    margin-left: auto;
+  }
+}

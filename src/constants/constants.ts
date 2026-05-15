@@ -1,5 +1,8 @@
 import { t } from '@/lib/i18n';
 
+export const HEADER_HEIGHT_DESKTOP = 70;
+export const HEADER_HEIGHT_MOBILE = 56;
+
 export const AUTH_TYPES = {
   google: 'GOOGLE',
   credentials: 'CREDENTIALS',
@@ -96,5 +99,4 @@ export const PROJECT_STATUS_LABEL: Record<string, () => string> = {
   [PROJECT_STATUS.CANCELLED]: () => t('STATUS_CANCELLED'),
 };
 
-export const getProjectStatusLabel = (status: string): string =>
-  PROJECT_STATUS_LABEL[status]?.() ?? status;
+export const getProjectStatusLabel = (status: string): string => PROJECT_STATUS_LABEL[status]?.() ?? status;

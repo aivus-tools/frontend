@@ -1,13 +1,14 @@
 'use client';
 
 import React, { useState } from 'react';
-import { Switch } from 'antd';
-import { DownOutlined } from '@ant-design/icons';
+import { Drawer, FloatButton, Switch } from 'antd';
+import { DownOutlined, MessageOutlined } from '@ant-design/icons';
 import { t } from '@/lib/i18n';
 import { useGetComparisonQuery } from '@/services/client/comparisonApi';
 import { ComparisonCategory, ComparisonVendor, VendorTotal } from '@/types/chat.interface';
 import { formatPrice } from '@/helpers/helper';
 import Spinner from '@/components/Spinner';
+import { useBreakpoint } from '@/hooks/useBreakpoint';
 import { ComparisonAnalysis } from './ComparisonAnalysis';
 import {
   ComparisonPageWrapper,
@@ -72,6 +73,8 @@ export const ComparisonTable: React.FC<ComparisonTableProps> = ({ briefId }) => 
   const { data, isLoading, isError } = useGetComparisonQuery(briefId);
   const [expandedCategories, setExpandedCategories] = useState<Set<string>>(new Set());
   const [costsOnly, setCostsOnly] = useState(true);
+  const { isMobile } = useBreakpoint();
+  const [analysisOpen, setAnalysisOpen] = useState(false);
 
   const toggleCategory = (categoryId: string) => {
     setExpandedCategories((prev) => {
@@ -133,11 +136,7 @@ export const ComparisonTable: React.FC<ComparisonTableProps> = ({ briefId }) => 
                   <ItemNameCell>{item.name}</ItemNameCell>
                   {vendors.map((vendor) => {
                     const valueObj = item.values.find((v) => v.vendor_id === vendor.id);
-                    const value = valueObj
-                      ? costsOnly
-                        ? valueObj.cost
-                        : valueObj.price
-                      : 0;
+                    const value = valueObj ? (costsOnly ? valueObj.cost : valueObj.price) : 0;
                     const bgColor = value > 0 ? getPriceColor(value, min, max) : 'transparent';
 
                     return (
@@ -151,9 +150,7 @@ export const ComparisonTable: React.FC<ComparisonTableProps> = ({ briefId }) => 
             })}
 
             <SubtotalRow>
-              <SubtotalLabel>
-                {t('SUBTOTAL')}
-              </SubtotalLabel>
+              <SubtotalLabel>{t('SUBTOTAL')}</SubtotalLabel>
               {vendors.map((vendor) => (
                 <SubtotalValue key={vendor.id}>
                   $ {formatPrice(findVendorTotal(category.subtotals, vendor.id))}
@@ -173,29 +170,25 @@ export const ComparisonTable: React.FC<ComparisonTableProps> = ({ briefId }) => 
           <TableTitle>{t('COMPARISON')}</TableTitle>
           <ModeToggle>
             {t('COMPARISON_MODE')}: {costsOnly ? t('COSTS_ONLY') : t('ALL_ITEMS')}
-            <Switch
-              checked={costsOnly}
-              onChange={(checked) => setCostsOnly(checked)}
-              size="small"
-            />
+            <Switch checked={costsOnly} onChange={(checked) => setCostsOnly(checked)} size='small' />
           </ModeToggle>
         </TableHeader>
 
         <ColorLegend>
           <LegendItem>
-            <LegendDot $color="#4CAF50" />
+            <LegendDot $color='#4CAF50' />
             {t('LOWEST')}
           </LegendItem>
           <LegendItem>
-            <LegendDot $color="#FFC107" />
+            <LegendDot $color='#FFC107' />
             {t('MEDIUM')}
           </LegendItem>
           <LegendItem>
-            <LegendDot $color="#FF9800" />
+            <LegendDot $color='#FF9800' />
             {t('HIGH')}
           </LegendItem>
           <LegendItem>
-            <LegendDot $color="#F44336" />
+            <LegendDot $color='#F44336' />
             {t('HIGHEST')}
           </LegendItem>
         </ColorLegend>
@@ -206,9 +199,7 @@ export const ComparisonTable: React.FC<ComparisonTableProps> = ({ briefId }) => 
             {vendors.map((vendor: ComparisonVendor) => (
               <HeaderVendorCell key={vendor.id}>
                 <VendorName>{vendor.name}</VendorName>
-                <VendorTotalStyled>
-                  $ {formatPrice(vendor.total)}
-                </VendorTotalStyled>
+                <VendorTotalStyled>$ {formatPrice(vendor.total)}</VendorTotalStyled>
               </HeaderVendorCell>
             ))}
           </StickyHeaderRow>
@@ -226,7 +217,29 @@ export const ComparisonTable: React.FC<ComparisonTableProps> = ({ briefId }) => 
         </ComparisonTableWrapper>
       </TableArea>
 
-      <ComparisonAnalysis briefId={briefId} />
+      {!isMobile && <ComparisonAnalysis briefId={briefId} />}
+      {isMobile && (
+        <>
+          <FloatButton
+            icon={<MessageOutlined />}
+            type='primary'
+            tooltip={t('COMPARISON_OPEN_AI_ANALYSIS')}
+            onClick={() => setAnalysisOpen(true)}
+            style={{ insetInlineEnd: 16, insetBlockEnd: 24 }}
+          />
+          <Drawer
+            placement='bottom'
+            open={analysisOpen}
+            onClose={() => setAnalysisOpen(false)}
+            height='min(80vh, 80dvh)'
+            styles={{ body: { padding: 0 } }}
+            title={t('COMPARISON_OPEN_AI_ANALYSIS')}
+            destroyOnClose={false}
+          >
+            <ComparisonAnalysis briefId={briefId} />
+          </Drawer>
+        </>
+      )}
     </ComparisonPageWrapper>
   );
 };

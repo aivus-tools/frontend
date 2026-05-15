@@ -1,7 +1,6 @@
 :root {
-  --min-width: 320;
-  --max-width: 1280px;
   --font-family: 'Montserrat', 'Aria', sans-serif;
+  --aivus-header-h: 70px;
 
   /* COLOURS */
   --white: #fff;
@@ -134,4 +133,10 @@ button:-moz-focusring,
 ::-webkit-file-upload-button {
   font: inherit;
   appearance: button;
+}
+
+@media (width <= 1023.98px) {
+  :root {
+    --aivus-header-h: 56px;
+  }
 }

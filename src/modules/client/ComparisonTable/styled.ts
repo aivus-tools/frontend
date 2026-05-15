@@ -1,11 +1,16 @@
 import { styled } from 'styled-components';
+import { media } from '@/styles/breakpoints';
 
 /* ───── Page layout ───── */
 
 export const ComparisonPageWrapper = styled.div`
   display: flex;
-  height: calc(100vh - 70px);
+  height: calc(100dvh - var(--aivus-header-h));
   background: #f8f9fb;
+
+  ${media.mobile} {
+    flex-direction: column;
+  }
 `;
 
 export const TableArea = styled.div`
@@ -13,6 +18,10 @@ export const TableArea = styled.div`
   overflow: auto;
   padding: 24px;
   min-width: 0;
+
+  ${media.mobile} {
+    padding: 16px 12px 96px;
+  }
 `;
 
 export const TableHeader = styled.div`
@@ -20,6 +29,13 @@ export const TableHeader = styled.div`
   align-items: center;
   justify-content: space-between;
   margin-bottom: 20px;
+
+  ${media.mobile} {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+    margin-bottom: 12px;
+  }
 `;
 
 export const TableTitle = styled.h1`
@@ -45,6 +61,13 @@ export const ColorLegend = styled.div`
   align-items: center;
   gap: 16px;
   margin-bottom: 16px;
+
+  ${media.mobile} {
+    gap: 8px;
+    flex-wrap: wrap;
+    font-size: 10px;
+    margin-bottom: 12px;
+  }
 `;
 
 export const LegendItem = styled.div`
@@ -96,6 +119,13 @@ export const HeaderItemCell = styled.div`
   left: 0;
   background: #ffffff;
   z-index: 6;
+
+  ${media.mobile} {
+    width: 140px;
+    min-width: 140px;
+    padding: 10px 12px;
+    font-size: 11px;
+  }
 `;
 
 export const HeaderVendorCell = styled.div`
@@ -108,6 +138,11 @@ export const HeaderVendorCell = styled.div`
   &:last-child {
     border-right: none;
   }
+
+  ${media.mobile} {
+    min-width: 120px;
+    padding: 10px 12px;
+  }
 `;
 
 export const VendorName = styled.div`
@@ -116,6 +151,10 @@ export const VendorName = styled.div`
   font-size: 13px;
   color: #4b5675;
   margin-bottom: 4px;
+
+  ${media.mobile} {
+    font-size: 12px;
+  }
 `;
 
 export const VendorTotal = styled.div`
@@ -123,6 +162,10 @@ export const VendorTotal = styled.div`
   font-weight: 600;
   font-size: 16px;
   color: #4b5675;
+
+  ${media.mobile} {
+    font-size: 14px;
+  }
 `;
 
 /* ───── Category / rows ───── */
@@ -181,6 +224,13 @@ export const ItemNameCell = styled.div`
   left: 0;
   background: #ffffff;
   z-index: 1;
+
+  ${media.mobile} {
+    width: 140px;
+    min-width: 140px;
+    padding: 8px 12px;
+    font-size: 12px;
+  }
 `;
 
 export const PriceCell = styled.div<{ $bgColor: string }>`
@@ -198,6 +248,12 @@ export const PriceCell = styled.div<{ $bgColor: string }>`
 
   &:last-child {
     border-right: none;
+  }
+
+  ${media.mobile} {
+    min-width: 120px;
+    padding: 8px 12px;
+    font-size: 12px;
   }
 `;
 
@@ -220,6 +276,13 @@ export const SubtotalLabel = styled.div`
   left: 0;
   background: #f8f9fb;
   z-index: 1;
+
+  ${media.mobile} {
+    width: 140px;
+    min-width: 140px;
+    padding: 8px 12px;
+    font-size: 11px;
+  }
 `;
 
 export const SubtotalValue = styled.div`
@@ -235,6 +298,12 @@ export const SubtotalValue = styled.div`
 
   &:last-child {
     border-right: none;
+  }
+
+  ${media.mobile} {
+    min-width: 120px;
+    padding: 8px 12px;
+    font-size: 12px;
   }
 `;
 
@@ -256,6 +325,13 @@ export const GrandTotalLabel = styled.div`
   left: 0;
   background: #4b5675;
   z-index: 1;
+
+  ${media.mobile} {
+    width: 140px;
+    min-width: 140px;
+    padding: 12px;
+    font-size: 12px;
+  }
 `;
 
 export const GrandTotalValue = styled.div`
@@ -272,6 +348,12 @@ export const GrandTotalValue = styled.div`
   &:last-child {
     border-right: none;
   }
+
+  ${media.mobile} {
+    min-width: 120px;
+    padding: 12px;
+    font-size: 14px;
+  }
 `;
 
 /* ───── Sidebar / Analysis panel ───── */
@@ -283,7 +365,15 @@ export const AnalysisPanel = styled.div`
   border-left: 1px solid #eef0f4;
   display: flex;
   flex-direction: column;
-  max-height: calc(100vh - 70px);
+  max-height: calc(100dvh - var(--aivus-header-h));
+
+  ${media.mobile} {
+    width: 100%;
+    min-width: 0;
+    max-height: none;
+    border-left: 0;
+    flex: 1;
+  }
 `;
 
 export const AnalysisTabs = styled.div`

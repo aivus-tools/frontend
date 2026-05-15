@@ -2,14 +2,14 @@
 
 import { App } from 'antd';
 import { ReduxStore } from '@/context/ReduxProvider';
-import { MobileStub } from '@/components/MobileStub/MobileStub';
-import { BetaFooter, BETA_FOOTER_HEIGHT } from '@/components/BetaFooter/BetaFooter';
+import { BetaFooter, useBetaFooterHeight } from '@/components/BetaFooter/BetaFooter';
 import { BetaFooterProvider, useBetaFooter } from '@/components/BetaFooter/BetaFooterContext';
 
 const SharedBriefContent = ({ children }: { children: React.ReactNode }) => {
   const { dismissed } = useBetaFooter();
+  const footerHeight = useBetaFooterHeight();
   return (
-    <div className='aivus-desktop-content' style={{ paddingBottom: dismissed ? 0 : BETA_FOOTER_HEIGHT }}>
+    <div style={{ paddingBottom: dismissed ? 0 : footerHeight }}>
       <App>{children}</App>
     </div>
   );
@@ -18,7 +18,6 @@ const SharedBriefContent = ({ children }: { children: React.ReactNode }) => {
 export default function SharedBriefLayout({ children }: { children: React.ReactNode }) {
   return (
     <ReduxStore>
-      <MobileStub />
       <BetaFooterProvider>
         <SharedBriefContent>{children}</SharedBriefContent>
         <BetaFooter />
