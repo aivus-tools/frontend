@@ -15,12 +15,13 @@ interface Props {
   handleChange: (id: string, key: keyof OfferData) => (data: ValueOf<OfferData> | null) => void;
 }
 
-export const SidebarExpenses: React.FC<Props> = (props) => {
+export const SidebarExpenses = (props: Props) => {
   const metaData = useAppSelector(selectOfferMetaData);
   const globalFringes = parseFloat(metaData?.fringesPercent || '0') || 0;
 
   const handleChangeUnit =
-    (field: 'price' | 'cost' | 'taxRate' | 'taxPrice' | 'showTax' | 'overtime') => (newValue: number | null | boolean) => {
+    (field: 'price' | 'cost' | 'taxRate' | 'taxPrice' | 'showTax' | 'overtime') =>
+    (newValue: number | null | boolean) => {
       props.handleChange(props.offer.id, field)(newValue);
     };
 

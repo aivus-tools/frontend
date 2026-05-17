@@ -1,0 +1,72 @@
+.sider {
+  position: sticky !important;
+  inset-inline-start: 0;
+  top: 0;
+  bottom: 0;
+  height: 100vh;
+  overflow: auto;
+  scrollbar-gutter: stable;
+  scrollbar-width: thin;
+}
+
+.header {
+  display: flex;
+  gap: 16px;
+  align-items: center;
+  justify-content: space-between;
+  height: 70px;
+  padding: 0 36px;
+  line-height: 70px;
+}
+
+.headerLeft {
+  display: flex;
+  flex: 1;
+  gap: 24px;
+  align-items: center;
+  min-width: 0;
+}
+
+.headerRight {
+  display: flex;
+  flex-shrink: 0;
+  align-items: center;
+}
+
+.menuButton {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+}
+
+.menuButton :global(.anticon) {
+  font-size: 20px;
+}
+
+.content {
+  max-height: calc(min(100vh, 100dvh) - var(--aivus-header-h));
+  overflow-y: auto;
+  box-shadow: inset 0 5px 16.5px -11px rgb(0 0 0 / 25%);
+}
+
+@media (width <= 1023.98px) {
+  .sider {
+    display: none !important;
+    flex: 0 !important;
+    width: 0 !important;
+    min-width: 0 !important;
+    max-width: 0 !important;
+  }
+
+  .header {
+    height: 56px;
+    padding: 0 12px;
+    line-height: 56px;
+  }
+
+  .headerLeft {
+    gap: 8px;
+  }
+}

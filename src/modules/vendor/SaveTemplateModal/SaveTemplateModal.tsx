@@ -11,11 +11,7 @@ interface SaveTemplateModalProps {
   offerId: string;
 }
 
-export const SaveTemplateModal: React.FC<SaveTemplateModalProps> = ({
-  open,
-  onClose,
-  offerId,
-}) => {
+export const SaveTemplateModal = (props: SaveTemplateModalProps) => {
   const { message } = App.useApp();
   const [name, setName] = useState('');
   const [createTemplate, { isLoading }] = useCreateTemplateMutation();
@@ -26,11 +22,11 @@ export const SaveTemplateModal: React.FC<SaveTemplateModalProps> = ({
     try {
       await createTemplate({
         name: name.trim(),
-        offerId,
+        offerId: props.offerId,
       }).unwrap();
       message.success(t('TEMPLATE_SAVED'));
       setName('');
-      onClose();
+      props.onClose();
     } catch {
       message.error(t('UNEXPECTED_ERROR'));
     }
@@ -38,18 +34,11 @@ export const SaveTemplateModal: React.FC<SaveTemplateModalProps> = ({
 
   const handleCancel = () => {
     setName('');
-    onClose();
+    props.onClose();
   };
 
   return (
-    <Modal
-      title={t('SAVE_AS_TEMPLATE')}
-      open={open}
-      onCancel={handleCancel}
-      width={420}
-      centered
-      footer={null}
-    >
+    <Modal title={t('SAVE_AS_TEMPLATE')} open={props.open} onCancel={handleCancel} width={420} centered footer={null}>
       <div style={{ marginTop: 16 }}>
         <label
           style={{
@@ -86,12 +75,7 @@ export const SaveTemplateModal: React.FC<SaveTemplateModalProps> = ({
         }}
       >
         <Button onClick={handleCancel}>{t('CANCEL')}</Button>
-        <Button
-          type="primary"
-          onClick={handleSave}
-          loading={isLoading}
-          disabled={!name.trim()}
-        >
+        <Button type='primary' onClick={handleSave} loading={isLoading} disabled={!name.trim()}>
           {t('SAVE')}
         </Button>
       </div>

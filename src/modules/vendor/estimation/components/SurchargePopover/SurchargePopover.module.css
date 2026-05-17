@@ -14,14 +14,14 @@
   font-size: 14px;
   font-weight: 700;
   line-height: 100%;
-  color: var(--main, #4b5675);
+  color: var(--main, var(--main));
 }
 
 .label {
   font-size: 13px;
   font-weight: 500;
   line-height: 100%;
-  color: var(--text-gray, #99a1b7);
+  color: var(--text-gray, var(--gray));
 }
 
 .closeButton {
@@ -32,7 +32,7 @@
   height: 24px;
   padding: 4px;
   font-size: 18px;
-  color: var(--text-dark, #121b3e);
+  color: var(--text-dark, var(--main-dark));
   cursor: pointer;
   background: none;
   border-radius: 4px;
@@ -40,7 +40,7 @@
 }
 
 .closeButton:hover {
-  background-color: var(--bg-gray-light, #e5e5e5);
+  background-color: var(--bg-gray-light, var(--bg-gray-light));
 }
 
 .surchargeSection {
@@ -62,14 +62,14 @@
 }
 
 .explanationItem svg {
-  fill: var(--text-gray, #99a1b7);
-} 
+  fill: var(--text-gray, var(--gray));
+}
 
 .explanationText {
   font-size: 9px;
   font-weight: 500;
   line-height: 100%;
-  color: var(--main, #4b5675);
+  color: var(--main, var(--main));
 }
 
 .explanationItem:last-child {
@@ -81,8 +81,6 @@
   margin-top: 2px;
   font-size: 14px;
 }
-
-
 
 .surchargePopover {
   min-width: 320px;

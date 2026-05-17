@@ -1,7 +1,5 @@
 'use client';
 
-import React from 'react';
-
-export const UnforeseenExpenses: React.FC = () => {
-    return null;
+export const UnforeseenExpenses = () => {
+  return null;
 };

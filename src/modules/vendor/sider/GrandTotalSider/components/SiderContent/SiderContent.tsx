@@ -1,11 +1,11 @@
-import React from 'react';
 import styles from './SiderContent.module.css';
 import { SiderContentProps } from './SiderContent.props';
 import cn from 'classnames';
 
-export const SiderContent: React.FC<SiderContentProps> = ({ children, className, ...props }) => {
+export const SiderContent = (props: SiderContentProps) => {
+  const { children, className, ...rest } = props;
   return (
-    <div className={cn(styles.siderContent, className)} {...props}>
+    <div className={cn(styles.siderContent, className)} {...rest}>
       {children}
     </div>
   );

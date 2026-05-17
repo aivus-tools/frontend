@@ -1,0 +1,15 @@
+.label {
+  padding: 12px 0;
+  font-size: 12px;
+  font-weight: 600;
+  line-height: 15.85px;
+  color: var(--gray);
+  text-align: right;
+  text-transform: none;
+}
+
+.totalSum {
+  padding: 12px 0;
+  font-size: 14px;
+  color: var(--blue);
+}

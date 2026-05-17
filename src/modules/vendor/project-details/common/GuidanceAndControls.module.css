@@ -1,0 +1,16 @@
+.borderDashedLine {
+  margin: 8px 0;
+  border: 1px dashed var(--gray);
+}
+
+.description {
+  margin-top: 8px;
+  font-size: 9px !important;
+  font-weight: 700 !important;
+  line-height: 10.97px !important;
+}
+
+.wrapper {
+  display: flex;
+  flex-direction: column;
+}

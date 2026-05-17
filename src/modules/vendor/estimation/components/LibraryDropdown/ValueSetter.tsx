@@ -1,8 +1,8 @@
 import { PropsWithChildren, useCallback, useEffect } from 'react';
 import { useSearchActiveKey } from './SearchContext';
-import { MenuItem } from '../../hooks/useSearchLibrary';
+import { MenuItem } from '@/modules/vendor/estimation/hooks/useSearchLibrary';
 import { OfferData } from '@/types/estimation.interface';
-import { menuItemToOfferData } from '../../helpers/menuItemToOfferData';
+import { menuItemToOfferData } from '@/modules/vendor/estimation/helpers/menuItemToOfferData';
 import { Key } from '@/constants/key';
 import { UnitOption } from '@/types/entries.interface';
 
@@ -13,13 +13,7 @@ interface Props {
   globalDefaultUnit?: UnitOption;
 }
 
-export const ValueSetter = ({
-  isTyping,
-  items,
-  children,
-  onSelect,
-  globalDefaultUnit,
-}: PropsWithChildren<Props>) => {
+export const ValueSetter = ({ isTyping, items, children, onSelect, globalDefaultUnit }: PropsWithChildren<Props>) => {
   const { activeKey, changeActiveKey } = useSearchActiveKey();
 
   const handleSelect = useCallback(() => {

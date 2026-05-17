@@ -30,6 +30,33 @@ const eslintConfig = compat.config({
     '@typescript-eslint/no-unused-vars': ['warn'], // Warnings only, not errors
     'import/no-unused-modules': 'off', // Disable unused modules check
     '@typescript-eslint/no-explicit-any': 'warn', // Warnings only for any
+    'no-restricted-syntax': [
+      'error',
+      {
+        selector:
+          "TSTypeReference[typeName.type='TSQualifiedName'][typeName.left.name='React'][typeName.right.name='FC']",
+        message:
+          'React.FC is forbidden in Aivus. Use an arrow function with a typed props interface: `export const Foo = (props: FooProps) => { ... }`.',
+      },
+      {
+        selector:
+          "TSTypeReference[typeName.type='TSQualifiedName'][typeName.left.name='React'][typeName.right.name='FunctionComponent']",
+        message:
+          'React.FunctionComponent is forbidden in Aivus. Use an arrow function with a typed props interface.',
+      },
+    ],
+    'no-restricted-imports': [
+      'error',
+      {
+        patterns: [
+          {
+            group: ['../../*'],
+            message:
+              'Deep relative imports are forbidden in Aivus. Use the `@/` alias instead (configured in tsconfig.json).',
+          },
+        ],
+      },
+    ],
   },
 });
 

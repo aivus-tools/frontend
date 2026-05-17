@@ -1,0 +1,116 @@
+.wrapper {
+  position: fixed;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  z-index: 50;
+  box-sizing: border-box;
+  display: flex;
+  gap: 14px;
+  align-items: center;
+  width: 100%;
+  font-family: Montserrat, sans-serif;
+  color: var(--main);
+  pointer-events: none;
+  background: linear-gradient(135deg, #fff4ef 0%, #fff0f6 55%, #f4edff 100%);
+  backdrop-filter: saturate(160%);
+  border-top: 1px solid rgb(253 130 88 / 20%);
+  box-shadow: 0 -6px 20px rgb(124 58 237 / 8%);
+}
+
+.variantCompact {
+  padding: 10px 20px;
+}
+
+.variantFull {
+  padding: 14px 24px;
+}
+
+.closeButton {
+  display: inline-flex;
+  flex-shrink: 0;
+  align-items: center;
+  justify-content: center;
+  width: 26px;
+  height: 26px;
+  color: #7c3aed;
+  pointer-events: auto;
+  cursor: pointer;
+  background: rgb(255 255 255 / 75%);
+  border: 1px solid rgb(124 58 237 / 25%);
+  border-radius: 50%;
+  transition:
+    background 0.15s ease,
+    transform 0.15s ease;
+}
+
+.closeButton:hover {
+  background: var(--white);
+  transform: scale(1.05);
+}
+
+.closeIcon {
+  font-size: 12px;
+}
+
+.iconBubble {
+  display: flex;
+  flex-shrink: 0;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  font-size: 18px;
+  color: var(--white);
+  background: linear-gradient(135deg, var(--orange) 0%, #ff5c9c 55%, #7c3aed 100%);
+  border-radius: 50%;
+  box-shadow: 0 6px 14px rgb(253 130 88 / 30%);
+}
+
+.text {
+  flex: 1;
+  min-width: 0;
+  font-size: 12px;
+  line-height: 1.55;
+}
+
+.title {
+  margin-bottom: 2px;
+  font-size: 13px;
+  font-weight: 700;
+  color: #1f2937;
+  background: linear-gradient(135deg, var(--orange), #ff5c9c, #7c3aed);
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.feedback {
+  margin-top: 4px;
+}
+
+@media (width <= 1023.98px) {
+  .wrapper {
+    gap: 10px;
+    padding: 10px 14px calc(10px + env(safe-area-inset-bottom, 0px));
+  }
+
+  .closeButton {
+    width: 32px;
+    height: 32px;
+  }
+
+  .iconBubble {
+    width: 30px;
+    height: 30px;
+    font-size: 15px;
+  }
+
+  .text {
+    font-size: 11px;
+    line-height: 1.45;
+  }
+
+  .title {
+    font-size: 12px;
+  }
+}

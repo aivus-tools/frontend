@@ -15,33 +15,8 @@ import { useUpdateOfferMutation } from '@/services/client/offersApi';
 import { Offer, OfferDeliverable, OfferScheduleEntry } from '@/types/offer.interface';
 import { RichTextEditor } from './RichTextEditor';
 import { TERRITORY_OPTIONS, MEDIA_PLACEMENTS_OPTIONS, DURATION_UNITS, SCHEDULE_PHASES } from './constants';
-import {
-  MetaFormContainer,
-  MetaFormHeader,
-  MetaFormHeaderLeft,
-  MetaFormHeaderTitle,
-  ChevronIcon,
-  MetaFormBody,
-  FormRow,
-  FormField,
-  FieldLabel,
-  FieldInput,
-  FieldSelect,
-  SectionHeader,
-  SectionLabel,
-  HintText,
-  DynamicRow,
-  InlineLabel,
-  SmallInput,
-  AddButton,
-  RemoveButton,
-  TagsContainer,
-  Tag,
-  TagRemove,
-  TagInput,
-  DeliverableNotesInput,
-  ScheduleNotesInput,
-} from './styled';
+
+import styles from './OfferMetaForm.module.css';
 
 interface TagsFieldProps {
   value: string[];
@@ -50,15 +25,14 @@ interface TagsFieldProps {
   placeholder?: string;
 }
 
-const TagsField: React.FC<TagsFieldProps> = (props) => {
-  const { value, onChange, options } = props;
+const TagsField = (props: TagsFieldProps) => {
   const [inputValue, setInputValue] = useState('');
   const [showSuggestions, setShowSuggestions] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
 
   const availableOptions = useMemo(() => {
-    return options.filter((x) => !value.includes(x));
-  }, [options, value]);
+    return props.options.filter((x) => !props.value.includes(x));
+  }, [props.options, props.value]);
 
   const filteredOptions = useMemo(() => {
     if (!inputValue.trim()) {
@@ -69,20 +43,20 @@ const TagsField: React.FC<TagsFieldProps> = (props) => {
 
   const handleAddTag = useCallback(
     (tag: string) => {
-      if (!value.includes(tag)) {
-        onChange([...value, tag]);
+      if (!props.value.includes(tag)) {
+        props.onChange([...props.value, tag]);
       }
       setInputValue('');
       setShowSuggestions(false);
     },
-    [value, onChange]
+    [props]
   );
 
   const handleRemoveTag = useCallback(
     (tag: string) => {
-      onChange(value.filter((x) => x !== tag));
+      props.onChange(props.value.filter((x) => x !== tag));
     },
-    [value, onChange]
+    [props]
   );
 
   const handleKeyDown = useCallback(
@@ -90,11 +64,11 @@ const TagsField: React.FC<TagsFieldProps> = (props) => {
       if (event.key === 'Enter' && inputValue.trim()) {
         event.preventDefault();
         handleAddTag(inputValue.trim());
-      } else if (event.key === 'Backspace' && !inputValue && value.length > 0) {
-        handleRemoveTag(value[value.length - 1]);
+      } else if (event.key === 'Backspace' && !inputValue && props.value.length > 0) {
+        handleRemoveTag(props.value[props.value.length - 1]);
       }
     },
-    [inputValue, value, handleAddTag, handleRemoveTag]
+    [inputValue, props.value, handleAddTag, handleRemoveTag]
   );
 
   const handleBlur = useCallback(() => {
@@ -108,30 +82,32 @@ const TagsField: React.FC<TagsFieldProps> = (props) => {
 
   return (
     <div style={{ position: 'relative' }}>
-      <TagsContainer onClick={() => inputRef.current?.focus()}>
-        {value.map((x) => (
-          <Tag key={x}>
+      <div className={styles.tagsContainer} onClick={() => inputRef.current?.focus()}>
+        {props.value.map((x) => (
+          <span key={x} className={styles.tag}>
             {x}
-            <TagRemove
+            <button
+              className={styles.tagRemove}
               onClick={(event) => {
                 event.stopPropagation();
                 handleRemoveTag(x);
               }}
             >
               <CloseIcon />
-            </TagRemove>
-          </Tag>
+            </button>
+          </span>
         ))}
-        <TagInput
+        <input
+          className={styles.tagInput}
           ref={inputRef}
           value={inputValue}
           onChange={(event) => setInputValue(event.target.value)}
           onFocus={() => setShowSuggestions(true)}
           onBlur={handleBlur}
           onKeyDown={handleKeyDown}
-          placeholder={value.length === 0 ? props.placeholder || 'Type to search or add custom value' : ''}
+          placeholder={props.value.length === 0 ? props.placeholder || 'Type to search or add custom value' : ''}
         />
-      </TagsContainer>
+      </div>
       {showSuggestions && filteredOptions.length > 0 && (
         <div
           style={{
@@ -172,7 +148,7 @@ const TagsField: React.FC<TagsFieldProps> = (props) => {
   );
 };
 
-export const OfferMetaForm: React.FC = () => {
+export const OfferMetaForm = () => {
   const dispatch = useAppDispatch();
   const metaData = useAppSelector(selectOfferMetaData);
   const offerDetails = useAppSelector(selectOfferDetails);
@@ -265,7 +241,6 @@ export const OfferMetaForm: React.FC = () => {
         .catch((x) => {
           logger.error('Failed to save offer metadata', x);
         });
-      // eslint-disable-next-line react-hooks/exhaustive-deps
     },
     [metaData?.id, updateOffer, dispatch]
   );
@@ -474,87 +449,94 @@ export const OfferMetaForm: React.FC = () => {
   }
 
   return (
-    <MetaFormContainer>
-      <MetaFormHeader $isOpen={isOpen} onClick={() => setIsOpen(!isOpen)}>
-        <MetaFormHeaderLeft>
-          <ChevronIcon $isOpen={isOpen}>
+    <div className={styles.metaFormContainer}>
+      <div
+        className={isOpen ? `${styles.metaFormHeader} ${styles.metaFormHeaderOpen}` : styles.metaFormHeader}
+        onClick={() => setIsOpen(!isOpen)}
+      >
+        <div className={styles.metaFormHeaderLeft}>
+          <div className={isOpen ? `${styles.chevronIcon} ${styles.chevronIconOpen}` : styles.chevronIcon}>
             <ArrowIcon />
-          </ChevronIcon>
-          <MetaFormHeaderTitle>{bidVersionName.toUpperCase() || t('BID_VERSION_NAME')}</MetaFormHeaderTitle>
-        </MetaFormHeaderLeft>
-      </MetaFormHeader>
+          </div>
+          <span className={styles.metaFormHeaderTitle}>{bidVersionName.toUpperCase() || t('BID_VERSION_NAME')}</span>
+        </div>
+      </div>
 
       {isOpen && (
-        <MetaFormBody>
-          <FormRow>
-            <FormField $width='150px'>
-              <FieldLabel>{t('BID_DATE')}</FieldLabel>
-              <FieldInput type='date' value={bidDate} onChange={handleBidDateChange} />
-            </FormField>
-            <FormField $width='100px'>
-              <FieldLabel>{t('REVISION')}</FieldLabel>
-              <FieldInput value={revision} onChange={handleRevisionChange} placeholder='1' />
-            </FormField>
-            <FormField $flex>
-              <FieldLabel>{t('BID_VERSION_NAME')}</FieldLabel>
-              <FieldInput
+        <div className={styles.metaFormBody}>
+          <div className={styles.formRow}>
+            <div className={styles.formField} style={{ width: '150px' }}>
+              <label className={styles.fieldLabel}>{t('BID_DATE')}</label>
+              <input className={styles.fieldInput} type='date' value={bidDate} onChange={handleBidDateChange} />
+            </div>
+            <div className={styles.formField} style={{ width: '100px' }}>
+              <label className={styles.fieldLabel}>{t('REVISION')}</label>
+              <input className={styles.fieldInput} value={revision} onChange={handleRevisionChange} placeholder='1' />
+            </div>
+            <div className={`${styles.formField} ${styles.formFieldFlex}`}>
+              <label className={styles.fieldLabel}>{t('BID_VERSION_NAME')}</label>
+              <input
+                className={styles.fieldInput}
                 value={bidVersionName}
                 onChange={handleBidVersionNameChange}
                 placeholder={t('BID_VERSION_NAME')}
               />
-            </FormField>
-          </FormRow>
+            </div>
+          </div>
 
-          <FormRow>
-            <FormField $width='150px'>
-              <FieldLabel>{t('TERM_LABEL')}</FieldLabel>
-              <FieldInput value={term} onChange={handleTermChange} placeholder='e.g. 1 year' />
-            </FormField>
-            <FormField $width='300px'>
-              <FieldLabel>{t('TERRITORY_LABEL')}</FieldLabel>
+          <div className={styles.formRow}>
+            <div className={styles.formField} style={{ width: '150px' }}>
+              <label className={styles.fieldLabel}>{t('TERM_LABEL')}</label>
+              <input className={styles.fieldInput} value={term} onChange={handleTermChange} placeholder='e.g. 1 year' />
+            </div>
+            <div className={styles.formField} style={{ width: '300px' }}>
+              <label className={styles.fieldLabel}>{t('TERRITORY_LABEL')}</label>
               <TagsField
                 value={territory}
                 onChange={handleTerritoryChange}
                 options={TERRITORY_OPTIONS}
                 placeholder='e.g. USA, Canada'
               />
-            </FormField>
-            <FormField $flex>
-              <FieldLabel>{t('MEDIA_PLACEMENTS_LABEL')}</FieldLabel>
+            </div>
+            <div className={`${styles.formField} ${styles.formFieldFlex}`}>
+              <label className={styles.fieldLabel}>{t('MEDIA_PLACEMENTS_LABEL')}</label>
               <TagsField
                 value={mediaPlacements}
                 onChange={handleMediaPlacementsChange}
                 options={MEDIA_PLACEMENTS_OPTIONS}
                 placeholder='e.g. Paid Social, YouTube'
               />
-            </FormField>
-          </FormRow>
+            </div>
+          </div>
 
           <div>
-            <SectionHeader>
-              <SectionLabel>{t('DELIVERABLES')}</SectionLabel>
-              <AddButton onClick={handleAddDeliverable}>
+            <div className={styles.sectionHeader}>
+              <span className={styles.sectionLabel}>{t('DELIVERABLES')}</span>
+              <button className={styles.addButton} onClick={handleAddDeliverable}>
                 <AddIcon color='var(--gray-light)' width={12} height={12} />
                 {t('ADD_DELIVERABLE')}
-              </AddButton>
-            </SectionHeader>
+              </button>
+            </div>
             {deliverables.map((x, i) => (
-              <DynamicRow key={x.id || i} style={{ marginTop: 6 }}>
-                <SmallInput
-                  $width='50px'
+              <div key={x.id || i} className={styles.dynamicRow} style={{ marginTop: 6 }}>
+                <input
+                  className={`${styles.fieldInput} ${styles.smallInput}`}
+                  style={{ '--small-input-width': '50px' } as React.CSSProperties}
                   type='number'
                   min='1'
                   value={x.quantity}
                   onChange={(event) => handleDeliverableChange(i, 'quantity', parseInt(event.target.value, 10) || 0)}
                 />
-                <InlineLabel>x</InlineLabel>
-                <SmallInput
-                  $width='75px'
+                <span className={styles.inlineLabel}>x</span>
+                <input
+                  className={`${styles.fieldInput} ${styles.smallInput}`}
+                  style={{ '--small-input-width': '75px' } as React.CSSProperties}
                   value={x.duration}
                   onChange={(event) => handleDeliverableChange(i, 'duration', event.target.value)}
                   placeholder='30'
                 />
-                <FieldSelect
+                <select
+                  className={styles.fieldSelect}
                   value={x.durationUnit}
                   onChange={(event) => handleDeliverableChange(i, 'durationUnit', event.target.value)}
                   style={{ width: 100, flex: 'none' }}
@@ -564,31 +546,34 @@ export const OfferMetaForm: React.FC = () => {
                       {unit}
                     </option>
                   ))}
-                </FieldSelect>
-                <DeliverableNotesInput
+                </select>
+                <input
+                  className={styles.fieldInput}
+                  style={{ flex: 1 }}
                   value={x.notes}
                   onChange={(event) => handleDeliverableChange(i, 'notes', event.target.value)}
                   placeholder='e.g. 16:9 Master'
                 />
-                <RemoveButton onClick={() => handleRemoveDeliverable(i)}>
+                <button className={styles.removeButton} onClick={() => handleRemoveDeliverable(i)}>
                   <CloseIcon width={10} height={10} />
-                </RemoveButton>
-              </DynamicRow>
+                </button>
+              </div>
             ))}
           </div>
 
           <div>
-            <SectionHeader>
-              <SectionLabel>{t('PRODUCTION_SCHEDULE')}</SectionLabel>
-              <AddButton onClick={handleAddScheduleEntry}>
+            <div className={styles.sectionHeader}>
+              <span className={styles.sectionLabel}>{t('PRODUCTION_SCHEDULE')}</span>
+              <button className={styles.addButton} onClick={handleAddScheduleEntry}>
                 <AddIcon color='var(--gray-light)' width={12} height={12} />
                 {t('ADD_SCHEDULE_ENTRY')}
-              </AddButton>
-            </SectionHeader>
-            <HintText>{t('PRODUCTION_SCHEDULE_HINT')}</HintText>
+              </button>
+            </div>
+            <span className={styles.hintText}>{t('PRODUCTION_SCHEDULE_HINT')}</span>
             {scheduleEntries.map((x, i) => (
-              <DynamicRow key={x.id || i} style={{ marginTop: 6 }}>
-                <FieldSelect
+              <div key={x.id || i} className={styles.dynamicRow} style={{ marginTop: 6 }}>
+                <select
+                  className={styles.fieldSelect}
                   value={x.phaseType}
                   onChange={(event) => handleScheduleEntryChange(i, 'phaseType', event.target.value)}
                   style={{ width: 150, flex: 'none' }}
@@ -599,18 +584,20 @@ export const OfferMetaForm: React.FC = () => {
                       {phase}
                     </option>
                   ))}
-                </FieldSelect>
-                <SmallInput
-                  $width='50px'
+                </select>
+                <input
+                  className={`${styles.fieldInput} ${styles.smallInput}`}
+                  style={{ '--small-input-width': '50px' } as React.CSSProperties}
                   type='number'
                   min='0'
                   value={x.days}
                   onChange={(event) => handleScheduleEntryChange(i, 'days', parseInt(event.target.value, 10) || 0)}
                 />
-                <InlineLabel>{t('DAYS_LABEL')}</InlineLabel>
-                <InlineLabel>{t('AT_LABEL')}</InlineLabel>
-                <SmallInput
-                  $width='50px'
+                <span className={styles.inlineLabel}>{t('DAYS_LABEL')}</span>
+                <span className={styles.inlineLabel}>{t('AT_LABEL')}</span>
+                <input
+                  className={`${styles.fieldInput} ${styles.smallInput}`}
+                  style={{ '--small-input-width': '50px' } as React.CSSProperties}
                   type='number'
                   min='0'
                   value={x.hoursPerDay}
@@ -618,41 +605,44 @@ export const OfferMetaForm: React.FC = () => {
                     handleScheduleEntryChange(i, 'hoursPerDay', parseInt(event.target.value, 10) || 0)
                   }
                 />
-                <InlineLabel>{t('HOURS_LABEL')}</InlineLabel>
-                <ScheduleNotesInput
+                <span className={styles.inlineLabel}>{t('HOURS_LABEL')}</span>
+                <input
+                  className={styles.fieldInput}
+                  style={{ flex: 1 }}
                   value={x.notes}
                   onChange={(event) => handleScheduleEntryChange(i, 'notes', event.target.value)}
                   placeholder='e.g. 11+1 day'
                 />
-                <RemoveButton onClick={() => handleRemoveScheduleEntry(i)}>
+                <button className={styles.removeButton} onClick={() => handleRemoveScheduleEntry(i)}>
                   <CloseIcon width={10} height={10} />
-                </RemoveButton>
-              </DynamicRow>
+                </button>
+              </div>
             ))}
           </div>
 
           <div>
-            <FieldLabel>{t('COVER_PAGE_NOTES')}</FieldLabel>
+            <label className={styles.fieldLabel}>{t('COVER_PAGE_NOTES')}</label>
             <div style={{ marginTop: 4 }}>
               <RichTextEditor value={coverPageNotes} onChange={handleCoverPageNotesChange} />
             </div>
           </div>
 
           <div>
-            <FieldLabel>Assumptions & Exclusions</FieldLabel>
+            <label className={styles.fieldLabel}>Assumptions &amp; Exclusions</label>
             <div style={{ marginTop: 4 }}>
               <RichTextEditor value={assumptionsExclusions} onChange={handleAssumptionsExclusionsChange} />
             </div>
           </div>
 
           <div>
-            <SectionHeader>
-              <SectionLabel>Production Percentages</SectionLabel>
-            </SectionHeader>
-            <FormRow style={{ flexWrap: 'wrap' }}>
-              <FormField $flex style={{ minWidth: 120 }}>
-                <FieldLabel>Fringes %</FieldLabel>
-                <FieldInput
+            <div className={styles.sectionHeader}>
+              <span className={styles.sectionLabel}>Production Percentages</span>
+            </div>
+            <div className={styles.formRow} style={{ flexWrap: 'wrap' }}>
+              <div className={`${styles.formField} ${styles.formFieldFlex}`} style={{ minWidth: 120 }}>
+                <label className={styles.fieldLabel}>Fringes %</label>
+                <input
+                  className={styles.fieldInput}
                   type='number'
                   step='0.01'
                   min='0'
@@ -660,10 +650,11 @@ export const OfferMetaForm: React.FC = () => {
                   onChange={handleFringesPercentChange}
                   placeholder='0'
                 />
-              </FormField>
-              <FormField $flex style={{ minWidth: 120 }}>
-                <FieldLabel>Handling %</FieldLabel>
-                <FieldInput
+              </div>
+              <div className={`${styles.formField} ${styles.formFieldFlex}`} style={{ minWidth: 120 }}>
+                <label className={styles.fieldLabel}>Handling %</label>
+                <input
+                  className={styles.fieldInput}
                   type='number'
                   step='0.01'
                   min='0'
@@ -671,10 +662,11 @@ export const OfferMetaForm: React.FC = () => {
                   onChange={handlePercentChange('handlingPercent', setHandlingPercent)}
                   placeholder='0'
                 />
-              </FormField>
-              <FormField $flex style={{ minWidth: 180 }}>
-                <FieldLabel>Default External Markup %</FieldLabel>
-                <FieldInput
+              </div>
+              <div className={`${styles.formField} ${styles.formFieldFlex}`} style={{ minWidth: 180 }}>
+                <label className={styles.fieldLabel}>Default External Markup %</label>
+                <input
+                  className={styles.fieldInput}
                   type='number'
                   step='0.01'
                   min='0'
@@ -682,10 +674,11 @@ export const OfferMetaForm: React.FC = () => {
                   onChange={handleMarkupPercentChange}
                   placeholder='0'
                 />
-              </FormField>
-              <FormField $flex style={{ minWidth: 120 }}>
-                <FieldLabel>Prod Insurance %</FieldLabel>
-                <FieldInput
+              </div>
+              <div className={`${styles.formField} ${styles.formFieldFlex}`} style={{ minWidth: 120 }}>
+                <label className={styles.fieldLabel}>Prod Insurance %</label>
+                <input
+                  className={styles.fieldInput}
                   type='number'
                   step='0.01'
                   min='0'
@@ -693,10 +686,11 @@ export const OfferMetaForm: React.FC = () => {
                   onChange={handlePercentChange('productionInsurancePercent', setProductionInsurancePercent)}
                   placeholder='0'
                 />
-              </FormField>
-              <FormField $flex style={{ minWidth: 120 }}>
-                <FieldLabel>Prod Fee %</FieldLabel>
-                <FieldInput
+              </div>
+              <div className={`${styles.formField} ${styles.formFieldFlex}`} style={{ minWidth: 120 }}>
+                <label className={styles.fieldLabel}>Prod Fee %</label>
+                <input
+                  className={styles.fieldInput}
                   type='number'
                   step='0.01'
                   min='0'
@@ -704,18 +698,19 @@ export const OfferMetaForm: React.FC = () => {
                   onChange={handlePercentChange('productionFeePercent', setProductionFeePercent)}
                   placeholder='0'
                 />
-              </FormField>
-            </FormRow>
+              </div>
+            </div>
           </div>
 
           <div>
-            <SectionHeader>
-              <SectionLabel>Post-Production Percentages</SectionLabel>
-            </SectionHeader>
-            <FormRow style={{ flexWrap: 'wrap' }}>
-              <FormField $flex style={{ minWidth: 120 }}>
-                <FieldLabel>Post Markup %</FieldLabel>
-                <FieldInput
+            <div className={styles.sectionHeader}>
+              <span className={styles.sectionLabel}>Post-Production Percentages</span>
+            </div>
+            <div className={styles.formRow} style={{ flexWrap: 'wrap' }}>
+              <div className={`${styles.formField} ${styles.formFieldFlex}`} style={{ minWidth: 120 }}>
+                <label className={styles.fieldLabel}>Post Markup %</label>
+                <input
+                  className={styles.fieldInput}
                   type='number'
                   step='0.01'
                   min='0'
@@ -723,10 +718,11 @@ export const OfferMetaForm: React.FC = () => {
                   onChange={handlePercentChange('postMarkupPercent', setPostMarkupPercent)}
                   placeholder='0'
                 />
-              </FormField>
-              <FormField $flex style={{ minWidth: 120 }}>
-                <FieldLabel>Post Insurance %</FieldLabel>
-                <FieldInput
+              </div>
+              <div className={`${styles.formField} ${styles.formFieldFlex}`} style={{ minWidth: 120 }}>
+                <label className={styles.fieldLabel}>Post Insurance %</label>
+                <input
+                  className={styles.fieldInput}
                   type='number'
                   step='0.01'
                   min='0'
@@ -734,10 +730,11 @@ export const OfferMetaForm: React.FC = () => {
                   onChange={handlePercentChange('postInsurancePercent', setPostInsurancePercent)}
                   placeholder='0'
                 />
-              </FormField>
-              <FormField $flex style={{ minWidth: 120 }}>
-                <FieldLabel>Post Tax %</FieldLabel>
-                <FieldInput
+              </div>
+              <div className={`${styles.formField} ${styles.formFieldFlex}`} style={{ minWidth: 120 }}>
+                <label className={styles.fieldLabel}>Post Tax %</label>
+                <input
+                  className={styles.fieldInput}
                   type='number'
                   step='0.01'
                   min='0'
@@ -745,11 +742,11 @@ export const OfferMetaForm: React.FC = () => {
                   onChange={handlePercentChange('postTaxPercent', setPostTaxPercent)}
                   placeholder='0'
                 />
-              </FormField>
-            </FormRow>
+              </div>
+            </div>
           </div>
-        </MetaFormBody>
+        </div>
       )}
-    </MetaFormContainer>
+    </div>
   );
 };

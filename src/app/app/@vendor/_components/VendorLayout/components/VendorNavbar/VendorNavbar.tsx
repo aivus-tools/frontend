@@ -7,6 +7,8 @@ import { NEW_BRIEF_SLUG } from '@/constants/constants';
 import { t } from '@/lib/i18n';
 import { AppRoute } from '@/constants/appRoute';
 
+import styles from './VendorNavbar.module.css';
+
 export const VendorNavbar = () => {
   const router = useRouter();
 
@@ -21,9 +23,9 @@ export const VendorNavbar = () => {
   };
 
   return (
-    <div style={{ flex: 1, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+    <div className={styles.navbar}>
       <VendorTabs />
-      <div style={{ display: 'flex', gap: '16px', alignItems: 'center' }}>
+      <div className={styles.actions}>
         <Button type='primary' onClick={handleNewEstimation}>
           {t('NEW_ESTIMATION')}
         </Button>

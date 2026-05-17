@@ -665,4 +665,7 @@ export const EN_LOCALES = {
   BRIEF_TAB_BRIEF: 'Brief',
   BRIEF_TAB_CHAT: 'Chat',
   COMPARISON_OPEN_AI_ANALYSIS: 'Open AI Analysis',
+  PAGE_NOT_FOUND_TITLE: 'Page not found',
+  PAGE_NOT_FOUND_SUBTITLE: 'The page you are looking for does not exist or was moved.',
+  BACK_TO_DASHBOARD: 'Back to dashboard',
 };

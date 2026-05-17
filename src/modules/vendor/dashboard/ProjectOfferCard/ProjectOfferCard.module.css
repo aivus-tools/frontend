@@ -1,0 +1,254 @@
+.cardContainer {
+  position: relative;
+  margin-bottom: 16px;
+  overflow: hidden;
+  cursor: pointer;
+  background: var(--card-bg);
+  border-left: 5px solid var(--card-accent);
+  border-radius: 12px;
+  box-shadow:
+    0 2px 8px rgb(0 0 0 / 6%),
+    0 0 0 1px rgb(0 0 0 / 3%);
+  transition:
+    box-shadow 0.2s ease,
+    transform 0.15s ease;
+}
+
+.cardContainer:hover {
+  box-shadow:
+    0 8px 24px rgb(0 0 0 / 10%),
+    0 0 0 1px rgb(0 0 0 / 4%);
+  transform: translateY(-2px);
+}
+
+.cardHeader {
+  display: flex;
+  gap: 16px;
+  align-items: center;
+  padding: 20px 24px 16px;
+}
+
+.projectInfo {
+  flex: 1;
+  min-width: 0;
+}
+
+.projectTitle {
+  overflow: hidden;
+  font-family: Montserrat, sans-serif;
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--main-dark);
+  text-overflow: ellipsis;
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
+  white-space: nowrap;
+}
+
+.projectMeta {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  margin-top: 6px;
+  font-family: Montserrat, sans-serif;
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--gray);
+}
+
+.metaDot {
+  flex-shrink: 0;
+  width: 3px;
+  height: 3px;
+  background: var(--bg-gray-light);
+  border-radius: 50%;
+}
+
+.headerActions {
+  display: flex;
+  flex-shrink: 0;
+  gap: 8px;
+  align-items: center;
+}
+
+.offersTable {
+  padding-bottom: 8px;
+  margin: 0 24px;
+  border-top: 1px solid var(--bg-gray-light);
+}
+
+.offerTableHeader {
+  display: grid;
+  grid-template-columns: 2fr 90px 1fr 1fr 1fr;
+  gap: 12px;
+  padding: 10px 20px 8px;
+  font-family: Montserrat, sans-serif;
+  font-size: 10px;
+  font-weight: 600;
+  color: var(--gray-light);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.offerRow {
+  display: grid;
+  grid-template-columns: 2fr 90px 1fr 1fr 1fr;
+  gap: 12px;
+  align-items: center;
+  padding: 10px 20px;
+  cursor: pointer;
+  border-radius: 8px;
+  transition: background 0.12s ease;
+}
+
+.offerRow:hover {
+  background: rgb(34 136 255 / 4%);
+}
+
+.offerRow:not(:last-child) {
+  border-bottom: 1px dashed var(--bg-gray-light);
+}
+
+.offerName {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  min-width: 0;
+}
+
+.offerNameText {
+  overflow: hidden;
+  font-family: Montserrat, sans-serif;
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--main);
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.offerStatusBadge {
+  display: inline-flex;
+  flex-shrink: 0;
+  align-items: center;
+  height: 22px;
+  padding: 0 10px;
+  font-family: Montserrat, sans-serif;
+  font-size: 9px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
+  cursor: pointer;
+  border-radius: 6px;
+  transition: filter 0.15s ease;
+}
+
+.offerStatusBadge:hover {
+  filter: brightness(0.95);
+}
+
+.offerStatusPublished {
+  color: var(--green-darker);
+  background: var(--bg-green);
+}
+
+.offerStatusArchived {
+  color: var(--orange);
+  background: var(--bg-orange);
+}
+
+.offerStatusDraft {
+  color: var(--gray);
+  background: var(--bg-gray-page);
+}
+
+.offerValue {
+  display: flex;
+  gap: 6px;
+  align-items: center;
+  justify-content: flex-end;
+  font-family: Montserrat, sans-serif;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--main);
+  text-align: right;
+}
+
+.offerValueHighlight {
+  color: var(--blue);
+}
+
+.offerValueNegative {
+  color: var(--red);
+}
+
+.percentBadge {
+  padding: 1px 5px;
+  font-family: Montserrat, sans-serif;
+  font-size: 10px;
+  font-weight: 600;
+  white-space: nowrap;
+  border-radius: 4px;
+}
+
+.percentBadgePositive {
+  color: var(--green-darker);
+  background: var(--bg-green);
+}
+
+.percentBadgeNegative {
+  color: var(--red);
+  background: var(--bg-red);
+}
+
+.statusDropdown {
+  min-width: 120px;
+  padding: 4px 0;
+  background: var(--white);
+  border-radius: 8px;
+  box-shadow: 0 8px 24px rgb(0 0 0 / 12%);
+}
+
+.statusDropdownOption {
+  display: flex;
+  align-items: center;
+  padding: 8px 12px;
+  cursor: pointer;
+}
+
+.statusDropdownOption:hover {
+  background: var(--bg-blue-subtotal);
+}
+
+.kebabButton {
+  display: flex;
+  flex-shrink: 0;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  font-size: 18px;
+  color: var(--gray-light);
+  cursor: pointer;
+  border-radius: 8px;
+  transition: all 0.15s ease;
+}
+
+.kebabButton:hover {
+  color: var(--main);
+  background: var(--bg-gray-light);
+}
+
+.emptyOffers {
+  padding: 16px 0 16px 20px;
+  margin: 0 24px;
+  font-family: Montserrat, sans-serif;
+  font-size: 12px;
+  font-style: italic;
+  font-weight: 500;
+  color: var(--gray-light);
+  border-top: 1px solid var(--bg-gray-light);
+}
+
+.alignRight {
+  text-align: right;
+}

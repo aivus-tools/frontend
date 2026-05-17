@@ -11,27 +11,8 @@ import { AppRoute } from '@/constants/appRoute';
 import { formatPrice } from '@/helpers/helper';
 import { useUpdateOfferStatusMutation } from '@/services/client/offersApi';
 import { useDeleteProjectMutation, useRestoreProjectMutation } from '@/services/client/projectsApi';
-import {
-  CardContainer,
-  CardHeader,
-  ProjectInfo,
-  ProjectTitle,
-  ProjectMeta,
-  MetaDot,
-  HeaderActions,
-  OffersTable,
-  OfferTableHeader,
-  OfferRow,
-  OfferName,
-  OfferNameText,
-  OfferStatusBadge,
-  OfferValue,
-  PercentBadge,
-  StatusDropdown,
-  StatusDropdownOption,
-  KebabButton,
-  EmptyOffers,
-} from './styled';
+
+import styles from './ProjectOfferCard.module.css';
 
 interface ProjectOfferCardProps {
   item: ProjectListItem;
@@ -41,13 +22,56 @@ interface ProjectOfferCardProps {
   className?: string;
 }
 
-export const ProjectOfferCard: React.FC<ProjectOfferCardProps> = ({
-  item,
-  offers,
-  onClick,
-  isArchived = false,
-  className,
-}) => {
+const statusAccent = (status?: string): string => {
+  switch (status) {
+    case 'RFP':
+      return '#2288FF';
+    case 'REVIEWING':
+      return '#F0A020';
+    case 'ONGOING':
+    case 'COMPLETED':
+      return '#52C41A';
+    default:
+      return '#B5B5C3';
+  }
+};
+
+const statusBg = (status?: string): string => {
+  switch (status) {
+    case 'RFP':
+      return 'linear-gradient(135deg, #f0f7ff 0%, #f8fbff 100%)';
+    case 'REVIEWING':
+      return 'linear-gradient(135deg, #fffbf5 0%, #fefcf9 100%)';
+    case 'ONGOING':
+    case 'COMPLETED':
+      return 'linear-gradient(135deg, #f6fcf0 0%, #fafdf7 100%)';
+    default:
+      return '#f9fafb';
+  }
+};
+
+const statusBadgeClass = (status: string): string => {
+  if (status === 'PUBLISHED') {
+    return `${styles.offerStatusBadge} ${styles.offerStatusPublished}`;
+  }
+  if (status === 'ARCHIVED') {
+    return `${styles.offerStatusBadge} ${styles.offerStatusArchived}`;
+  }
+  return `${styles.offerStatusBadge} ${styles.offerStatusDraft}`;
+};
+
+const offerValueClass = (highlight: boolean, negative: boolean): string => {
+  const base = styles.offerValue;
+  if (negative) {
+    return `${base} ${styles.offerValueNegative}`;
+  }
+  if (highlight) {
+    return `${base} ${styles.offerValueHighlight}`;
+  }
+  return base;
+};
+
+export const ProjectOfferCard = (props: ProjectOfferCardProps) => {
   const router = useRouter();
   const { modal } = App.useApp();
   const [statusPopoverId, setStatusPopoverId] = useState<string | null>(null);
@@ -55,12 +79,14 @@ export const ProjectOfferCard: React.FC<ProjectOfferCardProps> = ({
   const [deleteProject] = useDeleteProjectMutation();
   const [restoreProject] = useRestoreProjectMutation();
 
+  const isArchived = props.isArchived ?? false;
+
   const handleStatusChange = async (
-    e: React.MouseEvent,
+    event: React.MouseEvent,
     offerId: string,
     newStatus: 'DRAFT' | 'PUBLISHED' | 'ARCHIVED'
   ) => {
-    e.stopPropagation();
+    event.stopPropagation();
     setStatusPopoverId(null);
     try {
       await updateOfferStatus({ id: offerId, status: newStatus }).unwrap();
@@ -82,120 +108,137 @@ export const ProjectOfferCard: React.FC<ProjectOfferCardProps> = ({
         okText: t('ARCHIVE'),
         okButtonProps: { danger: true },
         onOk: async () => {
-          await deleteProject(item.id);
+          await deleteProject(props.item.id);
         },
       });
     }
     if (key === 'restore') {
-      restoreProject(item.id);
+      restoreProject(props.item.id);
     }
   };
 
+  const cardStyle = {
+    '--card-bg': statusBg(props.item.status),
+    '--card-accent': statusAccent(props.item.status),
+  } as React.CSSProperties;
+
   return (
-    <CardContainer className={className} onClick={onClick} $status={item.status}>
-      <CardHeader>
-        <ProjectInfo>
-          <ProjectTitle>{item.title}</ProjectTitle>
-          <ProjectMeta>
-            {item.clientName ? (
+    <div className={`${styles.cardContainer} ${props.className ?? ''}`} onClick={props.onClick} style={cardStyle}>
+      <div className={styles.cardHeader}>
+        <div className={styles.projectInfo}>
+          <div className={styles.projectTitle}>{props.item.title}</div>
+          <div className={styles.projectMeta}>
+            {props.item.clientName ? (
               <>
-                <span>{item.clientName}</span>
-                <MetaDot />
+                <span>{props.item.clientName}</span>
+                <span className={styles.metaDot} />
               </>
             ) : null}
-            <span>{item.createdAt}</span>
-          </ProjectMeta>
-        </ProjectInfo>
-        <HeaderActions>
+            <span>{props.item.createdAt}</span>
+          </div>
+        </div>
+        <div className={styles.headerActions}>
           <Dropdown menu={{ items: menuItems, onClick: handleMenuClick }} trigger={['click']} placement='bottomRight'>
-            <KebabButton onClick={(e) => e.stopPropagation()}>
+            <div className={styles.kebabButton} onClick={(event) => event.stopPropagation()}>
               <MoreOutlined />
-            </KebabButton>
+            </div>
           </Dropdown>
-        </HeaderActions>
-      </CardHeader>
+        </div>
+      </div>
 
-      {offers.length > 0 ? (
-        <OffersTable>
-          <OfferTableHeader>
+      {props.offers.length > 0 ? (
+        <div className={styles.offersTable}>
+          <div className={styles.offerTableHeader}>
             <span>{t('OFFER')}</span>
-            <span style={{ textAlign: 'right' }}>{t('DASHBOARD_STATUS')}</span>
-            <span style={{ textAlign: 'right' }}>{t('TOTAL_CLIENTS_COST')}</span>
-            <span style={{ textAlign: 'right' }}>{t('EXPENSES')}</span>
-            <span style={{ textAlign: 'right' }}>{t('PROFIT')}</span>
-          </OfferTableHeader>
-          {offers.map((offer) => {
+            <span className={styles.alignRight}>{t('DASHBOARD_STATUS')}</span>
+            <span className={styles.alignRight}>{t('TOTAL_CLIENTS_COST')}</span>
+            <span className={styles.alignRight}>{t('EXPENSES')}</span>
+            <span className={styles.alignRight}>{t('PROFIT')}</span>
+          </div>
+          {props.offers.map((offer) => {
             const expenses = offer.cost ?? 0;
             const profit = offer.profit ?? 0;
             const clientCost = expenses + profit;
             const markupPercent = clientCost !== 0 ? (profit / clientCost) * 100 : 0;
 
             return (
-              <OfferRow
+              <div
                 key={offer.id}
-                onClick={(e) => {
-                  e.stopPropagation();
-                  router.push(AppRoute.DASHBOARD_PROJECT_ESTIMATION(item.id) + '?offer=' + offer.id);
+                className={styles.offerRow}
+                onClick={(event) => {
+                  event.stopPropagation();
+                  router.push(AppRoute.DASHBOARD_PROJECT_ESTIMATION(props.item.id) + '?offer=' + offer.id);
                 }}
               >
-                <OfferName>
-                  <OfferNameText>{offer.projectName}</OfferNameText>
-                </OfferName>
-                <div style={{ textAlign: 'right' }}>
+                <div className={styles.offerName}>
+                  <span className={styles.offerNameText}>{offer.projectName}</span>
+                </div>
+                <div className={styles.alignRight}>
                   <Popover
                     open={statusPopoverId === offer.id}
                     onOpenChange={(open) => setStatusPopoverId(open ? offer.id : null)}
                     trigger='click'
                     placement='bottom'
                     content={
-                      <StatusDropdown>
-                        <StatusDropdownOption onClick={(e) => handleStatusChange(e, offer.id, 'DRAFT')}>
-                          <OfferStatusBadge $status='DRAFT'>{t('STATUS_DRAFT')}</OfferStatusBadge>
-                        </StatusDropdownOption>
-                        <StatusDropdownOption onClick={(e) => handleStatusChange(e, offer.id, 'PUBLISHED')}>
-                          <OfferStatusBadge $status='PUBLISHED'>{t('STATUS_PUBLISHED')}</OfferStatusBadge>
-                        </StatusDropdownOption>
-                        <StatusDropdownOption onClick={(e) => handleStatusChange(e, offer.id, 'ARCHIVED')}>
-                          <OfferStatusBadge $status='ARCHIVED'>{t('STATUS_ARCHIVED')}</OfferStatusBadge>
-                        </StatusDropdownOption>
-                      </StatusDropdown>
+                      <div className={styles.statusDropdown}>
+                        <div
+                          className={styles.statusDropdownOption}
+                          onClick={(event) => handleStatusChange(event, offer.id, 'DRAFT')}
+                        >
+                          <span className={statusBadgeClass('DRAFT')}>{t('STATUS_DRAFT')}</span>
+                        </div>
+                        <div
+                          className={styles.statusDropdownOption}
+                          onClick={(event) => handleStatusChange(event, offer.id, 'PUBLISHED')}
+                        >
+                          <span className={statusBadgeClass('PUBLISHED')}>{t('STATUS_PUBLISHED')}</span>
+                        </div>
+                        <div
+                          className={styles.statusDropdownOption}
+                          onClick={(event) => handleStatusChange(event, offer.id, 'ARCHIVED')}
+                        >
+                          <span className={statusBadgeClass('ARCHIVED')}>{t('STATUS_ARCHIVED')}</span>
+                        </div>
+                      </div>
                     }
                   >
-                    <OfferStatusBadge $status={offer.status} onClick={(e) => e.stopPropagation()}>
+                    <span className={statusBadgeClass(offer.status)} onClick={(event) => event.stopPropagation()}>
                       {offer.status === 'PUBLISHED'
                         ? t('STATUS_PUBLISHED')
                         : offer.status === 'ARCHIVED'
                           ? t('STATUS_ARCHIVED')
                           : t('STATUS_DRAFT')}
-                    </OfferStatusBadge>
+                    </span>
                   </Popover>
                 </div>
-                <OfferValue>{clientCost > 0 ? `$ ${formatPrice(clientCost)}` : '-'}</OfferValue>
-                <OfferValue>{expenses > 0 ? `$ ${formatPrice(expenses)}` : '-'}</OfferValue>
-                <OfferValue $highlight={profit > 0} $negative={profit < 0}>
+                <div className={styles.offerValue}>{clientCost > 0 ? `$ ${formatPrice(clientCost)}` : '-'}</div>
+                <div className={styles.offerValue}>{expenses > 0 ? `$ ${formatPrice(expenses)}` : '-'}</div>
+                <div className={offerValueClass(profit > 0, profit < 0)}>
                   {profit !== 0 ? (
                     <>
                       {`$ ${formatPrice(profit)}`}
-                      <PercentBadge $positive={markupPercent >= 0}>
-                        {markupPercent >= 0 ? '\u2191' : '\u2193'}{' '}
+                      <span
+                        className={`${styles.percentBadge} ${markupPercent >= 0 ? styles.percentBadgePositive : styles.percentBadgeNegative}`}
+                      >
+                        {markupPercent >= 0 ? '↑' : '↓'}{' '}
                         {Math.abs(markupPercent).toLocaleString('en-US', {
                           minimumFractionDigits: 1,
                           maximumFractionDigits: 1,
                         })}
                         %
-                      </PercentBadge>
+                      </span>
                     </>
                   ) : (
                     '-'
                   )}
-                </OfferValue>
-              </OfferRow>
+                </div>
+              </div>
             );
           })}
-        </OffersTable>
+        </div>
       ) : (
-        <EmptyOffers>{t('NO_OFFERS_YET')}</EmptyOffers>
+        <div className={styles.emptyOffers}>{t('NO_OFFERS_YET')}</div>
       )}
-    </CardContainer>
+    </div>
   );
 };

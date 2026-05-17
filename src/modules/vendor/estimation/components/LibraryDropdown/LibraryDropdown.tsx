@@ -3,13 +3,13 @@
 import { Dropdown } from 'antd';
 import { useCallback, useMemo, useState } from 'react';
 import { OfferData } from '@/types/estimation.interface';
-import { useRowHover } from '../../context/hover';
-import { MenuItem, useSearchLibrary } from '../../hooks/useSearchLibrary';
+import { useRowHover } from '@/modules/vendor/estimation/context/hover';
+import { MenuItem, useSearchLibrary } from '@/modules/vendor/estimation/hooks/useSearchLibrary';
 import debounce from 'lodash.debounce';
 import { SearchProvider } from './SearchContext';
 import { ValueSetter } from './ValueSetter';
 import { MenuClickEventHandler } from 'rc-menu/lib/interface';
-import { menuItemToOfferData } from '../../helpers/menuItemToOfferData';
+import { menuItemToOfferData } from '@/modules/vendor/estimation/helpers/menuItemToOfferData';
 
 import styles from './LibraryDropdown.module.css';
 

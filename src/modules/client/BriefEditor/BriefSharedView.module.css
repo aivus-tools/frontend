@@ -1,0 +1,100 @@
+.wrapper {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  background: var(--bg-gray-page);
+}
+
+.header {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 24px;
+  background: var(--white);
+  border-bottom: 1px solid var(--border-subtle);
+}
+
+.headerTitle {
+  font-family: Montserrat, sans-serif;
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--chat-text);
+}
+
+.headerHint {
+  font-family: Montserrat, sans-serif;
+  font-size: 12px;
+  color: var(--gray);
+}
+
+.body {
+  box-sizing: border-box;
+  flex: 1;
+  width: 100%;
+  max-width: 1200px;
+  padding: 20px 24px 32px;
+  margin: 0 auto;
+}
+
+.previewCard {
+  padding: 28px 32px;
+  font-family: Montserrat, sans-serif;
+  font-size: 14px;
+  line-height: 1.7;
+  color: var(--chat-text);
+  background: var(--white);
+  border: 1px solid var(--border-subtle);
+  border-radius: 10px;
+}
+
+.previewCard h1 {
+  margin: 0 0 12px;
+  font-size: 22px;
+  color: var(--chat-text);
+}
+
+.previewCard h2 {
+  padding-bottom: 4px;
+  margin: 20px 0 8px;
+  font-size: 16px;
+  border-bottom: 1px solid var(--border-subtle);
+}
+
+.previewCard h3 {
+  margin: 12px 0 4px;
+  font-size: 14px;
+}
+
+.previewCard ul,
+.previewCard ol {
+  padding-left: 22px;
+  margin: 0 0 8px;
+}
+
+.previewCard p {
+  margin: 0 0 8px;
+}
+
+.previewCard a {
+  color: var(--blue);
+}
+
+.previewCard blockquote {
+  padding-left: 10px;
+  margin: 8px 0;
+  color: var(--gray);
+  border-left: 3px solid var(--bg-gray-light);
+}
+
+.actionBar {
+  display: flex;
+  gap: 8px;
+  justify-content: flex-end;
+  margin-bottom: 12px;
+}
+
+.missingDoc {
+  padding: 24px;
+  color: var(--gray);
+}

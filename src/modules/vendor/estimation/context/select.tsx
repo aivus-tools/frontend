@@ -1,4 +1,4 @@
-import React, { createContext, useContext, ReactNode } from 'react';
+import { createContext, useContext, ReactNode } from 'react';
 
 type HandleSelectContext = () => void;
 
@@ -9,8 +9,8 @@ interface FocusProviderProps {
   handleSelect: HandleSelectContext;
 }
 
-export const HandleSelectProvider: React.FC<FocusProviderProps> = ({ children, handleSelect }) => {
-  return <handleSelectContext.Provider value={handleSelect}>{children}</handleSelectContext.Provider>;
+export const HandleSelectProvider = (props: FocusProviderProps) => {
+  return <handleSelectContext.Provider value={props.handleSelect}>{props.children}</handleSelectContext.Provider>;
 };
 
 export const useHandleSelect = () => {

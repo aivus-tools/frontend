@@ -1,92 +1,30 @@
 'use client';
 
+import React from 'react';
 import { Button } from 'antd';
 import { useRouter, usePathname, useSelectedLayoutSegments } from 'next/navigation';
 import { t } from '@/lib/i18n';
-import { styled } from 'styled-components';
-import React from 'react';
+import { AppRoute } from '@/constants/appRoute';
+
+import styles from './ClientNavbar.module.css';
 
 interface ClientNavbarProps {
   variant?: 'desktop' | 'mobile';
   onNavigate?: () => void;
 }
 
-const Wrapper = styled.div<{ $variant: 'desktop' | 'mobile' }>`
-  flex: 1;
-  display: flex;
-  align-items: center;
-  ${(x) =>
-    x.$variant === 'desktop'
-      ? `
-    flex-direction: row;
-    justify-content: space-between;
-  `
-      : `
-    flex-direction: column;
-    align-items: stretch;
-    gap: 16px;
-    width: 100%;
-  `}
-`;
+const BRIEF_TABS = [{ key: 'brief', labelKey: 'BRIEF_TAB_BRIEF' as const, suffix: '' }];
 
-const Nav = styled.nav<{ $variant: 'desktop' | 'mobile' }>`
-  display: flex;
-  gap: 8px;
-  ${(x) =>
-    x.$variant === 'mobile' &&
-    `
-    flex-direction: column;
-    align-items: stretch;
-    gap: 4px;
-    width: 100%;
-  `}
-`;
+const cn = (...names: Array<string | false | null | undefined>): string => names.filter(Boolean).join(' ');
 
-const Tab = styled.button<{ $isActive: boolean; $variant: 'desktop' | 'mobile' }>`
-  line-height: normal;
-  padding: 8px 12px;
-  border: none;
-  background: none;
-  cursor: pointer;
-  display: flex;
-  font-size: 16px;
-  font-weight: 600;
-  color: var(--main);
-  border-radius: 6px;
-  white-space: nowrap;
-  ${(x) => x.$variant === 'mobile' && 'padding: 12px 14px; font-size: 15px;'}
-
-  ${(x) =>
-    x.$isActive &&
-    `
-    color: var(--blue);
-    background-color: var(--beige);
-  `}
-`;
-
-const Actions = styled.div<{ $variant: 'desktop' | 'mobile' }>`
-  display: flex;
-  gap: 12px;
-  align-items: center;
-  ${(x) =>
-    x.$variant === 'mobile' &&
-    `
-    width: 100%;
-    & > .ant-btn {
-      width: 100%;
-    }
-  `}
-`;
-
-const BRIEF_TABS = [{ key: 'brief', label: 'Brief', suffix: '' }];
-
-export const ClientNavbar: React.FC<ClientNavbarProps> = (props) => {
+export const ClientNavbar = (props: ClientNavbarProps) => {
   const variant = props.variant ?? 'desktop';
+  const isMobile = variant === 'mobile';
   const router = useRouter();
   const pathname = usePathname();
   const segments = useSelectedLayoutSegments();
 
-  const isBriefPage = segments[0] === 'brief' && segments.length >= 2 && segments[1] !== 'create-v2';
+  const isBriefPage = segments[0] === 'brief' && segments.length >= 2 && segments[1] !== 'create';
   const briefId = isBriefPage ? segments[1] : null;
 
   const navigate = (path: string) => {
@@ -94,40 +32,42 @@ export const ClientNavbar: React.FC<ClientNavbarProps> = (props) => {
     props.onNavigate?.();
   };
 
+  const renderTab = (key: string, label: string, isActive: boolean, onClick: () => void) => (
+    <button
+      key={key}
+      type='button'
+      className={cn(styles.tab, isMobile && styles.tabMobile, isActive && styles.tabActive)}
+      onClick={onClick}
+    >
+      {label}
+    </button>
+  );
+
   return (
-    <Wrapper $variant={variant}>
-      <Nav $variant={variant}>
-        <Tab
-          key='dashboard'
-          $variant={variant}
-          $isActive={!isBriefPage && segments[0] === 'dashboard'}
-          onClick={() => navigate('/app/dashboard')}
-        >
-          {t('DASHBOARD')}
-        </Tab>
+    <div className={cn(styles.wrapper, isMobile ? styles.wrapperMobile : styles.wrapperDesktop)}>
+      <nav className={cn(styles.nav, isMobile && styles.navMobile)}>
+        {renderTab('dashboard', t('DASHBOARD'), !isBriefPage && segments[0] === 'dashboard', () =>
+          navigate('/app/dashboard')
+        )}
         {isBriefPage &&
           briefId &&
           BRIEF_TABS.map((tab) => {
             const tabPath = `/app/brief/${briefId}${tab.suffix}`;
             const isActive = tab.suffix === '' ? pathname === `/app/brief/${briefId}` : pathname.startsWith(tabPath);
-            return (
-              <Tab key={tab.key} $variant={variant} $isActive={isActive} onClick={() => navigate(tabPath)}>
-                {tab.label}
-              </Tab>
-            );
+            return renderTab(tab.key, t(tab.labelKey), isActive, () => navigate(tabPath));
           })}
-      </Nav>
-      <Actions $variant={variant}>
+      </nav>
+      <div className={cn(styles.actions, isMobile && styles.actionsMobile)}>
         <Button
           type='primary'
-          style={{ background: '#FD8258', borderColor: '#FD8258' }}
+          className={styles.createButton}
           onClick={() => {
-            navigate('/app/brief/create-v2');
+            navigate(AppRoute.CREATE_BRIEF);
           }}
         >
           {t('CREATE_A_BRIEF')}
         </Button>
-      </Actions>
-    </Wrapper>
+      </div>
+    </div>
   );
 };

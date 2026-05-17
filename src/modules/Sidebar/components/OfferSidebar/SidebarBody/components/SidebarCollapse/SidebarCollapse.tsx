@@ -10,7 +10,7 @@ interface Props {
   extra?: React.ReactNode;
 }
 
-export const SidebarCollapse: React.FC<Props> = ({ label, content, extra }) => {
+export const SidebarCollapse = (props: Props) => {
   const handleLabelClick = (e: React.MouseEvent) => {
     e.stopPropagation();
   };
@@ -29,11 +29,11 @@ export const SidebarCollapse: React.FC<Props> = ({ label, content, extra }) => {
           key: '0',
           label: (
             <div className={styles.collapseLabelWrapper} onClick={handleLabelClick}>
-              <div className={styles.collapseLabel}>{label}</div>
-              {extra}
+              <div className={styles.collapseLabel}>{props.label}</div>
+              {props.extra}
             </div>
           ),
-          children: content,
+          children: props.content,
           classNames: { header: styles.collapseHeader },
         },
       ]}

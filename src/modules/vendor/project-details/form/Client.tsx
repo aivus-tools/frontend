@@ -1,12 +1,11 @@
-import React from 'react';
 import { Form, Input, Flex, Col, Row } from 'antd';
 import { LabelWithAdd } from './LabelWithAdd';
 import RemoveIcon from '@/icons/minus.svg';
-import { IconButton } from '../common/styled';
+import commonStyles from '../common/common.module.css';
 import { useGuidance } from '@/context/GuidanceProvider';
 import { t } from '@/lib/i18n';
 
-export const Client: React.FC = () => {
+export const Client = () => {
   const { handleFocus } = useGuidance();
   return (
     <>
@@ -32,7 +31,12 @@ export const Client: React.FC = () => {
           <Input placeholder={t('IRS_EIN')} onFocus={handleFocus('irsEin')} />
         </Form.Item>
       </Flex>
-      <Form.Item name='brandName' label={t('BRAND_NAME')} extra={t('SPECIFY_BRAND_WITHIN_COMPANY')} style={{ width: '100%' }}>
+      <Form.Item
+        name='brandName'
+        label={t('BRAND_NAME')}
+        extra={t('SPECIFY_BRAND_WITHIN_COMPANY')}
+        style={{ width: '100%' }}
+      >
         <Input placeholder={t('BRAND_NAME')} onFocus={handleFocus('brandName')} />
       </Form.Item>
       <Form.List name='managers'>
@@ -57,13 +61,14 @@ export const Client: React.FC = () => {
                         <Input placeholder='' onFocus={handleFocus('manager')} />
                       </Form.Item>
                       <Form.Item label={isFirst ? ' ' : null}>
-                        <IconButton
+                        <div
+                          className={commonStyles.iconButton}
                           onClick={() => {
                             if (fields.length > 1) remove(field.name);
                           }}
                         >
                           <RemoveIcon color={'var(--gray-light)'} />
-                        </IconButton>
+                        </div>
                       </Form.Item>
                     </Flex>
                   </Col>

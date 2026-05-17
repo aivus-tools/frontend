@@ -23,7 +23,7 @@ const formatDate = (value: string | null): string => {
   });
 };
 
-export const CoverPage: React.FC<CoverPageProps> = (props) => {
+export const CoverPage = (props: CoverPageProps) => {
   const producer = props.data.collaborators.find((x) => x.role === 'producer') ?? null;
   const agencyProducer = props.data.collaborators.find((x) => x.role === 'agency_producer') ?? null;
   const firstClientManager = props.data.project.clientManagers.length > 0 ? props.data.project.clientManagers[0] : null;
@@ -161,7 +161,7 @@ interface InfoRowProps {
   value: string;
 }
 
-const InfoRow: React.FC<InfoRowProps> = (props) => {
+const InfoRow = (props: InfoRowProps) => {
   return (
     <div style={{ display: 'flex', gap: 4, lineHeight: '29px' }}>
       <span style={{ fontWeight: 400, color: TEXT_COLOR, minWidth: 150, fontSize: 14 }}>{props.label}</span>

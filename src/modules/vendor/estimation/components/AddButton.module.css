@@ -1,0 +1,11 @@
+.wrapper {
+  display: flex;
+  grid-column: 1 / -1;
+  align-items: flex-end;
+  padding: 0 20px 30px 10px;
+  background-color: var(--bg-gray-page);
+}
+
+.wrapper :global(.ant-dropdown-trigger) {
+  flex: 1;
+}

@@ -1,4 +1,4 @@
-import React, { createContext, useContext, ReactNode, useState, useMemo, useCallback } from 'react';
+import { createContext, useContext, ReactNode, useState, useMemo, useCallback } from 'react';
 
 interface HoverContextType {
   hoveredRow: string | null;
@@ -18,7 +18,7 @@ interface FocusProviderProps {
   children: ReactNode;
 }
 
-export const HoverProvider: React.FC<FocusProviderProps> = ({ children }) => {
+export const HoverProvider = (props: FocusProviderProps) => {
   const [hoveredRow, setHoveredRow] = useState<string | null>(null);
   const [focusedRow, setFocusedRow] = useState<string | null>(null);
 
@@ -51,7 +51,7 @@ export const HoverProvider: React.FC<FocusProviderProps> = ({ children }) => {
     [hoveredRow, focusedRow, focusRow, getRowProps]
   );
 
-  return <HoverContext.Provider value={value}>{children}</HoverContext.Provider>;
+  return <HoverContext.Provider value={value}>{props.children}</HoverContext.Provider>;
 };
 
 export const useRowHover = () => {

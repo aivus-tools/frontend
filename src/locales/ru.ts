@@ -666,4 +666,7 @@ export const RU_LOCALES = {
   BRIEF_TAB_BRIEF: 'Бриф',
   BRIEF_TAB_CHAT: 'Чат',
   COMPARISON_OPEN_AI_ANALYSIS: 'Открыть AI анализ',
+  PAGE_NOT_FOUND_TITLE: 'Страница не найдена',
+  PAGE_NOT_FOUND_SUBTITLE: 'Страница, которую вы ищете, не существует или была перемещена.',
+  BACK_TO_DASHBOARD: 'Вернуться на главную',
 };

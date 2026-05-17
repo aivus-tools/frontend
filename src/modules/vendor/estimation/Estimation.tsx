@@ -4,8 +4,7 @@ import { Header } from './components/Header';
 import { HoverProvider } from './context/hover';
 import { Category } from './components/Category';
 import { KeysProvider } from './context/expanded';
-import { Wrapper, Table } from './styled';
-import Spinner from '@/components/Spinner';
+import { PageSpinner } from '@/components/PageSpinner';
 import { Summary } from './components/Summary/Summary';
 import { useAppSelector } from '@/store/hooks';
 import { selectIsExternal, selectRootCategories } from '@/store/slices/offer/selectors';
@@ -14,6 +13,8 @@ import { useLoadData } from './hooks/useLoadData';
 import { useSetExternal } from './hooks/useSetExternal';
 import { useOfferSync } from '@/hooks/useOfferSync';
 import { OfferMetaForm } from './components/OfferMetaForm/OfferMetaForm';
+
+import styles from './estimation.module.css';
 
 export function Estimation({ external }: { external?: boolean }) {
   useSetExternal(external);
@@ -24,23 +25,23 @@ export function Estimation({ external }: { external?: boolean }) {
   const hasData = categories.length > 0;
 
   if (isLoading || (external && !isExternal)) {
-    return <Spinner />;
+    return <PageSpinner />;
   }
 
   return (
     <KeysProvider>
       <HoverProvider>
-        <Wrapper>
+        <div className={styles.wrapper}>
           <OfferMetaForm />
-          <Table>
+          <div className={styles.table}>
             <Header />
             {categories.map((category) => (
               <Category key={category.id} category={category} />
             ))}
             <AddButton hasData={hasData} />
             {hasData && <Summary />}
-          </Table>
-        </Wrapper>
+          </div>
+        </div>
       </HoverProvider>
     </KeysProvider>
   );

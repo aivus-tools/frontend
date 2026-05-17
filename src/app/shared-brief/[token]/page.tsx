@@ -4,7 +4,7 @@ import React from 'react';
 import { useParams } from 'next/navigation';
 import { Empty, Spin } from 'antd';
 import { useGetBriefAiShareViewQuery } from '@/services/client/briefAiApi';
-import { BriefSharedView } from '@/modules/client/BriefEditorV2/BriefSharedView';
+import { BriefSharedView } from '@/modules/client/BriefEditor/BriefSharedView';
 import { t } from '@/lib/i18n';
 
 export default function SharedBriefPage() {

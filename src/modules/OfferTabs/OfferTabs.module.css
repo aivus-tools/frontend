@@ -1,0 +1,199 @@
+.tabsContainer {
+  display: flex;
+  gap: 12px;
+  align-items: flex-end;
+  padding: 0 24px;
+  margin-top: 10px;
+  border-bottom: 2px solid var(--bg-gray-light);
+}
+
+.tab {
+  position: relative;
+  bottom: -2px;
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  padding: 10px 18px;
+  font-family: Montserrat, sans-serif;
+  white-space: nowrap;
+  cursor: pointer;
+  user-select: none;
+  background: none;
+  border: 0;
+  border-radius: 8px 8px 0 0;
+  transition: all 0.15s ease;
+}
+
+.activeTab {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--blue);
+  background: var(--bg-gray-light);
+  border: 2px solid var(--bg-gray-light);
+  border-bottom: 2px solid var(--bg-gray-light);
+}
+
+.inactiveTab {
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--main);
+  background: var(--white);
+  border: 1px solid transparent;
+  border-bottom: 2px solid var(--bg-gray-light);
+}
+
+.inactiveTab:hover {
+  background: var(--bg-blue-subtotal);
+}
+
+.statusBadge {
+  display: inline-flex;
+  align-items: center;
+  height: 18px;
+  padding: 0 6px;
+  font-family: Montserrat, sans-serif;
+  font-size: 8px;
+  font-weight: 700;
+  text-transform: uppercase;
+  border-radius: 3px;
+}
+
+.statusPublished {
+  color: var(--green-darker);
+  background: var(--bg-green);
+  border: 0.6px solid var(--green-darker);
+}
+
+.statusArchived {
+  color: var(--orange);
+  background: var(--bg-orange);
+  border: 0.6px solid var(--orange);
+}
+
+.statusDraft {
+  color: var(--gray);
+  background: var(--beige);
+  border: 0.6px solid var(--gray);
+}
+
+.statusBadgeClickable {
+  cursor: pointer;
+}
+
+.moreButton {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 20px;
+  height: 20px;
+  font-size: 14px;
+  color: var(--gray);
+  cursor: pointer;
+  border-radius: 4px;
+  opacity: 0;
+  transition: all 0.15s ease;
+}
+
+.moreButton:hover {
+  color: var(--main);
+  background: rgb(0 0 0 / 6%);
+  opacity: 1;
+}
+
+.tabWrapper {
+  position: relative;
+  display: flex;
+  align-items: flex-end;
+}
+
+.tabWrapper:hover .moreButton {
+  opacity: 0.6;
+}
+
+.newOfferTab {
+  height: 100%;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--blue);
+  background: transparent;
+  border: 1.5px dashed rgb(34 136 255 / 40%);
+  border-bottom: 0;
+}
+
+.newOfferTab:hover {
+  background: var(--bg-blue-subtotal);
+  border-color: rgb(34 136 255 / 70%);
+}
+
+.newOfferTab:disabled {
+  cursor: not-allowed;
+  opacity: 0.5;
+}
+
+.newOfferTab:disabled:hover {
+  background: transparent;
+  border-color: rgb(34 136 255 / 40%);
+}
+
+.renameInput {
+  width: 120px;
+  padding: 2px 4px;
+  font-family: Montserrat, sans-serif;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--blue);
+  background: var(--white);
+  border: 1px solid var(--blue);
+  border-radius: 3px;
+  outline: 0;
+}
+
+.dropdownContainer {
+  min-width: 240px;
+  padding: 8px 0;
+  background: var(--white);
+  border-radius: 6px;
+  box-shadow: 0 5px 16.5px -11px rgb(0 0 0 / 25%);
+}
+
+.dropdownContainerNarrow {
+  min-width: 140px;
+}
+
+.dropdownOption {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  padding: 10px 16px;
+  font-family: Montserrat, sans-serif;
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--main);
+  cursor: pointer;
+}
+
+.dropdownOption:hover {
+  background: var(--bg-blue-subtotal);
+}
+
+.dropdownOptionActive {
+  background: var(--bg-blue-subtotal);
+}
+
+.dropdownOptionDanger {
+  color: var(--red);
+}
+
+.dropdownDivider {
+  margin: 4px 16px;
+  border-top: 1px solid var(--bg-gray-light);
+}
+
+.dropdownLabel {
+  padding: 6px 16px;
+  font-family: Montserrat, sans-serif;
+  font-size: 10px;
+  font-weight: 500;
+  color: var(--gray);
+  text-transform: uppercase;
+}

@@ -1,16 +1,16 @@
 'use client';
 
 import { HeaderKey, OfferData, UnitType } from '@/types/estimation.interface';
-import { CLIENTS_HEADERS, HEADERS, KEY_SEPARATOR } from '../../constants';
-import { useRowHover } from '../../context/hover';
+import { CLIENTS_HEADERS, HEADERS, KEY_SEPARATOR } from '@/modules/vendor/estimation/constants';
+import { useRowHover } from '@/modules/vendor/estimation/context/hover';
 import SettingsIcon from '@/icons/settings-icon.svg';
 import AddIcon from '@/icons/add-icon.svg';
 import RemoveIcon from '@/icons/minus.svg';
 import DeleteIcon from '@/icons/delete.svg';
-import { EstimationItem, IconButton, InputNumberRight, UnitSelect, IconPlaceholder } from '../../styled';
-import { RowLine } from '../../components/RowLine';
+import { InputNumberRight } from '../InputNumberRight';
+import { RowLine } from '@/modules/vendor/estimation/components/RowLine';
 import { Flex, Select, Tooltip } from 'antd';
-import { EntrieInput } from '../../components/EntrieInput';
+import { EntrieInput } from '@/modules/vendor/estimation/components/EntrieInput';
 import { useAppDispatch } from '@/store/hooks';
 import { changeOfferRow, removeOfferRow } from '@/store/slices/offer/slice';
 import React, { Fragment } from 'react';
@@ -20,8 +20,19 @@ import { t } from '@/lib/i18n';
 import { openSidebar, setSidebarInfo } from '@/store/slices/sidebar';
 import { LinkButton } from '../LinkButtons/LinkButtons';
 
+import styles from '@/modules/vendor/estimation/estimation.module.css';
+
 const timeUnitFirst = (a: OfferData['units'][number], b: OfferData['units'][number]) => {
   return a?.type === UnitType.TIME && b?.type === UnitType.QUANTITY ? -1 : 1;
+};
+
+const cellClass = (isHovered: boolean): string => {
+  return isHovered ? `${styles.estimationItem} ${styles.estimationItemHovered}` : styles.estimationItem;
+};
+
+const unitSelectClass = (isHovered: boolean): string => {
+  const base = `${styles.selectWrapper} ${styles.unitSelect}`;
+  return isHovered ? `${base} ${styles.selectWrapperHovered}` : base;
 };
 
 export function Entries({ data }: { data: OfferData[] }) {
@@ -102,7 +113,12 @@ export function Entries({ data }: { data: OfferData[] }) {
 
             if (key === 'settings') {
               return (
-                <EstimationItem key={`settings-${key}`} {...rowProps} style={{ justifyContent: 'center' }}>
+                <div
+                  key={`settings-${key}`}
+                  className={cellClass(isActive)}
+                  {...rowProps}
+                  style={{ justifyContent: 'center' }}
+                >
                   {isActive && (
                     <Flex align='center' justify='center' style={{ height: '100%' }}>
                       <Tooltip title={t('SHOW_DETAILS')} placement='bottom'>
@@ -113,38 +129,49 @@ export function Entries({ data }: { data: OfferData[] }) {
                       </Tooltip>
                     </Flex>
                   )}
-                </EstimationItem>
+                </div>
               );
             }
 
             if (key === 'item') {
-              const rowProps = getRowProps(offer.id);
               return (
-                <EstimationItem key={`item-${key}`} style={itemStyle} {...rowProps}>
+                <div key={`item-${key}`} className={cellClass(isActive)} style={itemStyle} {...rowProps}>
                   <EntrieInput value={offer} variant={isActive ? 'outlined' : 'borderless'} />
-                </EstimationItem>
+                </div>
               );
             }
 
             if (key === 'actions') {
               return (
-                <EstimationItem key={`actions-${key}`} {...rowProps} style={{ justifyContent: 'center' }}>
+                <div
+                  key={`actions-${key}`}
+                  className={cellClass(isActive)}
+                  {...rowProps}
+                  style={{ justifyContent: 'center' }}
+                >
                   {isActive && (
                     <Flex align='center' justify='center' style={{ height: '100%' }}>
                       <DeleteIcon style={{ cursor: 'pointer' }} onClick={() => handleRemove(offer.id)} />
                     </Flex>
                   )}
-                </EstimationItem>
+                </div>
               );
             }
 
             if (key === 'units') {
               return (
-                <EstimationItem key={`actions-${key}`} {...rowProps} style={{ justifyContent: 'center' }}>
-                  <UnitSelect vertical $hovered={isActive}>
+                <div
+                  key={`units-${key}`}
+                  className={cellClass(isActive)}
+                  {...rowProps}
+                  style={{ justifyContent: 'center' }}
+                >
+                  <Flex vertical className={unitSelectClass(isActive)}>
                     {offer.units &&
                       offer.units.toSorted(timeUnitFirst).map((unit) => {
-                        if (!unit) return null;
+                        if (!unit) {
+                          return null;
+                        }
 
                         const isTime = unit.type === UnitType.TIME;
                         const isQuantity = unit.type === UnitType.QUANTITY;
@@ -154,11 +181,12 @@ export function Entries({ data }: { data: OfferData[] }) {
 
                         return (
                           <Flex gap={5} key={unit.value} align='center'>
-                            <IconPlaceholder>
+                            <div className={styles.iconPlaceholder}>
                               {isActive && (
                                 <>
                                   {isTime && unitsCount === 1 && hasQuantities && (
-                                    <IconButton
+                                    <div
+                                      className={styles.iconButton}
                                       onClick={() =>
                                         handleChangeUnit(
                                           offer.id,
@@ -167,28 +195,29 @@ export function Entries({ data }: { data: OfferData[] }) {
                                       }
                                     >
                                       <AddIcon color={'var(--gray-light)'} />
-                                    </IconButton>
+                                    </div>
                                   )}
                                   {isQuantity && unitsCount === 1 && hasTime && (
-                                    <IconButton
+                                    <div
+                                      className={styles.iconButton}
                                       onClick={() =>
-                                        handleChangeUnit(
-                                          offer.id,
-                                          UnitType.TIME
-                                        )(offer.options[UnitType.TIME][0].value)
+                                        handleChangeUnit(offer.id, UnitType.TIME)(offer.options[UnitType.TIME][0].value)
                                       }
                                     >
                                       <AddIcon color={'var(--gray-light)'} />
-                                    </IconButton>
+                                    </div>
                                   )}
                                   {isQuantity && unitsCount === 2 && (
-                                    <IconButton onClick={() => handleRemoveUnit(offer.id, UnitType.QUANTITY)}>
+                                    <div
+                                      className={styles.iconButton}
+                                      onClick={() => handleRemoveUnit(offer.id, UnitType.QUANTITY)}
+                                    >
                                       <RemoveIcon color={'var(--gray-light)'} />
-                                    </IconButton>
+                                    </div>
                                   )}
                                 </>
                               )}
-                            </IconPlaceholder>
+                            </div>
                             <Select
                               style={{ flex: 1 }}
                               placeholder={t('SELECT_UNIT')}
@@ -200,14 +229,19 @@ export function Entries({ data }: { data: OfferData[] }) {
                           </Flex>
                         );
                       })}
-                  </UnitSelect>
-                </EstimationItem>
+                  </Flex>
+                </div>
               );
             }
 
             if (key === 'quantity') {
               return (
-                <EstimationItem key={`${offer.id}${KEY_SEPARATOR}${key}`} style={itemStyle} {...rowProps}>
+                <div
+                  key={`${offer.id}${KEY_SEPARATOR}${key}`}
+                  className={cellClass(isActive)}
+                  style={itemStyle}
+                  {...rowProps}
+                >
                   <Flex key={offer.id} align='center' vertical style={{ maxWidth: '100%', gap: '5px' }}>
                     {offer.units &&
                       offer.units
@@ -227,21 +261,31 @@ export function Entries({ data }: { data: OfferData[] }) {
                             )
                         )}
                   </Flex>
-                </EstimationItem>
+                </div>
               );
             }
 
             if (key === 'cost') {
               return (
-                <EstimationItem key={`${offer.id}${KEY_SEPARATOR}${key}`} style={itemStyle} {...rowProps}>
+                <div
+                  key={`${offer.id}${KEY_SEPARATOR}${key}`}
+                  className={cellClass(isActive)}
+                  style={itemStyle}
+                  {...rowProps}
+                >
                   {formatCurrency(offer.cost)}
-                </EstimationItem>
+                </div>
               );
             }
 
             if (key === 'price') {
               return (
-                <EstimationItem key={`${offer.id}${KEY_SEPARATOR}${key}`} style={itemStyle} {...rowProps}>
+                <div
+                  key={`${offer.id}${KEY_SEPARATOR}${key}`}
+                  className={cellClass(isActive)}
+                  style={itemStyle}
+                  {...rowProps}
+                >
                   <Flex align='center' gap={4} style={{ width: '100%' }}>
                     <InputNumberRight
                       style={{ flex: 1 }}
@@ -257,12 +301,17 @@ export function Entries({ data }: { data: OfferData[] }) {
                       </span>
                     )}
                   </Flex>
-                </EstimationItem>
+                </div>
               );
             }
 
             return (
-              <EstimationItem key={`${offer.id}${KEY_SEPARATOR}${key}`} style={itemStyle} {...rowProps} />
+              <div
+                key={`${offer.id}${KEY_SEPARATOR}${key}`}
+                className={cellClass(isActive)}
+                style={itemStyle}
+                {...rowProps}
+              />
             );
           })}
           <div />
@@ -274,20 +323,25 @@ export function Entries({ data }: { data: OfferData[] }) {
             }
             if (key === 'link') {
               return (
-                <EstimationItem key={key} {...rowProps}>
+                <div key={key} className={cellClass(isActive)} {...rowProps}>
                   <Flex align='center' justify='center'>
                     <LinkButton link={offer.isLinkedSurcharge} onClickAction={handleToggleLink(offer.id)} />
                   </Flex>
-                </EstimationItem>
+                </div>
               );
             }
 
             if (key === 'marketRange') {
-              return <EstimationItem key={key} {...rowProps} />;
+              return <div key={key} className={cellClass(isActive)} {...rowProps} />;
             }
             if (key === 'surcharge') {
               return (
-                <EstimationItem key={`${key}${KEY_SEPARATOR}${offer.id}`} style={itemStyle} {...rowProps}>
+                <div
+                  key={`${key}${KEY_SEPARATOR}${offer.id}`}
+                  className={cellClass(isActive)}
+                  style={itemStyle}
+                  {...rowProps}
+                >
                   <InputNumberRight
                     variant={isActive ? 'outlined' : 'borderless'}
                     onChange={handleChange(offer.id, key)}
@@ -295,14 +349,19 @@ export function Entries({ data }: { data: OfferData[] }) {
                     controls={false}
                     {...itemProps}
                   />
-                </EstimationItem>
+                </div>
               );
             }
 
             return (
-              <EstimationItem key={`${key}${KEY_SEPARATOR}${offer.id}`} style={itemStyle} {...rowProps}>
+              <div
+                key={`${key}${KEY_SEPARATOR}${offer.id}`}
+                className={cellClass(isActive)}
+                style={itemStyle}
+                {...rowProps}
+              >
                 {formatCurrency(offer[key])}
-              </EstimationItem>
+              </div>
             );
           })}
           <RowLine />

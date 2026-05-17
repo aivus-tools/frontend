@@ -1,0 +1,24 @@
+.nav {
+  display: flex;
+  gap: 8px;
+}
+
+.tab {
+  display: flex;
+  padding: 8px 12px;
+  font-size: 16px;
+  font-weight: 600;
+  line-height: normal;
+  color: var(--main);
+  white-space: nowrap;
+  cursor: pointer;
+  background: var(--white);
+  border: 0;
+  border-bottom: 2px solid var(--gray-light);
+  border-radius: 6px 6px 0 0;
+}
+
+.tabActive {
+  background-color: var(--bg-gray-page);
+  border-bottom: 0;
+}

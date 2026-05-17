@@ -1,0 +1,32 @@
+.button {
+  display: flex;
+  align-items: center;
+  padding: 10px;
+  background: none;
+  background-color: var(--bg-blue-subtotal);
+  border: 1px dashed var(--gray);
+  border-radius: 6px;
+}
+
+.container {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  padding: 10px;
+}
+
+.description {
+  font-size: 10px;
+  font-style: normal;
+  font-weight: 500;
+  line-height: normal;
+  color: var(--gray);
+}
+
+.title {
+  font-size: 13px;
+  font-style: normal;
+  font-weight: 500;
+  line-height: normal;
+  color: var(--gray);
+}

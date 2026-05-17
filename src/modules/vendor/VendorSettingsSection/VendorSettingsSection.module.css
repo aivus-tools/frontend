@@ -1,0 +1,102 @@
+.spinner {
+  display: block;
+  margin: 40px auto;
+}
+
+.section {
+  max-width: 600px;
+  padding: 0 24px;
+  margin: 32px auto 0;
+}
+
+.title {
+  margin-bottom: 16px;
+  font-size: 18px;
+  font-weight: 600;
+}
+
+.logoWrapper {
+  margin-bottom: 24px;
+}
+
+.logoDrop {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 120px;
+  height: 120px;
+  overflow: hidden;
+  cursor: pointer;
+  border: 2px dashed var(--bg-gray-light);
+  border-radius: 8px;
+}
+
+.logoImage {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+.logoPlaceholder {
+  color: var(--gray-light);
+  text-align: center;
+}
+
+.logoPlaceholderText {
+  margin-top: 4px;
+  font-size: 12px;
+}
+
+.fileInput {
+  display: none;
+}
+
+.form {
+  max-width: 600px;
+}
+
+.row {
+  display: flex;
+  gap: 16px;
+}
+
+.itemFlex1 {
+  flex: 1;
+}
+
+.subTitle {
+  margin-top: 16px;
+  margin-bottom: 12px;
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.subTitleCompact {
+  margin-top: 8px;
+  margin-bottom: 12px;
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.percentsRow {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.percentItem120 {
+  width: 120px;
+}
+
+.percentItem140 {
+  width: 140px;
+}
+
+.percentInput {
+  width: 100%;
+}
+
+.submitButton {
+  margin-top: 8px;
+}

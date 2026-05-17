@@ -1,0 +1,72 @@
+.wrapper {
+  display: flex;
+  flex: 1;
+  align-items: center;
+}
+
+.wrapperDesktop {
+  flex-direction: row;
+  justify-content: space-between;
+}
+
+.wrapperMobile {
+  flex-direction: column;
+  gap: 16px;
+  align-items: stretch;
+  width: 100%;
+}
+
+.nav {
+  display: flex;
+  gap: 8px;
+}
+
+.navMobile {
+  flex-direction: column;
+  gap: 4px;
+  align-items: stretch;
+  width: 100%;
+}
+
+.tab {
+  display: flex;
+  padding: 8px 12px;
+  font-size: 16px;
+  font-weight: 600;
+  line-height: normal;
+  color: var(--main);
+  white-space: nowrap;
+  cursor: pointer;
+  background: none;
+  border: 0;
+  border-radius: 6px;
+}
+
+.tabMobile {
+  padding: 12px 14px;
+  font-size: 15px;
+}
+
+.tabActive {
+  color: var(--blue);
+  background-color: var(--beige);
+}
+
+.actions {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+}
+
+.actionsMobile {
+  width: 100%;
+}
+
+.actionsMobile :global(.ant-btn) {
+  width: 100%;
+}
+
+.createButton {
+  background: var(--orange);
+  border-color: var(--orange);
+}

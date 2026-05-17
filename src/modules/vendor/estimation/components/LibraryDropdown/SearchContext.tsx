@@ -1,4 +1,4 @@
-import React, { createContext, useContext, ReactNode, useState, useEffect } from 'react';
+import { createContext, useContext, ReactNode, useState, useEffect } from 'react';
 
 interface SearchContextType {
   activeKey?: string;
@@ -12,18 +12,18 @@ interface FocusProviderProps {
   activeKey?: string;
 }
 
-export const SearchProvider: React.FC<FocusProviderProps> = ({ children, activeKey: initialActiveKey }) => {
-  const [activeKey, setActiveKey] = useState(initialActiveKey);
+export const SearchProvider = (props: FocusProviderProps) => {
+  const [activeKey, setActiveKey] = useState(props.activeKey);
 
   useEffect(() => {
-    setActiveKey(initialActiveKey);
-  }, [initialActiveKey]);
+    setActiveKey(props.activeKey);
+  }, [props.activeKey]);
 
   const changeActiveKey = (key: string) => {
     setActiveKey(key);
   };
 
-  return <SearchContext.Provider value={{ activeKey, changeActiveKey }}>{children}</SearchContext.Provider>;
+  return <SearchContext.Provider value={{ activeKey, changeActiveKey }}>{props.children}</SearchContext.Provider>;
 };
 
 export const useSearchActiveKey = () => {

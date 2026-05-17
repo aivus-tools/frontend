@@ -12,9 +12,9 @@ interface Props {
   handleChange: (id: string, key: keyof OfferData) => (data: ValueOf<OfferData> | null) => void;
 }
 
-export const SidebarForClient: React.FC<Props> = ({ costWithTax, offer, handleChange }) => {
-  const profit = round(offer.clientCost - costWithTax);
-  const percent = offer.clientCost > 0 ? round((profit / offer.clientCost) * 100) : 0;
+export const SidebarForClient = (props: Props) => {
+  const profit = round(props.offer.clientCost - props.costWithTax);
+  const percent = props.offer.clientCost > 0 ? round((profit / props.offer.clientCost) * 100) : 0;
 
   return (
     <div className={styles.content}>
@@ -22,10 +22,10 @@ export const SidebarForClient: React.FC<Props> = ({ costWithTax, offer, handleCh
         <SidebarInput
           type='input'
           label={t('CLIENT_PRICE')}
-          value={offer.clientPrice}
+          value={props.offer.clientPrice}
           width={150}
           icon='$'
-          onChange={handleChange(offer.id, 'clientPrice')}
+          onChange={props.handleChange(props.offer.id, 'clientPrice')}
           // extraField={{
           //   type: 'double btn',
           //   width: [13, 13],
@@ -38,7 +38,7 @@ export const SidebarForClient: React.FC<Props> = ({ costWithTax, offer, handleCh
         <SidebarInput
           type='input'
           label={t('CLIENT_COST')}
-          value={offer.clientCost}
+          value={props.offer.clientCost}
           width={150}
           icon='$'
           disabled={true}
@@ -61,7 +61,7 @@ export const SidebarForClient: React.FC<Props> = ({ costWithTax, offer, handleCh
           accent
           type='input'
           label={t('PROFIT')}
-          bottomLabel={offer.showTax ? t('PROFIT_CALCULATION_WITH_TAX') : t('PROFIT_CALCULATION')}
+          bottomLabel={props.offer.showTax ? t('PROFIT_CALCULATION_WITH_TAX') : t('PROFIT_CALCULATION')}
           value={profit}
           width={150}
           icon='$'

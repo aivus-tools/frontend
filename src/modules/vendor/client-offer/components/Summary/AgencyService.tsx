@@ -1,7 +1,5 @@
 'use client';
 
-import React from 'react';
-
-export const AgencyService: React.FC = () => {
-    return null;
+export const AgencyService = () => {
+  return null;
 };

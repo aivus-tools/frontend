@@ -79,7 +79,7 @@ export const useSearchLibrary = () => {
           label: (
             <Label itemKey={itemKey}>
               {entry.name}
-              <span style={{ color: '#99A1B7', fontSize: 12, marginLeft: 8 }}>{sectionPath}</span>
+              <span style={{ color: 'var(--gray-light)', fontSize: 12, marginLeft: 8 }}>{sectionPath}</span>
             </Label>
           ),
           value: `${entry.name}`,

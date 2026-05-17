@@ -116,7 +116,7 @@ describe('ExportPage', () => {
     expect(screen.getByText('Failed to load export data. Please try again.')).toBeInTheDocument();
   });
 
-  it('renders all sections when data is loaded', () => {
+  it('renders all sections when data is loaded', async () => {
     mockedUseGetOfferExportDataQuery.mockReturnValue({
       data: createMockExportData(),
       isLoading: false,
@@ -125,7 +125,7 @@ describe('ExportPage', () => {
     } as never);
 
     render(<ExportPage offerId='offer-1' />);
-    expect(screen.getByTestId('cover-page')).toBeInTheDocument();
+    expect(await screen.findByTestId('cover-page')).toBeInTheDocument();
     expect(screen.getByTestId('top-sheet')).toBeInTheDocument();
     expect(screen.getByTestId('budget-detail')).toBeInTheDocument();
   });
@@ -175,7 +175,7 @@ describe('ExportPage', () => {
     expect(screen.queryByTestId('assumptions-page')).not.toBeInTheDocument();
   });
 
-  it('shows AssumptionsPage when assumptionsExclusions is present', () => {
+  it('shows AssumptionsPage when assumptionsExclusions is present', async () => {
     mockedUseGetOfferExportDataQuery.mockReturnValue({
       data: createMockExportData({ offer: { assumptionsExclusions: '<p>Some assumptions</p>' } }),
       isLoading: false,
@@ -184,7 +184,7 @@ describe('ExportPage', () => {
     } as never);
 
     render(<ExportPage offerId='offer-1' />);
-    expect(screen.getByTestId('assumptions-page')).toBeInTheDocument();
+    expect(await screen.findByTestId('assumptions-page')).toBeInTheDocument();
   });
 
   it('calls window.print when Save as PDF button is clicked', () => {

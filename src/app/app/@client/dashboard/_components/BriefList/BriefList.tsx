@@ -6,9 +6,10 @@ import { Button } from 'antd';
 import { InboxOutlined } from '@ant-design/icons';
 import { useRouter } from 'next/navigation';
 import { t } from '@/lib/i18n';
+import { AppRoute } from '@/constants/appRoute';
 import { useGetBriefAiListQuery } from '@/services/client/briefAiApi';
 import { THeadItem } from '@/components/THeadItem/THeadItem';
-import Spinner from '@/components/Spinner';
+import { PageSpinner } from '@/components/PageSpinner';
 import { BriefCard } from '../BriefCard/BriefCard';
 
 import styles from './BriefList.module.css';
@@ -27,29 +28,16 @@ export const BriefList = () => {
   ];
 
   if (isLoading) {
-    return <Spinner />;
+    return <PageSpinner />;
   }
 
   if (!briefs.length) {
     return (
       <div className={styles.dashboard}>
-        <div
-          style={{
-            display: 'flex',
-            flexDirection: 'column',
-            alignItems: 'center',
-            justifyContent: 'center',
-            padding: '80px 20px',
-            color: '#78829d',
-          }}
-        >
-          <InboxOutlined style={{ fontSize: 48, marginBottom: 16, opacity: 0.4 }} />
-          <div style={{ fontSize: 16, fontWeight: 500, marginBottom: 8 }}>{t('NO_BRIEFS')}</div>
-          <Button
-            type='primary'
-            style={{ marginTop: 16, background: '#FD8258', borderColor: '#FD8258' }}
-            onClick={() => router.push('/app/brief/create-v2')}
-          >
+        <div className={styles.emptyState}>
+          <InboxOutlined className={styles.emptyIcon} />
+          <div className={styles.emptyTitle}>{t('NO_BRIEFS')}</div>
+          <Button type='primary' className={styles.emptyAction} onClick={() => router.push(AppRoute.CREATE_BRIEF)}>
             {t('CREATE_A_BRIEF')}
           </Button>
         </div>

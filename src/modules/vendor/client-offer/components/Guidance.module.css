@@ -1,0 +1,41 @@
+.borderDashedLine {
+  width: 100%;
+  height: 0;
+  margin: 12px 0;
+  border-top: 1px dashed var(--gray);
+}
+
+.shortDescription {
+  margin-top: 5px;
+  font-size: 9px;
+  font-weight: 500;
+  line-height: 1.4;
+  color: var(--gray-light);
+}
+
+.sectionTitle {
+  margin-bottom: 5px;
+  font-size: 14px;
+  font-weight: 600;
+  line-height: 17px;
+  color: var(--main);
+}
+
+.description {
+  font-size: 9px;
+  font-weight: 500;
+  line-height: 1.4;
+  color: var(--gray-light);
+}
+
+.itemTitle {
+  font-size: 14px !important;
+  font-weight: 700 !important;
+  line-height: 17px !important;
+  color: var(--main) !important;
+}
+
+.wrapper {
+  display: flex;
+  flex-direction: column;
+}

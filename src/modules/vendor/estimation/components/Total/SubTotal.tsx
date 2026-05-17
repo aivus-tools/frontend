@@ -1,61 +1,26 @@
 'use client';
 
 import { Flex, Input } from 'antd';
-import { styled } from 'styled-components';
 import AddIcon from '@/icons/add-icon.svg';
 import { LibraryDropdown } from '../LibraryDropdown/LibraryDropdown';
-import { useSelectOffer } from '../../hooks/useSelectOffer';
+import { useSelectOffer } from '@/modules/vendor/estimation/hooks/useSelectOffer';
 import { useMemo } from 'react';
 import { t } from '@/lib/i18n';
-import { filterOptionsById } from '../../helpers/filters';
+import { filterOptionsById } from '@/modules/vendor/estimation/helpers/filters';
 
-const LabelSubTotal = styled.div`
-  font-weight: 600;
-  font-size: 13px;
-  line-height: 15.85px;
-  text-align: right;
-  padding: 12px 0;
-  margin-right: 4px;
-  background-color: var(--bg-blue-subtotal);
-`;
-const SubTotalSum = styled.div`
-  width: 100%;
-  padding: 12px 0;
-  font-weight: 700;
-  font-size: 14px;
-  line-height: 17.07px;
-  border-radius: 0 0 6px 6px;
-  text-align: right;
-  color: var(--blue);
-  background-color: var(--bg-blue-subtotal);
-  justify-content: flex-end;
-`;
+import styles from './SubTotal.module.css';
 
-const EmptyBlockSubTotalSum = styled.div`
-  background-color: var(--bg-blue-subtotal);
-  border-radius: 0 0 6px 6px;
-`;
-
-const Label = styled(Flex)`
-  font-weight: 500;
-  font-size: 10px;
-  line-height: 100%;
-  vertical-align: middle;
-  background-color: var(--bg-blue-subtotal);
-  color: var(--gray);
-  cursor: pointer;
-`;
-
-interface Props {
+interface SubTotalProps {
   value: string;
   clientValue: string;
   subCategoryId?: string;
   name?: string;
 }
 
-export const SubTotal = ({ value, clientValue, subCategoryId, name = '' }: Props) => {
+export const SubTotal = (props: SubTotalProps) => {
   const handleSelect = useSelectOffer();
-  const handleFilter = useMemo(() => filterOptionsById(subCategoryId), [subCategoryId]);
+  const handleFilter = useMemo(() => filterOptionsById(props.subCategoryId), [props.subCategoryId]);
+  const name = props.name ?? '';
 
   return (
     <>
@@ -66,7 +31,7 @@ export const SubTotal = ({ value, clientValue, subCategoryId, name = '' }: Props
       >
         <AddIcon color={'var(--gray-light)'} />
       </Flex>
-      <Label align='center'>
+      <Flex align='center' className={styles.label}>
         <LibraryDropdown
           onSelect={handleSelect}
           filterOptions={handleFilter}
@@ -81,15 +46,17 @@ export const SubTotal = ({ value, clientValue, subCategoryId, name = '' }: Props
             />
           )}
         />
-      </Label>
-      <LabelSubTotal style={{ gridColumn: 'span 3' }}>{t('SUBTOTAL_OF_LOCATIONS', name.toLowerCase())}</LabelSubTotal>
-      <SubTotalSum>{value}</SubTotalSum>
-      <EmptyBlockSubTotalSum style={{ borderRadius: ' 0 0 6px 0' }} />
+      </Flex>
+      <div className={styles.labelSubTotal} style={{ gridColumn: 'span 3' }}>
+        {t('SUBTOTAL_OF_LOCATIONS', name.toLowerCase())}
+      </div>
+      <div className={styles.subTotalSum}>{props.value}</div>
+      <div className={styles.emptyBlockSubTotalSum} style={{ borderRadius: ' 0 0 6px 0' }} />
       <div />
       <Flex style={{ gridColumn: 'span 4' }}>
-        <SubTotalSum>{clientValue}</SubTotalSum>
+        <div className={styles.subTotalSum}>{props.clientValue}</div>
       </Flex>
-      <EmptyBlockSubTotalSum style={{ gridColumn: 'span 1' }} />
+      <div className={styles.emptyBlockSubTotalSum} style={{ gridColumn: 'span 1' }} />
     </>
   );
 };

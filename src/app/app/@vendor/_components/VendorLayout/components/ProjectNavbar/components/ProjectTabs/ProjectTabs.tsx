@@ -1,6 +1,6 @@
 'use client';
 import { useRouter, useSelectedLayoutSegments, useSearchParams } from 'next/navigation';
-import { Tabs } from '../../../Tabs/Tabs';
+import { Tabs } from '@/app/app/@vendor/_components/VendorLayout/components/Tabs/Tabs';
 import { VENDOR_PROJECT_TABS, VENDOR_PROJECT_TAB_KEYS, NEW_BRIEF_SLUG } from '@/constants/constants';
 import React, { useMemo } from 'react';
 
@@ -13,9 +13,7 @@ export const ProjectTabs = () => {
 
   const visibleTabs = useMemo(
     () =>
-      isNewProject
-        ? VENDOR_PROJECT_TABS.filter((t) => t.key === VENDOR_PROJECT_TAB_KEYS.DETAILS)
-        : VENDOR_PROJECT_TABS,
+      isNewProject ? VENDOR_PROJECT_TABS.filter((t) => t.key === VENDOR_PROJECT_TAB_KEYS.DETAILS) : VENDOR_PROJECT_TABS,
     [isNewProject]
   );
 

@@ -89,7 +89,7 @@ export const ProjectNavbar = () => {
           onChange={handleTemplateNameChange}
           placeholder={t('TEMPLATE_NAME_PLACEHOLDER')}
           variant='borderless'
-          style={{ fontSize: 16, fontWeight: 600, maxWidth: 400 }}
+          className={styles.templateNameInput}
         />
       ) : (
         <ProjectTabs />
@@ -97,15 +97,15 @@ export const ProjectNavbar = () => {
 
       <div className={styles.buttons}>
         {!isTemplateMode && isEstimation && offerMetaData?.id && (
-          <Button onClick={() => setSaveTemplateOpen(true)}>
-            {t('SAVE_AS_TEMPLATE')}
-          </Button>
+          <Button onClick={() => setSaveTemplateOpen(true)}>{t('SAVE_AS_TEMPLATE')}</Button>
         )}
 
         {!isTemplateMode && tab === VENDOR_PROJECT_TAB_KEYS.OFFER && (
           <ExportPopover
             action={handleExport}
-            defaultName={offerMetaData?.projectName ? `${offerMetaData.projectName} ${dayjs().format('MM-DD-YYYY')}` : ''}
+            defaultName={
+              offerMetaData?.projectName ? `${offerMetaData.projectName} ${dayjs().format('MM-DD-YYYY')}` : ''
+            }
           >
             <Button className={styles.export} type='primary'>
               {t('EXPORT')}
@@ -115,14 +115,8 @@ export const ProjectNavbar = () => {
 
         {!isTemplateMode && offerMetaData?.id && (
           <div className={styles.share}>
-            <Tooltip
-              title={offerMetaData.status !== 'PUBLISHED' ? t('SHARE_PUBLISH_REQUIRED') : undefined}
-            >
-              <Button
-                type='primary'
-                disabled={offerMetaData.status !== 'PUBLISHED'}
-                onClick={() => setShareOpen(true)}
-              >
+            <Tooltip title={offerMetaData.status !== 'PUBLISHED' ? t('SHARE_PUBLISH_REQUIRED') : undefined}>
+              <Button type='primary' disabled={offerMetaData.status !== 'PUBLISHED'} onClick={() => setShareOpen(true)}>
                 {t('SHARE')}
               </Button>
             </Tooltip>

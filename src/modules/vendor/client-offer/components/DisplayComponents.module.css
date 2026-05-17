@@ -1,0 +1,18 @@
+.unitRow {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  font-size: 13px;
+  font-weight: 500;
+  line-height: 18px;
+  color: var(--main);
+  white-space: nowrap;
+}
+
+.quantityValue {
+  font-size: 13px;
+  font-weight: 500;
+  line-height: 18px;
+  color: var(--main);
+  text-align: center;
+}

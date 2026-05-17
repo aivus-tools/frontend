@@ -4,13 +4,8 @@ import React, { useCallback } from 'react';
 import { useSearchParams, useRouter } from 'next/navigation';
 import { ClockCircleOutlined, InboxOutlined } from '@ant-design/icons';
 import { t } from '@/lib/i18n';
-import {
-  SidebarContainer,
-  Separator,
-  SectionLabel,
-  SidebarItem,
-  ItemIcon,
-} from './styled';
+
+import styles from './DashboardSidebar.module.css';
 
 const STATUS_FILTERS = [
   { key: 'DRAFT', label: () => t('STATUS_DRAFT') },
@@ -18,7 +13,11 @@ const STATUS_FILTERS = [
   { key: 'ARCHIVED', label: () => t('STATUS_ARCHIVED') },
 ] as const;
 
-export const DashboardSidebar: React.FC = () => {
+const itemClass = (isActive: boolean): string => {
+  return isActive ? `${styles.sidebarItem} ${styles.sidebarItemActive}` : styles.sidebarItem;
+};
+
+export const DashboardSidebar = () => {
   const searchParams = useSearchParams();
   const router = useRouter();
 
@@ -36,47 +35,42 @@ export const DashboardSidebar: React.FC = () => {
       const sp = new URLSearchParams(params);
       router.push(`/app/dashboard?${sp.toString()}`);
     },
-    [router],
+    [router]
   );
 
   return (
-    <SidebarContainer>
-      {/* Quick access items */}
-      <SidebarItem $active={isAllProjects} onClick={() => navigateTo()}>
-        <ItemIcon>
+    <div className={styles.sidebarContainer}>
+      <div className={itemClass(isAllProjects)} onClick={() => navigateTo()}>
+        <span className={styles.itemIcon}>
           <ClockCircleOutlined />
-        </ItemIcon>
+        </span>
         {t('RECENTLY_VIEWED')}
-      </SidebarItem>
+      </div>
 
-      <SidebarItem $active={isArchiveView} onClick={() => navigateTo({ view: 'archive' })}>
-        <ItemIcon>
+      <div className={itemClass(isArchiveView)} onClick={() => navigateTo({ view: 'archive' })}>
+        <span className={styles.itemIcon}>
           <InboxOutlined />
-        </ItemIcon>
+        </span>
         {t('ARCHIVE')}
-      </SidebarItem>
+      </div>
 
-      <Separator />
+      <div className={styles.separator} />
 
-      {/* Status filters */}
-      <SectionLabel>{t('BY_STATUS')}</SectionLabel>
+      <div className={styles.sectionLabel}>{t('BY_STATUS')}</div>
 
-      <SidebarItem
-        $active={isAllProjects}
-        onClick={() => navigateTo()}
-      >
+      <div className={itemClass(isAllProjects)} onClick={() => navigateTo()}>
         {t('ALL')}
-      </SidebarItem>
+      </div>
 
       {STATUS_FILTERS.map(({ key, label }) => (
-        <SidebarItem
+        <div
           key={key}
-          $active={currentStatus === key && !isArchiveView}
+          className={itemClass(currentStatus === key && !isArchiveView)}
           onClick={() => navigateTo({ status: key })}
         >
           {label()}
-        </SidebarItem>
+        </div>
       ))}
-    </SidebarContainer>
+    </div>
   );
 };

@@ -1,4 +1,3 @@
-import React from 'react';
 import { Form, Input, Select, Flex, Row, Col, Typography } from 'antd';
 import { Uploader } from './Uploader';
 import { LabelWithAdd } from './LabelWithAdd';
@@ -7,7 +6,7 @@ import { Person } from '@/types/brief.interface';
 import { ProjectFormData } from '@/hooks/useMutateProject';
 import { useGuidance } from '@/context/GuidanceProvider';
 import RemoveIcon from '@/icons/minus.svg';
-import { IconButton } from '../common/styled';
+import commonStyles from '../common/common.module.css';
 import { t } from '@/lib/i18n';
 import { useAppSelector } from '@/store/hooks';
 import { selectIsNewBrief } from '@/store/slices/project';
@@ -27,7 +26,8 @@ interface InitialParametersProps {
   thumbnailUrl?: string | null;
 }
 
-export const InitialParameters: React.FC<InitialParametersProps> = ({ thumbnailUrl }) => {
+export const InitialParameters = (props: InitialParametersProps) => {
+  const thumbnailUrl = props.thumbnailUrl;
   const isNewProject = useAppSelector(selectIsNewBrief);
   const { handleFocus } = useGuidance();
   const form = Form.useFormInstance<ProjectFormData>();
@@ -111,14 +111,12 @@ export const InitialParameters: React.FC<InitialParametersProps> = ({ thumbnailU
             return null;
           }
           const collaborators = form.getFieldValue('collaborators') || [];
-          const visibleCount = fields.filter(x => collaborators[x.name]?.role !== 'agency_producer').length;
+          const visibleCount = fields.filter((x) => collaborators[x.name]?.role !== 'agency_producer').length;
           return (
             <Row gutter={20}>
               <Col span={12}>
                 <Form.Item label={<LabelWithAdd text={t('COLLABORATORS')} onClick={() => showModal()} />}>
-                  {visibleCount === 0 && (
-                    <Typography.Text type='secondary'>{t('EMPTY')}</Typography.Text>
-                  )}
+                  {visibleCount === 0 && <Typography.Text type='secondary'>{t('EMPTY')}</Typography.Text>}
                   {fields.map((field) => {
                     const collaborator = collaborators[field.name];
                     if (collaborator?.role === 'agency_producer') {
@@ -135,9 +133,9 @@ export const InitialParameters: React.FC<InitialParametersProps> = ({ thumbnailU
                           {roleLabel ? <Typography.Text type='secondary'> - {roleLabel}</Typography.Text> : null}
                           {displayEmail}
                         </Typography.Text>
-                        <IconButton onClick={() => remove(field.name)}>
+                        <div className={commonStyles.iconButton} onClick={() => remove(field.name)}>
                           <RemoveIcon color={'var(--gray-light)'} />
-                        </IconButton>
+                        </div>
                       </Flex>
                     );
                   })}

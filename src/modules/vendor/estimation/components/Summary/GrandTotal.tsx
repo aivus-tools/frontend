@@ -1,61 +1,41 @@
 'use client';
 
-import { styled } from 'styled-components';
 import SettingsIcon from '@/icons/settings-icon.svg';
 import { Flex } from 'antd';
 import { useAppSelector } from '@/store/hooks';
 import { t } from '@/lib/i18n';
 import { selectGrandTotal } from '@/store/slices/offer/selectors';
-import { GrandTotalRowWrapper } from '../../styled';
 
-const Label = styled.div`
-  display: flex;
-  justify-content: space-between;
-  background-color: var(--bg-blue-important);
-  padding: 16px 0;
-  padding-right: 40px;
-  gap: 8px;
-
-  font-weight: 700;
-  font-size: 14px;
-  text-transform: uppercase;
-`;
-const TotalSum = styled.div`
-  min-width: 90px;
-  display: flex;
-  align-items: center;
-  justify-content: flex-end;
-
-  font-weight: 700;
-  font-size: 18px;
-`;
-
-const EmptyBlockTotalSum = styled.div`
-  background-color: var(--bg-blue-important);
-`;
+import estimationStyles from '@/modules/vendor/estimation/estimation.module.css';
+import styles from './GrandTotal.module.css';
 
 export const GrandTotal = () => {
   const { total, clientTotal } = useAppSelector(selectGrandTotal);
   return (
-    <GrandTotalRowWrapper>
-      <EmptyBlockTotalSum style={{ borderRadius: '6px 0 0 6px' }}>
+    <div className={`${estimationStyles.summaryRowWrapper} ${estimationStyles.grandTotalRowWrapper}`}>
+      <div className={styles.emptyBlockTotalSum} style={{ borderRadius: '6px 0 0 6px' }}>
         <Flex align='center' justify='center' style={{ height: '100%' }}>
           <SettingsIcon />
         </Flex>
-      </EmptyBlockTotalSum>
-      <Label style={{ gridColumn: 'span 6' }}>
+      </div>
+      <div className={styles.label} style={{ gridColumn: 'span 6' }}>
         <Flex align='center' justify='end'>
           {t('GRAND_TOTAL')}
         </Flex>
-        <TotalSum>{total}</TotalSum>
-      </Label>
+        <div className={styles.totalSum}>{total}</div>
+      </div>
       <div />
       <Flex
         justify='flex-end'
-        style={{ gridColumn: 'span 5', paddingRight: '16px', backgroundColor: 'var(--bg-blue-important)', borderRadius: '6px' }}
+        style={{
+          gridColumn: 'span 5',
+          paddingRight: '16px',
+          backgroundColor: 'var(--bg-blue-important)',
+          borderRadius: '6px',
+        }}
       >
-        <TotalSum>{clientTotal}</TotalSum>
+        <div className={styles.totalSum}>{clientTotal}</div>
       </Flex>
-    </GrandTotalRowWrapper>
+    </div>
   );
 };

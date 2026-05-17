@@ -1,0 +1,54 @@
+.briefHeaderSlot {
+  display: flex;
+  flex: 1;
+  gap: 8px;
+  align-items: center;
+  min-width: 0;
+}
+
+.backButton,
+.menuButton {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+}
+
+.backButton :global(.anticon),
+.menuButton :global(.anticon) {
+  font-size: 20px;
+  color: var(--main);
+}
+
+.headerLeftBrief,
+.headerLeftDashboard {
+  display: flex;
+  flex: 1;
+  gap: 24px;
+  align-items: center;
+  min-width: 0;
+}
+
+.desktopOnly {
+  display: contents;
+}
+
+.mobileOnly {
+  display: none;
+}
+
+@media (width <= 1023.98px) {
+  .headerLeftBrief,
+  .headerLeftDashboard {
+    gap: 8px;
+  }
+
+  .desktopOnly {
+    display: none;
+  }
+
+  .mobileOnly {
+    display: inline-flex;
+  }
+}

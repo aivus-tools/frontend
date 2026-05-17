@@ -1,12 +1,12 @@
-import { Line } from '../styled';
+import styles from '../estimation.module.css';
 
 export const RowLine = () => (
   <>
     <div style={{ backgroundColor: 'var(--white)' }} />
-    <Line style={{ gridColumn: 'span 5' }} />
+    <div className={styles.line} style={{ gridColumn: 'span 5' }} />
     <div style={{ backgroundColor: 'var(--white)' }} />
     <div />
     <div style={{ backgroundColor: 'var(--white)' }} />
-    <Line style={{ gridColumn: 'span 4' }} />
+    <div className={styles.line} style={{ gridColumn: 'span 4' }} />
   </>
 );

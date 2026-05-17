@@ -3,53 +3,54 @@
 import React from 'react';
 import { useExpandedKeys } from '@/modules/vendor/estimation/context/expanded';
 import { Flex } from 'antd';
-import { SectionSubTitle, SectionSubTitleText, SectionSubTitleSumHeader, RowLine } from '../styled';
 import { ArrowButton } from '@/modules/vendor/estimation/components/Title/ArrowButton';
 
-interface Props {
-    text: string;
-    itemKey: string;
-    value: string;
+import styles from '../components.module.css';
+
+interface SubTitleProps {
+  text: string;
+  itemKey: string;
+  value: string;
 }
 
-export const SubTitle = ({ text, itemKey, value }: Props) => {
-    const { keys, switchKey } = useExpandedKeys();
-    const isOpen = !!keys?.includes(itemKey);
-    const handleClick = () => switchKey(itemKey);
+export const SubTitle = (props: SubTitleProps) => {
+  const { keys, switchKey } = useExpandedKeys();
+  const isOpen = !!keys?.includes(props.itemKey);
+  const handleClick = () => switchKey(props.itemKey);
 
-    return (
+  return (
+    <>
+      <div style={{ backgroundColor: 'var(--white)' }} />
+      <div className={styles.sectionSubTitle} style={{ gridColumn: isOpen ? 'span 4' : 'span 1' }}>
+        <Flex align='center' onClick={handleClick} style={{ cursor: 'pointer' }}>
+          <ArrowButton isOpen={isOpen} />
+          <div className={styles.sectionSubTitleText}>{props.text}</div>
+        </Flex>
+      </div>
+      {!isOpen && (
         <>
-            <div style={{ backgroundColor: '#fff' }} />
-            <SectionSubTitle style={{ gridColumn: isOpen ? 'span 4' : 'span 1' }}>
-                <Flex align='center' onClick={handleClick} style={{ cursor: 'pointer' }}>
-                    <ArrowButton isOpen={isOpen} />
-                    <SectionSubTitleText>{text}</SectionSubTitleText>
-                </Flex>
-            </SectionSubTitle>
-            {!isOpen && (
-                <>
-                    <div style={{ backgroundColor: '#fff' }} />
-                    <div style={{ backgroundColor: '#fff' }} />
-                    <div style={{ backgroundColor: '#fff' }} />
-                    <SectionSubTitleSumHeader style={{ backgroundColor: '#fff', paddingRight: 2 }}>
-                        {value}
-                    </SectionSubTitleSumHeader>
-                    <div style={{ backgroundColor: '#fff' }} />
-                </>
-            )}
-            {isOpen && (
-                <>
-                    <div style={{ backgroundColor: '#fff' }} />
-                    <div style={{ backgroundColor: '#fff' }} />
-                </>
-            )}
-            {isOpen && (
-                <>
-                    <div style={{ backgroundColor: '#fff' }} />
-                    <RowLine />
-                    <div style={{ backgroundColor: '#fff' }} />
-                </>
-            )}
+          <div style={{ backgroundColor: 'var(--white)' }} />
+          <div style={{ backgroundColor: 'var(--white)' }} />
+          <div style={{ backgroundColor: 'var(--white)' }} />
+          <div className={styles.sectionSubTitleSumHeader} style={{ backgroundColor: 'var(--white)', paddingRight: 2 }}>
+            {props.value}
+          </div>
+          <div style={{ backgroundColor: 'var(--white)' }} />
         </>
-    );
+      )}
+      {isOpen && (
+        <>
+          <div style={{ backgroundColor: 'var(--white)' }} />
+          <div style={{ backgroundColor: 'var(--white)' }} />
+        </>
+      )}
+      {isOpen && (
+        <>
+          <div style={{ backgroundColor: 'var(--white)' }} />
+          <div className={styles.rowLine} />
+          <div style={{ backgroundColor: 'var(--white)' }} />
+        </>
+      )}
+    </>
+  );
 };

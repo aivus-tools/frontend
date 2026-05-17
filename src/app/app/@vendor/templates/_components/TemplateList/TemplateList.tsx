@@ -7,7 +7,7 @@ import { t } from '@/lib/i18n';
 import { useGetTemplatesQuery, useDeleteTemplateMutation } from '@/services/client/templatesApi';
 import { Template } from '@/types/template.interface';
 import { THeadItem } from '@/components/THeadItem/THeadItem';
-import Spinner from '@/components/Spinner';
+import { PageSpinner } from '@/components/PageSpinner';
 import { TemplateCard } from '../TemplateCard/TemplateCard';
 
 import styles from './TemplateList.module.css';
@@ -34,7 +34,7 @@ export const TemplateList = () => {
   };
 
   if (isLoading) {
-    return <Spinner />;
+    return <PageSpinner />;
   }
 
   if (!templates.length) {
@@ -61,11 +61,7 @@ export const TemplateList = () => {
       </div>
       <div className={styles.content}>
         {templates.map((template: Template) => (
-          <TemplateCard
-            key={template.id}
-            template={template}
-            onDelete={handleDelete}
-          />
+          <TemplateCard key={template.id} template={template} onDelete={handleDelete} />
         ))}
       </div>
     </div>

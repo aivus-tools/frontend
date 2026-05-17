@@ -85,7 +85,7 @@ const isPublicAuthPath = (pathname: string): boolean => {
 // CSP for development with unsafe-eval (needed for Next.js hot reload / React dev tools)
 const isDevelopment = process.env.NODE_ENV === 'development';
 const connectSrcDev = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000';
-// Note: 'unsafe-inline' is required for style-src because Next.js, Ant Design, and styled-components inject inline styles.
+// Note: 'unsafe-inline' is required for style-src because Next.js and Ant Design inject inline styles.
 // script-src uses 'unsafe-inline' because Next.js injects inline scripts for hydration; nonce-based CSP requires custom server setup.
 const CSP = isDevelopment
   ? `default-src 'self'; script-src 'self' 'unsafe-eval' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https:; font-src 'self' data:; connect-src 'self' data: ${connectSrcDev}; frame-ancestors 'self' https://www.vilkaservice.com https://app.aivus.co`

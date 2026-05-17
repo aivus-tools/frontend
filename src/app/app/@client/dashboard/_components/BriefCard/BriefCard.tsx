@@ -2,7 +2,7 @@
 
 import React, { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { App, Button, Dropdown, Input, Modal } from 'antd';
+import { App, Button, Dropdown, Input, Modal, theme } from 'antd';
 import { MoreOutlined } from '@ant-design/icons';
 import { format } from 'date-fns';
 import { PrStatus } from '@/components/PrStatus/PrStatus';
@@ -19,30 +19,23 @@ interface BriefCardProps {
   brief: BriefV3ListItem;
 }
 
-const getAccentColor = (status?: string): string => {
-  switch (status) {
-    case PROJECT_STATUS.RFP:
-      return '#2288FF';
-    case PROJECT_STATUS.REVIEWING:
-      return '#FD8258';
-    case PROJECT_STATUS.ONGOING:
-      return '#A5C500';
-    case PROJECT_STATUS.COMPLETED:
-      return '#A5C500';
-    default:
-      return '#99A1B7';
-  }
-};
+interface StatusPalette {
+  accent: string;
+  background: string;
+}
 
-const getRowBg = (status?: string): string => {
+const useStatusPalette = (status?: string): StatusPalette => {
+  const { token } = theme.useToken();
   switch (status) {
     case PROJECT_STATUS.RFP:
-      return '#F4FBFF';
+      return { accent: token.colorPrimary, background: 'var(--bg-blue-subtotal)' };
+    case PROJECT_STATUS.REVIEWING:
+      return { accent: token.colorWarning, background: token.colorBgContainer };
     case PROJECT_STATUS.ONGOING:
     case PROJECT_STATUS.COMPLETED:
-      return '#FCFFF0';
+      return { accent: token.colorSuccess, background: 'var(--bg-light-green)' };
     default:
-      return '#FFFFFF';
+      return { accent: token.colorTextSecondary, background: token.colorBgContainer };
   }
 };
 
@@ -61,7 +54,7 @@ const renderOffersCell = (
   onCompareClick: (event: React.MouseEvent) => void
 ): React.ReactNode => {
   if (brief.offersCount === 0) {
-    return <span style={{ color: '#99A1B7', fontSize: 12 }}>—</span>;
+    return <span className={styles.emptyMark}>—</span>;
   }
   if (brief.offersCount === 1) {
     return <span className={styles.numericValue}>1 {t('BRIEF_LIST_OFFER_RECEIVED')}</span>;
@@ -73,7 +66,8 @@ const renderOffersCell = (
   );
 };
 
-export const BriefCard: React.FC<BriefCardProps> = ({ brief }) => {
+export const BriefCard = (props: BriefCardProps) => {
+  const { brief } = props;
   const { message, modal } = App.useApp();
   const router = useRouter();
   const [deleteBrief, { isLoading: isDeleting }] = useDeleteBriefAiMutation();
@@ -81,11 +75,12 @@ export const BriefCard: React.FC<BriefCardProps> = ({ brief }) => {
   const [renameModalOpen, setRenameModalOpen] = useState(false);
   const [renameValue, setRenameValue] = useState('');
 
+  const palette = useStatusPalette(brief.status);
   const title = brief.title || t('UNTITLED_BRIEF');
   const formattedCreated = brief.createdAt ? format(new Date(brief.createdAt), 'MMM dd, yyyy') : '';
 
   const handleClick = () => {
-    router.push(AppRoute.BRIEF_V2_DETAIL(brief.id));
+    router.push(AppRoute.BRIEF_DETAIL(brief.id));
   };
 
   const handleCompareClick = (event: React.MouseEvent) => {
@@ -152,10 +147,14 @@ export const BriefCard: React.FC<BriefCardProps> = ({ brief }) => {
   ];
 
   return (
-    <div className={styles.card} style={{ backgroundColor: getRowBg(brief.status) }} onClick={handleClick}>
+    <div
+      className={styles.card}
+      style={{ '--card-bg': palette.background } as React.CSSProperties}
+      onClick={handleClick}
+    >
       <div className={styles.row}>
         <div className={styles.projectCell}>
-          <div className={styles.accent} style={{ backgroundColor: getAccentColor(brief.status) }} />
+          <div className={styles.accent} style={{ backgroundColor: palette.accent }} />
           <div>
             <div className={styles.projectName}>{title.toUpperCase()}</div>
             <div className={styles.assignee}>{renderConversationLabel(brief.conversationStatus)}</div>

@@ -1,48 +1,30 @@
-import { styled } from 'styled-components';
 import React from 'react';
 
-const Nav = styled.nav`
-  display: flex;
-  gap: 8px;
-`;
+import styles from './Tabs.module.css';
 
-const Tab = styled.button<{ $isActive: boolean }>`
-  line-height: normal;
-  padding: 8px 12px;
-  border: none;
-  cursor: pointer;
-  display: flex;
-  font-size: 16px;
-  font-weight: 600;
-  color: var(--main);
-  border-radius: 6px 6px 0 0;
-  white-space: nowrap;
+interface TabItem {
+  key: string;
+  label: string;
+}
 
-  ${({ $isActive }) =>
-    $isActive
-      ? `
-    background-color: var(--bg-gray-page);
-  `
-      : `
-    background: #fff;
-    border-bottom: 2px solid var(--gray-light);
-  `}
-`;
-
-interface Props {
-  items: { key: string; label: string }[];
+interface TabsProps {
   onChange: (key: string) => (e: React.MouseEvent<HTMLButtonElement>) => void;
+  items: TabItem[];
   activeKey?: string;
 }
 
-export const Tabs = ({ activeKey, items, onChange }: Props) => {
+export const Tabs = (props: TabsProps) => {
   return (
-    <Nav>
-      {items.map((item) => (
-        <Tab key={item.key} $isActive={activeKey === item.key} onClick={onChange(item.key)}>
-          {item.label}
-        </Tab>
-      ))}
-    </Nav>
+    <nav className={styles.nav}>
+      {props.items.map((x) => {
+        const isActive = props.activeKey === x.key;
+        const tabClass = isActive ? `${styles.tab} ${styles.tabActive}` : styles.tab;
+        return (
+          <button key={x.key} className={tabClass} onClick={props.onChange(x.key)}>
+            {x.label}
+          </button>
+        );
+      })}
+    </nav>
   );
 };

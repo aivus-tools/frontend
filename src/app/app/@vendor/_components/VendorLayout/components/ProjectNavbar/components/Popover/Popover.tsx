@@ -8,13 +8,14 @@ import { t, tRich } from '@/lib/i18n';
 
 import styles from './Popover.module.css';
 
-export type ExportPopoverProps = {
+export interface ExportPopoverProps {
   children: React.ReactElement;
   action: (data: { format: 'xlsx' | 'pdf' | 'csv'; name: string; date?: Dayjs; watermark?: string }) => void;
   defaultName?: string;
-};
+}
 
-export const ExportPopover: React.FC<ExportPopoverProps> = ({ children, action, defaultName }) => {
+export const ExportPopover = (props: ExportPopoverProps) => {
+  const { children, action, defaultName } = props;
   const [format, setFormat] = useState<'xlsx' | 'pdf' | 'csv'>('pdf');
   const [name, setName] = useState(defaultName || '');
 
@@ -104,5 +105,3 @@ export const ExportPopover: React.FC<ExportPopoverProps> = ({ children, action, 
     </AntdPopover>
   );
 };
-
-export default ExportPopover;

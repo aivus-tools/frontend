@@ -2,26 +2,9 @@ import React, { useState } from 'react';
 import { App, Button, Modal, Popover, Tooltip } from 'antd';
 import { t } from '@/lib/i18n';
 import { PreVendor } from '@/types/preVendor.interface';
-import {
-  Card,
-  CardAddress,
-  CardBody,
-  CardCategory,
-  CardDescription,
-  CardFooter,
-  CardLogo,
-  CardLogoFallback,
-  CardRank,
-  CardTitle,
-  CardTop,
-  CardTopSpacer,
-  CardTopText,
-  EmailModalDescription,
-  EmailModalPreview,
-  PortfolioButton,
-  SendBriefButton,
-} from './styles';
 import { buildMailto, MailtoPlan } from './buildMailto';
+
+import styles from './PreVendorCard.module.css';
 
 interface PreVendorCardProps {
   preVendor: PreVendor;
@@ -39,7 +22,7 @@ async function copyToClipboard(text: string): Promise<boolean> {
       await navigator.clipboard.writeText(text);
       return true;
     } catch {
-      // fall through to legacy path
+      void text;
     }
   }
   if (typeof document === 'undefined') {
@@ -61,7 +44,7 @@ async function copyToClipboard(text: string): Promise<boolean> {
   return ok;
 }
 
-const LocationIcon: React.FC = () => {
+const LocationIcon = () => {
   return (
     <svg width='16' height='16' viewBox='0 0 16 16' fill='none' xmlns='http://www.w3.org/2000/svg' aria-hidden='true'>
       <path
@@ -72,7 +55,7 @@ const LocationIcon: React.FC = () => {
   );
 };
 
-export const PreVendorCard: React.FC<PreVendorCardProps> = (props) => {
+export const PreVendorCard = (props: PreVendorCardProps) => {
   const x = props.preVendor;
   const { message } = App.useApp();
   const [modalPlan, setModalPlan] = useState<MailtoPlan | null>(null);
@@ -126,9 +109,13 @@ export const PreVendorCard: React.FC<PreVendorCardProps> = (props) => {
     setModalPlan(null);
   };
 
+  const sendButtonClassName = props.sendDisabled
+    ? `${styles.sendBriefButton} ${styles.sendBriefButtonDisabled}`
+    : styles.sendBriefButton;
+
   const sendButton = (
-    <SendBriefButton
-      $disabled={props.sendDisabled}
+    <a
+      className={sendButtonClassName}
       href={href}
       target='_blank'
       rel='noopener noreferrer'
@@ -136,7 +123,7 @@ export const PreVendorCard: React.FC<PreVendorCardProps> = (props) => {
       aria-disabled={props.sendDisabled}
     >
       {t('PRE_VENDORS_SEND_BRIEF_BUTTON')}
-    </SendBriefButton>
+    </a>
   );
 
   const renderSendButton = () => {
@@ -159,41 +146,41 @@ export const PreVendorCard: React.FC<PreVendorCardProps> = (props) => {
   };
 
   return (
-    <Card>
-      <CardTop>
+    <article className={styles.card}>
+      <div className={styles.cardTop}>
         {x.logoUrl ? (
-          <CardLogo>
+          <div className={styles.cardLogo}>
             <img src={x.logoUrl} alt={x.title} />
-          </CardLogo>
+          </div>
         ) : (
-          <CardLogoFallback>{x.title.slice(0, 2).toUpperCase()}</CardLogoFallback>
+          <div className={styles.cardLogoFallback}>{x.title.slice(0, 2).toUpperCase()}</div>
         )}
-        <CardTopText>
-          {x.rankLabel ? <CardRank>{x.rankLabel}</CardRank> : null}
-          {x.categoryLabel ? <CardCategory>{x.categoryLabel}</CardCategory> : null}
-        </CardTopText>
-        <CardTopSpacer />
+        <div className={styles.cardTopText}>
+          {x.rankLabel ? <p className={styles.cardRank}>{x.rankLabel}</p> : null}
+          {x.categoryLabel ? <p className={styles.cardCategory}>{x.categoryLabel}</p> : null}
+        </div>
+        <div className={styles.cardTopSpacer} />
         {x.portfolioUrl ? (
-          <PortfolioButton href={x.portfolioUrl} target='_blank' rel='noopener noreferrer'>
+          <a className={styles.portfolioButton} href={x.portfolioUrl} target='_blank' rel='noopener noreferrer'>
             {t('PRE_VENDORS_PORTFOLIO_LABEL')} ↗
-          </PortfolioButton>
+          </a>
         ) : null}
-      </CardTop>
+      </div>
 
-      <CardBody>
-        <CardTitle>{x.title}</CardTitle>
-        <CardDescription>{x.shortDescription}</CardDescription>
-      </CardBody>
+      <div className={styles.cardBody}>
+        <p className={styles.cardTitle}>{x.title}</p>
+        <p className={styles.cardDescription}>{x.shortDescription}</p>
+      </div>
 
-      <CardFooter>
+      <div className={styles.cardFooter}>
         {renderSendButton()}
         {x.address ? (
-          <CardAddress>
+          <div className={styles.cardAddress}>
             <LocationIcon />
             <span>{x.address}</span>
-          </CardAddress>
+          </div>
         ) : null}
-      </CardFooter>
+      </div>
 
       <Modal
         open={modalPlan !== null}
@@ -212,9 +199,9 @@ export const PreVendorCard: React.FC<PreVendorCardProps> = (props) => {
           </Button>,
         ]}
       >
-        <EmailModalDescription>{t('PRE_VENDORS_EMAIL_MODAL_DESCRIPTION')}</EmailModalDescription>
-        <EmailModalPreview>{modalPlan?.body ?? ''}</EmailModalPreview>
+        <p className={styles.emailModalDescription}>{t('PRE_VENDORS_EMAIL_MODAL_DESCRIPTION')}</p>
+        <pre className={styles.emailModalPreview}>{modalPlan?.body ?? ''}</pre>
       </Modal>
-    </Card>
+    </article>
   );
 };

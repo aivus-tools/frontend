@@ -1,0 +1,10 @@
+.buttonWrapper {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 20px;
+  height: 20px;
+  color: var(--blue);
+  cursor: pointer;
+  border-radius: 50%;
+}

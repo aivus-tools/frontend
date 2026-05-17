@@ -2,7 +2,7 @@
 
 import React from 'react';
 import { useParams, useRouter, useSearchParams } from 'next/navigation';
-import { BriefEditorLayout } from '@/modules/client/BriefEditorV2/BriefEditorLayout';
+import { BriefEditorLayout } from '@/modules/client/BriefEditor/BriefEditorLayout';
 import { getPublicBriefToken } from '@/services/client/publicBriefApi';
 import { setPendingBrief } from '@/helpers/pendingBrief';
 

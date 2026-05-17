@@ -7,7 +7,7 @@ import { useGetTemplateQuery } from '@/services/client/templatesApi';
 import { useAppDispatch } from '@/store/hooks';
 import { setOfferDetails, setMetaData, setTemplateId } from '@/store/slices/offer/slice';
 import { OfferDetails } from '@/types/store.interface';
-import Spinner from '@/components/Spinner';
+import { PageSpinner } from '@/components/PageSpinner';
 
 export default function TemplateEditPage() {
   const params = useParams();
@@ -19,9 +19,7 @@ export default function TemplateEditPage() {
   useEffect(() => {
     if (template?.details) {
       const details: OfferDetails =
-        typeof template.details === 'string'
-          ? JSON.parse(template.details)
-          : (template.details as OfferDetails);
+        typeof template.details === 'string' ? JSON.parse(template.details) : (template.details as OfferDetails);
 
       dispatch(setOfferDetails(details));
 
@@ -54,7 +52,7 @@ export default function TemplateEditPage() {
   }, [template, templateId, dispatch]);
 
   if (isLoading) {
-    return <Spinner />;
+    return <PageSpinner />;
   }
 
   // Render Estimation component (NOT in external mode — we want real categories from API)

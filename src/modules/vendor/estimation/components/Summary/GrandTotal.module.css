@@ -1,0 +1,23 @@
+.label {
+  display: flex;
+  gap: 8px;
+  justify-content: space-between;
+  padding: 16px 40px 16px 0;
+  font-size: 14px;
+  font-weight: 700;
+  text-transform: uppercase;
+  background-color: var(--bg-blue-important);
+}
+
+.totalSum {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  min-width: 90px;
+  font-size: 18px;
+  font-weight: 700;
+}
+
+.emptyBlockTotalSum {
+  background-color: var(--bg-blue-important);
+}

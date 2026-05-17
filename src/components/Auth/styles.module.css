@@ -6,8 +6,8 @@
   padding: 10px;
   text-align: center;
   cursor: pointer;
-  background-color: #fff;
-  border: 1px solid #ced4da;
+  background-color: var(--white);
+  border: 1px solid var(--bg-gray-light);
   border-radius: 5px;
 }
 

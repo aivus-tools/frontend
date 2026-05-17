@@ -5,14 +5,10 @@ import { useParams, useRouter } from 'next/navigation';
 import { InitialParameters } from './InitialParameters';
 import { Client } from './Client';
 import { Agency } from './Agency';
-// Brief and Specifications are commented out - will be used by Client later
-// import { Brief } from './Brief';
-// import { Specifications } from './Specifications';
 import { GuidanceAndControls } from '../common/GuidanceAndControls';
-import { Wrapper, Section, Header, Column, Content } from '../common/styled';
+import commonStyles from '../common/common.module.css';
 import { Form, message } from 'antd';
 import { useMutateProject, ProjectFormData } from '@/hooks/useMutateProject';
-import { useBrief } from '@/hooks/useBrief';
 import { GuidanceProvider } from '@/context/GuidanceProvider';
 import { useAppDispatch, useAppSelector } from '@/store/hooks';
 import { setMode, selectProjectId } from '@/store/slices/project';
@@ -34,7 +30,6 @@ export default function Details() {
   const { create, update, isLoading: isMutating } = useMutateProject();
   const [uploadThumbnail] = projectsApi.useUploadThumbnailMutation();
   const [applyTemplate] = useApplyTemplateMutation();
-  const { data: brief, isLoading } = useBrief();
   const { data: vendorSettings } = useGetVendorSettingsQuery();
   const isExistingProject = !!routeProjectId && routeProjectId !== NEW_BRIEF_SLUG;
   const { data: existingProject, isFetching: isProjectFetching } = projectsApi.useGetProjectByIdQuery(
@@ -78,36 +73,14 @@ export default function Details() {
           position: m.position,
         })) || [{ name: '', position: '' }],
       });
-    } else if (!isLoading && brief && typeof brief.details === 'object') {
-      initializedRef.current = true;
-      const details = brief.details;
-      form.setFieldsValue({
-        ...initialValues,
-        crmId: details.crmId || '',
-        projectName: details.projectName || '',
-        description: details.description || '',
-        clientName: details.clientName || '',
-        irsEin: details.irsEin || '',
-        brandName: details.brandName || '',
-        managers: details.managers?.map((m: { manager?: string; name?: string; position?: string }) => ({
-          name: m.manager || m.name || '',
-          position: m.position || '',
-        })) || [{ name: '', position: '' }],
-        collaborators:
-          details.collaborators?.map((c: string) => ({
-            name: c,
-            email: '',
-            role: 'internal_user' as const,
-          })) || [],
-      });
-    } else if (!isLoading && !isProjectFetching) {
+    } else if (!isProjectFetching) {
       initializedRef.current = true;
     }
-  }, [brief, existingProject, form, isLoading, isProjectFetching]);
+  }, [existingProject, form, isProjectFetching]);
 
   useEffect(() => {
     if (isExistingProject) return;
-    if (isLoading || isProjectFetching) return;
+    if (isProjectFetching) return;
     if (!vendorSettings) return;
     const currentAgencyName = form.getFieldValue('agencyName') as string;
     if (!currentAgencyName) {
@@ -115,7 +88,7 @@ export default function Details() {
         agencyName: vendorSettings.agencyName || '',
       });
     }
-  }, [vendorSettings, form, isExistingProject, isLoading, isProjectFetching]);
+  }, [vendorSettings, form, isExistingProject, isProjectFetching]);
 
   const handleSubmit = useCallback(
     async (formData: ProjectFormData) => {
@@ -204,45 +177,31 @@ export default function Details() {
         scrollToFirstError
         clearOnDestroy
       >
-        <Wrapper>
-          <Column style={{ flex: '1 1 70%' }}>
-            <Section>
-              <Header>{t('INITIAL_PARAMETERS')}</Header>
-              <Content>
+        <div className={commonStyles.wrapper}>
+          <div className={commonStyles.column} style={{ flex: '1 1 70%' }}>
+            <div className={commonStyles.section}>
+              <div className={commonStyles.header}>{t('INITIAL_PARAMETERS')}</div>
+              <div className={commonStyles.content}>
                 <InitialParameters thumbnailUrl={existingProject?.thumbnailUrl} />
-              </Content>
-            </Section>
-            <Section>
-              <Header>{t('THE_CLIENT')}</Header>
-              <Content>
+              </div>
+            </div>
+            <div className={commonStyles.section}>
+              <div className={commonStyles.header}>{t('THE_CLIENT')}</div>
+              <div className={commonStyles.content}>
                 <Client />
-              </Content>
-            </Section>
-            <Section>
-              <Header>{t('THE_AGENCY')}</Header>
-              <Content>
+              </div>
+            </div>
+            <div className={commonStyles.section}>
+              <div className={commonStyles.header}>{t('THE_AGENCY')}</div>
+              <div className={commonStyles.content}>
                 <Agency />
-              </Content>
-            </Section>
-            {/* Brief and Specifications sections commented out - will be used by Client later
-            <Section>
-              <Header>{t('THE_CLIENTS_BRIEF')}</Header>
-              <Content>
-                <Brief />
-              </Content>
-            </Section>
-            <Section>
-              <Header>{t('RIGHTS_AND_TECHNICAL_SPECIFICATIONS')}</Header>
-              <Content>
-                <Specifications />
-              </Content>
-            </Section>
-            */}
-          </Column>
-          <Column style={{ flex: '1 1 30%', justifyContent: 'space-between' }}>
+              </div>
+            </div>
+          </div>
+          <div className={commonStyles.column} style={{ flex: '1 1 30%', justifyContent: 'space-between' }}>
             <GuidanceAndControls />
-          </Column>
-        </Wrapper>
+          </div>
+        </div>
       </Form>
     </GuidanceProvider>
   );

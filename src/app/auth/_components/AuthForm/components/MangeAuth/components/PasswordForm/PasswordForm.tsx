@@ -34,7 +34,7 @@ export const PasswordForm = ({ email, prevStepAction }: { email: string; prevSte
         form.resetFields();
         form.setFields([{ name: 'password', errors: [''] }]);
       } else if (pending) {
-        window.location.href = AppRoute.BRIEF_V2_DETAIL(pending.briefId);
+        window.location.href = AppRoute.BRIEF_DETAIL(pending.briefId);
       } else {
         window.location.href = CALLBACK_URL || AppRoute.HOME;
       }

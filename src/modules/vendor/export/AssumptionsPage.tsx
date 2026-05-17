@@ -1,4 +1,3 @@
-import React from 'react';
 import { OfferExportData } from '@/types/exportData.interface';
 import { sanitizeHtml } from '@/lib/sanitizeHtml';
 
@@ -9,7 +8,7 @@ interface AssumptionsPageProps {
   data: OfferExportData;
 }
 
-export const AssumptionsPage: React.FC<AssumptionsPageProps> = (props) => {
+export const AssumptionsPage = (props: AssumptionsPageProps) => {
   return (
     <div style={{ maxWidth: 1210, margin: '0 auto', padding: '0 32px' }}>
       <div

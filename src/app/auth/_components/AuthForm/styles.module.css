@@ -5,7 +5,7 @@
   min-height: 100vh;
   min-height: 100dvh;
   padding: 16px;
-  background-color: #f5f5f5;
+  background-color: var(--bg-gray-page);
 }
 
 .container {
@@ -14,7 +14,7 @@
   width: 100%;
   max-width: 400px;
   padding: 20px;
-  background-color: #fff;
+  background-color: var(--white);
   border-radius: 5px;
   box-shadow: 0 0 10px rgb(0 0 0 / 10%);
 }

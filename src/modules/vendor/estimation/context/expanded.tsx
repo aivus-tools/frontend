@@ -1,4 +1,4 @@
-import React, { createContext, useContext, ReactNode, useState, useEffect } from 'react';
+import { createContext, useContext, ReactNode, useState, useEffect } from 'react';
 
 interface KeysContextType {
   keys: string[] | undefined;
@@ -13,15 +13,15 @@ interface FocusProviderProps {
   initialKeys?: string[];
 }
 
-export const KeysProvider: React.FC<FocusProviderProps> = ({ children, initialKeys }) => {
-  const [keys, setKeys] = useState<string[] | undefined>(initialKeys);
+export const KeysProvider = (props: FocusProviderProps) => {
+  const [keys, setKeys] = useState<string[] | undefined>(props.initialKeys);
 
   // Update keys when initialKeys change (e.g., when data is loaded)
   useEffect(() => {
-    if (initialKeys && initialKeys.length > 0) {
-      setKeys(initialKeys);
+    if (props.initialKeys && props.initialKeys.length > 0) {
+      setKeys(props.initialKeys);
     }
-  }, [initialKeys]);
+  }, [props.initialKeys]);
 
   const switchKey = (key: string) => {
     setKeys((prevKeys) => {
@@ -42,7 +42,7 @@ export const KeysProvider: React.FC<FocusProviderProps> = ({ children, initialKe
       return [...(prevKey || []), key];
     });
 
-  return <HoverContext.Provider value={{ keys, switchKey, addKey }}>{children}</HoverContext.Provider>;
+  return <HoverContext.Provider value={{ keys, switchKey, addKey }}>{props.children}</HoverContext.Provider>;
 };
 
 export const useExpandedKeys = () => {

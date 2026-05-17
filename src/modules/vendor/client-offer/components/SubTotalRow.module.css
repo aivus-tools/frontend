@@ -1,0 +1,22 @@
+.wrapper {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  width: 100%;
+  padding: 16px 0;
+}
+
+.label {
+  margin-right: 12px;
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--main);
+}
+
+.value {
+  min-width: 100px;
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--blue);
+  text-align: right;
+}

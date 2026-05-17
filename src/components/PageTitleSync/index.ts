@@ -1,0 +1,1 @@
+export { PageTitleSync } from './PageTitleSync';

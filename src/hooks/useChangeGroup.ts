@@ -29,7 +29,7 @@ export const useChangeGroup = () => {
 
         if (result.claimedBriefId) {
           clearPendingBrief();
-          window.location.href = AppRoute.BRIEF_V2_DETAIL(result.claimedBriefId);
+          window.location.href = AppRoute.BRIEF_DETAIL(result.claimedBriefId);
         } else {
           window.location.href = AppRoute.DASHBOARD;
         }

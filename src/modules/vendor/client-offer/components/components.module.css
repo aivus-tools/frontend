@@ -1,0 +1,326 @@
+.wrapper {
+  display: flex;
+  gap: 30px;
+  padding: 10px 30px 30px;
+}
+
+.column {
+  display: flex;
+  flex-direction: column;
+  gap: 30px;
+}
+
+.section {
+  display: flex;
+  flex-direction: column;
+}
+
+.header {
+  padding: 0 6px 4px;
+  font-size: 14px;
+  font-style: normal;
+  font-weight: 700;
+  line-height: normal;
+  color: var(--main);
+  text-transform: uppercase;
+}
+
+.content {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  align-self: stretch;
+  width: 100%;
+  padding: 30px;
+  background-color: var(--white);
+  border-radius: 6px;
+  box-shadow: 0 5px 16.5px -11px rgb(0 0 0 / 25%);
+}
+
+.table {
+  display: grid;
+  grid-template-columns: 38px 1fr 90px 90px 90px 110px 40px;
+  grid-auto-flow: row;
+  width: 100%;
+}
+
+.tableHeader {
+  display: contents;
+}
+
+.tableHeader > div {
+  padding: 16px 0 12px;
+  font-size: 11px;
+  font-weight: 500;
+  line-height: 13px;
+  color: var(--gray);
+  background: transparent;
+}
+
+.headerCell {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.headerCellLeft {
+  justify-content: flex-start;
+}
+
+.headerCellRight {
+  justify-content: flex-end;
+  padding-right: 10px;
+}
+
+.categoryBlockWrapper {
+  width: 100%;
+  margin-bottom: 15px;
+  overflow: hidden;
+  background: var(--white);
+  border-radius: 6px;
+  box-shadow: 0 5px 16.5px -11px rgb(0 0 0 / 25%);
+}
+
+.rowWrapper {
+  display: contents;
+}
+
+.rowWrapper > div,
+.rowWrapper > * {
+  background-color: var(--row-bg);
+}
+
+.spacer {
+  grid-column: span 7;
+  height: 15px;
+  background-color: transparent !important;
+}
+
+.estimationItem {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  min-height: 42px;
+  padding: 8px 2px;
+  font-size: 13px;
+  font-weight: 500;
+  line-height: 15.85px;
+  text-align: center;
+  background-color: var(--white);
+}
+
+.estimationItemHovered {
+  background-color: var(--bg-blue-subsection);
+}
+
+.itemDescription {
+  margin-top: 2px;
+  font-size: 11px;
+  font-weight: 400;
+  line-height: 14px;
+  color: var(--gray);
+}
+
+.actionCell {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 42px;
+  padding: 8px 8px 8px 0;
+  background-color: var(--white);
+}
+
+.actionCellHovered {
+  background-color: var(--bg-blue-subsection);
+}
+
+.rowLine {
+  grid-column: span 5;
+  height: 1px;
+  margin-left: 0;
+  border-bottom: 1px dashed var(--gray-light);
+}
+
+.rowLineDark {
+  border-bottom-color: var(--gray);
+}
+
+.rowLineStart {
+  grid-column: span 1;
+  background: var(--white);
+}
+
+.entryRowLine {
+  grid-column: 2 / 7;
+  height: 0;
+  background: transparent;
+  border-bottom: 1px dashed var(--gray-light, var(--bg-gray-light));
+}
+
+.label {
+  padding: 16px 0;
+  font-size: 14px;
+  font-weight: 600;
+  line-height: 17.07px;
+  text-align: right;
+  text-transform: uppercase;
+  letter-spacing: 0;
+}
+
+.totalSum {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  padding: 16px 0;
+  font-size: 16px;
+  font-weight: 600;
+  line-height: 19.5px;
+  color: var(--blue);
+}
+
+.iconPlaceholder {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 16px;
+}
+
+.sectionTitle {
+  display: flex;
+  align-items: center;
+  padding: 18px 2px;
+  background-color: var(--white);
+}
+
+.sectionTitleText {
+  font-size: 14px;
+  font-weight: 700;
+  line-height: 17.07px;
+  color: var(--blue);
+  text-transform: uppercase;
+  user-select: none;
+}
+
+.sectionTitleSumHeader {
+  display: flex;
+  align-items: center;
+  font-size: 16px;
+  font-weight: 600;
+  line-height: 19.5px;
+  color: var(--blue);
+  text-align: right;
+}
+
+.sectionSubTitle {
+  display: flex;
+  align-items: center;
+  padding: 8px 0;
+  background: var(--white);
+}
+
+.sectionSubTitleText {
+  font-size: 13px;
+  font-weight: 500;
+  line-height: 15.85px;
+  color: var(--blue);
+  user-select: none;
+}
+
+.sectionSubTitleSumHeader {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  font-size: 14px;
+  font-weight: 700;
+  line-height: 17.07px;
+  text-align: right;
+}
+
+.subTotalRow {
+  display: contents;
+}
+
+.subTotalRow > div {
+  background: var(--bg-blue-subtotal, var(--bg-blue-subtotal));
+}
+
+.subTotalRow > div:first-child {
+  border-radius: 0 0 0 6px;
+}
+
+.subTotalRow > div:last-child {
+  border-radius: 0 0 6px;
+}
+
+.categoryTotalRow {
+  display: flex;
+  grid-column: span 7;
+  gap: 20px;
+  align-items: center;
+  justify-content: flex-end;
+  padding: 20px 40px 14px 8px;
+  background: var(--bg-blue-important, var(--bg-blue-important));
+  border-radius: 0 0 6px 6px;
+  box-shadow: 0 5px 16.5px -11px rgb(0 0 0 / 25%);
+}
+
+.summaryRow {
+  position: relative;
+  z-index: 3;
+  display: flex;
+  grid-column: span 7;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 40px 16px 16px;
+  margin-top: 15px;
+  margin-bottom: -6px;
+  background: var(--bg-blue-important, var(--bg-blue-important));
+  border-radius: 6px;
+  box-shadow: 0 4px 8px -2px rgb(0 0 0 / 15%);
+}
+
+.agencyServiceRow {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  grid-column: span 7;
+  align-items: center;
+  justify-content: space-between;
+  min-height: 50px;
+  padding: 12px 40px 12px 14px;
+  margin-bottom: -6px;
+  background: var(--white);
+  border-radius: 6px;
+  box-shadow: 0 4px 8px -2px rgb(0 0 0 / 10%);
+}
+
+.grandTotalRow {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  grid-column: span 7;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 40px 16px 16px;
+  margin-bottom: -6px;
+  background: var(--bg-green, var(--bg-green));
+  border-radius: 6px;
+  box-shadow: 0 5px 16.5px -11px rgb(0 0 0 / 25%);
+}
+
+.costPerVideoRow {
+  position: relative;
+  z-index: 0;
+  display: flex;
+  grid-column: span 7;
+  align-items: center;
+  justify-content: space-between;
+  width: calc(100% - 28px);
+  padding: 10px 40px 4px 14px;
+  margin-right: 14px;
+  margin-left: 14px;
+  background: var(--white);
+  border-radius: 6px;
+  box-shadow: 0 5px 16.5px -11px rgb(0 0 0 / 25%);
+}

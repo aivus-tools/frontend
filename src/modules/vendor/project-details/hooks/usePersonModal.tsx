@@ -1,16 +1,8 @@
 import React, { useState } from 'react';
 import { Button, Col, Flex, Form, Input, Modal, Row, Select, Typography } from 'antd';
-import { styled } from 'styled-components';
 import { Person } from '@/types/brief.interface';
 
-const Text = styled(Typography.Text)`
-  font-size: 10px !important;
-  font-weight: 500 !important;
-  line-height: 12.19px !important;
-
-  margin-top: 36px;
-  vertical-align: bottom;
-`;
+import styles from './usePersonModal.module.css';
 
 interface OnSubmit {
   (person: Person): void;
@@ -76,9 +68,9 @@ export const usePersonModal = (onSubmit?: OnSubmit) => {
           </Col>
           <Col span={12}>
             <Flex vertical>
-              <Text type='secondary'>
+              <Typography.Text type='secondary' className={styles.helperText}>
                 Depending on the Role, the user will see or not see certain information. Choose one to find out.
-              </Text>
+              </Typography.Text>
             </Flex>
           </Col>
         </Row>

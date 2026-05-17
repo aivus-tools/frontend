@@ -4,6 +4,7 @@ import { useSession } from 'next-auth/react';
 import { PropsWithChildren, useEffect } from 'react';
 import { useSelectedLayoutSegment } from 'next/navigation';
 import { AppRoute } from '@/constants/appRoute';
+import { PageTitleSync } from '@/components/PageTitleSync';
 
 export const GroupSwitch = ({ children }: PropsWithChildren) => {
   const session = useSession();
@@ -22,5 +23,10 @@ export const GroupSwitch = ({ children }: PropsWithChildren) => {
     }
   }, [group, segment]);
 
-  return children;
+  return (
+    <>
+      <PageTitleSync />
+      {children}
+    </>
+  );
 };

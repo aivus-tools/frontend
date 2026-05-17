@@ -3,7 +3,12 @@ import { redirect } from 'next/navigation';
 import { ReduxStore } from '@/context/ReduxProvider';
 import { GROUPS } from '@/constants/constants';
 import React from 'react';
+import type { Metadata } from 'next';
 import { Sidebar } from '@/modules/Sidebar/Sidebar';
+
+export const metadata: Metadata = {
+  title: 'Aivus',
+};
 
 export default async function Layout({
   vendor,

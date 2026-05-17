@@ -3,29 +3,13 @@ import React, { useCallback } from 'react';
 
 import { Button, Flex, Typography, Form } from 'antd';
 import { useComponentSize } from '@/hooks/useComponentSize';
-import { Section, Header, Content } from '../common/styled';
 import { useGuidance } from '@/context/GuidanceProvider';
-import { styled } from 'styled-components';
 import { useAppDispatch, useAppSelector } from '@/store/hooks';
 import { selectMode, setMode } from '@/store/slices/project';
 import { t } from '@/lib/i18n';
 
-const BorderDashedLine = styled.div`
-  border: 1px dashed #99a1b7;
-  margin: 8px 0;
-`;
-
-const Description = styled(Typography.Text)`
-  margin-top: 8px;
-  font-size: 9px !important;
-  font-weight: 700 !important;
-  line-height: 10.97px !important;
-`;
-
-const Wrapper = styled.div`
-  display: flex;
-  flex-direction: column;
-`;
+import commonStyles from './common.module.css';
+import styles from './GuidanceAndControls.module.css';
 
 export const GuidanceAndControls = () => {
   const { observedRef, width } = useComponentSize();
@@ -45,8 +29,11 @@ export const GuidanceAndControls = () => {
 
   const controls =
     mode === 'edit' ? (
-      <Section style={{ position: 'fixed', width: width, bottom: '24px', minWidth: '300px' }}>
-        <Content>
+      <div
+        className={commonStyles.section}
+        style={{ position: 'fixed', width: width, bottom: '24px', minWidth: '300px' }}
+      >
+        <div className={commonStyles.content}>
           <Flex gap={8} align='center' justify='space-between'>
             <Typography.Text type='secondary'>{t('SAVED_AT')}</Typography.Text>
             <Button type='text' onClick={reset}>
@@ -58,8 +45,8 @@ export const GuidanceAndControls = () => {
               </Button>
             </Form.Item>
           </Flex>
-        </Content>
-      </Section>
+        </div>
+      </div>
     ) : (
       <Flex
         gap={8}
@@ -74,23 +61,25 @@ export const GuidanceAndControls = () => {
     );
 
   return (
-    <Wrapper ref={observedRef}>
-      <Section style={{ position: 'fixed', width: width }}>
-        <Header>{t('GUIDANCE')}</Header>
-        <Content>
+    <div className={styles.wrapper} ref={observedRef}>
+      <div className={commonStyles.section} style={{ position: 'fixed', width: width }}>
+        <div className={commonStyles.header}>{t('GUIDANCE')}</div>
+        <div className={commonStyles.content}>
           {focusedField ? (
             <>
               <Typography.Text>{focusedField.label}</Typography.Text>
-              <BorderDashedLine />
+              <div className={styles.borderDashedLine} />
               <Typography.Text>{t('WHAT_IS_THIS_USED_FOR')}</Typography.Text>
-              <Description type='secondary'>{focusedField.description}</Description>
+              <Typography.Text type='secondary' className={styles.description}>
+                {focusedField.description}
+              </Typography.Text>
             </>
           ) : (
             <Typography.Text>{t('CLICK_ON_FIELD_FOR_GUIDANCE')}</Typography.Text>
           )}
-        </Content>
-      </Section>
+        </div>
+      </div>
       {controls}
-    </Wrapper>
+    </div>
   );
 };

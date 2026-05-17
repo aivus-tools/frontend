@@ -1,0 +1,26 @@
+.label {
+  display: flex;
+  gap: 8px;
+  justify-content: space-between;
+  padding: 16px 40px 16px 0;
+  font-size: 14px;
+  font-weight: 700;
+  line-height: 17.07px;
+  text-align: left;
+  background-color: var(--bg-green);
+}
+
+.totalSum {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  min-width: 90px;
+  font-size: 16px;
+  font-weight: 600;
+  line-height: 19.5px;
+  color: var(--green-darker);
+}
+
+.emptyBlockTotalSum {
+  background-color: var(--bg-green);
+}
