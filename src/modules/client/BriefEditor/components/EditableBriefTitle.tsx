@@ -14,6 +14,7 @@ interface EditableBriefTitleProps {
   briefId: string;
   title: string;
   editable: boolean;
+  variant?: 'portal' | 'inline';
 }
 
 export const EditableBriefTitle = (props: EditableBriefTitleProps) => {
@@ -91,9 +92,11 @@ export const EditableBriefTitle = (props: EditableBriefTitleProps) => {
   };
 
   const displayClassName = isEmpty ? `${styles.titleDisplay} ${styles.titleDisplayEmpty}` : styles.titleDisplay;
+  const variant = props.variant ?? 'portal';
+  const wrapperClassName = variant === 'inline' ? `${styles.wrapper} ${styles.wrapperInline}` : styles.wrapper;
 
   return (
-    <div className={styles.wrapper}>
+    <div className={wrapperClassName}>
       <Link className={styles.backLink} href={AppRoute.DASHBOARD}>
         {t('ALL_PROJECTS')}
       </Link>

@@ -92,21 +92,24 @@
   color: var(--gray);
 }
 
-@media (width <= 1023.98px) {
-  .card {
-    position: relative;
-  }
+.metaRow {
+  display: none;
+}
 
+@media (width <= 1023.98px) {
   .row {
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-    align-items: stretch;
-    padding: 14px 16px 14px 18px;
+    display: grid;
+    grid-template-areas:
+      'title status actions'
+      'meta meta meta';
+    grid-template-columns: 1fr auto 40px;
+    gap: 6px;
+    padding: 12px 14px;
   }
 
   .projectCell {
-    padding-right: 36px;
+    grid-area: title;
+    padding-right: 0;
     padding-left: 14px;
   }
 
@@ -118,40 +121,39 @@
     border-radius: 0;
   }
 
-  .statusCell,
+  .statusCell {
+    grid-area: status;
+    justify-content: flex-end;
+  }
+
   .messagesCell,
   .offersCell,
   .dateCell {
-    display: flex;
-    gap: 12px;
-    align-items: center;
-    justify-content: space-between;
-  }
-
-  .statusCell[data-label]::before,
-  .messagesCell[data-label]::before,
-  .offersCell[data-label]::before,
-  .dateCell[data-label]::before {
-    font-size: 11px;
-    font-weight: 500;
-    color: var(--gray);
-    text-transform: uppercase;
-    letter-spacing: 0.04em;
-    content: attr(data-label);
+    display: none;
   }
 
   .actionsCell {
-    position: absolute;
-    top: 6px;
-    right: 6px;
+    position: static;
+    grid-area: actions;
+    justify-content: flex-end;
   }
 
-  .compareButton {
-    width: 100%;
-    max-width: 220px;
+  .metaRow {
+    display: flex;
+    grid-area: meta;
+    gap: 8px;
+    align-items: center;
+    font-size: 12px;
+    color: var(--gray);
   }
 
-  .offersCell .compareButton {
-    margin-left: auto;
+  .metaItem {
+    display: inline-flex;
+    gap: 4px;
+    align-items: center;
+  }
+
+  .metaDivider {
+    color: var(--gray-light);
   }
 }

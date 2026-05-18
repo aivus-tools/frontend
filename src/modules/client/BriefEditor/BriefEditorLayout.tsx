@@ -14,6 +14,7 @@ import { FileUploadZone } from './components/FileUploadZone';
 import { BriefFinalPackage } from './BriefFinalPackage';
 import { BriefSettings } from './BriefSettings';
 import { EditableBriefTitle } from './components/EditableBriefTitle';
+import { computeChatBadge, nextLastSeenOnTabSwitch } from './briefChatBadge';
 import {
   briefAiApi,
   useCreateBriefAiDraftMutation,
@@ -40,6 +41,7 @@ import {
 import { BriefAttachment, BriefV3Detail, ChatMessageV3, ConversationStatus } from '@/types/briefAi.interface';
 import { useBetaFooterHeight } from '@/components/BetaFooter/BetaFooter';
 import { useBetaFooter } from '@/components/BetaFooter/BetaFooterContext';
+import { useBreakpoint } from '@/hooks/useBreakpoint';
 
 import styles from './BriefEditorLayout.module.css';
 
@@ -107,8 +109,9 @@ export const BriefEditorLayout = (props: BriefEditorLayoutProps) => {
   const { dismissed: footerDismissed } = useBetaFooter();
   const footerVisible = !footerDismissed;
   const footerHeight = useBetaFooterHeight();
+  const { isMobile } = useBreakpoint();
   const [mobileTab, setMobileTab] = useState<'brief' | 'chat'>('brief');
-  const [chatBadge, setChatBadge] = useState(false);
+  const [lastSeenAssistantMessageId, setLastSeenAssistantMessageId] = useState<string | null>(null);
 
   useEffect(() => {
     setHasMounted(true);
@@ -184,21 +187,26 @@ export const BriefEditorLayout = (props: BriefEditorLayoutProps) => {
     }
   }, [authDetail, publicDetail, isAuth, hydrateFromDetail]);
 
+  const chatBadge = computeChatBadge(messages, {
+    mobileTab,
+    lastSeenAssistantMessageId,
+  });
+
   useEffect(() => {
-    if (mobileTab === 'chat') {
-      setChatBadge(false);
+    if (mobileTab !== 'chat') {
       return;
     }
-    const last = messages[messages.length - 1];
-    if (last?.role === 'assistant') {
-      setChatBadge(true);
+    const next = nextLastSeenOnTabSwitch(messages, 'chat', lastSeenAssistantMessageId);
+    if (next !== lastSeenAssistantMessageId) {
+      setLastSeenAssistantMessageId(next);
     }
-  }, [messages, mobileTab]);
+  }, [mobileTab, messages, lastSeenAssistantMessageId]);
 
   const handleSelectMobileTab = (tab: 'brief' | 'chat') => {
     setMobileTab(tab);
-    if (tab === 'chat') {
-      setChatBadge(false);
+    const next = nextLastSeenOnTabSwitch(messages, tab, lastSeenAssistantMessageId);
+    if (next !== lastSeenAssistantMessageId) {
+      setLastSeenAssistantMessageId(next);
     }
   };
 
@@ -799,15 +807,25 @@ export const BriefEditorLayout = (props: BriefEditorLayoutProps) => {
     );
   }
 
+  const showInlineTitle = isMobile && isAuth && !!briefId;
   const pageTitleHeader =
-    isAuth && briefId && headerSlot
-      ? createPortal(<EditableBriefTitle briefId={briefId} title={authDetail?.title ?? ''} editable />, headerSlot)
+    !isMobile && isAuth && briefId && headerSlot
+      ? createPortal(
+          <EditableBriefTitle briefId={briefId} title={authDetail?.title ?? ''} editable variant='portal' />,
+          headerSlot
+        )
       : null;
+  const inlineTitleBar = showInlineTitle ? (
+    <div className={styles.mobileTitleBar}>
+      <EditableBriefTitle briefId={briefId!} title={authDetail?.title ?? ''} editable variant='inline' />
+    </div>
+  ) : null;
 
   if (stage === 'comparison' && briefId) {
     return (
       <OuterWrapper footerVisible={footerVisible} footerHeight={footerHeight}>
         {pageTitleHeader}
+        {inlineTitleBar}
         <ComparisonTable briefId={briefId} />
       </OuterWrapper>
     );
@@ -817,6 +835,7 @@ export const BriefEditorLayout = (props: BriefEditorLayoutProps) => {
     return (
       <OuterWrapper footerVisible={footerVisible} footerHeight={footerHeight}>
         {pageTitleHeader}
+        {inlineTitleBar}
         <BriefSettings brief={authDetail} />
       </OuterWrapper>
     );
@@ -837,6 +856,7 @@ export const BriefEditorLayout = (props: BriefEditorLayoutProps) => {
         {pageTitleHeader}
         {finalPackage ? (
           <div className={styles.finalContainer}>
+            {inlineTitleBar}
             <div className={styles.mobileTabBar} role='tablist'>
               <button
                 type='button'
@@ -922,6 +942,7 @@ export const BriefEditorLayout = (props: BriefEditorLayoutProps) => {
   return (
     <OuterWrapper footerVisible={footerVisible} footerHeight={footerHeight}>
       {pageTitleHeader}
+      {inlineTitleBar}
       <div className={styles.chatScreen}>
         <div className={styles.chatWrapper}>
           <BriefChatPanel

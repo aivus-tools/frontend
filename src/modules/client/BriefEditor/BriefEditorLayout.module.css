@@ -155,6 +155,25 @@
   overflow: hidden;
 }
 
+.mobileTitleBar {
+  display: none;
+}
+
+@media (width <= 1023.98px) {
+  .mobileTitleBar {
+    position: sticky;
+    top: 0;
+    z-index: 5;
+    display: flex;
+    flex-shrink: 0;
+    align-items: center;
+    width: 100%;
+    padding: 10px 16px;
+    background: var(--white);
+    border-bottom: 1px solid var(--border-subtle);
+  }
+}
+
 .mobileTabBar {
   display: none;
 }
@@ -162,7 +181,7 @@
 @media (width <= 1023.98px) {
   .mobileTabBar {
     position: sticky;
-    top: 0;
+    top: 44px;
     z-index: 4;
     display: flex;
     flex-shrink: 0;

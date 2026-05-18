@@ -23,6 +23,7 @@ import { useGetPreVendorsQuery } from '@/services/client/preVendorsApi';
 import { BriefFinalDocument, BriefFinalPackage as BriefFinalPackageType } from '@/types/briefAi.interface';
 import { PreVendorLanguage } from '@/types/preVendor.interface';
 import { PickVendorButton, PreVendorsBlock } from '@/modules/client/PreVendors';
+import { useBreakpoint } from '@/hooks/useBreakpoint';
 
 import styles from './BriefFinalPackage.module.css';
 
@@ -362,12 +363,15 @@ const ShareControlPanel = (props: ShareControlPanelProps) => {
 
 interface ShareControlProps {
   briefId: string;
+  compact?: boolean;
 }
 
 const ShareControl = (props: ShareControlProps) => {
   const { isFetching } = useGetBriefAiShareQuery(props.briefId, {
     refetchOnMountOrArgChange: true,
   });
+
+  const shareLabel = t('BRIEF_V3_SHARE');
 
   return (
     <Popover
@@ -376,8 +380,13 @@ const ShareControl = (props: ShareControlProps) => {
       trigger='click'
       placement='bottomRight'
     >
-      <Button icon={<ShareAltOutlined />} loading={isFetching}>
-        {t('BRIEF_V3_SHARE')}
+      <Button
+        icon={<ShareAltOutlined />}
+        loading={isFetching}
+        aria-label={shareLabel}
+        className={props.compact ? styles.iconOnlyButton : undefined}
+      >
+        {props.compact ? null : shareLabel}
       </Button>
     </Popover>
   );
@@ -399,6 +408,7 @@ const saveStatusClass = (state: SaveState): string => {
 
 export const BriefFinalPackage = (props: BriefFinalPackageProps) => {
   const { briefId, package: pkg, onRegenerate, isRegenerating } = props;
+  const { isMobile } = useBreakpoint();
   const byKind = new Map(pkg.documents.map((x) => [x.kind, x]));
 
   const tabs: { key: 'production_brief' | 'vendor_email'; label: string; document?: BriefFinalDocument }[] = [
@@ -479,14 +489,16 @@ export const BriefFinalPackage = (props: BriefFinalPackageProps) => {
           <div className={styles.headerActions}>
             <span className={saveStatusClass(saveState)}>{saveLabel}</span>
             {hasPreVendors ? <PickVendorButton onClick={handlePickVendor} /> : null}
-            <ShareControl briefId={briefId} />
+            <ShareControl briefId={briefId} compact={isMobile} />
             <Button
               type='primary'
               icon={<DownloadOutlined />}
               onClick={() => editorRef.current?.download()}
               disabled={!activeDoc}
+              aria-label={t('BRIEF_V3_DOWNLOAD_PDF')}
+              className={isMobile ? styles.iconOnlyButton : undefined}
             >
-              {t('BRIEF_V3_DOWNLOAD_PDF')}
+              {isMobile ? null : t('BRIEF_V3_DOWNLOAD_PDF')}
             </Button>
           </div>
         </div>

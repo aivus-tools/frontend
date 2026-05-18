@@ -8,6 +8,19 @@
   line-height: 1.4;
 }
 
+.wrapperInline {
+  flex: 1;
+  min-width: 0;
+}
+
+@media (width <= 1023.98px) {
+  .wrapperInline {
+    display: flex;
+    align-items: center;
+    width: 100%;
+  }
+}
+
 .backLink {
   color: var(--gray);
   text-decoration: none;
@@ -105,5 +118,19 @@
     min-width: 0;
     max-width: calc(100vw - 156px);
     font-size: 14px;
+  }
+
+  .wrapperInline .titleDisplay {
+    flex: 1;
+    max-width: none;
+    padding: 6px 8px;
+    font-size: 15px;
+  }
+
+  .wrapperInline .titleInput {
+    flex: 1;
+    max-width: none;
+    padding: 6px 8px;
+    font-size: 15px;
   }
 }

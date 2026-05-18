@@ -1,0 +1,14 @@
+.pageTitle {
+  padding: 16px 16px 0;
+  margin: 0 0 16px;
+  font-size: 20px;
+  font-weight: 700;
+  color: var(--main-dark);
+}
+
+@media (width >= 1024px) {
+  .pageTitle {
+    padding: 24px 24px 0;
+    font-size: 24px;
+  }
+}

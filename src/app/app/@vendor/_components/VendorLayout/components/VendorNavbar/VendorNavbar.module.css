@@ -5,8 +5,20 @@
   justify-content: space-between;
 }
 
+.navbarMobile {
+  flex: none;
+  flex-direction: column;
+  gap: 16px;
+  align-items: stretch;
+  width: 100%;
+}
+
 .actions {
   display: flex;
   gap: 16px;
   align-items: center;
+}
+
+.actionsMobile {
+  width: 100%;
 }

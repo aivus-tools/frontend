@@ -11,16 +11,27 @@ interface TabsProps {
   onChange: (key: string) => (e: React.MouseEvent<HTMLButtonElement>) => void;
   items: TabItem[];
   activeKey?: string;
+  orientation?: 'horizontal' | 'vertical';
 }
 
 export const Tabs = (props: TabsProps) => {
+  const orientation = props.orientation ?? 'horizontal';
+  const isVertical = orientation === 'vertical';
+  const navClass = isVertical ? `${styles.nav} ${styles.navVertical}` : styles.nav;
+
   return (
-    <nav className={styles.nav}>
+    <nav className={navClass}>
       {props.items.map((x) => {
         const isActive = props.activeKey === x.key;
-        const tabClass = isActive ? `${styles.tab} ${styles.tabActive}` : styles.tab;
+        const classes = [styles.tab];
+        if (isVertical) {
+          classes.push(styles.tabVertical);
+        }
+        if (isActive) {
+          classes.push(isVertical ? styles.tabVerticalActive : styles.tabActive);
+        }
         return (
-          <button key={x.key} className={tabClass} onClick={props.onChange(x.key)}>
+          <button key={x.key} className={classes.join(' ')} onClick={props.onChange(x.key)}>
             {x.label}
           </button>
         );

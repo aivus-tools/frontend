@@ -76,13 +76,13 @@ const ClientLayoutInner = (props: PropsWithChildren) => {
           onClick={goBackToDashboard}
         />
       </span>
-      <ClientHomeLogo theme={theme} compact />
+      <ClientHomeLogo theme={THEME.light} compact />
       <div id='brief-header-slot' className={styles.briefHeaderSlot} />
     </div>
   ) : (
     <div className={styles.headerLeftDashboard}>
       <span className={styles.mobileOnly}>
-        <ClientHomeLogo theme={theme} compact />
+        <ClientHomeLogo theme={THEME.light} compact />
       </span>
       <span className={styles.desktopOnly}>
         <ClientNavbar />

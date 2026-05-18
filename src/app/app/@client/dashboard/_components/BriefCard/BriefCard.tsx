@@ -3,8 +3,8 @@
 import React, { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { App, Button, Dropdown, Input, Modal, theme } from 'antd';
-import { MoreOutlined } from '@ant-design/icons';
-import { format } from 'date-fns';
+import { CalendarOutlined, MessageOutlined, MoreOutlined, ShoppingCartOutlined } from '@ant-design/icons';
+import { format, formatDistanceToNow } from 'date-fns';
 import { PrStatus } from '@/components/PrStatus/PrStatus';
 import { t } from '@/lib/i18n';
 import { PROJECT_STATUS } from '@/constants/constants';
@@ -12,6 +12,7 @@ import { AppRoute } from '@/constants/appRoute';
 import { ProjectStatus } from '@/types/project.interface';
 import { useDeleteBriefAiMutation, useRenameBriefAiMutation } from '@/services/client/briefAiApi';
 import { BriefV3ListItem, ConversationStatus } from '@/types/briefAi.interface';
+import { useBreakpoint } from '@/hooks/useBreakpoint';
 
 import styles from './BriefCard.module.css';
 
@@ -78,6 +79,8 @@ export const BriefCard = (props: BriefCardProps) => {
   const palette = useStatusPalette(brief.status);
   const title = brief.title || t('UNTITLED_BRIEF');
   const formattedCreated = brief.createdAt ? format(new Date(brief.createdAt), 'MMM dd, yyyy') : '';
+  const relativeCreated = brief.createdAt ? formatDistanceToNow(new Date(brief.createdAt), { addSuffix: true }) : '';
+  const { isMobile } = useBreakpoint();
 
   const handleClick = () => {
     router.push(AppRoute.BRIEF_DETAIL(brief.id));
@@ -176,6 +179,31 @@ export const BriefCard = (props: BriefCardProps) => {
         <div className={styles.dateCell} data-label={t('CREATED')}>
           <div className={styles.dateValue}>{formattedCreated}</div>
         </div>
+
+        {isMobile ? (
+          <div className={styles.metaRow}>
+            {relativeCreated ? (
+              <span className={styles.metaItem}>
+                <CalendarOutlined />
+                {t('BRIEF_LIST_SENT_AGO', relativeCreated)}
+              </span>
+            ) : null}
+            <span className={styles.metaDivider} aria-hidden='true'>
+              ·
+            </span>
+            <span className={styles.metaItem}>
+              <MessageOutlined />
+              {t('BRIEF_LIST_MSGS', String(brief.messageCount))}
+            </span>
+            <span className={styles.metaDivider} aria-hidden='true'>
+              ·
+            </span>
+            <span className={styles.metaItem}>
+              <ShoppingCartOutlined />
+              {t('BRIEF_LIST_OFFERS_COUNT', String(brief.offersCount))}
+            </span>
+          </div>
+        ) : null}
 
         <div className={styles.actionsCell} onClick={stopPropagation} role='presentation'>
           <Dropdown menu={{ items: menuItems }} trigger={['click']} placement='bottomRight'>

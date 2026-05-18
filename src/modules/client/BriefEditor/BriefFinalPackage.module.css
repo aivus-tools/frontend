@@ -61,6 +61,53 @@
   margin-left: auto;
 }
 
+.iconOnlyButton {
+  flex: 0 0 40px;
+  width: 40px;
+  height: 40px;
+  padding: 0;
+}
+
+@media (width <= 1023.98px) {
+  .tabsHeader {
+    position: sticky;
+    top: 0;
+    z-index: 5;
+    flex-direction: column;
+    gap: 8px;
+    align-items: stretch;
+    padding: 8px 12px;
+    background: var(--bg-gray-page);
+  }
+
+  .tabsList {
+    gap: 16px;
+    width: 100%;
+  }
+
+  .headerActions {
+    display: flex;
+    flex-wrap: nowrap;
+    gap: 8px;
+    align-items: center;
+    width: 100%;
+    margin-left: 0;
+  }
+
+  .headerActions > :global(.ant-btn) {
+    height: 40px;
+  }
+
+  .headerActions > :not(.iconOnlyButton, .saveStatus) {
+    flex: 1 1 auto;
+    min-width: 0;
+  }
+
+  .saveStatus {
+    display: none;
+  }
+}
+
 .documentPane {
   display: flex;
   flex: 1;
