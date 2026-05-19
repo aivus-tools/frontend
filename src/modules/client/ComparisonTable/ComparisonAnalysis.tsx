@@ -6,32 +6,31 @@ import { SendOutlined, BulbOutlined } from '@ant-design/icons';
 import { t } from '@/lib/i18n';
 import { useAnalyzeComparisonMutation } from '@/services/client/comparisonApi';
 import { AnalysisResponse } from '@/types/chat.interface';
-import {
-  AnalysisPanel,
-  AnalysisTabs,
-  AnalysisTab,
-  AnalysisContent,
-  AnalysisTitle,
-  AnalysisText,
-  HighlightItem,
-  AnalysisChatInput,
-} from './styled';
+
+import styles from './ComparisonAnalysis.module.css';
 
 interface ComparisonAnalysisProps {
   briefId: string;
 }
 
-export const ComparisonAnalysis: React.FC<ComparisonAnalysisProps> = ({ briefId }) => {
+interface ChatEntry {
+  role: 'user' | 'assistant';
+  content: string;
+}
+
+export const ComparisonAnalysis = (props: ComparisonAnalysisProps) => {
   const [activeTab, setActiveTab] = useState<'guidance' | 'comments'>('guidance');
   const [question, setQuestion] = useState('');
   const [analysis, setAnalysis] = useState<AnalysisResponse | null>(null);
-  const [chatHistory, setChatHistory] = useState<{ role: 'user' | 'assistant'; content: string }[]>([]);
+  const [chatHistory, setChatHistory] = useState<ChatEntry[]>([]);
 
   const [analyzeComparison, { isLoading }] = useAnalyzeComparisonMutation();
 
   const handleAskQuestion = async () => {
     const trimmed = question.trim();
-    if (!trimmed || isLoading) return;
+    if (!trimmed || isLoading) {
+      return;
+    }
 
     const historyForRequest = chatHistory;
     setChatHistory((prev) => [...prev, { role: 'user', content: trimmed }]);
@@ -39,7 +38,7 @@ export const ComparisonAnalysis: React.FC<ComparisonAnalysisProps> = ({ briefId 
 
     try {
       const result = await analyzeComparison({
-        briefId,
+        briefId: props.briefId,
         question: trimmed,
         history: historyForRequest,
       }).unwrap();
@@ -50,92 +49,82 @@ export const ComparisonAnalysis: React.FC<ComparisonAnalysisProps> = ({ briefId 
     }
   };
 
-  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
-    if (e.key === 'Enter') {
-      e.preventDefault();
+  const handleKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
+    if (event.key === 'Enter') {
+      event.preventDefault();
       handleAskQuestion();
     }
   };
 
-  return (
-    <AnalysisPanel>
-      <AnalysisTabs>
-        <AnalysisTab $active={activeTab === 'guidance'} onClick={() => setActiveTab('guidance')}>
-          {t('GUIDANCE')}
-        </AnalysisTab>
-        <AnalysisTab $active={activeTab === 'comments'} onClick={() => setActiveTab('comments')}>
-          {t('AI_ANALYSIS')}
-        </AnalysisTab>
-      </AnalysisTabs>
+  const tabClass = (active: boolean): string => {
+    return active ? `${styles.analysisTab} ${styles.analysisTabActive}` : styles.analysisTab;
+  };
 
-      <AnalysisContent>
+  return (
+    <div className={styles.analysisPanel}>
+      <div className={styles.analysisTabs}>
+        <button type='button' className={tabClass(activeTab === 'guidance')} onClick={() => setActiveTab('guidance')}>
+          {t('GUIDANCE')}
+        </button>
+        <button type='button' className={tabClass(activeTab === 'comments')} onClick={() => setActiveTab('comments')}>
+          {t('AI_ANALYSIS')}
+        </button>
+      </div>
+
+      <div className={styles.analysisContent}>
         {activeTab === 'guidance' ? (
           <>
-            <AnalysisTitle>{t('GUIDANCE')}</AnalysisTitle>
-            <AnalysisText>{t('COMPARISON_GUIDANCE_TEXT')}</AnalysisText>
-            <AnalysisText>{t('COMPARISON_COLOR_HINT')}</AnalysisText>
+            <h3 className={styles.analysisTitle}>{t('GUIDANCE')}</h3>
+            <p className={styles.analysisText}>{t('COMPARISON_GUIDANCE_TEXT')}</p>
+            <p className={styles.analysisText}>{t('COMPARISON_COLOR_HINT')}</p>
           </>
         ) : (
           <>
-            <AnalysisTitle>{t('AI_ANALYSIS')}</AnalysisTitle>
+            <h3 className={styles.analysisTitle}>{t('AI_ANALYSIS')}</h3>
 
             {analysis?.highlights && analysis.highlights.length > 0 && (
               <>
-                <div style={{ marginBottom: 12, fontWeight: 600, fontSize: 12, color: '#4b5675' }}>
-                  {t('HIGHLIGHTS')}
-                </div>
+                <div className={styles.highlightsHeader}>{t('HIGHLIGHTS')}</div>
                 {analysis.highlights.map((highlight, index) => (
-                  <HighlightItem key={index}>
-                    <BulbOutlined style={{ color: '#FFC107', flexShrink: 0, marginTop: 2 }} />
+                  <div key={index} className={styles.highlightItem}>
+                    <BulbOutlined className={styles.highlightIcon} />
                     {highlight}
-                  </HighlightItem>
+                  </div>
                 ))}
               </>
             )}
 
             {chatHistory.map((msg, index) => (
-              <div
-                key={index}
-                style={{
-                  padding: '8px 0',
-                  borderBottom: '1px solid #f4f5f8',
-                }}
-              >
+              <div key={index} className={styles.chatMessage}>
                 <div
-                  style={{
-                    fontSize: 10,
-                    fontWeight: 600,
-                    color: msg.role === 'user' ? '#2288FF' : '#4CAF50',
-                    textTransform: 'uppercase',
-                    marginBottom: 4,
-                  }}
+                  className={
+                    msg.role === 'user'
+                      ? `${styles.chatRole} ${styles.chatRoleUser}`
+                      : `${styles.chatRole} ${styles.chatRoleAssistant}`
+                  }
                 >
                   {msg.role === 'user' ? t('YOU') : t('AI_ASSISTANT')}
                 </div>
-                <AnalysisText>{msg.content}</AnalysisText>
+                <p className={styles.analysisText}>{msg.content}</p>
               </div>
             ))}
 
             {chatHistory.length === 0 && !analysis && (
-              <AnalysisText style={{ color: '#99a1b7', fontStyle: 'italic' }}>{t('ASK_ABOUT_OFFERS')}</AnalysisText>
+              <p className={`${styles.analysisText} ${styles.analysisPlaceholder}`}>{t('ASK_ABOUT_OFFERS')}</p>
             )}
           </>
         )}
-      </AnalysisContent>
+      </div>
 
       {activeTab === 'comments' && (
-        <AnalysisChatInput>
+        <div className={styles.analysisChatInput}>
           <Input
             value={question}
-            onChange={(e) => setQuestion(e.target.value)}
+            onChange={(event) => setQuestion(event.target.value)}
             onKeyDown={handleKeyDown}
             placeholder={t('ASK_ABOUT_OFFERS')}
             disabled={isLoading}
-            style={{
-              fontFamily: "'Montserrat', sans-serif",
-              fontSize: 13,
-              borderRadius: 8,
-            }}
+            className={styles.questionInput}
           />
           <Button
             type='primary'
@@ -143,14 +132,10 @@ export const ComparisonAnalysis: React.FC<ComparisonAnalysisProps> = ({ briefId 
             onClick={handleAskQuestion}
             disabled={!question.trim() || isLoading}
             loading={isLoading}
-            style={{
-              background: '#FD8258',
-              borderColor: '#FD8258',
-              borderRadius: 8,
-            }}
+            className={styles.sendButton}
           />
-        </AnalysisChatInput>
+        </div>
       )}
-    </AnalysisPanel>
+    </div>
   );
 };

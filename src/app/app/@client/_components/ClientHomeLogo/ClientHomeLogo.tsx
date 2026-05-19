@@ -2,7 +2,6 @@
 
 import React from 'react';
 import Link from 'next/link';
-import { styled } from 'styled-components';
 import HomeIcon from '@/icons/home-icon.svg';
 import LogoIcon from '@/icons/aivus-logo.svg';
 import { BetaBadge } from '@/components/BetaBadge/BetaBadge';
@@ -10,38 +9,38 @@ import { AppRoute } from '@/constants/appRoute';
 import { Theme } from '@/types/index.interface';
 import { THEME } from '@/constants/constants';
 
+import styles from './ClientHomeLogo.module.css';
+
 interface ClientHomeLogoProps {
   theme?: Theme;
   compact?: boolean;
 }
 
-const Wrapper = styled.div<{ $theme: Theme; $compact: boolean }>`
-  display: flex;
-  align-items: center;
-  justify-content: start;
-  height: ${(x) => (x.$compact ? '40px' : '70px')};
-  color: ${(x) => (x.$theme === THEME.light ? 'var(--main-dark)' : '#fff')};
-`;
-
-const Group = styled.div<{ $compact: boolean }>`
-  display: flex;
-  align-items: center;
-  padding: ${(x) => (x.$compact ? '0' : '30px')};
-  gap: 12px;
-`;
-
-export const ClientHomeLogo: React.FC<ClientHomeLogoProps> = (props) => {
+export const ClientHomeLogo = (props: ClientHomeLogoProps) => {
   const theme = props.theme ?? THEME.light;
   const compact = !!props.compact;
+  const wrapperClass = [
+    styles.wrapper,
+    theme === THEME.light ? null : styles.wrapperDark,
+    compact ? styles.wrapperCompact : null,
+  ]
+    .filter(Boolean)
+    .join(' ');
+  const groupClass = [styles.group, compact ? styles.groupCompact : null].filter(Boolean).join(' ');
+
   return (
     <Link href={AppRoute.DASHBOARD} prefetch={false}>
-      <Wrapper $theme={theme} $compact={compact}>
-        <Group $compact={compact}>
-          <HomeIcon />
+      <div className={wrapperClass}>
+        <div className={groupClass}>
+          <span className={styles.homeIcon}>
+            <HomeIcon />
+          </span>
           <LogoIcon />
-          <BetaBadge size='sm' />
-        </Group>
-      </Wrapper>
+          <span className={styles.betaSlot}>
+            <BetaBadge size='sm' />
+          </span>
+        </div>
+      </div>
     </Link>
   );
 };

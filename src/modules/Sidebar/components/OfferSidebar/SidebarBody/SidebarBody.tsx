@@ -19,9 +19,9 @@ interface Props {
   initialOfferData: OfferData | null;
 }
 
-export const SidebarBody: React.FC<Props> = ({ initialOfferData }) => {
+export const SidebarBody = (props: Props) => {
   const dispatch = useAppDispatch();
-  const offer = useAppSelector((state: RootState) => selectOfferById(state, initialOfferData?.id ?? ''));
+  const offer = useAppSelector((state: RootState) => selectOfferById(state, props.initialOfferData?.id ?? ''));
 
   if (!offer) {
     return null;

@@ -1,0 +1,127 @@
+.title {
+  margin: 0 0 24px;
+  font-family: Montserrat, sans-serif;
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--main);
+}
+
+.linkRow {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.linkInput {
+  flex: 1;
+  height: 40px;
+  font-family: Montserrat, sans-serif;
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--main);
+  border-radius: 6px;
+}
+
+.linkInputError {
+  border-color: var(--red);
+}
+
+.copyButton {
+  min-width: 80px;
+  height: 40px;
+  font-family: Montserrat, sans-serif;
+  font-size: 14px;
+  font-weight: 600;
+  border-radius: 4px;
+}
+
+.errorMessage {
+  margin-top: -12px;
+  margin-bottom: 12px;
+  font-size: 12px;
+  color: var(--red);
+}
+
+.toggleRow {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  padding: 12px 0;
+  margin-bottom: 20px;
+}
+
+.toggleSwitchActive {
+  background-color: var(--blue);
+}
+
+.toggleLabel {
+  font-family: Montserrat, sans-serif;
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--main);
+}
+
+.toggleLabelClickable {
+  cursor: pointer;
+}
+
+.divider {
+  margin: 16px 0;
+  border-top: 1px dashed var(--bg-gray-light);
+}
+
+.sharedLabel {
+  margin-bottom: 8px;
+  font-family: Montserrat, sans-serif;
+  font-size: 10px;
+  font-weight: 500;
+  color: var(--gray);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.ownerRow {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  padding: 6px 0;
+}
+
+.ownerName {
+  font-family: Montserrat, sans-serif;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--main);
+}
+
+.ownerBadge {
+  font-family: Montserrat, sans-serif;
+  font-size: 10px;
+  font-weight: 500;
+  color: var(--gray);
+}
+
+.footer {
+  display: flex;
+  gap: 12px;
+  justify-content: flex-end;
+  margin-top: 24px;
+}
+
+.footerButton {
+  height: 36px;
+  font-family: Montserrat, sans-serif;
+  font-size: 14px;
+  font-weight: 600;
+  border-radius: 4px;
+}
+
+.cancelButton {
+  color: var(--main);
+}
+
+.skeletonInput {
+  flex: 1;
+  height: 40px;
+}

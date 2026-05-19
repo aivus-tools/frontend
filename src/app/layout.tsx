@@ -1,8 +1,8 @@
-import type { Metadata } from 'next';
+import '@ant-design/v5-patch-for-react-19';
+import type { Metadata, Viewport } from 'next';
 import Script from 'next/script';
 import { AntdRegistry } from '@ant-design/nextjs-registry';
 import { ConfigProvider } from 'antd';
-import StyledComponentsRegistry from '@/app/_components/StyledComponentsRegistry';
 import { Montserrat } from 'next/font/google';
 import SessionProvider from '@/context/SessionProvider';
 import './globals.css';
@@ -23,8 +23,15 @@ const montserrat = Montserrat({
 });
 
 export const metadata: Metadata = {
-  title: 'Aivus Web',
+  title: 'Aivus',
   description: 'Aivus Web',
+};
+
+export const viewport: Viewport = {
+  width: 'device-width',
+  initialScale: 1,
+  minimumScale: 1,
+  viewportFit: 'cover',
 };
 
 export default async function RootLayout({
@@ -53,15 +60,13 @@ export default async function RootLayout({
     <html lang={resolvedLocale} suppressHydrationWarning>
       <body className={montserrat.className} suppressHydrationWarning>
         <VersionLogger creationDate={creationDate} />
-        <StyledComponentsRegistry>
-          <AntdRegistry>
-            <ConfigProvider theme={theme}>
-              <AntdAppProvider>
-                <SessionProvider session={session}>{children}</SessionProvider>
-              </AntdAppProvider>
-            </ConfigProvider>
-          </AntdRegistry>
-        </StyledComponentsRegistry>
+        <AntdRegistry>
+          <ConfigProvider theme={theme}>
+            <AntdAppProvider>
+              <SessionProvider session={session}>{children}</SessionProvider>
+            </AntdAppProvider>
+          </ConfigProvider>
+        </AntdRegistry>
       </body>
       <Script id='resize-iframe' strategy='afterInteractive'>
         {`

@@ -5,11 +5,11 @@ import { useAppSelector } from '@/store/hooks';
 import { selectMode } from '@/store/slices/project';
 import dynamic from 'next/dynamic';
 import ViewProjectDetails from './view/Details';
-import Spinner from '@/components/Spinner';
+import { PageSpinner } from '@/components/PageSpinner';
 import i18n from 'i18n-iso-countries';
 import { getLocale } from '@/lib/i18n';
 
-const FormProjectDetails = dynamic(() => import('./form/Details'), { ssr: false, loading: () => <Spinner /> });
+const FormProjectDetails = dynamic(() => import('./form/Details'), { ssr: false, loading: () => <PageSpinner /> });
 
 export default function Page() {
   const mode = useAppSelector(selectMode);
@@ -22,8 +22,8 @@ export default function Page() {
     setIsClient(true);
   }, []);
 
-  // While component is not mounted on client - show placeholder (e.g., <Spinner />)
-  if (!isClient) return <Spinner />;
+  // While component is not mounted on client - show placeholder (e.g., <PageSpinner />)
+  if (!isClient) return <PageSpinner />;
 
   return mode === 'edit' ? <FormProjectDetails /> : <ViewProjectDetails />;
 }

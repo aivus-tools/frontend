@@ -1,0 +1,38 @@
+.labelSubTotal {
+  padding: 12px 0;
+  margin-right: 4px;
+  font-size: 13px;
+  font-weight: 600;
+  line-height: 15.85px;
+  text-align: right;
+  background-color: var(--bg-blue-subtotal);
+}
+
+.subTotalSum {
+  display: flex;
+  justify-content: flex-end;
+  width: 100%;
+  padding: 12px 0;
+  font-size: 14px;
+  font-weight: 700;
+  line-height: 17.07px;
+  color: var(--blue);
+  text-align: right;
+  background-color: var(--bg-blue-subtotal);
+  border-radius: 0 0 6px 6px;
+}
+
+.emptyBlockSubTotalSum {
+  background-color: var(--bg-blue-subtotal);
+  border-radius: 0 0 6px 6px;
+}
+
+.label {
+  font-size: 10px;
+  font-weight: 500;
+  line-height: 100%;
+  color: var(--gray);
+  vertical-align: middle;
+  cursor: pointer;
+  background-color: var(--bg-blue-subtotal);
+}

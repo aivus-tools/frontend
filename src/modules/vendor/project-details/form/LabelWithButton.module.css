@@ -1,0 +1,14 @@
+.labelContainer {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+}
+
+.side {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}

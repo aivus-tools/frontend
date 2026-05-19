@@ -1,16 +1,17 @@
-import React from 'react';
 import { Form, Input, Flex, Col, Row } from 'antd';
 import { LabelWithAdd } from './LabelWithAdd';
 import RemoveIcon from '@/icons/minus.svg';
-import { IconButton } from '../common/styled';
+import commonStyles from '../common/common.module.css';
 import { useGuidance } from '@/context/GuidanceProvider';
 import { t } from '@/lib/i18n';
+import { useBreakpoint } from '@/hooks/useBreakpoint';
 
-export const Client: React.FC = () => {
+export const Client = () => {
   const { handleFocus } = useGuidance();
+  const { isMobile } = useBreakpoint();
   return (
     <>
-      <Flex gap={20} flex={1} style={{ width: '100%' }}>
+      <Flex gap={isMobile ? 0 : 20} flex={1} style={{ width: '100%' }} vertical={isMobile}>
         <Form.Item
           name='clientName'
           label={t('CLIENT')}
@@ -32,7 +33,12 @@ export const Client: React.FC = () => {
           <Input placeholder={t('IRS_EIN')} onFocus={handleFocus('irsEin')} />
         </Form.Item>
       </Flex>
-      <Form.Item name='brandName' label={t('BRAND_NAME')} extra={t('SPECIFY_BRAND_WITHIN_COMPANY')} style={{ width: '100%' }}>
+      <Form.Item
+        name='brandName'
+        label={t('BRAND_NAME')}
+        extra={t('SPECIFY_BRAND_WITHIN_COMPANY')}
+        style={{ width: '100%' }}
+      >
         <Input placeholder={t('BRAND_NAME')} onFocus={handleFocus('brandName')} />
       </Form.Item>
       <Form.List name='managers'>
@@ -51,23 +57,24 @@ export const Client: React.FC = () => {
 
               return (
                 <Row key={field.key}>
-                  <Col span={14}>
+                  <Col xs={24} sm={14}>
                     <Flex gap={10} style={{ marginRight: '20px' }}>
                       <Form.Item name={[field.name, 'name']} label={managerLabel} extra={extra} style={{ flex: 1 }}>
                         <Input placeholder='' onFocus={handleFocus('manager')} />
                       </Form.Item>
                       <Form.Item label={isFirst ? ' ' : null}>
-                        <IconButton
+                        <div
+                          className={commonStyles.iconButton}
                           onClick={() => {
                             if (fields.length > 1) remove(field.name);
                           }}
                         >
                           <RemoveIcon color={'var(--gray-light)'} />
-                        </IconButton>
+                        </div>
                       </Form.Item>
                     </Flex>
                   </Col>
-                  <Col span={10}>
+                  <Col xs={24} sm={10}>
                     <Form.Item name={[field.name, 'position']} {...positionProps}>
                       <Input placeholder='' onFocus={handleFocus('manager_position')} />
                     </Form.Item>

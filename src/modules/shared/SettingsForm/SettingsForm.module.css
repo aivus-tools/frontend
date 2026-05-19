@@ -1,0 +1,63 @@
+.settingsFormWrapper {
+  max-width: 600px;
+  padding: 40px 24px;
+  margin: 0 auto;
+}
+
+.pageTitle {
+  margin-bottom: 32px;
+  font-family: Montserrat, sans-serif;
+  font-size: 24px;
+  font-weight: 700;
+  color: var(--main-dark);
+}
+
+.sectionTitle {
+  margin-top: 32px;
+  margin-bottom: 16px;
+  font-family: Montserrat, sans-serif;
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--main-dark);
+}
+
+.sectionTitle:first-of-type {
+  margin-top: 0;
+}
+
+.sectionDivider {
+  margin: 24px 0;
+  border-top: 1px solid var(--bg-gray-light);
+}
+
+.settingRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 0;
+}
+
+.settingLabel {
+  font-family: Montserrat, sans-serif;
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--main-dark);
+}
+
+.fieldLabel {
+  display: block;
+  margin-bottom: 6px;
+  font-family: Montserrat, sans-serif;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--main-dark);
+}
+
+.formSection {
+  margin-bottom: 16px;
+}
+
+.spinner {
+  display: block;
+  margin: 80px auto;
+}

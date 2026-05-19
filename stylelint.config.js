@@ -9,17 +9,34 @@ module.exports = {
   ],
   rules: {
     'selector-class-pattern': null,
+    'selector-no-qualifying-type': null,
   },
   overrides: [
     {
-      files: ['*.module.css', '**/*.module.css'],
+      files: ['**/*.module.css'],
       rules: {
-        'selector-class-pattern': [
-          '^[a-z]+((d)|([A-Z0-9][a-z0-9]+))*([A-Z])?$',
+        'color-no-hex': [
+          true,
           {
-            message: 'Expected class selector to be camelCase',
+            message:
+              'Hardcoded hex color is forbidden in .module.css. Use var(--token) from globals.css or a domain CSS variable. Theme tokens live in Frontend/src/lib/themeConfig.ts and are mirrored as CSS aliases in globals.css.',
           },
         ],
+      },
+    },
+    {
+      files: [
+        '**/BetaBadge/BetaBadge.module.css',
+        '**/BetaFooter/BetaFooter.module.css',
+      ],
+      rules: {
+        'color-no-hex': null,
+      },
+    },
+    {
+      files: ['**/globals.css'],
+      rules: {
+        'color-no-hex': null,
       },
     },
   ],

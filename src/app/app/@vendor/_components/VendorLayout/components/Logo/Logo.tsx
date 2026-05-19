@@ -2,37 +2,29 @@
 import Link from 'next/link';
 import HomeIcon from '@/icons/home-icon.svg';
 import LogoIcon from '@/icons/aivus-logo.svg';
-import { styled } from 'styled-components';
 import { Theme } from '@/types/index.interface';
 import { THEME } from '@/constants/constants';
 import { AppRoute } from '@/constants/appRoute';
 import { BetaBadge } from '@/components/BetaBadge/BetaBadge';
 
-const IconWrapper = styled.div<{ $themeType: Theme }>`
-  display: flex;
-  align-items: center;
-  justify-content: start;
-  height: 70px;
-  color: ${({ $themeType }) => ($themeType === THEME.light ? 'var(--main-dark)' : '#fff')};
-`;
+import styles from './Logo.module.css';
 
-const IconGroup = styled.div`
-  display: flex;
-  align-items: center;
-  padding: 30px;
-  gap: 12px;
-`;
+interface LogoProps {
+  theme?: Theme;
+}
 
-export const Logo = ({ theme }: { theme: Theme }) => {
+export const Logo = (props: LogoProps) => {
+  const themeClass = props.theme === THEME.light ? styles.wrapperLight : styles.wrapperDark;
+
   return (
     <Link href={AppRoute.DASHBOARD} prefetch={false}>
-      <IconWrapper $themeType={theme}>
-        <IconGroup>
+      <div className={`${styles.wrapper} ${themeClass}`}>
+        <div className={styles.group}>
           <HomeIcon />
           <LogoIcon />
           <BetaBadge size='sm' />
-        </IconGroup>
-      </IconWrapper>
+        </div>
+      </div>
     </Link>
   );
 };

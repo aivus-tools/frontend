@@ -32,9 +32,18 @@ interface BudgetSectionProps {
   section: ExportCategorySection;
 }
 
-export const BudgetSection: React.FC<BudgetSectionProps> = props => {
+export const BudgetSection = (props: BudgetSectionProps) => {
   return (
-    <table className="budget-section-table" style={{ width: '100%', borderCollapse: 'collapse', marginBottom: 16, fontFamily: FONT_FAMILY, tableLayout: 'fixed' }}>
+    <table
+      className='budget-section-table'
+      style={{
+        width: '100%',
+        borderCollapse: 'collapse',
+        marginBottom: 16,
+        fontFamily: FONT_FAMILY,
+        tableLayout: 'fixed',
+      }}
+    >
       <colgroup>
         <col style={{ width: '6%' }} />
         <col />
@@ -83,7 +92,7 @@ export const BudgetSection: React.FC<BudgetSectionProps> = props => {
         </tr>
       </thead>
       <tbody>
-        {props.section.entries.map(x => {
+        {props.section.entries.map((x) => {
           const display = computeDisplayValues(x);
           return (
             <tr key={x.id}>
@@ -112,16 +121,26 @@ export const BudgetSection: React.FC<BudgetSectionProps> = props => {
             <td colSpan={8} style={{ ...cellStyle, background: SUBTOTAL_BG, textAlign: 'right' }}>
               Fringes
             </td>
-            <td style={{ ...numericCellStyle, background: SUBTOTAL_BG }}>
-              {formatCurrency(props.section.fringes)}
-            </td>
+            <td style={{ ...numericCellStyle, background: SUBTOTAL_BG }}>{formatCurrency(props.section.fringes)}</td>
           </tr>
         )}
         <tr>
-          <td colSpan={8} style={{ ...cellStyle, fontWeight: 700, background: TOTAL_BG, color: '#fff', textAlign: 'right', borderBottom: 'none' }}>
+          <td
+            colSpan={8}
+            style={{
+              ...cellStyle,
+              fontWeight: 700,
+              background: TOTAL_BG,
+              color: '#fff',
+              textAlign: 'right',
+              borderBottom: 'none',
+            }}
+          >
             TOTAL {props.section.code ?? ''}
           </td>
-          <td style={{ ...numericCellStyle, fontWeight: 700, background: TOTAL_BG, color: '#fff', borderBottom: 'none' }}>
+          <td
+            style={{ ...numericCellStyle, fontWeight: 700, background: TOTAL_BG, color: '#fff', borderBottom: 'none' }}
+          >
             {formatCurrency(props.section.sectionTotal)}
           </td>
         </tr>

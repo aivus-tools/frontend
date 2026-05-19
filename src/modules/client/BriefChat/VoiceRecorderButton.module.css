@@ -1,0 +1,213 @@
+.voiceButton {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  align-self: stretch;
+  justify-content: center;
+  width: 56px;
+  min-width: 56px;
+  min-height: 56px;
+  font-size: 18px;
+  color: var(--main);
+  cursor: pointer;
+  background: var(--border-subtle);
+  border: 0;
+  border-radius: 12px;
+  transition:
+    background 0.15s ease,
+    color 0.15s ease;
+}
+
+.voiceButtonCompact {
+  width: 44px;
+  min-width: 44px;
+  min-height: 44px;
+  border-radius: 10px;
+}
+
+.voiceButton:disabled {
+  cursor: not-allowed;
+  opacity: 0.5;
+}
+
+.voiceButton:hover:not(:disabled) {
+  background: var(--bg-gray-light);
+}
+
+.voiceButtonRecording {
+  color: var(--white);
+  background: var(--red);
+  animation: voice-pulse 1.6s infinite;
+}
+
+.voiceButtonRecording:hover:not(:disabled) {
+  background: var(--red);
+}
+
+.voiceButtonProcessing {
+  background: var(--border-subtle);
+}
+
+.voiceButtonError {
+  color: var(--red);
+  background: var(--bg-red);
+}
+
+.voiceButtonError:hover:not(:disabled) {
+  background: var(--bg-red);
+}
+
+@keyframes voice-pulse {
+  0% {
+    box-shadow: 0 0 0 0 rgb(248 113 113 / 45%);
+  }
+
+  70% {
+    box-shadow: 0 0 0 10px rgb(248 113 113 / 0%);
+  }
+
+  100% {
+    box-shadow: 0 0 0 0 rgb(248 113 113 / 0%);
+  }
+}
+
+@media (width <= 480px) {
+  .voiceButton {
+    width: 44px;
+    min-width: 44px;
+    min-height: 44px;
+    border-radius: 10px;
+  }
+}
+
+.voicePanel {
+  position: absolute;
+  right: 16px;
+  bottom: calc(100% + 8px);
+  left: 16px;
+  z-index: 30;
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  padding: 12px 14px;
+  font-family: Montserrat, sans-serif;
+  background: var(--white);
+  border: 1px solid var(--border-subtle);
+  border-radius: 12px;
+  box-shadow: 0 8px 24px rgb(0 0 0 / 8%);
+}
+
+.voiceInlinePanel {
+  display: inline-flex;
+  gap: 10px;
+  align-items: center;
+  min-width: 280px;
+  max-width: 100%;
+  padding: 6px 10px 6px 14px;
+  background: var(--white);
+  border: 1px solid var(--border-subtle);
+  border-radius: 999px;
+  box-shadow: 0 1px 4px rgb(0 0 0 / 4%);
+}
+
+@media (width <= 480px) {
+  .voiceInlinePanel {
+    flex: 1 1 auto;
+    gap: 6px;
+    min-width: 0;
+    padding: 4px 8px 4px 10px;
+  }
+}
+
+.voiceWave {
+  display: flex;
+  flex: 1;
+  gap: 3px;
+  align-items: center;
+  justify-content: center;
+  min-width: 0;
+  height: 32px;
+}
+
+.voiceWaveBar {
+  width: 3px;
+  height: var(--wave-bar-height, 4px);
+  background: var(--blue);
+  border-radius: 2px;
+  transition: height 0.06s linear;
+}
+
+.voiceTimer {
+  min-width: 38px;
+  font-family: Montserrat, sans-serif;
+  font-size: 13px;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+  color: var(--main);
+  text-align: center;
+}
+
+.stopGlyph {
+  display: inline-block;
+  width: 12px;
+  height: 12px;
+  background: currentcolor;
+  border-radius: 2px;
+}
+
+.voiceRecordingDot {
+  flex-shrink: 0;
+  width: 8px;
+  height: 8px;
+  background: var(--red);
+  border-radius: 50%;
+  animation: recording-dot-pulse 1.2s ease-in-out infinite;
+}
+
+@keyframes recording-dot-pulse {
+  0%,
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+
+  50% {
+    opacity: 0.45;
+    transform: scale(0.85);
+  }
+}
+
+.voiceIconBtn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  font-size: 14px;
+  cursor: pointer;
+  border: 0;
+  border-radius: 50%;
+}
+
+.voiceIconBtnSend {
+  color: var(--white);
+  background: var(--blue);
+}
+
+.voiceIconBtnSend:hover:not(:disabled) {
+  background: var(--blue);
+}
+
+.voiceIconBtnCancel {
+  color: var(--main);
+  background: var(--border-subtle);
+}
+
+.voiceIconBtnCancel:hover:not(:disabled) {
+  background: var(--bg-gray-light);
+}
+
+.voiceIconBtn:disabled {
+  cursor: not-allowed;
+  opacity: 0.5;
+}

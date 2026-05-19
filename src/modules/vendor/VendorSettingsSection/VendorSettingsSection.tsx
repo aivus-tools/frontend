@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useEffect, useRef } from 'react';
+import { useEffect, useRef } from 'react';
 import { Form, Input, InputNumber, Button, App, Spin } from 'antd';
 import { CameraOutlined } from '@ant-design/icons';
 import {
@@ -8,6 +8,8 @@ import {
   useUpdateVendorSettingsMutation,
   useUploadVendorLogoMutation,
 } from '@/services/client/vendorSettingsApi';
+
+import styles from './VendorSettingsSection.module.css';
 
 interface VendorSettingsFormValues {
   companyName: string;
@@ -22,7 +24,7 @@ interface VendorSettingsFormValues {
   postTaxPercent: string;
 }
 
-export const VendorSettingsSection: React.FC = () => {
+export const VendorSettingsSection = () => {
   const { message } = App.useApp();
   const [form] = Form.useForm<VendorSettingsFormValues>();
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -79,94 +81,76 @@ export const VendorSettingsSection: React.FC = () => {
   };
 
   if (isLoading) {
-    return <Spin size="large" style={{ display: 'block', margin: '40px auto' }} />;
+    return <Spin size='large' className={styles.spinner} />;
   }
 
   return (
-    <div style={{ maxWidth: 600, margin: '32px auto 0', padding: '0 24px' }}>
-      <h3 style={{ fontSize: 18, fontWeight: 600, marginBottom: 16 }}>Company Settings</h3>
+    <div className={styles.section}>
+      <h3 className={styles.title}>Company Settings</h3>
 
-      <div style={{ marginBottom: 24 }}>
-        <div
-          onClick={handleLogoClick}
-          style={{
-            width: 120,
-            height: 120,
-            border: '2px dashed #d9d9d9',
-            borderRadius: 8,
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            cursor: 'pointer',
-            overflow: 'hidden',
-            position: 'relative',
-          }}
-        >
+      <div className={styles.logoWrapper}>
+        <div onClick={handleLogoClick} className={styles.logoDrop}>
           {settings?.logoUrl ? (
-            <img src={settings.logoUrl} alt="Logo" style={{ width: '100%', height: '100%', objectFit: 'contain' }} />
+            <img src={settings.logoUrl} alt='Logo' className={styles.logoImage} />
           ) : (
-            <div style={{ textAlign: 'center', color: '#999' }}>
-              {isUploadingLogo ? <Spin size="small" /> : <CameraOutlined style={{ fontSize: 24 }} />}
-              <div style={{ fontSize: 12, marginTop: 4 }}>Upload Logo</div>
+            <div className={styles.logoPlaceholder}>
+              {isUploadingLogo ? <Spin size='small' /> : <CameraOutlined style={{ fontSize: 24 }} />}
+              <div className={styles.logoPlaceholderText}>Upload Logo</div>
             </div>
           )}
         </div>
         <input
           ref={fileInputRef}
-          type="file"
-          accept="image/*"
-          style={{ display: 'none' }}
+          type='file'
+          accept='image/*'
+          className={styles.fileInput}
           onChange={handleLogoChange}
         />
       </div>
 
-      <Form form={form} layout="vertical" onFinish={handleSubmit} style={{ maxWidth: 600 }}>
-        <div style={{ display: 'flex', gap: 16 }}>
-          <Form.Item name="companyName" label="Company Name" style={{ flex: 1 }}>
-            <Input placeholder="Your company name" size="large" />
+      <Form form={form} layout='vertical' onFinish={handleSubmit} className={styles.form}>
+        <div className={styles.row}>
+          <Form.Item name='companyName' label='Company Name' className={styles.itemFlex1}>
+            <Input placeholder='Your company name' size='large' />
           </Form.Item>
-          <Form.Item name="agencyName" label="Default Agency" style={{ flex: 1 }}>
-            <Input placeholder="Default agency for new projects" size="large" />
-          </Form.Item>
-        </div>
-
-        <h4 style={{ fontSize: 14, fontWeight: 600, marginTop: 16, marginBottom: 12 }}>
-          Default Production Percentages
-        </h4>
-        <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap' }}>
-          <Form.Item name="fringesPercent" label="Fringes %" style={{ width: 120 }}>
-            <InputNumber step={0.01} min={0} style={{ width: '100%' }} />
-          </Form.Item>
-          <Form.Item name="handlingPercent" label="Handling %" style={{ width: 120 }}>
-            <InputNumber step={0.01} min={0} style={{ width: '100%' }} />
-          </Form.Item>
-          <Form.Item name="markupPercent" label="Markup %" style={{ width: 120 }}>
-            <InputNumber step={0.01} min={0} style={{ width: '100%' }} />
-          </Form.Item>
-          <Form.Item name="productionInsurancePercent" label="Prod Insurance %" style={{ width: 140 }}>
-            <InputNumber step={0.01} min={0} style={{ width: '100%' }} />
-          </Form.Item>
-          <Form.Item name="productionFeePercent" label="Prod Fee %" style={{ width: 120 }}>
-            <InputNumber step={0.01} min={0} style={{ width: '100%' }} />
+          <Form.Item name='agencyName' label='Default Agency' className={styles.itemFlex1}>
+            <Input placeholder='Default agency for new projects' size='large' />
           </Form.Item>
         </div>
 
-        <h4 style={{ fontSize: 14, fontWeight: 600, marginTop: 8, marginBottom: 12 }}>
-          Default Post-Production Percentages
-        </h4>
-        <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap' }}>
-          <Form.Item name="postMarkupPercent" label="Post Markup %" style={{ width: 140 }}>
-            <InputNumber step={0.01} min={0} style={{ width: '100%' }} />
+        <h4 className={styles.subTitle}>Default Production Percentages</h4>
+        <div className={styles.percentsRow}>
+          <Form.Item name='fringesPercent' label='Fringes %' className={styles.percentItem120}>
+            <InputNumber step={0.01} min={0} className={styles.percentInput} />
           </Form.Item>
-          <Form.Item name="postInsurancePercent" label="Post Insurance %" style={{ width: 140 }}>
-            <InputNumber step={0.01} min={0} style={{ width: '100%' }} />
+          <Form.Item name='handlingPercent' label='Handling %' className={styles.percentItem120}>
+            <InputNumber step={0.01} min={0} className={styles.percentInput} />
           </Form.Item>
-          <Form.Item name="postTaxPercent" label="Post Tax %" style={{ width: 120 }}>
-            <InputNumber step={0.01} min={0} style={{ width: '100%' }} />
+          <Form.Item name='markupPercent' label='Markup %' className={styles.percentItem120}>
+            <InputNumber step={0.01} min={0} className={styles.percentInput} />
+          </Form.Item>
+          <Form.Item name='productionInsurancePercent' label='Prod Insurance %' className={styles.percentItem140}>
+            <InputNumber step={0.01} min={0} className={styles.percentInput} />
+          </Form.Item>
+          <Form.Item name='productionFeePercent' label='Prod Fee %' className={styles.percentItem120}>
+            <InputNumber step={0.01} min={0} className={styles.percentInput} />
           </Form.Item>
         </div>
 
-        <Button type="primary" htmlType="submit" loading={isUpdating} size="large" style={{ marginTop: 8 }}>
+        <h4 className={styles.subTitleCompact}>Default Post-Production Percentages</h4>
+        <div className={styles.percentsRow}>
+          <Form.Item name='postMarkupPercent' label='Post Markup %' className={styles.percentItem140}>
+            <InputNumber step={0.01} min={0} className={styles.percentInput} />
+          </Form.Item>
+          <Form.Item name='postInsurancePercent' label='Post Insurance %' className={styles.percentItem140}>
+            <InputNumber step={0.01} min={0} className={styles.percentInput} />
+          </Form.Item>
+          <Form.Item name='postTaxPercent' label='Post Tax %' className={styles.percentItem120}>
+            <InputNumber step={0.01} min={0} className={styles.percentInput} />
+          </Form.Item>
+        </div>
+
+        <Button type='primary' htmlType='submit' loading={isUpdating} size='large' className={styles.submitButton}>
           Save Company Settings
         </Button>
       </Form>

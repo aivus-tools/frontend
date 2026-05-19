@@ -3,6 +3,10 @@
 import React from 'react';
 import { App } from 'antd';
 
-export const AntdAppProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  return <App>{children}</App>;
+interface AntdAppProviderProps {
+  children: React.ReactNode;
+}
+
+export const AntdAppProvider = (props: AntdAppProviderProps) => {
+  return <App>{props.children}</App>;
 };

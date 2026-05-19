@@ -1,0 +1,41 @@
+.markupLabel {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  justify-content: flex-end;
+  padding: 4px 40px 4px 0;
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--gray);
+  background-color: var(--white);
+}
+
+.markupValue {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  min-width: 90px;
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--gray);
+}
+
+.emptyCell {
+  background-color: var(--white);
+}
+
+.switchCell {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: var(--white);
+}
+
+.editableName {
+  cursor: pointer;
+}
+
+.editableName:hover {
+  text-decoration: underline;
+  text-decoration-style: dashed;
+}

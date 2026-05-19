@@ -7,7 +7,16 @@ import { NEW_BRIEF_SLUG } from '@/constants/constants';
 import { t } from '@/lib/i18n';
 import { AppRoute } from '@/constants/appRoute';
 
-export const VendorNavbar = () => {
+import styles from './VendorNavbar.module.css';
+
+interface VendorNavbarProps {
+  variant?: 'desktop' | 'mobile';
+  onNavigate?: () => void;
+}
+
+export const VendorNavbar = (props: VendorNavbarProps) => {
+  const variant = props.variant ?? 'desktop';
+  const isMobile = variant === 'mobile';
   const router = useRouter();
 
   const detailsPath = AppRoute.DASHBOARD_PROJECT_DETAILS(NEW_BRIEF_SLUG);
@@ -18,13 +27,17 @@ export const VendorNavbar = () => {
 
   const handleNewEstimation = () => {
     router.push(detailsPath);
+    props.onNavigate?.();
   };
 
+  const wrapperClass = isMobile ? `${styles.navbar} ${styles.navbarMobile}` : styles.navbar;
+  const actionsClass = isMobile ? `${styles.actions} ${styles.actionsMobile}` : styles.actions;
+
   return (
-    <div style={{ flex: 1, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-      <VendorTabs />
-      <div style={{ display: 'flex', gap: '16px', alignItems: 'center' }}>
-        <Button type='primary' onClick={handleNewEstimation}>
+    <div className={wrapperClass}>
+      <VendorTabs orientation={isMobile ? 'vertical' : 'horizontal'} onNavigate={props.onNavigate} />
+      <div className={actionsClass}>
+        <Button type='primary' block={isMobile} onClick={handleNewEstimation}>
           {t('NEW_ESTIMATION')}
         </Button>
       </div>

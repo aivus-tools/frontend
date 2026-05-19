@@ -8,7 +8,7 @@ import { useProjects } from '@/hooks/useProjects';
 import { Project, ProjectListItem } from '@/types/project.interface';
 import { Offer } from '@/types/offer.interface';
 import { format } from 'date-fns';
-import Spinner from '@/components/Spinner';
+import { PageSpinner } from '@/components/PageSpinner';
 import { AppRoute } from '@/constants/appRoute';
 import { useGetAllOffersQuery } from '@/services/client/offersApi';
 import { useGetArchivedProjectsQuery } from '@/services/client/projectsApi';
@@ -81,7 +81,7 @@ export const ProjectList = () => {
   }, [router, filteredData]);
 
   if (isLoading) {
-    return <Spinner />;
+    return <PageSpinner />;
   }
 
   if (filteredData.length === 0) {

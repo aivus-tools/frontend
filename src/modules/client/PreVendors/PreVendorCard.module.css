@@ -1,0 +1,231 @@
+.card {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  min-width: 0;
+  padding: 12px;
+  font-family: Inter, sans-serif;
+  background: var(--chat-bg-bubble);
+  border-radius: 12px;
+}
+
+@media (width <= 767px) {
+  .card {
+    gap: 12px;
+    padding: 10px;
+  }
+}
+
+.cardTop {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  width: 100%;
+  min-width: 0;
+}
+
+.cardLogo {
+  display: flex;
+  flex-shrink: 0;
+  align-items: center;
+  justify-content: flex-start;
+  width: 40px;
+  height: 28px;
+  overflow: hidden;
+}
+
+.cardLogo img {
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: contain;
+  object-position: left center;
+}
+
+.cardLogoFallback {
+  display: flex;
+  flex-shrink: 0;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 28px;
+  font-size: 10px;
+  font-weight: 600;
+  color: var(--gray);
+  background: var(--bg-gray-light);
+  border-radius: 4px;
+}
+
+.cardTopText {
+  display: flex;
+  flex: 0 1 auto;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+  overflow: hidden;
+}
+
+.cardRank {
+  margin: 0;
+  overflow: hidden;
+  font-size: 14px;
+  font-weight: 600;
+  line-height: 1.2;
+  color: var(--chat-text);
+  text-overflow: ellipsis;
+  letter-spacing: -0.3px;
+  white-space: nowrap;
+}
+
+.cardCategory {
+  margin: 0;
+  overflow: hidden;
+  font-size: 12px;
+  font-weight: 400;
+  line-height: 1.2;
+  color: var(--gray-light);
+  text-overflow: ellipsis;
+  letter-spacing: -0.3px;
+  white-space: nowrap;
+}
+
+.cardTopSpacer {
+  flex: 1 1 auto;
+}
+
+.portfolioButton {
+  flex-shrink: 0;
+  padding: 6px 8px;
+  font-family: Inter, sans-serif;
+  font-size: 12px;
+  font-weight: 600;
+  line-height: 1;
+  color: var(--white);
+  text-decoration: none;
+  letter-spacing: -0.3px;
+  white-space: nowrap;
+  background: var(--chat-text);
+  border-radius: 6px;
+}
+
+.portfolioButton:hover {
+  color: var(--white);
+  background: var(--chat-text);
+}
+
+.cardBody {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  width: 100%;
+}
+
+.cardTitle {
+  margin: 0;
+  font-family: Roboto, sans-serif;
+  font-size: 24px;
+  font-weight: 500;
+  line-height: 30px;
+  color: var(--chat-text);
+  word-break: break-word;
+}
+
+@media (width <= 767px) {
+  .cardTitle {
+    font-size: 20px;
+    line-height: 26px;
+  }
+}
+
+.cardDescription {
+  min-height: calc(13px * 1.4 * 4);
+  margin: 0;
+  font-family: Inter, sans-serif;
+  font-size: 13px;
+  font-weight: 400;
+  line-height: 1.4;
+  color: var(--main);
+  letter-spacing: -0.2px;
+}
+
+@media (width <= 767px) {
+  .cardDescription {
+    min-height: calc(12px * 1.4 * 4);
+    font-size: 12px;
+  }
+}
+
+.cardFooter {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  width: 100%;
+}
+
+.sendBriefButton {
+  display: block;
+  width: 100%;
+  padding: 10px;
+  font-family: Inter, sans-serif;
+  font-size: 13px;
+  font-weight: 600;
+  line-height: 1;
+  color: var(--white);
+  text-align: center;
+  text-decoration: none;
+  letter-spacing: -0.3px;
+  cursor: pointer;
+  background: var(--purple);
+  border-radius: 8px;
+}
+
+.sendBriefButton:hover {
+  color: var(--white);
+  background: var(--purple-dark);
+}
+
+.sendBriefButtonDisabled {
+  cursor: not-allowed;
+  background: var(--bg-gray-light);
+}
+
+.sendBriefButtonDisabled:hover {
+  background: var(--bg-gray-light);
+}
+
+.cardAddress {
+  display: flex;
+  gap: 6px;
+  align-items: center;
+  font-family: Inter, sans-serif;
+  font-size: 12px;
+  font-weight: 500;
+  line-height: 1.2;
+  color: var(--chat-text);
+}
+
+.cardAddress svg {
+  flex-shrink: 0;
+}
+
+.emailModalDescription {
+  margin: 0 0 16px;
+  font-size: 14px;
+  line-height: 1.5;
+  color: var(--gray);
+}
+
+.emailModalPreview {
+  max-height: 380px;
+  padding: 16px;
+  margin: 0;
+  overflow-y: auto;
+  font-family: 'Roboto Mono', ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-size: 13px;
+  line-height: 1.5;
+  color: var(--chat-text);
+  word-break: break-word;
+  white-space: pre-wrap;
+  background: var(--bg-gray-page);
+  border: 1px solid var(--bg-gray-light);
+  border-radius: 8px;
+}

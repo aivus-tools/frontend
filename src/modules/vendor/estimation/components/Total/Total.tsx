@@ -1,69 +1,34 @@
 'use client';
 
 import { Flex, Input } from 'antd';
-import { styled } from 'styled-components';
 import AddIcon from '@/icons/add-icon.svg';
-import { useSelectOffer } from '../../hooks/useSelectOffer';
+import { useSelectOffer } from '@/modules/vendor/estimation/hooks/useSelectOffer';
 import { LibraryDropdown } from '../LibraryDropdown/LibraryDropdown';
-import { filterOptionsBySetOfId } from '../../helpers/filters';
+import { filterOptionsBySetOfId } from '@/modules/vendor/estimation/helpers/filters';
 import { useCallback, useMemo } from 'react';
 import { useAppSelector } from '@/store/hooks';
 import { selectSubcategoryById } from '@/store/slices/offer/selectors';
 import { RootState } from '@/store/store';
 import { t } from '@/lib/i18n';
 
-const Wrapper = styled.div`
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  background-color: var(--bg-blue-important);
-  padding-right: 40px;
-  gap: 8px;
-`;
+import styles from './Total.module.css';
 
-const Label = styled.div`
-  font-weight: 600;
-  font-size: 14px;
-  line-height: 17.07px;
-  letter-spacing: 0;
-  text-align: right;
-  padding: 16px 0;
-  border-radius: 0 0 0 6px;
-  text-transform: uppercase;
-`;
-const TotalSum = styled.div`
-  font-weight: 600;
-  font-size: 16px;
-  line-height: 19.5px;
-  display: flex;
-  align-items: center;
-  justify-content: flex-end;
-  color: var(--blue);
-  padding: 16px 0;
-  min-width: 90px;
-`;
-
-const EmptyBlockTotalSum = styled.div`
-  background-color: var(--bg-blue-important);
-  border-radius: 0 0 6px 6px;
-`;
-
-interface Props {
+interface TotalProps {
   text: string;
   value: string;
   clientValue: string;
   categoryId?: string;
 }
 
-export const Total = ({ text, value, clientValue, categoryId }: Props) => {
+export const Total = (props: TotalProps) => {
   const handleSelect = useSelectOffer();
   const subCategories = useAppSelector(
-    useCallback((state: RootState) => selectSubcategoryById(state, categoryId), [categoryId])
+    useCallback((state: RootState) => selectSubcategoryById(state, props.categoryId), [props.categoryId])
   );
   const categorySet = useMemo(() => {
     const set = new Set<string>();
-    if (categoryId) {
-      set.add(categoryId);
+    if (props.categoryId) {
+      set.add(props.categoryId);
     }
     subCategories?.forEach((subCategory) => {
       if (subCategory.id) {
@@ -71,7 +36,7 @@ export const Total = ({ text, value, clientValue, categoryId }: Props) => {
       }
     });
     return set;
-  }, [categoryId, subCategories]);
+  }, [props.categoryId, subCategories]);
   const handleFilter = useMemo(() => filterOptionsBySetOfId(categorySet), [categorySet]);
 
   return (
@@ -83,7 +48,7 @@ export const Total = ({ text, value, clientValue, categoryId }: Props) => {
       >
         <AddIcon color={'var(--gray-light)'} />
       </Flex>
-      <Wrapper style={{ gridColumn: 'span 6' }}>
+      <div className={styles.wrapper} style={{ gridColumn: 'span 6' }}>
         <Flex>
           <LibraryDropdown
             onSelect={handleSelect}
@@ -101,17 +66,17 @@ export const Total = ({ text, value, clientValue, categoryId }: Props) => {
           />
         </Flex>
         <Flex>
-          <Label style={{ marginRight: '16px' }}>
-            {text} {t('TOTAL')}:
-          </Label>
-          <TotalSum>{value}</TotalSum>
+          <div className={styles.label} style={{ marginRight: '16px' }}>
+            {props.text} {t('TOTAL')}:
+          </div>
+          <div className={styles.totalSum}>{props.value}</div>
         </Flex>
-      </Wrapper>
+      </div>
       <div />
       <Flex style={{ gridColumn: 'span 4', backgroundColor: 'var(--bg-blue-important)' }} justify='flex-end'>
-        <TotalSum>{clientValue}</TotalSum>
+        <div className={styles.totalSum}>{props.clientValue}</div>
       </Flex>
-      <EmptyBlockTotalSum style={{ gridColumn: 'span 1' }} />
+      <div className={styles.emptyBlock} style={{ gridColumn: 'span 1' }} />
     </>
   );
 };

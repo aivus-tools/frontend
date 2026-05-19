@@ -2,7 +2,8 @@
 
 import React, { useRef } from 'react';
 import dynamic from 'next/dynamic';
-import { EditorWrapper } from './styled';
+
+import styles from './OfferMetaForm.module.css';
 
 const Editor = dynamic(
   async () => {
@@ -16,7 +17,10 @@ const Editor = dynamic(
     const tinymceReact = await import('@tinymce/tinymce-react');
     return tinymceReact.Editor;
   },
-  { ssr: false, loading: () => <div style={{ height: 200, border: '1px solid #d9d9d9', borderRadius: 6 }} /> }
+  {
+    ssr: false,
+    loading: () => <div style={{ height: 200, border: '1px solid var(--bg-gray-light)', borderRadius: 6 }} />,
+  }
 );
 
 interface RichTextEditorProps {
@@ -24,11 +28,11 @@ interface RichTextEditorProps {
   onChange: (value: string) => void;
 }
 
-export const RichTextEditor: React.FC<RichTextEditorProps> = (props) => {
+export const RichTextEditor = (props: RichTextEditorProps) => {
   const editorRef = useRef<unknown>(null);
 
   return (
-    <EditorWrapper>
+    <div className={styles.editorWrapper}>
       <Editor
         onInit={(_event: unknown, editor: unknown) => {
           editorRef.current = editor;
@@ -62,6 +66,6 @@ export const RichTextEditor: React.FC<RichTextEditorProps> = (props) => {
           content_css: false,
         }}
       />
-    </EditorWrapper>
+    </div>
   );
 };

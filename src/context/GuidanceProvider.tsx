@@ -1,4 +1,4 @@
-import React, { useCallback, createContext, useContext, ReactNode, useState } from 'react';
+import { useCallback, createContext, useContext, ReactNode, useState } from 'react';
 import { GuidanceDictionary } from './guidance-dictionary';
 
 type GuidanceDictionaryType = typeof GuidanceDictionary;
@@ -22,7 +22,7 @@ interface FocusProviderProps {
   children: ReactNode;
 }
 
-export const GuidanceProvider: React.FC<FocusProviderProps> = ({ children }) => {
+export const GuidanceProvider = (props: FocusProviderProps) => {
   const [focusedField, setFocusedField] = useState<GuidanceDictionaryKeys | null>(null);
   const [customGuidance, setCustomGuidance] = useState<GuidanceItem | null>(null);
 
@@ -38,7 +38,7 @@ export const GuidanceProvider: React.FC<FocusProviderProps> = ({ children }) => 
 
   return (
     <GuidanceContext.Provider value={{ handleFocus, setCustomGuidance, focusedField: currentGuidance }}>
-      {children}
+      {props.children}
     </GuidanceContext.Provider>
   );
 };

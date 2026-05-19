@@ -3,7 +3,7 @@
 import { useEffect, useMemo, useState } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { Flex, Typography, Button, message } from 'antd';
-import Spinner from '@/components/Spinner';
+import { PageSpinner } from '@/components/PageSpinner';
 import { t } from '@/lib/i18n';
 import { AppRoute } from '@/constants/appRoute';
 import { useSession, signOut } from 'next-auth/react';
@@ -73,7 +73,7 @@ const ConfirmEmailPage = () => {
 
           if (data.claimedBriefId) {
             clearPendingBrief();
-            window.location.href = AppRoute.BRIEF_V2_DETAIL(data.claimedBriefId);
+            window.location.href = AppRoute.BRIEF_DETAIL(data.claimedBriefId);
           } else {
             window.location.href = AppRoute.GROUP;
           }
@@ -100,8 +100,14 @@ const ConfirmEmailPage = () => {
   const renderContent = () => {
     if (status === 'pending' || status === 'idle') {
       return (
-        <Flex align='center' justify='center' vertical gap={16} style={{ height: '100vh', width: '100%' }}>
-          <Spinner />
+        <Flex
+          align='center'
+          justify='center'
+          vertical
+          gap={16}
+          style={{ minHeight: '100dvh', width: '100%', padding: '16px' }}
+        >
+          <PageSpinner />
           <Typography.Text type='secondary'>{t('EMAIL_CONFIRMATION_PROCESSING')}</Typography.Text>
         </Flex>
       );
@@ -109,7 +115,13 @@ const ConfirmEmailPage = () => {
 
     if (status === 'success') {
       return (
-        <Flex align='center' justify='center' vertical gap={16} style={{ height: '100vh', width: '100%' }}>
+        <Flex
+          align='center'
+          justify='center'
+          vertical
+          gap={16}
+          style={{ minHeight: '100dvh', width: '100%', padding: '16px' }}
+        >
           <Typography.Title level={3}>{t('EMAIL_CONFIRMED')}</Typography.Title>
           <Typography.Text type='secondary'>
             {session?.user ? t('EMAIL_CONFIRMED_REDIRECT') : t('EMAIL_CONFIRMED_LOGIN')}
@@ -122,7 +134,13 @@ const ConfirmEmailPage = () => {
     }
 
     return (
-      <Flex align='center' justify='center' vertical gap={16} style={{ height: '100vh', width: '100%' }}>
+      <Flex
+        align='center'
+        justify='center'
+        vertical
+        gap={16}
+        style={{ minHeight: '100dvh', width: '100%', padding: '16px' }}
+      >
         <Typography.Title level={3}>{t('EMAIL_CONFIRMATION_FAILED_TITLE')}</Typography.Title>
         <Typography.Text type='danger'>{errorMessage ?? t('EMAIL_CONFIRMATION_FAILED')}</Typography.Text>
         <Flex gap={12}>

@@ -1,6 +1,6 @@
 'use client';
 import { ProfileProps } from './Profile.props';
-import { UserOutlined } from '@ant-design/icons';
+import { LoadingOutlined, UserOutlined } from '@ant-design/icons';
 import styles from './Profile.module.css';
 import cn from 'classnames';
 import { t } from '@/lib/i18n';
@@ -8,22 +8,26 @@ import ArrowIcon from '@/icons/arrow-icon.svg';
 import { Popover } from 'react-tiny-popover';
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { logout } from '@/auth/actions/logout';
+import { signOut, useSession } from 'next-auth/react';
 import { Avatar } from 'antd';
-import { useSession } from 'next-auth/react';
 import { ProfileImage } from './ProfileImage';
 import { AppRoute } from '@/constants/appRoute';
 import { useGetProfileQuery } from '@/services/client/profileApi';
 
 export const Profile = ({ className, ...props }: ProfileProps) => {
   const [isPopoverOpen, setIsPopoverOpen] = useState(false);
+  const [isLoggingOut, setIsLoggingOut] = useState(false);
   const router = useRouter();
   const { data: profileData } = useGetProfileQuery();
   const session = useSession();
   const image = profileData?.avatar_url || session?.data?.user?.image;
 
   const logoutHandle = () => {
-    logout();
+    if (isLoggingOut) {
+      return;
+    }
+    setIsLoggingOut(true);
+    signOut({ callbackUrl: AppRoute.AUTH });
   };
 
   const navigateTo = (path: string) => {
@@ -38,6 +42,7 @@ export const Profile = ({ className, ...props }: ProfileProps) => {
         positions={['bottom']}
         align='end'
         padding={8}
+        containerStyle={{ zIndex: '9999' }}
         onClickOutside={() => setIsPopoverOpen(false)}
         content={() => (
           <div className={cn(styles.popover)}>
@@ -48,7 +53,8 @@ export const Profile = ({ className, ...props }: ProfileProps) => {
               {t('SETTINGS')}
             </div>
             <div className={cn(styles.divider)} />
-            <div className={cn(styles.menuItem)} onClick={logoutHandle}>
+            <div className={cn(styles.menuItem, { [styles.menuItemDisabled]: isLoggingOut })} onClick={logoutHandle}>
+              {isLoggingOut ? <LoadingOutlined className={styles.menuItemIcon} /> : null}
               {t('LOGOUT')}
             </div>
           </div>

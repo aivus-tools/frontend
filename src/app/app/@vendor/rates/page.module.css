@@ -1,3 +1,9 @@
 .rates {
-  padding: 10px 30px;
+  padding: 10px 16px;
+}
+
+@media (width >= 1024px) {
+  .rates {
+    padding: 10px 30px;
+  }
 }

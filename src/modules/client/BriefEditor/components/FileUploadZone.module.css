@@ -1,0 +1,98 @@
+.zone {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  align-items: center;
+  justify-content: center;
+  padding: 18px 20px;
+  font-family: Montserrat, sans-serif;
+  cursor: pointer;
+  background: var(--bg-gray-page);
+  border: 1px dashed var(--bg-gray-light);
+  border-radius: 10px;
+  transition: all 0.15s ease;
+}
+
+.zone:hover {
+  background: var(--bg-blue-subsection);
+  border-color: var(--blue);
+}
+
+.zoneDragging {
+  background: var(--bg-blue-subsection);
+  border-color: var(--blue);
+}
+
+@media (width <= 1023.98px) {
+  .zone {
+    padding: 14px 16px;
+  }
+}
+
+.zoneHintWrapper {
+  display: contents;
+}
+
+@media (width <= 1023.98px) {
+  .zoneHintWrapper {
+    display: none;
+  }
+}
+
+.zoneTitle {
+  display: flex;
+  gap: 6px;
+  align-items: center;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--main);
+}
+
+.zoneHint {
+  font-size: 11px;
+  color: var(--gray);
+}
+
+.hiddenInput {
+  display: none;
+}
+
+.attachmentList {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-top: 8px;
+}
+
+.attachmentRow {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  padding: 6px 10px;
+  font-family: Montserrat, sans-serif;
+  font-size: 12px;
+  color: var(--main);
+  background: var(--white);
+  border: 1px solid var(--border-subtle);
+  border-radius: 8px;
+}
+
+.attachmentMeta {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+
+.attachmentName {
+  overflow: hidden;
+  font-weight: 500;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.attachmentSize {
+  font-size: 10px;
+  color: var(--gray);
+}

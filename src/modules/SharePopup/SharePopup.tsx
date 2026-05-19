@@ -5,18 +5,8 @@ import { Modal, Input, Button, Switch, Avatar, Popconfirm, Skeleton } from 'antd
 import { CopyOutlined, CheckOutlined, UserOutlined } from '@ant-design/icons';
 import { t } from '@/lib/i18n';
 import { useCreateShareMutation, useGetShareByOfferIdQuery, useUpdateShareMutation } from '@/services/client/sharesApi';
-import {
-  Title,
-  LinkRow,
-  ToggleRow,
-  ToggleLabel,
-  Divider,
-  SharedLabel,
-  OwnerRow,
-  OwnerName,
-  OwnerBadge,
-  Footer,
-} from './styled';
+
+import styles from './SharePopup.module.css';
 
 interface SharePopupProps {
   open: boolean;
@@ -26,11 +16,16 @@ interface SharePopupProps {
   ownerAvatar?: string;
 }
 
-export const SharePopup: React.FC<SharePopupProps> = ({ open, onClose, offerId, ownerName, ownerAvatar }) => {
+export const SharePopup = (props: SharePopupProps) => {
+  const { open, onClose, offerId, ownerName, ownerAvatar } = props;
   const [copied, setCopied] = useState(false);
   const [createShare, { isLoading: isCreating }] = useCreateShareMutation();
   const [updateShare] = useUpdateShareMutation();
-  const { data: existingShare, isLoading: isLoadingShare, error: shareError } = useGetShareByOfferIdQuery(offerId, {
+  const {
+    data: existingShare,
+    isLoading: isLoadingShare,
+    error: shareError,
+  } = useGetShareByOfferIdQuery(offerId, {
     skip: !open || !offerId,
   });
 
@@ -39,7 +34,6 @@ export const SharePopup: React.FC<SharePopupProps> = ({ open, onClose, offerId, 
   const [hasError, setHasError] = useState(false);
   const createGuardRef = useRef(false);
 
-  // Sync state with fetched share data
   useEffect(() => {
     if (existingShare) {
       setShareToken(existingShare.token);
@@ -47,7 +41,6 @@ export const SharePopup: React.FC<SharePopupProps> = ({ open, onClose, offerId, 
     }
   }, [existingShare]);
 
-  // Auto-create share when modal opens and no existing share
   useEffect(() => {
     const is404 = shareError && 'status' in shareError && shareError.status === 404;
     if (open && !existingShare && !isLoadingShare && !shareToken && !createGuardRef.current && (!shareError || is404)) {
@@ -67,7 +60,6 @@ export const SharePopup: React.FC<SharePopupProps> = ({ open, onClose, offerId, 
     }
   }, [open, existingShare, isLoadingShare, shareToken, shareError, offerId, createShare]);
 
-  // Reset state when modal closes
   useEffect(() => {
     if (!open) {
       setShareToken(null);
@@ -84,13 +76,14 @@ export const SharePopup: React.FC<SharePopupProps> = ({ open, onClose, offerId, 
   );
 
   const handleCopy = useCallback(async () => {
-    if (!shareUrl) return;
+    if (!shareUrl) {
+      return;
+    }
     try {
       await navigator.clipboard.writeText(shareUrl);
       setCopied(true);
       setTimeout(() => setCopied(false), 2000);
     } catch {
-      // Fallback for older browsers
       const textarea = document.createElement('textarea');
       textarea.value = shareUrl;
       document.body.appendChild(textarea);
@@ -104,12 +97,13 @@ export const SharePopup: React.FC<SharePopupProps> = ({ open, onClose, offerId, 
 
   const handleToggle = useCallback(
     async (checked: boolean) => {
-      if (!shareToken) return;
+      if (!shareToken) {
+        return;
+      }
       setIsActive(checked);
       try {
         await updateShare({ token: shareToken, isActive: checked }).unwrap();
       } catch {
-        // Revert on failure
         setIsActive(!checked);
       }
     },
@@ -136,54 +130,34 @@ export const SharePopup: React.FC<SharePopupProps> = ({ open, onClose, offerId, 
       }}
       destroyOnClose
     >
-      <Title>{t('SHARE_THIS_ESTIMATE')}</Title>
+      <h2 className={styles.title}>{t('SHARE_THIS_ESTIMATE')}</h2>
 
-      <LinkRow>
+      <div className={styles.linkRow}>
         {isLoading ? (
-          <Skeleton.Input active style={{ flex: 1, height: 40 }} />
+          <Skeleton.Input active className={styles.skeletonInput} />
         ) : (
           <Input
             readOnly
             value={activeState ? shareUrl : t('LINK_SHARING_DISABLED')}
             disabled={!activeState}
-            style={{
-              flex: 1,
-              height: 40,
-              borderRadius: 6,
-              fontFamily: "'Montserrat', sans-serif",
-              fontWeight: 500,
-              fontSize: 13,
-              color: '#4B5675',
-              borderColor: hasError ? '#D63C22' : '#D9D9D9',
-            }}
+            className={`${styles.linkInput} ${hasError ? styles.linkInputError : ''}`}
           />
         )}
         <Button
-          type="primary"
+          type='primary'
           icon={copied ? <CheckOutlined /> : <CopyOutlined />}
           onClick={handleCopy}
           disabled={!activeState || isLoading}
-          style={{
-            height: 40,
-            minWidth: 80,
-            borderRadius: 4,
-            fontFamily: "'Montserrat', sans-serif",
-            fontWeight: 600,
-            fontSize: 14,
-          }}
+          className={styles.copyButton}
         >
           {copied ? t('COPIED') : t('COPY')}
         </Button>
-      </LinkRow>
+      </div>
 
-      {hasError && (
-        <div style={{ color: '#D63C22', fontSize: 12, marginTop: -12, marginBottom: 12 }}>
-          {t('FAILED_TO_GENERATE_LINK')}
-        </div>
-      )}
+      {hasError && <div className={styles.errorMessage}>{t('FAILED_TO_GENERATE_LINK')}</div>}
 
       {!isLoading && (
-        <ToggleRow>
+        <div className={styles.toggleRow}>
           {activeState ? (
             <Popconfirm
               title={t('DEACTIVATE_SHARE_LINK')}
@@ -191,10 +165,7 @@ export const SharePopup: React.FC<SharePopupProps> = ({ open, onClose, offerId, 
               okText={t('YES')}
               cancelText={t('NO')}
             >
-              <Switch
-                checked={activeState}
-                style={{ backgroundColor: activeState ? '#2288FF' : undefined }}
-              />
+              <Switch checked={activeState} className={activeState ? styles.toggleSwitchActive : undefined} />
             </Popconfirm>
           ) : (
             <Switch checked={false} onChange={() => handleToggle(true)} />
@@ -206,51 +177,33 @@ export const SharePopup: React.FC<SharePopupProps> = ({ open, onClose, offerId, 
               okText={t('YES')}
               cancelText={t('NO')}
             >
-              <ToggleLabel style={{ cursor: 'pointer' }}>{t('ANYONE_WITH_LINK_CAN_VIEW')}</ToggleLabel>
+              <span className={`${styles.toggleLabel} ${styles.toggleLabelClickable}`}>
+                {t('ANYONE_WITH_LINK_CAN_VIEW')}
+              </span>
             </Popconfirm>
           ) : (
-            <ToggleLabel>{t('ANYONE_WITH_LINK_CAN_VIEW')}</ToggleLabel>
+            <span className={styles.toggleLabel}>{t('ANYONE_WITH_LINK_CAN_VIEW')}</span>
           )}
-        </ToggleRow>
+        </div>
       )}
 
-      <Divider />
+      <div className={styles.divider} />
 
-      <SharedLabel>{t('SHARED_WITH')}</SharedLabel>
-      <OwnerRow>
+      <div className={styles.sharedLabel}>{t('SHARED_WITH')}</div>
+      <div className={styles.ownerRow}>
         <Avatar size={27} src={ownerAvatar} icon={!ownerAvatar ? <UserOutlined /> : undefined} />
-        <OwnerName>{ownerName || t('YOU')}</OwnerName>
-        <OwnerBadge>({t('OWNER')})</OwnerBadge>
-      </OwnerRow>
+        <span className={styles.ownerName}>{ownerName || t('YOU')}</span>
+        <span className={styles.ownerBadge}>({t('OWNER')})</span>
+      </div>
 
-      <Footer>
-        <Button
-          onClick={onClose}
-          style={{
-            height: 36,
-            borderRadius: 4,
-            fontFamily: "'Montserrat', sans-serif",
-            fontWeight: 600,
-            fontSize: 14,
-            color: '#4B5675',
-          }}
-        >
+      <div className={styles.footer}>
+        <Button onClick={onClose} className={`${styles.footerButton} ${styles.cancelButton}`}>
           {t('CANCEL')}
         </Button>
-        <Button
-          type="primary"
-          onClick={onClose}
-          style={{
-            height: 36,
-            borderRadius: 4,
-            fontFamily: "'Montserrat', sans-serif",
-            fontWeight: 600,
-            fontSize: 14,
-          }}
-        >
+        <Button type='primary' onClick={onClose} className={styles.footerButton}>
           {t('DONE')}
         </Button>
-      </Footer>
+      </div>
     </Modal>
   );
 };

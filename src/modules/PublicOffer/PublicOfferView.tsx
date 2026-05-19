@@ -13,37 +13,17 @@ import {
   useGetShareExportDataQuery,
   useLinkShareToBriefMutation,
 } from '@/services/client/sharesApi';
-import { useGetBriefsQuery, useCreateBriefMutation } from '@/services/client/briefApi';
+import { useGetBriefAiListQuery, useCreateBriefAiDraftMutation } from '@/services/client/briefAiApi';
 import { CoverPage } from '@/modules/vendor/export/CoverPage';
 import { TopSheet } from '@/modules/vendor/export/TopSheet';
 import { AssumptionsPage } from '@/modules/vendor/export/AssumptionsPage';
 import { BudgetDetail } from '@/modules/vendor/export/BudgetDetail';
-import { NewBrief } from '@/types/brief.interface';
 import logger from '@/lib/logger';
 import LogoIcon from '@/icons/aivus-logo.svg';
 import { BetaBadge } from '@/components/BetaBadge/BetaBadge';
 import { BetaFooter, BETA_FOOTER_HEIGHT } from '@/components/BetaFooter/BetaFooter';
-import {
-  PageContainer,
-  PublicHeader,
-  LogoArea,
-  MainContent,
-  GuestBanner,
-  BannerText,
-  BannerActions,
-  LoginLink,
-  AuthorBanner,
-  AuthorBannerText,
-  EditLink,
-  InfoBar,
-  InfoBarText,
-  ClientPanel,
-  ClientLabel,
-  FullPageMessage,
-  ErrorTitle,
-  ErrorSubtitle,
-  OfferTableWrapper,
-} from './styled';
+
+import styles from './PublicOfferView.module.css';
 
 const CREATE_NEW_VALUE = 'create-new';
 
@@ -51,8 +31,8 @@ interface PublicOfferViewProps {
   params: Promise<{ token: string }>;
 }
 
-export const PublicOfferView: React.FC<PublicOfferViewProps> = ({ params }) => {
-  const { token } = use(params);
+export const PublicOfferView = (props: PublicOfferViewProps) => {
+  const { token } = use(props.params);
   const router = useRouter();
   const session = useSession();
   const { message } = App.useApp();
@@ -65,9 +45,9 @@ export const PublicOfferView: React.FC<PublicOfferViewProps> = ({ params }) => {
   const isAuthenticated = session?.status === 'authenticated';
   const isClient = isAuthenticated && userGroup === GROUPS.client;
 
-  const { data: briefs = [] } = useGetBriefsQuery(undefined, { skip: !isClient });
+  const { data: briefs = [] } = useGetBriefAiListQuery(undefined, { skip: !isClient });
   const [linkShareToBrief, { isLoading: isLinking }] = useLinkShareToBriefMutation();
-  const [createBrief] = useCreateBriefMutation();
+  const [createBriefDraft] = useCreateBriefAiDraftMutation();
 
   const getViewerRole = useCallback((): 'guest' | 'vendor-author' | 'vendor-other' | 'client' => {
     if (!isAuthenticated) {
@@ -99,8 +79,8 @@ export const PublicOfferView: React.FC<PublicOfferViewProps> = ({ params }) => {
       let briefId = selectedBriefId;
 
       if (briefId === CREATE_NEW_VALUE) {
-        const newBrief = await createBrief({ details: {} as NewBrief['details'], status: 'DRAFT' }).unwrap();
-        briefId = newBrief.id;
+        const newBrief = await createBriefDraft().unwrap();
+        briefId = newBrief.briefId;
       }
 
       await linkShareToBrief({ token, briefId }).unwrap();
@@ -110,12 +90,12 @@ export const PublicOfferView: React.FC<PublicOfferViewProps> = ({ params }) => {
       logger.error('Error linking offer to brief:', err);
       message.error(t('ERROR_ADDING_TO_BRIEF'));
     }
-  }, [selectedBriefId, token, createBrief, linkShareToBrief, message]);
+  }, [selectedBriefId, token, createBriefDraft, linkShareToBrief, message]);
 
   const briefOptions = useMemo(() => {
     const options = briefs.map((x) => ({
       value: x.id,
-      label: x.details?.projectName || t('UNTITLED_BRIEF'),
+      label: x.title || t('UNTITLED_BRIEF'),
     }));
     options.push({ value: CREATE_NEW_VALUE, label: t('CREATE_NEW_BRIEF') });
     return options;
@@ -123,17 +103,17 @@ export const PublicOfferView: React.FC<PublicOfferViewProps> = ({ params }) => {
 
   if (isLoading) {
     return (
-      <PageContainer>
-        <PublicHeader>
-          <LogoArea>
+      <div className={styles.pageContainer}>
+        <header className={styles.publicHeader}>
+          <div className={styles.logoArea}>
             <LogoIcon />
             <BetaBadge size='sm' />
-          </LogoArea>
-        </PublicHeader>
-        <MainContent>
+          </div>
+        </header>
+        <main className={styles.mainContent}>
           <Skeleton active paragraph={{ rows: 8 }} />
-        </MainContent>
-      </PageContainer>
+        </main>
+      </div>
     );
   }
 
@@ -150,10 +130,10 @@ export const PublicOfferView: React.FC<PublicOfferViewProps> = ({ params }) => {
         : t('ESTIMATE_NO_LONGER_AVAILABLE');
 
     return (
-      <FullPageMessage>
-        <ErrorTitle>{title}</ErrorTitle>
-        <ErrorSubtitle>{title}</ErrorSubtitle>
-      </FullPageMessage>
+      <div className={styles.fullPageMessage}>
+        <h1 className={styles.errorTitle}>{title}</h1>
+        <p className={styles.errorSubtitle}>{title}</p>
+      </div>
     );
   }
 
@@ -161,70 +141,62 @@ export const PublicOfferView: React.FC<PublicOfferViewProps> = ({ params }) => {
   const { offer, vendor } = data;
 
   return (
-    <PageContainer>
-      <PublicHeader>
-        <LogoArea>
-          <Link href={AppRoute.HOME} style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+    <div className={styles.pageContainer}>
+      <header className={styles.publicHeader}>
+        <div className={styles.logoArea}>
+          <Link href={AppRoute.HOME} className={styles.logoLink}>
             <LogoIcon />
             <BetaBadge size='sm' />
           </Link>
-        </LogoArea>
+        </div>
         {isAuthenticated && (
           <Link href={AppRoute.DASHBOARD}>
-            <Button type='default' style={{ fontWeight: 600 }}>
+            <Button type='default' className={styles.dashboardButton}>
               {t('DASHBOARD')}
             </Button>
           </Link>
         )}
-      </PublicHeader>
+      </header>
 
       {viewerRole === 'vendor-other' && (
-        <InfoBar>
-          <InfoBarText>{t('SHARED_ESTIMATE_FROM', vendor?.name || '')}</InfoBarText>
-        </InfoBar>
+        <div className={styles.infoBar}>
+          <span className={styles.infoBarText}>{t('SHARED_ESTIMATE_FROM', vendor?.name || '')}</span>
+        </div>
       )}
 
-      <MainContent>
+      <main className={styles.mainContent}>
         {viewerRole === 'guest' && (
-          <GuestBanner>
-            <BannerText>{t('SIGN_UP_TO_SAVE_ESTIMATE')}</BannerText>
-            <BannerActions>
-              <Button
-                type='primary'
-                onClick={handleSignUp}
-                style={{
-                  height: 36,
-                  padding: '8px 26px',
-                  borderRadius: 4,
-                  fontWeight: 600,
-                  fontSize: 15,
-                }}
-              >
+          <div className={styles.guestBanner}>
+            <span className={styles.bannerText}>{t('SIGN_UP_TO_SAVE_ESTIMATE')}</span>
+            <div className={styles.bannerActions}>
+              <Button type='primary' onClick={handleSignUp} className={styles.signUpButton}>
                 {t('SIGN_UP_FREE')}
               </Button>
-              <LoginLink href={`${AppRoute.AUTH}?redirect=/public/${token}`}>{t('LOG_IN')}</LoginLink>
-            </BannerActions>
-          </GuestBanner>
+              <a className={styles.loginLink} href={`${AppRoute.AUTH}?redirect=/public/${token}`}>
+                {t('LOG_IN')}
+              </a>
+            </div>
+          </div>
         )}
 
         {viewerRole === 'vendor-author' && (
-          <AuthorBanner>
-            <AuthorBannerText>{t('THIS_IS_YOUR_ESTIMATE')}</AuthorBannerText>
-            <EditLink href={offer.projectId ? AppRoute.DASHBOARD_PROJECT_ESTIMATION(offer.projectId) : '#'}>
+          <div className={styles.authorBanner}>
+            <span className={styles.authorBannerText}>{t('THIS_IS_YOUR_ESTIMATE')}</span>
+            <a
+              className={styles.editLink}
+              href={offer.projectId ? AppRoute.DASHBOARD_PROJECT_ESTIMATION(offer.projectId) : '#'}
+            >
               {t('EDIT_IN_DASHBOARD')}
-            </EditLink>
-          </AuthorBanner>
+            </a>
+          </div>
         )}
 
         {viewerRole === 'client' && (
-          <ClientPanel>
-            <ClientLabel>{t('ADD_TO_BRIEF')}</ClientLabel>
+          <div className={styles.clientPanel}>
+            <span className={styles.clientLabel}>{t('ADD_TO_BRIEF')}</span>
             <Select
               placeholder={t('SELECT_OPTION')}
-              style={{
-                width: 300,
-                height: 40,
-              }}
+              className={styles.clientBriefSelect}
               onChange={(value) => setSelectedBriefId(value)}
               value={selectedBriefId}
               options={briefOptions}
@@ -234,50 +206,37 @@ export const PublicOfferView: React.FC<PublicOfferViewProps> = ({ params }) => {
               onClick={handleAddToBrief}
               loading={isLinking}
               disabled={!selectedBriefId || addedBriefId === selectedBriefId}
-              style={{
-                height: 40,
-                padding: '8px 26px',
-                borderRadius: 4,
-                fontWeight: 600,
-                fontSize: 14,
-              }}
+              className={styles.clientAddButton}
             >
               {addedBriefId === selectedBriefId ? t('ADDED') : t('ADD')}
             </Button>
-          </ClientPanel>
+          </div>
         )}
 
-        <OfferTableWrapper>
+        <div className={styles.offerTableWrapper}>
           {exportError ? (
-            <div
-              style={{
-                padding: '40px',
-                textAlign: 'center',
-                fontFamily: "'Montserrat', sans-serif",
-                fontSize: 14,
-                color: '#99A1B7',
-              }}
-            >
-              {t('FAILED_TO_LOAD_ESTIMATE')}
-            </div>
+            <div className={styles.offerTableError}>{t('FAILED_TO_LOAD_ESTIMATE')}</div>
           ) : isExportLoading || !exportData ? (
-            <div style={{ padding: '40px' }}>
+            <div className={styles.offerTableInner}>
               <Skeleton active paragraph={{ rows: 12 }} />
             </div>
           ) : (
-            <div style={{ padding: '40px' }}>
+            <div className={styles.offerTableInner}>
               <CoverPage data={exportData} />
-              <div style={{ height: 32 }} />
+              <div className={styles.offerTableSpacer} />
               <TopSheet data={exportData} />
-              <div style={{ height: 32 }} />
+              <div className={styles.offerTableSpacer} />
               <AssumptionsPage data={exportData} />
               <BudgetDetail data={exportData} />
             </div>
           )}
-        </OfferTableWrapper>
-      </MainContent>
-      <div style={{ height: BETA_FOOTER_HEIGHT }} />
+        </div>
+      </main>
+      <div
+        className={styles.footerSpacer}
+        style={{ '--beta-footer-height': `${BETA_FOOTER_HEIGHT}px` } as React.CSSProperties}
+      />
       <BetaFooter />
-    </PageContainer>
+    </div>
   );
 };

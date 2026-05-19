@@ -56,7 +56,6 @@
     "react-redux": "^9.2.0",
     "react-tiny-popover": "^8.0.4",
     "react-world-flags": "^1.6.0",
-    "styled-components": "^6.1.13",
     "tinymce": "^8.3.2",
     "uuid": "^11.1.0",
     "zod": "^3.23.8"

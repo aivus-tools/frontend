@@ -3,7 +3,7 @@
 import { useEffect, useRef } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import { App } from 'antd';
-import Spinner from '@/components/Spinner';
+import { PageSpinner } from '@/components/PageSpinner';
 import {
   useClaimPublicBriefMutation,
   getPublicBriefToken,
@@ -37,7 +37,7 @@ const BriefClaimPage = () => {
       .unwrap()
       .then(() => {
         removePublicBriefToken(params.briefId);
-        router.replace(AppRoute.BRIEF_V2_DETAIL(params.briefId));
+        router.replace(AppRoute.BRIEF_DETAIL(params.briefId));
       })
       .catch((error) => {
         logger.error('Failed to claim brief:', error);
@@ -46,7 +46,7 @@ const BriefClaimPage = () => {
       });
   }, [params.briefId]);
 
-  return <Spinner />;
+  return <PageSpinner />;
 };
 
 export default BriefClaimPage;

@@ -1,0 +1,137 @@
+.section {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  padding: 24px 28px;
+  margin: 16px 24px 32px;
+  font-family: Inter, sans-serif;
+  background: var(--white);
+  border-radius: 16px;
+}
+
+@media (width <= 1023px) {
+  .section {
+    padding: 20px;
+    margin: 12px 16px 24px;
+  }
+}
+
+@media (width <= 767px) {
+  .section {
+    gap: 12px;
+    padding: 16px 12px;
+    margin: 8px 8px 16px;
+    border-radius: 12px;
+  }
+}
+
+.headerTop {
+  display: flex;
+  gap: 16px;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+}
+
+@media (width <= 767px) {
+  .headerTop {
+    flex-direction: column;
+    gap: 8px;
+    align-items: flex-start;
+  }
+}
+
+.headerLogo {
+  display: flex;
+  flex-shrink: 0;
+  align-items: center;
+}
+
+.headerTitle {
+  margin: 0;
+  font-family: Roboto, sans-serif;
+  font-size: 18px;
+  font-weight: 500;
+  line-height: 24px;
+  color: var(--chat-text);
+  text-align: right;
+}
+
+@media (width <= 767px) {
+  .headerTitle {
+    font-size: 16px;
+    line-height: 22px;
+    text-align: left;
+  }
+}
+
+.headerTextBlock {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  width: 100%;
+  color: var(--main);
+}
+
+.headerHeading {
+  margin: 0;
+  font-family: Inter, sans-serif;
+  font-size: 14px;
+  font-weight: 600;
+  line-height: 20px;
+  color: var(--chat-text);
+}
+
+.headerDescription {
+  margin: 0;
+  font-family: Inter, sans-serif;
+  font-size: 13px;
+  font-weight: 400;
+  line-height: 1.5;
+  color: var(--main);
+}
+
+.headerDescription a {
+  color: var(--main);
+  text-decoration: underline;
+}
+
+.headerDescription a:hover {
+  color: var(--blue);
+}
+
+.simpleHeader {
+  margin: 0;
+  font-family: Roboto, sans-serif;
+  font-size: 18px;
+  font-weight: 500;
+  line-height: 24px;
+  color: var(--chat-text);
+}
+
+@media (width <= 767px) {
+  .simpleHeader {
+    font-size: 16px;
+    line-height: 22px;
+  }
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px;
+  width: 100%;
+}
+
+@media (width <= 1279px) {
+  .grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (width <= 767px) {
+  .grid {
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+}

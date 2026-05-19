@@ -52,7 +52,7 @@ export function EntryRow({ catalogEntry, units, onPriceChange, onUnitChange, onR
     <div className={styles.itemRow}>
       <div className={styles.itemName}>
         <span className={styles.itemNameText}>
-          <span style={{ color: '#99A1B7', marginRight: 6 }}>{catalogEntry.label}.</span>
+          <span style={{ color: 'var(--gray-light)', marginRight: 6 }}>{catalogEntry.label}.</span>
           {entry.name}
         </span>
       </div>

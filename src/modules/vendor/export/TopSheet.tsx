@@ -31,7 +31,7 @@ interface TopSheetProps {
   data: OfferExportData;
 }
 
-export const TopSheet: React.FC<TopSheetProps> = (props) => {
+export const TopSheet = (props: TopSheetProps) => {
   const groupsMap = new Map<string, SectionGroup>();
 
   for (const cat of props.data.categories) {
@@ -71,9 +71,7 @@ export const TopSheet: React.FC<TopSheetProps> = (props) => {
           <SectionTable
             title={section.name}
             items={section.children.map((x) => ({ code: x.code, label: x.name, value: x.total }))}
-            subTotals={[
-              { label: `Sub-Total ${section.name}`, value: section.subtotal },
-            ]}
+            subTotals={[{ label: `Sub-Total ${section.name}`, value: section.subtotal }]}
             fees={section.fees}
             total={{ label: `${section.name.toUpperCase()} TOTAL`, value: section.sectionTotal }}
           />
@@ -105,7 +103,7 @@ interface SectionTableProps {
   total: { label: string; value: number };
 }
 
-const SectionTable: React.FC<SectionTableProps> = (props) => {
+const SectionTable = (props: SectionTableProps) => {
   return (
     <table style={tableStyle}>
       <thead>
@@ -137,9 +135,9 @@ const SectionTable: React.FC<SectionTableProps> = (props) => {
           <tr key={x.label}>
             <td style={cellStyle} />
             <td style={cellStyle} />
-            <td style={{ ...cellStyle, color: '#99A1B7', textAlign: 'right' }}>{x.label}</td>
+            <td style={{ ...cellStyle, color: 'var(--gray-light)', textAlign: 'right' }}>{x.label}</td>
             <td style={priceCellStyle}>
-              <span style={{ marginRight: 16, color: '#99A1B7', fontSize: 12 }}>{x.percent}%</span>
+              <span style={{ marginRight: 16, color: 'var(--gray-light)', fontSize: 12 }}>{x.percent}%</span>
               {formatCurrency(x.value)}
             </td>
           </tr>
@@ -148,7 +146,9 @@ const SectionTable: React.FC<SectionTableProps> = (props) => {
           <td style={totalCellStyle} />
           <td style={totalCellStyle} />
           <td style={{ ...totalCellStyle, fontWeight: 700, textAlign: 'right' }}>{props.total.label}</td>
-          <td style={{ ...totalCellStyle, textAlign: 'right', fontWeight: 700 }}>{formatCurrency(props.total.value)}</td>
+          <td style={{ ...totalCellStyle, textAlign: 'right', fontWeight: 700 }}>
+            {formatCurrency(props.total.value)}
+          </td>
         </tr>
       </tbody>
     </table>

@@ -17,7 +17,7 @@ import {
 } from '@/store/slices/offer/selectors';
 import { useCallback } from 'react';
 import { RootState } from '@/store/store';
-import { CategorySection } from '../styled';
+import styles from '../estimation.module.css';
 
 export function Category({ category }: { category: TypeCategory }) {
   const { keys } = useExpandedKeys();
@@ -38,7 +38,7 @@ export function Category({ category }: { category: TypeCategory }) {
   );
 
   return (
-    <CategorySection>
+    <div className={styles.categorySection}>
       <Title category={category} itemKey={key} value={total} clientValue={clientTotal} />
       {isOpen && (
         <>
@@ -48,9 +48,14 @@ export function Category({ category }: { category: TypeCategory }) {
           <Entries data={offers} />
           <CategoryFees categoryId={category.id} />
           <CategoryExternalMarkup categoryId={category.id} />
-          <Total text={category.name} value={totalWithFees} clientValue={clientTotalWithFees} categoryId={category.id} />
+          <Total
+            text={category.name}
+            value={totalWithFees}
+            clientValue={clientTotalWithFees}
+            categoryId={category.id}
+          />
         </>
       )}
-    </CategorySection>
+    </div>
   );
 }

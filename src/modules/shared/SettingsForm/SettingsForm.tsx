@@ -8,7 +8,8 @@ import {
   useUpdateSettingsMutation,
   useChangePasswordMutation,
 } from '@/services/client/profileApi';
-import { SettingsFormWrapper, PageTitle, SectionTitle, SectionDivider, FieldLabel, FormSection } from './styled';
+
+import styles from './SettingsForm.module.css';
 
 interface PasswordFormValues {
   current_password: string;
@@ -51,7 +52,6 @@ export const SettingsForm = () => {
       const values = settingsForm.getFieldsValue();
       await updateSettings(values).unwrap();
       message.success(t('SETTINGS_SAVED'));
-      // Apply language change
       if (values.language && values.language !== getLocale()) {
         document.cookie = `locale=${values.language};path=/;max-age=31536000`;
         window.location.reload();
@@ -63,27 +63,27 @@ export const SettingsForm = () => {
 
   if (isLoadingSettings) {
     return (
-      <SettingsFormWrapper>
-        <Spin size='large' style={{ display: 'block', margin: '80px auto' }} />
-      </SettingsFormWrapper>
+      <div className={styles.settingsFormWrapper}>
+        <Spin size='large' className={styles.spinner} />
+      </div>
     );
   }
 
   return (
-    <SettingsFormWrapper>
-      <PageTitle>{t('SETTINGS')}</PageTitle>
+    <div className={styles.settingsFormWrapper}>
+      <h1 className={styles.pageTitle}>{t('SETTINGS')}</h1>
 
-      <SectionTitle>{t('CHANGE_PASSWORD')}</SectionTitle>
+      <h2 className={styles.sectionTitle}>{t('CHANGE_PASSWORD')}</h2>
       <Form form={passwordForm} layout='vertical' onFinish={handlePasswordSubmit}>
-        <FormSection>
-          <FieldLabel>{t('CURRENT_PASSWORD')}</FieldLabel>
+        <div className={styles.formSection}>
+          <label className={styles.fieldLabel}>{t('CURRENT_PASSWORD')}</label>
           <Form.Item name='current_password' rules={[{ required: true, message: t('PASSWORD_REQUIRED') }]}>
             <Input.Password placeholder={t('CURRENT_PASSWORD')} size='large' />
           </Form.Item>
-        </FormSection>
+        </div>
 
-        <FormSection>
-          <FieldLabel>{t('NEW_PASSWORD')}</FieldLabel>
+        <div className={styles.formSection}>
+          <label className={styles.fieldLabel}>{t('NEW_PASSWORD')}</label>
           <Form.Item
             name='new_password'
             rules={[
@@ -93,10 +93,10 @@ export const SettingsForm = () => {
           >
             <Input.Password placeholder={t('NEW_PASSWORD')} size='large' />
           </Form.Item>
-        </FormSection>
+        </div>
 
-        <FormSection>
-          <FieldLabel>{t('CONFIRM_NEW_PASSWORD')}</FieldLabel>
+        <div className={styles.formSection}>
+          <label className={styles.fieldLabel}>{t('CONFIRM_NEW_PASSWORD')}</label>
           <Form.Item
             name='confirm_password'
             dependencies={['new_password']}
@@ -114,32 +114,32 @@ export const SettingsForm = () => {
           >
             <Input.Password placeholder={t('CONFIRM_NEW_PASSWORD')} size='large' />
           </Form.Item>
-        </FormSection>
+        </div>
 
         <Button type='primary' htmlType='submit' loading={isChangingPassword} size='large'>
           {t('CHANGE_PASSWORD')}
         </Button>
       </Form>
 
-      <SectionDivider />
+      <div className={styles.sectionDivider} />
 
       <Form form={settingsForm} layout='vertical'>
-        <SectionTitle>{t('LANGUAGE')}</SectionTitle>
-        <FormSection>
+        <h2 className={styles.sectionTitle}>{t('LANGUAGE')}</h2>
+        <div className={styles.formSection}>
           <Form.Item name='language'>
             <Select size='large' style={{ width: '100%' }}>
               <Select.Option value='en'>{t('LANGUAGE_ENGLISH')}</Select.Option>
               <Select.Option value='ru'>{t('LANGUAGE_RUSSIAN')}</Select.Option>
             </Select>
           </Form.Item>
-        </FormSection>
+        </div>
 
-        <SectionDivider />
+        <div className={styles.sectionDivider} />
 
         <Button type='primary' onClick={handleSettingsSubmit} loading={isUpdatingSettings} size='large'>
           {t('SAVE_SETTINGS')}
         </Button>
       </Form>
-    </SettingsFormWrapper>
+    </div>
   );
 };

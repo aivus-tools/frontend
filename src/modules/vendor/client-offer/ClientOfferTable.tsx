@@ -2,7 +2,6 @@
 
 import React, { useMemo } from 'react';
 import { OfferData } from '@/types/estimation.interface';
-import { Table, TableHeader, HeaderCell, Content, Wrapper } from './components/styled';
 import { FileTextOutlined } from '@ant-design/icons';
 import { t } from '@/lib/i18n';
 import { useAppSelector } from '@/store/hooks';
@@ -13,60 +12,58 @@ import { Summary } from '@/modules/vendor/client-offer/components/Summary/Summar
 import { Empty } from 'antd';
 import { KEY_SEPARATOR } from '../estimation/constants';
 
-interface Props {
-    offers?: OfferData[];
+import styles from './components/components.module.css';
+
+interface ClientOfferTableProps {
+  offers?: OfferData[];
 }
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-export const ClientOfferTable = ({ offers }: Props) => {
-    const offerDetails = useAppSelector(selectOfferDetails);
-    const categories = offerDetails?.categories ?? [];
-    const subCategories = offerDetails?.subCategories ?? [];
+export const ClientOfferTable = (_props: ClientOfferTableProps) => {
+  const offerDetails = useAppSelector(selectOfferDetails);
+  const categories = offerDetails?.categories ?? [];
+  const subCategories = offerDetails?.subCategories ?? [];
 
-    const topCategories = useMemo(() =>
-        categories.filter(cat => !cat.parentCategoryId),
-        [categories]
-    );
+  const topCategories = useMemo(() => categories.filter((cat) => !cat.parentCategoryId), [categories]);
 
-    const initialKeys = useMemo(() => {
-        const catKeys = categories.map(cat => cat.id.toString());
-        const subCatKeys = subCategories
-            .filter(cat => cat.parentCategoryId)
-            .map(cat => `${cat.parentCategoryId}${KEY_SEPARATOR}${cat.id}`);
-        return [...catKeys, ...subCatKeys];
-    }, [categories, subCategories]);
+  const initialKeys = useMemo(() => {
+    const catKeys = categories.map((cat) => cat.id.toString());
+    const subCatKeys = subCategories
+      .filter((cat) => cat.parentCategoryId)
+      .map((cat) => `${cat.parentCategoryId}${KEY_SEPARATOR}${cat.id}`);
+    return [...catKeys, ...subCatKeys];
+  }, [categories, subCategories]);
 
-    if (categories.length === 0) {
-        return (
-            <Content style={{ padding: '60px', alignItems: 'center' }}>
-                <Empty description={t('EMPTY')} />
-            </Content>
-        );
-    }
-
+  if (categories.length === 0) {
     return (
-        <KeysProvider initialKeys={initialKeys}>
-            <Wrapper>
-                <Table>
-                    <TableHeader>
-                        <HeaderCell>
-                            <FileTextOutlined style={{ color: '#99A1B7', fontSize: 14 }} />
-                        </HeaderCell>
-                        <HeaderCell $align='left'>{t('ITEM')}</HeaderCell>
-                        <HeaderCell $align='right'>{t('PRICE')}</HeaderCell>
-                        <HeaderCell $align='right'>{t('UNITS')}</HeaderCell>
-                        <HeaderCell $align='center'>{t('QUANTITY')}</HeaderCell>
-                        <HeaderCell $align='center'>{t('COST')}</HeaderCell>
-                        <HeaderCell />
-                    </TableHeader>
-
-                    {topCategories.map((category) => (
-                        <Category key={category.id} category={category} />
-                    ))}
-
-                    <Summary />
-                </Table>
-            </Wrapper>
-        </KeysProvider>
+      <div className={styles.content} style={{ padding: '60px', alignItems: 'center' }}>
+        <Empty description={t('EMPTY')} />
+      </div>
     );
+  }
+
+  return (
+    <KeysProvider initialKeys={initialKeys}>
+      <div className={styles.wrapper}>
+        <div className={styles.table}>
+          <div className={styles.tableHeader}>
+            <div className={styles.headerCell}>
+              <FileTextOutlined style={{ color: 'var(--gray-light)', fontSize: 14 }} />
+            </div>
+            <div className={`${styles.headerCell} ${styles.headerCellLeft}`}>{t('ITEM')}</div>
+            <div className={`${styles.headerCell} ${styles.headerCellRight}`}>{t('PRICE')}</div>
+            <div className={`${styles.headerCell} ${styles.headerCellRight}`}>{t('UNITS')}</div>
+            <div className={styles.headerCell}>{t('QUANTITY')}</div>
+            <div className={styles.headerCell}>{t('COST')}</div>
+            <div className={styles.headerCell} />
+          </div>
+
+          {topCategories.map((category) => (
+            <Category key={category.id} category={category} />
+          ))}
+
+          <Summary />
+        </div>
+      </div>
+    </KeysProvider>
+  );
 };

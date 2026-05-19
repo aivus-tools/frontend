@@ -2,7 +2,6 @@
 
 import React, { useCallback } from 'react';
 import { useRouter } from 'next/navigation';
-import { styled } from 'styled-components';
 import { Theme } from '@/types/index.interface';
 import { AppRoute } from '@/constants/appRoute';
 import { UploadOutlined, LoadingOutlined } from '@ant-design/icons';
@@ -11,59 +10,21 @@ import { t } from '@/lib/i18n';
 import { useUploadXlsxMutation } from '@/services/client/xlsxApi';
 import type { UploadRequestOption } from 'rc-upload/lib/interface';
 import { ClientHomeLogo } from '../ClientHomeLogo/ClientHomeLogo';
+import { ClientNavbar } from '../ClientNavbar/ClientNavbar';
 
-const SidebarContent = styled.div`
-  padding: 16px 20px;
-  color: #ffffff;
-`;
+import styles from './ClientSidebar.module.css';
 
-const UploadArea = styled.div`
-  margin-top: auto;
-  padding: 20px;
-  position: absolute;
-  bottom: 20px;
-  left: 12px;
-  right: 12px;
-  border: 2px dashed rgba(255, 255, 255, 0.3);
-  border-radius: 6px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  text-align: center;
-  cursor: pointer;
-  transition: border-color 0.15s ease;
-  &:hover {
-    border-color: rgba(255, 255, 255, 0.6);
-  }
-`;
+interface ClientSidebarProps {
+  theme: Theme;
+  variant?: 'desktop' | 'mobile';
+  onNavigate?: () => void;
+}
 
-const UploadIcon = styled.div`
-  font-size: 24px;
-  color: #ffffff;
-  opacity: 0.6;
-  margin-bottom: 8px;
-`;
+const cn = (...names: Array<string | false | null | undefined>): string => names.filter(Boolean).join(' ');
 
-const UploadText = styled.div`
-  font-family: 'Montserrat', sans-serif;
-  font-weight: 600;
-  font-size: 11px;
-  color: #ffffff;
-  opacity: 0.8;
-  line-height: 1.4;
-`;
-
-const UploadHint = styled.div`
-  font-family: 'Montserrat', sans-serif;
-  font-weight: 400;
-  font-size: 10px;
-  color: #ffffff;
-  opacity: 0.5;
-  margin-top: 4px;
-`;
-
-export const ClientSidebar = ({ theme }: { theme: Theme }) => {
+export const ClientSidebar = (props: ClientSidebarProps) => {
+  const variant = props.variant ?? 'desktop';
+  const isMobile = variant === 'mobile';
   const router = useRouter();
   const [uploadXlsx, { isLoading: isUploading }] = useUploadXlsxMutation();
 
@@ -91,22 +52,26 @@ export const ClientSidebar = ({ theme }: { theme: Theme }) => {
       } catch {
         message.error(t('UPLOAD_FAILED'));
       }
+      props.onNavigate?.();
     },
-    [uploadXlsx, router]
+    [uploadXlsx, router, props]
   );
 
   return (
-    <div style={{ position: 'relative', height: '100%' }}>
-      <ClientHomeLogo theme={theme} />
-
-      <SidebarContent />
-
+    <div className={cn(styles.root, isMobile && styles.rootMobile)}>
+      <ClientHomeLogo theme={props.theme} />
+      {isMobile && (
+        <div className={styles.mobileNav}>
+          <ClientNavbar variant='mobile' onNavigate={props.onNavigate} />
+        </div>
+      )}
+      <div className={styles.filler} />
       <Upload accept='.xlsx' showUploadList={false} customRequest={handleUpload} disabled={isUploading}>
-        <UploadArea>
-          <UploadIcon>{isUploading ? <LoadingOutlined /> : <UploadOutlined />}</UploadIcon>
-          <UploadText>{isUploading ? t('UPLOADING') : t('UPLOAD_XLSX_TITLE')}</UploadText>
-          <UploadHint>{t('UPLOAD_XLSX_HINT')}</UploadHint>
-        </UploadArea>
+        <div className={cn(styles.uploadArea, isMobile ? styles.uploadAreaMobile : styles.uploadAreaDesktop)}>
+          <div className={styles.uploadIcon}>{isUploading ? <LoadingOutlined /> : <UploadOutlined />}</div>
+          <div className={styles.uploadText}>{isUploading ? t('UPLOADING') : t('UPLOAD_XLSX_TITLE')}</div>
+          <div className={styles.uploadHint}>{t('UPLOAD_XLSX_HINT')}</div>
+        </div>
       </Upload>
     </div>
   );

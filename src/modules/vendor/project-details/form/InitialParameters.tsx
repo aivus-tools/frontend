@@ -1,4 +1,3 @@
-import React from 'react';
 import { Form, Input, Select, Flex, Row, Col, Typography } from 'antd';
 import { Uploader } from './Uploader';
 import { LabelWithAdd } from './LabelWithAdd';
@@ -7,11 +6,12 @@ import { Person } from '@/types/brief.interface';
 import { ProjectFormData } from '@/hooks/useMutateProject';
 import { useGuidance } from '@/context/GuidanceProvider';
 import RemoveIcon from '@/icons/minus.svg';
-import { IconButton } from '../common/styled';
+import commonStyles from '../common/common.module.css';
 import { t } from '@/lib/i18n';
 import { useAppSelector } from '@/store/hooks';
 import { selectIsNewBrief } from '@/store/slices/project';
 import { useGetTemplatesQuery } from '@/services/client/templatesApi';
+import { useBreakpoint } from '@/hooks/useBreakpoint';
 
 const { TextArea } = Input;
 
@@ -27,11 +27,13 @@ interface InitialParametersProps {
   thumbnailUrl?: string | null;
 }
 
-export const InitialParameters: React.FC<InitialParametersProps> = ({ thumbnailUrl }) => {
+export const InitialParameters = (props: InitialParametersProps) => {
+  const thumbnailUrl = props.thumbnailUrl;
   const isNewProject = useAppSelector(selectIsNewBrief);
   const { handleFocus } = useGuidance();
   const form = Form.useFormInstance<ProjectFormData>();
   const { data: templates = [] } = useGetTemplatesQuery();
+  const { isMobile } = useBreakpoint();
 
   const templateOptions = templates.map((tmpl) => ({
     label: tmpl.name,
@@ -57,11 +59,11 @@ export const InitialParameters: React.FC<InitialParametersProps> = ({ thumbnailU
   return (
     <>
       {modal}
-      <Flex gap={30} style={{ width: '100%' }}>
+      <Flex gap={isMobile ? 16 : 30} style={{ width: '100%' }} vertical={isMobile}>
         <Form.Item name='previewImage' valuePropName='image' style={{ width: 'auto' }}>
           <Uploader thumbnailUrl={thumbnailUrl} />
         </Form.Item>
-        <Flex gap={20} flex={1}>
+        <Flex gap={isMobile ? 0 : 20} flex={1} vertical={isMobile}>
           <Form.Item
             name='crmId'
             label={t('CRM_ID_LINK')}
@@ -111,14 +113,12 @@ export const InitialParameters: React.FC<InitialParametersProps> = ({ thumbnailU
             return null;
           }
           const collaborators = form.getFieldValue('collaborators') || [];
-          const visibleCount = fields.filter(x => collaborators[x.name]?.role !== 'agency_producer').length;
+          const visibleCount = fields.filter((x) => collaborators[x.name]?.role !== 'agency_producer').length;
           return (
             <Row gutter={20}>
-              <Col span={12}>
+              <Col xs={24} sm={12}>
                 <Form.Item label={<LabelWithAdd text={t('COLLABORATORS')} onClick={() => showModal()} />}>
-                  {visibleCount === 0 && (
-                    <Typography.Text type='secondary'>{t('EMPTY')}</Typography.Text>
-                  )}
+                  {visibleCount === 0 && <Typography.Text type='secondary'>{t('EMPTY')}</Typography.Text>}
                   {fields.map((field) => {
                     const collaborator = collaborators[field.name];
                     if (collaborator?.role === 'agency_producer') {
@@ -135,15 +135,15 @@ export const InitialParameters: React.FC<InitialParametersProps> = ({ thumbnailU
                           {roleLabel ? <Typography.Text type='secondary'> - {roleLabel}</Typography.Text> : null}
                           {displayEmail}
                         </Typography.Text>
-                        <IconButton onClick={() => remove(field.name)}>
+                        <div className={commonStyles.iconButton} onClick={() => remove(field.name)}>
                           <RemoveIcon color={'var(--gray-light)'} />
-                        </IconButton>
+                        </div>
                       </Flex>
                     );
                   })}
                 </Form.Item>
               </Col>
-              <Col span={12}>
+              <Col xs={24} sm={12}>
                 <Typography.Text>
                   <b>{t('ADD_INTERNAL_MANAGERS')}</b> {t('INTERNAL_MANAGERS_DESCRIPTION')}
                 </Typography.Text>

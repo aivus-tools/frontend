@@ -1,0 +1,53 @@
+.headerLeftDashboard {
+  display: flex;
+  flex: 1;
+  gap: 24px;
+  align-items: center;
+  min-width: 0;
+}
+
+.desktopOnly {
+  display: contents;
+}
+
+.mobileOnly {
+  display: none;
+}
+
+.mobileSidebar {
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  height: 100%;
+  padding: 8px 12px 16px;
+}
+
+.mobileProjectTabsBar {
+  display: none;
+}
+
+@media (width <= 1023.98px) {
+  .headerLeftDashboard {
+    gap: 8px;
+  }
+
+  .desktopOnly {
+    display: none;
+  }
+
+  .mobileOnly {
+    display: contents;
+  }
+
+  .mobileProjectTabsBar {
+    position: sticky;
+    top: 0;
+    z-index: 5;
+    display: flex;
+    padding: 0 12px;
+    overflow-x: auto;
+    background: var(--white);
+    border-bottom: 1px solid var(--border-subtle);
+  }
+}

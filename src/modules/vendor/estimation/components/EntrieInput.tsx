@@ -1,7 +1,6 @@
 'use client';
 
-import { Input as LibInput } from 'antd';
-import { styled } from 'styled-components';
+import { Input } from 'antd';
 import { OfferData } from '@/types/estimation.interface';
 import { LibraryDropdown } from './LibraryDropdown/LibraryDropdown';
 import { useAppDispatch, useAppSelector } from '@/store/hooks';
@@ -11,25 +10,14 @@ import { useExpandedKeys } from '../context/expanded';
 import { KEY_SEPARATOR } from '../constants';
 import { useRateLookup } from '@/hooks/useRateLookup';
 
-const Input = styled(LibInput)`
-  &.ant-input-borderless {
-    border: 1px solid transparent;
-  }
+import styles from './EntrieInput.module.css';
 
-  &.ant-input-borderless:focus {
-    border: 1px solid var(--blue);
-  }
-`;
-
-const DropdownWrapper = styled.div`
-  width: 100%;
-`;
-interface Props {
+interface EntrieInputProps {
   value: OfferData;
   variant?: 'borderless' | 'outlined';
 }
 
-export const EntrieInput = ({ value, variant }: Props) => {
+export const EntrieInput = (props: EntrieInputProps) => {
   const dispatch = useAppDispatch();
   const allCategories = useAppSelector(selectAllCategories);
   const { addKey } = useExpandedKeys();
@@ -38,10 +26,12 @@ export const EntrieInput = ({ value, variant }: Props) => {
   const handleSelect = (offer: OfferData) => {
     const ratePrice = lookupPrice(offer.entryId);
     const offerWithRate = ratePrice !== null ? { ...offer, price: ratePrice } : offer;
-    dispatch(removeOfferRow(value.id));
+    dispatch(removeOfferRow(props.value.id));
     dispatch(addOfferRow(offerWithRate));
     const category = allCategories.find((cat) => cat.id === offer.categoryId);
-    if (!category) return;
+    if (!category) {
+      return;
+    }
     const parentCategory = allCategories.find((cat) => cat.id === category.parentCategoryId);
     if (parentCategory) {
       addKey(`${parentCategory.id}${KEY_SEPARATOR}${category.id}`);
@@ -50,15 +40,17 @@ export const EntrieInput = ({ value, variant }: Props) => {
       addKey(`${category.id}`);
     }
   };
+
   return (
-    <DropdownWrapper>
+    <div className={styles.dropdownWrapper}>
       <LibraryDropdown
-        value={value}
+        value={props.value}
         onSelect={handleSelect}
         componentAction={({ handleChange, handleBlur, handleFocus, value }) => (
           <Input
+            className={styles.input}
             placeholder={value}
-            variant={variant}
+            variant={props.variant}
             value={value}
             onChange={handleChange}
             onBlur={handleBlur}
@@ -66,6 +58,6 @@ export const EntrieInput = ({ value, variant }: Props) => {
           />
         )}
       />
-    </DropdownWrapper>
+    </div>
   );
 };

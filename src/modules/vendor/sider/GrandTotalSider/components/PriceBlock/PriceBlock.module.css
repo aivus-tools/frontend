@@ -50,11 +50,11 @@
 }
 
 .percentPositive {
-  color: #7bb420;
-  background: #f3ffe6;
+  color: var(--green-darker);
+  background: var(--bg-light-green);
 }
 
 .percentNegative {
-  color: #e74c3c;
-  background: #ffeaea;
+  color: var(--red);
+  background: var(--bg-red);
 }

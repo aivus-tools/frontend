@@ -5,7 +5,8 @@ import { LinkButton } from '../LinkButtons/LinkButtons';
 import LinkIcon from '@/icons/link-angle-icon.svg';
 import UnLinkIcon from '@/icons/unlink-icon.svg';
 import styles from './SurchargePopover.module.css';
-import { InputNumberRight, Line } from '../../styled';
+import { InputNumberRight } from '../InputNumberRight';
+import estimationStyles from '@/modules/vendor/estimation/estimation.module.css';
 import { useAppDispatch, useAppSelector } from '@/store/hooks';
 import { changeOverallSurcharge } from '@/store/slices/offer/slice';
 import { selectOverallSurcharge } from '@/store/slices/offer/selectors';
@@ -56,7 +57,7 @@ export const SurchargePopover = () => {
             ✕
           </button>
         </div>
-        <Line />
+        <div className={estimationStyles.line} />
         <div className={styles.surchargeSection}>
           <span className={styles.label}>{t('OVERALL_MARKUP')}</span>
           <Space>
@@ -71,7 +72,7 @@ export const SurchargePopover = () => {
             <LinkButton link={linked} onClickAction={toggleLink} />
           </Space>
         </div>
-        <Line />
+        <div className={estimationStyles.line} />
         <div className={styles.explanation}>
           <div className={styles.explanationItem}>
             <LinkIcon width={24} height={24} />

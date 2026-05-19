@@ -1,0 +1,11 @@
+.input:global(.ant-input-borderless) {
+  border: 1px solid transparent;
+}
+
+.input:global(.ant-input-borderless):focus {
+  border: 1px solid var(--blue);
+}
+
+.dropdownWrapper {
+  width: 100%;
+}

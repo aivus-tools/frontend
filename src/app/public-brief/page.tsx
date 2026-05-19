@@ -5,7 +5,7 @@ import { useRouter } from 'next/navigation';
 import { useSession } from 'next-auth/react';
 import { GROUPS } from '@/constants/constants';
 import { AppRoute } from '@/constants/appRoute';
-import { BriefEditorLayout } from '@/modules/client/BriefEditorV2/BriefEditorLayout';
+import { BriefEditorLayout } from '@/modules/client/BriefEditor/BriefEditorLayout';
 import { setPendingBrief } from '@/helpers/pendingBrief';
 
 export default function PublicBriefPage() {
@@ -17,7 +17,7 @@ export default function PublicBriefPage() {
       return;
     }
     if (session?.user?.group === GROUPS.client) {
-      router.replace(AppRoute.CREATE_BRIEF_V2);
+      router.replace(AppRoute.CREATE_BRIEF);
     }
   }, [sessionStatus, session?.user?.group, router]);
 

@@ -1,21 +1,10 @@
 :root {
-  --min-width: 320;
-  --max-width: 1280px;
   --font-family: 'Montserrat', 'Aria', sans-serif;
+  --aivus-header-h: 70px;
 
-  /* COLOURS */
-  --white: #fff;
-  --beige: #f9f9f9;
-  --gray-light: #a0a0a0;
-  --gray: #99a1b7;
-  --gray-dark: #3f3e3e;
-  --main: #4b5675;
-  --main-dark: #121b3e;
-  --blue: #28f;
-  --orange: #fd8258;
-  --red: #d63c22;
-  --green: #bed935;
-  --green-darker: #a5c500;
+  /* Domain colors (brief/offer status backgrounds, comparison cells).
+     These are NOT design tokens — they live here as a domain contract.
+     Do not move into themeConfig.ts. */
   --bg-blue-subtotal: #f4fbff;
   --bg-blue-subsection: #f6f9ff;
   --bg-blue-important: #e1f5ff;
@@ -25,15 +14,46 @@
   --bg-light-green: #fcfff0;
   --bg-red: #f6dcd7;
   --bg-gray-light: #e5e5e5;
-  --bg-gray-page: #f6f7f9;
-  --text-gray: #99a1b7;
-  --text-dark: #121b3e;
+  --border-subtle: #eef0f4;
+  --chat-text: #1f2937;
+  --chat-bg-bubble: #f3f5f9;
+  --purple: #7949ff;
+  --purple-dark: #6536e0;
   --compare-green: #5ce191;
   --compare-green-light: #cce25f;
   --compare-yellow: #f8d977;
   --compare-orange: #fc9b73;
   --compare-red: #de644f;
-  --box-shadow: 0 5px 16.5px -11px rgb(0 0 0 / 25%);
+
+  /* CSS aliases for antd theme tokens.
+     In TSX: use theme.useToken() (token.colorPrimary etc.).
+     In .module.css: use these var(--xxx) — they mirror themeConfig.ts values.
+     Keep these in sync with Frontend/src/lib/themeConfig.ts. */
+  --white: #fff;
+  --beige: #f9f9f9;
+  --gray-light: #6e7689;
+  --gray: #5b6478;
+  --gray-dark: #3f3e3e;
+  --main: #4b5675;
+  --main-dark: #121b3e;
+  --blue: #28f;
+  --orange: #fd8258;
+  --red: #d63c22;
+  --green: #bed935;
+  --green-darker: #a5c500;
+  --bg-gray-page: #f6f7f9;
+
+  /* Text-on-white AA-safe variants of brand colors.
+     Mirror colorPrimaryText/colorErrorText/colorSuccessText/colorWarningText.
+     Use these in .module.css for links and text where the saturated brand
+     variant would fail WCAG AA contrast. */
+  --blue-text: #0a66c2;
+  --red-text: #b8311c;
+  --green-text: #5f7300;
+  --orange-text: #a14216;
+
+  /* Sider/Drawer dark background, mirror of themeConfig colors.siderBg. */
+  --sider-bg: #121b3e;
 }
 
 * {
@@ -46,10 +66,20 @@ html,
 body {
   max-width: 100vw;
   overflow-x: hidden;
-  font-size: 13px;
+  font-size: 14px;
   font-weight: 500;
   color: var(--main);
-  background-color: var(--white);
+  background-color: #fff;
+}
+
+@media (width <= 1023.98px) {
+  .ant-layout-sider {
+    display: none !important;
+    flex: 0 0 0 !important;
+    width: 0 !important;
+    min-width: 0 !important;
+    max-width: 0 !important;
+  }
 }
 
 h2 {
@@ -134,4 +164,10 @@ button:-moz-focusring,
 ::-webkit-file-upload-button {
   font: inherit;
   appearance: button;
+}
+
+@media (width <= 1023.98px) {
+  :root {
+    --aivus-header-h: 56px;
+  }
 }

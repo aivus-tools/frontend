@@ -1,46 +1,49 @@
 'use client';
 
-import { useExpandedKeys } from '../../context/expanded';
+import { useExpandedKeys } from '@/modules/vendor/estimation/context/expanded';
 import { RowLine } from '../RowLine';
 import { ArrowButton } from '../Title/ArrowButton';
 import { Flex } from 'antd';
-import { SectionSubTitle, SectionSubTitleText, SectionSubTitleSumHeader } from '../Title/styled';
 
-interface Props {
+import styles from './title.module.css';
+
+interface SubTitleProps {
   text: string;
   itemKey: string;
   value: string;
   clientValue: string;
 }
 
-export const SubTitle = ({ text, itemKey, value, clientValue }: Props) => {
+export const SubTitle = (props: SubTitleProps) => {
   const { keys, switchKey } = useExpandedKeys();
-  const isOpen = !!keys?.includes(itemKey);
-  const handleClick = () => switchKey(itemKey);
+  const isOpen = !!keys?.includes(props.itemKey);
+  const handleClick = () => switchKey(props.itemKey);
 
   return (
     <>
       <div style={{ backgroundColor: 'var(--white)' }} />
-      <SectionSubTitle style={{ gridColumn: isOpen ? 'span 6' : 'span 4' }}>
+      <div className={styles.sectionSubTitle} style={{ gridColumn: isOpen ? 'span 6' : 'span 4' }}>
         <Flex align='center' onClick={handleClick} style={{ cursor: 'pointer' }}>
           <ArrowButton isOpen={isOpen} />
-          <SectionSubTitleText>{text}</SectionSubTitleText>
+          <div className={styles.sectionSubTitleText}>{props.text}</div>
         </Flex>
-      </SectionSubTitle>
+      </div>
       {!isOpen && (
         <>
-          <SectionSubTitleSumHeader>{value}</SectionSubTitleSumHeader>
+          <div className={styles.sectionSubTitleSumHeader}>{props.value}</div>
           <div style={{ backgroundColor: 'var(--white)', borderRadius: '0 6px 6px 0' }} />
         </>
       )}
       <div />
       {!isOpen ? (
         <>
-          <SectionSubTitleSumHeader style={{ gridColumn: 'span 4' }}>{clientValue}</SectionSubTitleSumHeader>
+          <div className={styles.sectionSubTitleSumHeader} style={{ gridColumn: 'span 4' }}>
+            {props.clientValue}
+          </div>
           <div style={{ backgroundColor: 'var(--white)' }} />
         </>
       ) : (
-        <SectionSubTitle style={{ gridColumn: 'span 5' }} />
+        <div className={styles.sectionSubTitle} style={{ gridColumn: 'span 5' }} />
       )}
       <RowLine />
     </>

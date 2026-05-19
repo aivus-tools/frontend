@@ -1,79 +1,104 @@
 'use client';
 import { PropsWithChildren } from 'react';
-import { Layout } from 'antd';
-import Sider from 'antd/es/layout/Sider';
-import { Logo } from './components/Logo/Logo';
-import { useLayoutTheme } from '@/hooks/useLayoutTheme';
-import { Profile } from '@/components/Profile/Profile';
-import { styled } from 'styled-components';
 import { useSelectedLayoutSegments } from 'next/navigation';
+import { AppShell, useAppShell } from '@/components/layout/AppShell';
+import { Profile } from '@/components/Profile/Profile';
+import { Logo } from './components/Logo/Logo';
 import { ProjectNavbar } from './components/ProjectNavbar/ProjectNavbar';
+import { ProjectTabs } from './components/ProjectNavbar/components/ProjectTabs/ProjectTabs';
 import { VendorNavbar } from './components/VendorNavbar/VendorNavbar';
 import { GrandTotalSider } from '@/modules/vendor/sider/GrandTotalSider/GrandTotalSider';
+import {
+  GrandTotalMobileBar,
+  GRAND_TOTAL_MOBILE_BAR_HEIGHT,
+} from '@/modules/vendor/sider/GrandTotalSider/GrandTotalMobileBar';
 import { DashboardSidebar } from '@/modules/vendor/dashboard/DashboardSidebar/DashboardSidebar';
-import { BetaFooter, BETA_FOOTER_HEIGHT } from '@/components/BetaFooter/BetaFooter';
+import { BetaFooter, useBetaFooterHeight } from '@/components/BetaFooter/BetaFooter';
 import { BetaFooterProvider, useBetaFooter } from '@/components/BetaFooter/BetaFooterContext';
+import { PageTitleSync } from '@/components/PageTitleSync';
+import { useBreakpoint } from '@/hooks/useBreakpoint';
+import { THEME } from '@/constants/constants';
 
-const { Header, Content } = Layout;
+import styles from './VendorLayout.module.css';
 
-const siderStyle: React.CSSProperties = {
-  overflow: 'auto',
-  position: 'sticky',
-  height: '100vh',
-  insetInlineStart: 0,
-  top: 0,
-  bottom: 0,
-  scrollbarWidth: 'thin',
-  scrollbarGutter: 'stable',
-};
-
-const HeaderLayout = styled(Header)`
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 16px;
-`;
-
-const ContentLayout = styled(Content)`
-  box-shadow: inset 0 5px 16.5px -11px rgb(0 0 0 / 25%);
-`;
-
-const VendorLayoutInner = ({ children }: PropsWithChildren) => {
-  const theme = useLayoutTheme();
-  const segments = useSelectedLayoutSegments();
-  const isRoot = segments.length === 1;
-  const { dismissed: footerDismissed } = useBetaFooter();
-
+const MobileSidebar = (props: { isRoot: boolean }) => {
+  const { closeDrawer } = useAppShell();
   return (
-    <Layout hasSider>
-      <Sider style={siderStyle} width={250} theme={theme}>
-        <Logo theme={theme} />
-        {isRoot ? <DashboardSidebar /> : <GrandTotalSider />}
-      </Sider>
-      <Layout>
-        <HeaderLayout style={{ padding: '0 36px' }}>
-          {isRoot ? <VendorNavbar /> : <ProjectNavbar />}
-          <Profile />
-        </HeaderLayout>
-        <ContentLayout
-          style={{
-            overflowY: 'auto',
-            maxHeight: 'calc(100vh - 70px)',
-            backgroundColor: isRoot ? undefined : 'var(--bg-gray-page)',
-            paddingBottom: footerDismissed ? 0 : BETA_FOOTER_HEIGHT,
-          }}
-        >
-          {children}
-        </ContentLayout>
-      </Layout>
-      <BetaFooter />
-    </Layout>
+    <div className={styles.mobileSidebar}>
+      <Logo theme={THEME.dark} />
+      {props.isRoot && <VendorNavbar variant='mobile' onNavigate={closeDrawer} />}
+      <DashboardSidebar />
+    </div>
   );
 };
 
-const VendorLayout = ({ children }: PropsWithChildren) => (
+const VendorLayoutInner = (props: PropsWithChildren) => {
+  const segments = useSelectedLayoutSegments();
+  const isRoot = segments.length === 1;
+  const { dismissed } = useBetaFooter();
+  const betaFooterHeight = useBetaFooterHeight();
+  const { isMobile, ready } = useBreakpoint();
+
+  const showMobileBar = ready && isMobile && !isRoot;
+  const mobileBarOffset = showMobileBar ? GRAND_TOTAL_MOBILE_BAR_HEIGHT : 0;
+
+  const siderTheme = isRoot ? THEME.dark : THEME.light;
+  const siderBody = isRoot ? <DashboardSidebar /> : <GrandTotalSider />;
+
+  const headerLeft = isRoot ? (
+    <div className={styles.headerLeftDashboard}>
+      <span className={styles.desktopOnly}>
+        <VendorNavbar />
+      </span>
+    </div>
+  ) : (
+    <>
+      <span className={styles.desktopOnly}>
+        <ProjectNavbar variant='desktop' />
+      </span>
+      <span className={styles.mobileOnly}>
+        <ProjectNavbar variant='mobile' />
+      </span>
+    </>
+  );
+
+  return (
+    <>
+      <PageTitleSync />
+      <AppShell
+        sider={
+          <>
+            <Logo theme={siderTheme} />
+            {siderBody}
+          </>
+        }
+        drawer={<MobileSidebar isRoot={isRoot} />}
+        siderTheme={siderTheme}
+        headerLeft={headerLeft}
+        headerRight={<Profile />}
+        contentBackground={isRoot ? undefined : 'var(--bg-gray-page)'}
+        contentPaddingBottom={(dismissed ? 0 : betaFooterHeight) + mobileBarOffset}
+        footer={
+          <>
+            <BetaFooter />
+            {!isRoot && <GrandTotalMobileBar />}
+          </>
+        }
+      >
+        {!isRoot && (
+          <div className={styles.mobileProjectTabsBar}>
+            <ProjectTabs fullWidth />
+          </div>
+        )}
+        {props.children}
+      </AppShell>
+    </>
+  );
+};
+
+const VendorLayout = (props: PropsWithChildren) => (
   <BetaFooterProvider>
-    <VendorLayoutInner>{children}</VendorLayoutInner>
+    <VendorLayoutInner>{props.children}</VendorLayoutInner>
   </BetaFooterProvider>
 );
 

@@ -2,27 +2,25 @@
 
 import React, { Fragment } from 'react';
 import { EntryRow } from './EntryRow';
-import { EntryRowLine } from './styled';
 
-interface Props {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    data: any[];
+import styles from './components.module.css';
+
+interface EntriesProps {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  data: any[];
 }
 
-export function Entries({ data }: Props) {
-    return (
-        <>
-            {data.map((offer, index) => (
-                <Fragment key={offer.id}>
-                    <EntryRow
-                        offer={offer}
-                        isEven={index % 2 === 0}
-                    />
-                    <div style={{ background: '#fff' }} />
-                    <EntryRowLine />
-                    <div style={{ background: '#fff' }} />
-                </Fragment>
-            ))}
-        </>
-    );
-}
+export const Entries = (props: EntriesProps) => {
+  return (
+    <>
+      {props.data.map((offer, index) => (
+        <Fragment key={offer.id}>
+          <EntryRow offer={offer} isEven={index % 2 === 0} />
+          <div className={styles.entryRowSpacerStart} />
+          <div className={styles.entryRowLine} />
+          <div className={styles.entryRowSpacerEnd} />
+        </Fragment>
+      ))}
+    </>
+  );
+};

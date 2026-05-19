@@ -1,0 +1,36 @@
+.wrapper {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  justify-content: space-between;
+  padding-right: 40px;
+  background-color: var(--bg-blue-important);
+}
+
+.label {
+  padding: 16px 0;
+  font-size: 14px;
+  font-weight: 600;
+  line-height: 17.07px;
+  text-align: right;
+  text-transform: uppercase;
+  letter-spacing: 0;
+  border-radius: 0 0 0 6px;
+}
+
+.totalSum {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  min-width: 90px;
+  padding: 16px 0;
+  font-size: 16px;
+  font-weight: 600;
+  line-height: 19.5px;
+  color: var(--blue);
+}
+
+.emptyBlock {
+  background-color: var(--bg-blue-important);
+  border-radius: 0 0 6px 6px;
+}

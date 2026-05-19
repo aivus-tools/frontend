@@ -3,7 +3,7 @@ import { Button, Flex, message, Typography } from 'antd';
 
 import { useSearchParams } from 'next/navigation';
 import logger from '@/lib/logger';
-import Spinner from '@/components/Spinner';
+import { PageSpinner } from '@/components/PageSpinner';
 import { useSession } from 'next-auth/react';
 import { GROUPS } from '@/constants/constants';
 import { logout } from '@/auth/actions/logout';
@@ -67,7 +67,7 @@ export const Confirm = () => {
 
   const render = () => {
     if (isLoading || group !== GROUPS.unconfirmed) {
-      return <Spinner />;
+      return <PageSpinner />;
     }
     return (
       <Flex align='center' justify='center' vertical gap={16} style={{ height: '100vh', width: '100%' }}>

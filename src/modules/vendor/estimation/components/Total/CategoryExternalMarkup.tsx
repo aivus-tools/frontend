@@ -2,61 +2,25 @@
 
 import React, { useState, useCallback } from 'react';
 import { Flex, Switch, Input, InputNumber } from 'antd';
-import { styled } from 'styled-components';
 import { useAppSelector, useAppDispatch } from '@/store/hooks';
-import { selectCategoryExternalMarkup, selectCategoryFees, selectIsExternal , FeeRow } from '@/store/slices/offer/selectors';
+import {
+  selectCategoryExternalMarkup,
+  selectCategoryFees,
+  selectIsExternal,
+  FeeRow,
+} from '@/store/slices/offer/selectors';
 import { setCategoryExternalMarkup } from '@/store/slices/offer/slice';
 import { formatCurrency } from '@/lib/utils';
 import { RootState } from '@/store/store';
-import { percentFormat, percentParser } from '../../helpers/format';
+import { percentFormat, percentParser } from '@/modules/vendor/estimation/helpers/format';
 
-const MarkupLabel = styled.div`
-  display: flex;
-  justify-content: flex-end;
-  align-items: center;
-  background-color: var(--white);
-  padding: 4px 0;
-  padding-right: 40px;
-  gap: 8px;
-  font-weight: 500;
-  font-size: 12px;
-  color: #99a1b7;
-`;
-
-const MarkupValue = styled.div`
-  font-weight: 500;
-  font-size: 12px;
-  color: #99a1b7;
-  display: flex;
-  align-items: center;
-  justify-content: flex-end;
-  min-width: 90px;
-`;
-
-const EmptyCell = styled.div`
-  background-color: var(--white);
-`;
-
-const SwitchCell = styled.div`
-  background-color: var(--white);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-`;
-
-const EditableName = styled.span`
-  cursor: pointer;
-  &:hover {
-    text-decoration: underline;
-    text-decoration-style: dashed;
-  }
-`;
+import styles from './CategoryExternalMarkup.module.css';
 
 interface CategoryExternalMarkupProps {
   categoryId: string;
 }
 
-export const CategoryExternalMarkup: React.FC<CategoryExternalMarkupProps> = (props) => {
+export const CategoryExternalMarkup = (props: CategoryExternalMarkupProps) => {
   const dispatch = useAppDispatch();
   const markup = useAppSelector(
     useCallback((state: RootState) => selectCategoryExternalMarkup(state, props.categoryId), [props.categoryId])
@@ -98,34 +62,34 @@ export const CategoryExternalMarkup: React.FC<CategoryExternalMarkupProps> = (pr
     }
   };
 
-  const handleNameKeyDown = (e: React.KeyboardEvent) => {
-    if (e.key === 'Enter') {
+  const handleNameKeyDown = (event: React.KeyboardEvent) => {
+    if (event.key === 'Enter') {
       handleFinishEditName();
-    } else if (e.key === 'Escape') {
+    } else if (event.key === 'Escape') {
       setEditingName(false);
     }
   };
 
   return (
     <>
-      <EmptyCell />
-      <MarkupLabel style={{ gridColumn: 'span 6' }}>
+      <div className={styles.emptyCell} />
+      <div className={styles.markupLabel} style={{ gridColumn: 'span 6' }}>
         <Flex align='center' justify='end' gap={8}>
           <Switch size='small' checked={markup.enabled} onClick={handleToggle} />
           {editingName ? (
             <Input
               size='small'
               value={nameValue}
-              onChange={e => setNameValue(e.target.value)}
+              onChange={(event) => setNameValue(event.target.value)}
               onBlur={handleFinishEditName}
               onKeyDown={handleNameKeyDown}
               autoFocus
               style={{ fontSize: 12, width: 160 }}
             />
           ) : (
-            <EditableName onClick={handleStartEditName}>
+            <span className={styles.editableName} onClick={handleStartEditName}>
               {markup.name || 'Markup'}
-            </EditableName>
+            </span>
           )}
         </Flex>
         <Flex align='center'>
@@ -139,21 +103,14 @@ export const CategoryExternalMarkup: React.FC<CategoryExternalMarkupProps> = (pr
             disabled={!markup.enabled}
             style={{ width: 70, fontSize: 12 }}
           />
-          <MarkupValue>
-            {markup.enabled ? formatCurrency(extFee?.vendorAmount ?? 0) : '-'}
-          </MarkupValue>
+          <div className={styles.markupValue}>{markup.enabled ? formatCurrency(extFee?.vendorAmount ?? 0) : '-'}</div>
         </Flex>
-      </MarkupLabel>
+      </div>
       <div />
-      <Flex
-        justify='flex-end'
-        style={{ gridColumn: 'span 4', backgroundColor: 'var(--white)' }}
-      >
-        <MarkupValue>
-          {markup.enabled ? formatCurrency(clientAmount) : '-'}
-        </MarkupValue>
+      <Flex justify='flex-end' style={{ gridColumn: 'span 4', backgroundColor: 'var(--white)' }}>
+        <div className={styles.markupValue}>{markup.enabled ? formatCurrency(clientAmount) : '-'}</div>
       </Flex>
-      <EmptyCell style={{ gridColumn: 'span 1' }} />
+      <div className={styles.emptyCell} style={{ gridColumn: 'span 1' }} />
     </>
   );
 };

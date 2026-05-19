@@ -1,9 +1,8 @@
-import React from 'react';
 import { Form, Input, Flex, InputNumber, Typography } from 'antd';
 import { ExtraMaterials } from './ExtraMaterials';
 import { LabelWithAdd } from './LabelWithAdd';
 import RemoveIcon from '@/icons/minus.svg';
-import { IconButton, AntdListWrapper } from '../common/styled';
+import commonStyles from '../common/common.module.css';
 import { LabelWithSide } from './LabelWithButton';
 
 import EyeCrossed from '@/icons/eye-crossed.svg';
@@ -11,13 +10,15 @@ import Eye from '@/icons/eye.svg';
 import { Details } from '@/types/brief.interface';
 import { useGuidance } from '@/context/GuidanceProvider';
 import { t } from '@/lib/i18n';
+import { useBreakpoint } from '@/hooks/useBreakpoint';
 
 const { TextArea } = Input;
 
-export const Brief: React.FC = () => {
+export const Brief = () => {
   const form = Form.useFormInstance<Details>();
   const visibleForVendors = Form.useWatch('visibleForVendors', form);
   const { handleFocus } = useGuidance();
+  const { isMobile } = useBreakpoint();
 
   return (
     <>
@@ -28,7 +29,7 @@ export const Brief: React.FC = () => {
           placeholder={t('PROJECT_DESCRIPTION_PLACEHOLDER')}
         />
       </Form.Item>
-      <AntdListWrapper>
+      <div className={commonStyles.antdListWrapper}>
         <Form.List name='referenceVideos'>
           {(fields, { add, remove }) => (
             <Form.Item
@@ -37,7 +38,7 @@ export const Brief: React.FC = () => {
               rules={[{ required: true, message: t('AT_LEAST_ONE_REFERENCE_VIDEO_REQUIRED') }]}
             >
               {fields.map((field) => (
-                <Flex gap={20} key={field.key}>
+                <Flex gap={isMobile ? 12 : 20} key={field.key} vertical={isMobile}>
                   <Form.Item
                     noStyle
                     name={[field.name, 'url']}
@@ -49,21 +50,22 @@ export const Brief: React.FC = () => {
                     <Input placeholder={t('COMMENT')} onFocus={handleFocus('referenceVideos')} />
                   </Form.Item>
                   <Form.Item noStyle>
-                    <IconButton
+                    <div
+                      className={commonStyles.iconButton}
                       onClick={() => {
                         if (fields.length > 1) remove(field.name);
                       }}
                     >
                       <RemoveIcon color={'var(--gray-light)'} />
-                    </IconButton>
+                    </div>
                   </Form.Item>
                 </Flex>
               ))}
             </Form.Item>
           )}
         </Form.List>
-      </AntdListWrapper>
-      <Flex gap={20}>
+      </div>
+      <Flex gap={isMobile ? 12 : 20} vertical={isMobile}>
         <Form.Item
           name='budget'
           className='budget'

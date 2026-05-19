@@ -1,0 +1,119 @@
+.sidebarContainer {
+  display: flex;
+  flex-direction: column;
+  padding: 16px 12px;
+  font-family: Montserrat, sans-serif;
+  color: var(--white);
+}
+
+.searchBar {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  padding: 8px 12px;
+  margin-bottom: 16px;
+  background: rgb(255 255 255 / 8%);
+  border-radius: 6px;
+}
+
+.searchInput {
+  flex: 1;
+  font-family: Montserrat, sans-serif;
+  font-size: 13px;
+  font-weight: 500;
+  color: rgb(255 255 255 / 65%);
+  background: transparent;
+  border: 0;
+  outline: 0;
+}
+
+.searchInput::placeholder {
+  color: rgb(255 255 255 / 35%);
+}
+
+.searchIcon {
+  display: flex;
+  align-items: center;
+  font-size: 14px;
+  color: rgb(255 255 255 / 35%);
+}
+
+.filterIcon {
+  display: flex;
+  align-items: center;
+  font-size: 14px;
+  color: rgb(255 255 255 / 35%);
+  cursor: pointer;
+}
+
+.filterIcon:hover {
+  color: rgb(255 255 255 / 65%);
+}
+
+.separator {
+  margin: 12px 0;
+  border-top: 1px dashed rgb(255 255 255 / 15%);
+}
+
+.sectionLabel {
+  padding: 8px 12px 4px;
+  font-size: 10px;
+  font-weight: 600;
+  color: rgb(255 255 255 / 40%);
+  text-transform: uppercase;
+  letter-spacing: 0.8px;
+}
+
+.sidebarItem {
+  position: relative;
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  padding: 9px 12px;
+  font-size: 13px;
+  font-weight: 500;
+  color: rgb(255 255 255 / 75%);
+  cursor: pointer;
+  border-radius: 6px;
+  transition:
+    background 0.15s ease,
+    color 0.15s ease;
+}
+
+.sidebarItem:hover {
+  color: var(--white);
+  background: rgb(255 255 255 / 6%);
+}
+
+.sidebarItemActive {
+  font-weight: 600;
+  color: var(--white);
+  background: rgb(255 255 255 / 10%);
+}
+
+.sidebarItemActive::before {
+  position: absolute;
+  top: 6px;
+  bottom: 6px;
+  left: 0;
+  width: 3px;
+  content: '';
+  background: var(--blue);
+  border-radius: 0 2px 2px 0;
+}
+
+.itemIcon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 16px;
+  font-size: 14px;
+  opacity: 0.7;
+}
+
+.itemCount {
+  margin-left: auto;
+  font-size: 11px;
+  font-weight: 500;
+  color: rgb(255 255 255 / 35%);
+}

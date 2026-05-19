@@ -17,8 +17,6 @@ export const ApiPathname = {
 } as const;
 
 export const ApiRoute = {
-  BRIEF: (id: string | number) => `/service/briefs/${id}`,
-  BRIEF_LIST: `/service/briefs`,
   CATEGORY: (id: string | number) => `/service/categories/${id}`,
   CATEGORY_LIST: `/service/categories`,
   CHANGE_ROLE: (id: number | string) => `/service/users/${id}/change-group`,

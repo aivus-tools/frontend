@@ -13,30 +13,29 @@ import {
   useDeleteOfferMutation,
   useUpdateOfferMutation,
   useUpdateOfferStatusMutation,
- offersApi } from '@/services/client/offersApi';
+  offersApi,
+} from '@/services/client/offersApi';
 import { useGetTemplatesQuery, useApplyTemplateMutation } from '@/services/client/templatesApi';
 import { useAppDispatch, useAppSelector } from '@/store/hooks';
 import { selectProjectId } from '@/store/slices/project';
 import { selectOfferMetaData } from '@/store/slices/offer/selectors';
 import { setMetaData } from '@/store/slices/offer/slice';
-import {
-  TabsContainer,
-  ActiveTab,
-  InactiveTab,
-  StatusBadge,
-  MoreButton,
-  TabWrapper,
-  NewOfferTab,
-  RenameInput,
-  DropdownContainer,
-  DropdownOption,
-  DropdownDivider,
-  DropdownLabel,
-} from './styled';
+
+import styles from './OfferTabs.module.css';
 
 const MAX_OFFERS = 10;
 
-export const OfferTabs: React.FC = () => {
+const statusClassName = (status: string): string => {
+  if (status === 'PUBLISHED') {
+    return styles.statusPublished;
+  }
+  if (status === 'ARCHIVED') {
+    return styles.statusArchived;
+  }
+  return styles.statusDraft;
+};
+
+export const OfferTabs = () => {
   const router = useRouter();
   const searchParams = useSearchParams();
   const dispatch = useAppDispatch();
@@ -63,7 +62,6 @@ export const OfferTabs: React.FC = () => {
 
   const activeOfferId = searchParams.get('offer') || offers[0]?.id;
 
-  // Don't render tabs if no offers yet
   if (offers.length === 0) {
     return null;
   }
@@ -75,7 +73,9 @@ export const OfferTabs: React.FC = () => {
   };
 
   const handleNewBlank = async () => {
-    if (!projectId) return;
+    if (!projectId) {
+      return;
+    }
     setDropdownOpen(false);
     try {
       const today = new Date().toISOString().split('T')[0];
@@ -117,11 +117,12 @@ export const OfferTabs: React.FC = () => {
   };
 
   const handleNewFromTemplate = async (templateId: string) => {
-    if (!projectId) return;
+    if (!projectId) {
+      return;
+    }
     setDropdownOpen(false);
     try {
       const newOffer = await applyTemplate({ templateId, projectId }).unwrap();
-      // Cross-invalidate offersApi since templatesApi can't do it via tags
       dispatch(offersApi.util.invalidateTags(['Offer']));
       handleTabClick(newOffer.id);
     } catch {
@@ -131,10 +132,8 @@ export const OfferTabs: React.FC = () => {
 
   const handleDelete = async (offerId: string) => {
     try {
-      // Compute remaining before the delete to avoid stale cache issues
-      const remaining = offers.filter((o) => o.id !== offerId);
+      const remaining = offers.filter((x) => x.id !== offerId);
       await deleteOffer(offerId).unwrap();
-      // If deleted the active tab, switch to first remaining
       if (offerId === activeOfferId && remaining.length > 0) {
         handleTabClick(remaining[0].id);
       }
@@ -155,10 +154,10 @@ export const OfferTabs: React.FC = () => {
     setRenamingId(null);
   };
 
-  const handleRenameKeyDown = (e: React.KeyboardEvent) => {
-    if (e.key === 'Enter') {
+  const handleRenameKeyDown = (event: React.KeyboardEvent) => {
+    if (event.key === 'Enter') {
       handleRenameSubmit();
-    } else if (e.key === 'Escape') {
+    } else if (event.key === 'Escape') {
       setRenamingId(null);
     }
   };
@@ -178,26 +177,29 @@ export const OfferTabs: React.FC = () => {
   const isMaxOffers = offers.length >= MAX_OFFERS;
 
   return (
-    <TabsContainer>
+    <div className={styles.tabsContainer}>
       {offers.map((offer) => {
         const isActive = offer.id === activeOfferId;
-        const TabComponent = isActive ? ActiveTab : InactiveTab;
+        const tabClassName = `${styles.tab} ${isActive ? styles.activeTab : styles.inactiveTab}`;
 
         return (
-          <TabWrapper key={offer.id}>
-            <TabComponent
+          <div className={styles.tabWrapper} key={offer.id}>
+            <button
+              type='button'
+              className={tabClassName}
               onClick={() => handleTabClick(offer.id)}
               onDoubleClick={() => handleDoubleClick(offer)}
             >
               {renamingId === offer.id ? (
-                <RenameInput
+                <input
                   ref={renameInputRef}
+                  className={styles.renameInput}
                   value={renameValue}
-                  onChange={(e) => setRenameValue(e.target.value)}
+                  onChange={(event) => setRenameValue(event.target.value)}
                   onBlur={handleRenameSubmit}
                   onKeyDown={handleRenameKeyDown}
                   autoFocus
-                  onClick={(e) => e.stopPropagation()}
+                  onClick={(event) => event.stopPropagation()}
                 />
               ) : (
                 <>
@@ -205,110 +207,113 @@ export const OfferTabs: React.FC = () => {
                   <Popover
                     open={statusPopoverId === offer.id}
                     onOpenChange={(open) => setStatusPopoverId(open ? offer.id : null)}
-                    trigger="click"
-                    placement="bottom"
+                    trigger='click'
+                    placement='bottom'
                     content={
-                      <DropdownContainer style={{ minWidth: 140 }}>
-                        <DropdownOption
+                      <div className={`${styles.dropdownContainer} ${styles.dropdownContainerNarrow}`}>
+                        <div
+                          className={`${styles.dropdownOption} ${offer.status === 'DRAFT' ? styles.dropdownOptionActive : ''}`}
                           onClick={() => handleStatusChange(offer.id, 'DRAFT')}
-                          style={offer.status === 'DRAFT' ? { background: '#f4fbff' } : undefined}
                         >
-                          <StatusBadge $status="DRAFT">{t('STATUS_DRAFT')}</StatusBadge>
-                        </DropdownOption>
-                        <DropdownOption
+                          <span className={`${styles.statusBadge} ${statusClassName('DRAFT')}`}>
+                            {t('STATUS_DRAFT')}
+                          </span>
+                        </div>
+                        <div
+                          className={`${styles.dropdownOption} ${offer.status === 'PUBLISHED' ? styles.dropdownOptionActive : ''}`}
                           onClick={() => handleStatusChange(offer.id, 'PUBLISHED')}
-                          style={offer.status === 'PUBLISHED' ? { background: '#f4fbff' } : undefined}
                         >
-                          <StatusBadge $status="PUBLISHED">{t('STATUS_PUBLISHED')}</StatusBadge>
-                        </DropdownOption>
-                      </DropdownContainer>
+                          <span className={`${styles.statusBadge} ${statusClassName('PUBLISHED')}`}>
+                            {t('STATUS_PUBLISHED')}
+                          </span>
+                        </div>
+                      </div>
                     }
                   >
-                    <StatusBadge
-                      $status={offer.status}
-                      onClick={(e) => e.stopPropagation()}
-                      style={{ cursor: 'pointer' }}
+                    <span
+                      className={`${styles.statusBadge} ${statusClassName(offer.status)} ${styles.statusBadgeClickable}`}
+                      onClick={(event) => event.stopPropagation()}
                     >
                       {offer.status === 'PUBLISHED' ? t('STATUS_PUBLISHED') : t('STATUS_DRAFT')}
-                    </StatusBadge>
+                    </span>
                   </Popover>
                   {offers.length > 1 && (
                     <Popover
                       open={menuOpenId === offer.id}
                       onOpenChange={(open) => setMenuOpenId(open ? offer.id : null)}
-                      trigger="click"
-                      placement="bottomRight"
+                      trigger='click'
+                      placement='bottomRight'
                       content={
-                        <DropdownContainer style={{ minWidth: 140 }}>
-                          <DropdownOption
+                        <div className={`${styles.dropdownContainer} ${styles.dropdownContainerNarrow}`}>
+                          <div
+                            className={`${styles.dropdownOption} ${styles.dropdownOptionDanger}`}
                             onClick={() => {
                               setMenuOpenId(null);
                               handleDelete(offer.id);
                             }}
-                            style={{ color: '#d63c22' }}
                           >
                             <DeleteOutlined />
                             {t('DELETE')}
-                          </DropdownOption>
-                        </DropdownContainer>
+                          </div>
+                        </div>
                       }
                     >
-                      <MoreButton onClick={(e) => e.stopPropagation()}>
+                      <span className={styles.moreButton} onClick={(event) => event.stopPropagation()}>
                         <EllipsisOutlined />
-                      </MoreButton>
+                      </span>
                     </Popover>
                   )}
                 </>
               )}
-            </TabComponent>
-          </TabWrapper>
+            </button>
+          </div>
         );
       })}
 
       <Popover
         open={dropdownOpen}
         onOpenChange={setDropdownOpen}
-        trigger="click"
-        placement="bottomLeft"
+        trigger='click'
+        placement='bottomLeft'
         content={
-          <DropdownContainer>
-            <DropdownOption onClick={handleNewBlank}>
+          <div className={styles.dropdownContainer}>
+            <div className={styles.dropdownOption} onClick={handleNewBlank}>
               <FileAddOutlined />
               {t('BLANK_ESTIMATE')}
-            </DropdownOption>
+            </div>
             {offers.length > 0 && (
               <>
-                <DropdownDivider />
-                <DropdownLabel>{t('COPY_FROM_EXISTING')}</DropdownLabel>
+                <div className={styles.dropdownDivider} />
+                <div className={styles.dropdownLabel}>{t('COPY_FROM_EXISTING')}</div>
                 {offers.map((offer) => (
-                  <DropdownOption key={offer.id} onClick={() => handleCopyFrom(offer.id)}>
+                  <div key={offer.id} className={styles.dropdownOption} onClick={() => handleCopyFrom(offer.id)}>
                     <CopyOutlined />
                     {t('COPY_FROM', offer.projectName)}
-                  </DropdownOption>
+                  </div>
                 ))}
               </>
             )}
             {templates.length > 0 && (
               <>
-                <DropdownDivider />
-                <DropdownLabel>{t('FROM_TEMPLATE')}</DropdownLabel>
+                <div className={styles.dropdownDivider} />
+                <div className={styles.dropdownLabel}>{t('FROM_TEMPLATE')}</div>
                 {templates.map((tmpl) => (
-                  <DropdownOption key={tmpl.id} onClick={() => handleNewFromTemplate(tmpl.id)}>
+                  <div key={tmpl.id} className={styles.dropdownOption} onClick={() => handleNewFromTemplate(tmpl.id)}>
                     <SnippetsOutlined />
                     {tmpl.name}
-                  </DropdownOption>
+                  </div>
                 ))}
               </>
             )}
-          </DropdownContainer>
+          </div>
         }
       >
         <Tooltip title={isMaxOffers ? t('MAX_OFFERS_REACHED') : undefined}>
-          <NewOfferTab disabled={isMaxOffers}>
+          <button type='button' className={`${styles.tab} ${styles.newOfferTab}`} disabled={isMaxOffers}>
             {t('NEW_OFFER')}
-          </NewOfferTab>
+          </button>
         </Tooltip>
       </Popover>
-    </TabsContainer>
+    </div>
   );
 };

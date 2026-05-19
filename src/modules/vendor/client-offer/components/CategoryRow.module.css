@@ -1,0 +1,14 @@
+.wrapper {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  padding: 12px 0;
+  border-bottom: 1px solid var(--bg-gray-light);
+}
+
+.name {
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--main);
+  text-transform: uppercase;
+}

@@ -1,7 +1,6 @@
 import type { TypedStartListening } from '@reduxjs/toolkit';
 import { configureStore } from '@reduxjs/toolkit';
 import { rootReducer } from '@/store/rootReducer';
-import { briefApi } from '@/services/client/briefApi';
 import { categoriesApi } from '@/services/client/categoriesApi';
 import { ratesApi } from '@/services/client/ratesApi';
 import { offersApi } from '@/services/client/offersApi';
@@ -24,7 +23,6 @@ export const makeStore = () => {
     reducer: rootReducer,
     middleware: (getDefaultMiddleware) =>
       getDefaultMiddleware().concat(
-        briefApi.middleware,
         userApi.middleware,
         categoriesApi.middleware,
         ratesApi.middleware,

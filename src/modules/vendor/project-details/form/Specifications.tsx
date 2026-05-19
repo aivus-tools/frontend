@@ -1,18 +1,20 @@
-import React, { useEffect } from 'react';
+import { useEffect } from 'react';
 import { Form, Input, Flex, Select } from 'antd';
-import { AntdListWrapper, IconButton } from '../common/styled';
+import commonStyles from '../common/common.module.css';
 import { LabelWithAdd } from './LabelWithAdd';
 import RemoveIcon from '@/icons/minus.svg';
 import CrossIcon from '@/icons/cross.svg';
 import { useGuidance } from '@/context/GuidanceProvider';
 import { getLocale, t } from '@/lib/i18n';
+import { useBreakpoint } from '@/hooks/useBreakpoint';
 
 import i18n from 'i18n-iso-countries';
 import Flag from 'react-world-flags';
 import { Details } from '@/types/brief.interface';
 
-export const Specifications: React.FC = () => {
+export const Specifications = () => {
   const { handleFocus } = useGuidance();
+  const { isMobile } = useBreakpoint();
   const countries = i18n.getNames(getLocale(), { select: 'official' });
   const countryOptions = [
     {
@@ -49,7 +51,7 @@ export const Specifications: React.FC = () => {
       >
         <Input placeholder={t('AD_PLACEMENTS')} onFocus={handleFocus('distributionAndAdPlacements')} />
       </Form.Item>
-      <Flex gap={16} style={{ width: '100%' }}>
+      <Flex gap={isMobile ? 0 : 16} style={{ width: '100%' }} vertical={isMobile}>
         <Form.Item
           name='territory'
           label={t('TERRITORY')}
@@ -93,7 +95,7 @@ export const Specifications: React.FC = () => {
         extra={t('NUMBER_AND_LENGTH_OF_ORIGINAL_VIDEOS')}
         rules={[{ required: true, message: t('MAIN_VIDEO_DURATION_REQUIRED') }]}
       >
-        <Flex gap={16}>
+        <Flex gap={isMobile ? 8 : 16} vertical={isMobile}>
           <Flex gap={4} align='center'>
             <Form.Item name={['mainVideoDuration', 'number']} noStyle>
               <Input placeholder={t('NUMBER')} onFocus={handleFocus('mainVideoDuration')} />
@@ -102,7 +104,7 @@ export const Specifications: React.FC = () => {
               <svg xmlns='http://www.w3.org/2000/svg' width='10px' height='10px' viewBox='0 0 10 10' fill='none'>
                 <path
                   d='M1 9L9 1M9 9L1 1'
-                  stroke='#99A1B7'
+                  stroke='var(--gray-light)'
                   strokeWidth='1.5'
                   strokeMiterlimit='10'
                   strokeLinecap='round'
@@ -132,7 +134,7 @@ export const Specifications: React.FC = () => {
           </Flex>
         </Flex>
       </Form.Item>
-      <AntdListWrapper>
+      <div className={commonStyles.antdListWrapper}>
         <Form.List name='cuts'>
           {(fields, { add, remove }) => (
             <Form.Item
@@ -140,7 +142,7 @@ export const Specifications: React.FC = () => {
               extra={t('ADDITIONAL_VERSIONS_OF_MAIN_VIDEO')}
             >
               {fields.map((field) => (
-                <Flex key={field.key} gap={16}>
+                <Flex key={field.key} gap={isMobile ? 8 : 16} vertical={isMobile}>
                   <Flex gap={4} align='center'>
                     <Form.Item noStyle name={[field.name, 'number']}>
                       <Input placeholder={t('NUMBER')} onFocus={handleFocus('cuts')} />
@@ -166,26 +168,27 @@ export const Specifications: React.FC = () => {
                     <Form.Item noStyle name={[field.name, 'comment']}>
                       <Input placeholder={t('COMMENT')} onFocus={handleFocus('cuts')} />
                     </Form.Item>
-                    <IconButton
+                    <div
+                      className={commonStyles.iconButton}
                       onClick={() => {
                         if (fields.length > 1) remove(field.name);
                       }}
                     >
                       <RemoveIcon color={'var(--gray-light)'} />
-                    </IconButton>
+                    </div>
                   </Flex>
                 </Flex>
               ))}
             </Form.Item>
           )}
         </Form.List>
-      </AntdListWrapper>
+      </div>
       <Form.Item
         label={t('SHOOTING_DAYS')}
         extra={t('SHOOTING_DAYS_DESCRIPTION')}
         rules={[{ required: true, message: t('SHOOTING_DAYS_REQUIRED') }]}
       >
-        <Flex gap={16}>
+        <Flex gap={isMobile ? 8 : 16} vertical={isMobile}>
           <Flex gap={4} align='center'>
             <Form.Item name={['shootingDays', 'number']} noStyle>
               <Input placeholder={t('NUMBER')} onFocus={handleFocus('shootingDays')} />
@@ -194,7 +197,7 @@ export const Specifications: React.FC = () => {
               <svg xmlns='http://www.w3.org/2000/svg' width='10px' height='10px' viewBox='0 0 10 10' fill='none'>
                 <path
                   d='M1 9L9 1M9 9L1 1'
-                  stroke='#99A1B7'
+                  stroke='var(--gray-light)'
                   strokeWidth='1.5'
                   strokeMiterlimit='10'
                   strokeLinecap='round'

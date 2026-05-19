@@ -2,62 +2,31 @@
 
 import { PropsWithChildren, useEffect, useRef } from 'react';
 import { useRouter, usePathname } from 'next/navigation';
-import { Layout } from 'antd';
-import Sider from 'antd/es/layout/Sider';
+import { Button } from 'antd';
+import { ArrowLeftOutlined } from '@ant-design/icons';
 import { useLayoutTheme } from '@/hooks/useLayoutTheme';
+import { AppShell, useAppShell } from '@/components/layout/AppShell';
 import { Profile } from '@/components/Profile/Profile';
-import { styled } from 'styled-components';
 import { ClientNavbar } from '../ClientNavbar/ClientNavbar';
 import { ClientSidebar } from '../ClientSidebar/ClientSidebar';
 import { ClientHomeLogo } from '../ClientHomeLogo/ClientHomeLogo';
 import { getPendingBrief, clearPendingBrief } from '@/helpers/pendingBrief';
 import { AppRoute } from '@/constants/appRoute';
-import { BetaFooter, BETA_FOOTER_HEIGHT } from '@/components/BetaFooter/BetaFooter';
+import { BetaFooter, useBetaFooterHeight } from '@/components/BetaFooter/BetaFooter';
 import { BetaFooterProvider, useBetaFooter } from '@/components/BetaFooter/BetaFooterContext';
-import { getLocale, resetLocaleCache } from '@/lib/i18n';
+import { PageTitleSync } from '@/components/PageTitleSync';
+import { getLocale, resetLocaleCache, t } from '@/lib/i18n';
 import { useGetSettingsQuery } from '@/services/client/profileApi';
+import { THEME } from '@/constants/constants';
 
-const { Header, Content } = Layout;
+import styles from './ClientLayout.module.css';
 
-const siderStyle: React.CSSProperties = {
-  overflow: 'auto',
-  position: 'sticky',
-  height: '100vh',
-  insetInlineStart: 0,
-  top: 0,
-  bottom: 0,
-  scrollbarWidth: 'thin',
-  scrollbarGutter: 'stable',
+const MobileSidebar = () => {
+  const { closeDrawer } = useAppShell();
+  return <ClientSidebar theme={THEME.dark} variant='mobile' onNavigate={closeDrawer} />;
 };
 
-const HeaderLayout = styled(Header)`
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 16px;
-`;
-
-const HeaderLeft = styled.div`
-  display: flex;
-  align-items: center;
-  gap: 24px;
-  min-width: 0;
-  flex: 1;
-`;
-
-const BriefHeaderSlot = styled.div`
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  min-width: 0;
-  flex: 1;
-`;
-
-const ContentLayout = styled(Content)`
-  box-shadow: inset 0 5px 16.5px -11px rgb(0 0 0 / 25%);
-`;
-
-const ClientLayoutInner = ({ children }: PropsWithChildren) => {
+const ClientLayoutInner = (props: PropsWithChildren) => {
   const theme = useLayoutTheme();
   const router = useRouter();
   const pathname = usePathname();
@@ -65,6 +34,7 @@ const ClientLayoutInner = ({ children }: PropsWithChildren) => {
   const checked = useRef(false);
   const { dismissed: footerDismissed } = useBetaFooter();
   const { data: userSettings } = useGetSettingsQuery();
+  const footerHeight = useBetaFooterHeight();
 
   useEffect(() => {
     if (!userSettings?.language) {
@@ -87,49 +57,61 @@ const ClientLayoutInner = ({ children }: PropsWithChildren) => {
     const pending = getPendingBrief();
     if (pending) {
       clearPendingBrief();
-      window.location.href = AppRoute.BRIEF_V2_DETAIL(pending.briefId);
+      window.location.href = AppRoute.BRIEF_DETAIL(pending.briefId);
     }
   }, [router]);
 
+  const goBackToDashboard = () => {
+    router.push(AppRoute.DASHBOARD);
+  };
+
+  const headerLeft = hideSider ? (
+    <div className={styles.headerLeftBrief}>
+      <span className={styles.mobileOnly}>
+        <Button
+          className={styles.backButton}
+          type='text'
+          icon={<ArrowLeftOutlined />}
+          aria-label={t('BACK')}
+          onClick={goBackToDashboard}
+        />
+      </span>
+      <ClientHomeLogo theme={THEME.light} compact />
+      <div id='brief-header-slot' className={styles.briefHeaderSlot} />
+    </div>
+  ) : (
+    <div className={styles.headerLeftDashboard}>
+      <span className={styles.mobileOnly}>
+        <ClientHomeLogo theme={THEME.light} compact />
+      </span>
+      <span className={styles.desktopOnly}>
+        <ClientNavbar />
+      </span>
+    </div>
+  );
+
   return (
-    <Layout hasSider={!hideSider}>
-      {!hideSider && (
-        <Sider style={siderStyle} width={250} theme={theme}>
-          <ClientSidebar theme={theme} />
-        </Sider>
-      )}
-      <Layout>
-        <HeaderLayout style={{ padding: '0 36px' }}>
-          <HeaderLeft>
-            {hideSider ? (
-              <>
-                <ClientHomeLogo theme={theme} compact />
-                <BriefHeaderSlot id='brief-header-slot' />
-              </>
-            ) : (
-              <ClientNavbar />
-            )}
-          </HeaderLeft>
-          <Profile />
-        </HeaderLayout>
-        <ContentLayout
-          style={{
-            overflowY: 'auto',
-            maxHeight: 'calc(100vh - 70px)',
-            paddingBottom: footerDismissed ? 0 : BETA_FOOTER_HEIGHT,
-          }}
-        >
-          {children}
-        </ContentLayout>
-      </Layout>
-      <BetaFooter />
-    </Layout>
+    <>
+      <PageTitleSync />
+      <AppShell
+        sider={<ClientSidebar theme={theme} />}
+        drawer={<MobileSidebar />}
+        hideSider={hideSider}
+        siderTheme={theme}
+        headerLeft={headerLeft}
+        headerRight={<Profile />}
+        contentPaddingBottom={footerDismissed ? 0 : footerHeight}
+        footer={<BetaFooter />}
+      >
+        {props.children}
+      </AppShell>
+    </>
   );
 };
 
-const ClientLayout = ({ children }: PropsWithChildren) => (
+const ClientLayout = (props: PropsWithChildren) => (
   <BetaFooterProvider>
-    <ClientLayoutInner>{children}</ClientLayoutInner>
+    <ClientLayoutInner>{props.children}</ClientLayoutInner>
   </BetaFooterProvider>
 );
 

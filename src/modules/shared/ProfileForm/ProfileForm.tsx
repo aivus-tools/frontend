@@ -4,22 +4,9 @@ import React, { useEffect, useRef } from 'react';
 import { Form, Input, Button, App, Spin } from 'antd';
 import { CameraOutlined, UserOutlined } from '@ant-design/icons';
 import { t } from '@/lib/i18n';
-import {
-  useGetProfileQuery,
-  useUpdateProfileMutation,
-  useUploadAvatarMutation,
-} from '@/services/client/profileApi';
-import {
-  ProfileFormWrapper,
-  PageTitle,
-  AvatarSection,
-  AvatarWrapper,
-  AvatarOverlay,
-  AvatarImage,
-  AvatarPlaceholder,
-  FormSection,
-  FieldLabel,
-} from './styled';
+import { useGetProfileQuery, useUpdateProfileMutation, useUploadAvatarMutation } from '@/services/client/profileApi';
+
+import styles from './ProfileForm.module.css';
 
 interface ProfileFormValues {
   name: string;
@@ -59,9 +46,11 @@ export const ProfileForm = () => {
     fileInputRef.current?.click();
   };
 
-  const handleAvatarChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (!file) return;
+  const handleAvatarChange = async (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (!file) {
+      return;
+    }
 
     const formData = new FormData();
     formData.append('avatar', file);
@@ -76,74 +65,67 @@ export const ProfileForm = () => {
 
   if (isLoadingProfile) {
     return (
-      <ProfileFormWrapper>
-        <Spin size="large" style={{ display: 'block', margin: '80px auto' }} />
-      </ProfileFormWrapper>
+      <div className={styles.profileFormWrapper}>
+        <Spin size='large' className={styles.spinner} />
+      </div>
     );
   }
 
   return (
-    <ProfileFormWrapper>
-      <PageTitle>{t('PROFILE')}</PageTitle>
+    <div className={styles.profileFormWrapper}>
+      <h1 className={styles.pageTitle}>{t('PROFILE')}</h1>
 
-      <AvatarSection>
-        <AvatarWrapper onClick={handleAvatarClick}>
+      <div className={styles.avatarSection}>
+        <div className={styles.avatarWrapper} onClick={handleAvatarClick}>
           {profile?.avatar_url ? (
-            <AvatarImage src={profile.avatar_url} alt={t('AVATAR')} />
+            <img className={styles.avatarImage} src={profile.avatar_url} alt={t('AVATAR')} />
           ) : (
-            <AvatarPlaceholder>
+            <div className={styles.avatarPlaceholder}>
               <UserOutlined />
-            </AvatarPlaceholder>
+            </div>
           )}
-          <AvatarOverlay className="avatar-overlay">
-            {isUploadingAvatar ? <Spin size="small" /> : <CameraOutlined />}
-          </AvatarOverlay>
-        </AvatarWrapper>
+          <div className={styles.avatarOverlay}>{isUploadingAvatar ? <Spin size='small' /> : <CameraOutlined />}</div>
+        </div>
         <input
           ref={fileInputRef}
-          type="file"
-          accept="image/*"
-          style={{ display: 'none' }}
+          type='file'
+          accept='image/*'
+          className={styles.hiddenInput}
           onChange={handleAvatarChange}
         />
-      </AvatarSection>
+      </div>
 
-      <Form form={form} layout="vertical" onFinish={handleSubmit}>
-        <FormSection>
-          <FieldLabel>{t('YOUR_NAME')}</FieldLabel>
-          <Form.Item name="name" rules={[{ required: true, message: t('NAME_PLACEHOLDER') }]}>
-            <Input placeholder={t('NAME_PLACEHOLDER')} size="large" />
+      <Form form={form} layout='vertical' onFinish={handleSubmit}>
+        <div className={styles.formSection}>
+          <label className={styles.fieldLabel}>{t('YOUR_NAME')}</label>
+          <Form.Item name='name' rules={[{ required: true, message: t('NAME_PLACEHOLDER') }]}>
+            <Input placeholder={t('NAME_PLACEHOLDER')} size='large' />
           </Form.Item>
-        </FormSection>
+        </div>
 
-        <FormSection>
-          <FieldLabel>{t('EMAIL')}</FieldLabel>
-          <Input
-            value={profile?.email ?? ''}
-            disabled
-            size="large"
-            style={{ marginBottom: 24 }}
-          />
-        </FormSection>
+        <div className={styles.formSection}>
+          <label className={styles.fieldLabel}>{t('EMAIL')}</label>
+          <Input value={profile?.email ?? ''} disabled size='large' className={styles.emailInput} />
+        </div>
 
-        <FormSection>
-          <FieldLabel>{t('COMPANY_NAME')}</FieldLabel>
-          <Form.Item name="company">
-            <Input placeholder={t('COMPANY_NAME')} size="large" />
+        <div className={styles.formSection}>
+          <label className={styles.fieldLabel}>{t('COMPANY_NAME')}</label>
+          <Form.Item name='company'>
+            <Input placeholder={t('COMPANY_NAME')} size='large' />
           </Form.Item>
-        </FormSection>
+        </div>
 
-        <FormSection>
-          <FieldLabel>{t('POSITION')}</FieldLabel>
-          <Form.Item name="position">
-            <Input placeholder={t('POSITION')} size="large" />
+        <div className={styles.formSection}>
+          <label className={styles.fieldLabel}>{t('POSITION')}</label>
+          <Form.Item name='position'>
+            <Input placeholder={t('POSITION')} size='large' />
           </Form.Item>
-        </FormSection>
+        </div>
 
-        <Button type="primary" htmlType="submit" loading={isUpdating} size="large">
+        <Button type='primary' htmlType='submit' loading={isUpdating} size='large'>
           {t('SAVE_PROFILE')}
         </Button>
       </Form>
-    </ProfileFormWrapper>
+    </div>
   );
 };

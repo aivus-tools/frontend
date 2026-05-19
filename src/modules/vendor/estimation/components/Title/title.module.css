@@ -1,0 +1,83 @@
+.sectionTitle {
+  display: flex;
+  align-items: center;
+  padding: 18px 2px;
+  background-color: var(--white);
+  border-radius: 6px 0 0 6px;
+}
+
+.sectionTitleOpen {
+  border-radius: 6px 0 0;
+}
+
+.sectionTitleText {
+  font-size: 14px;
+  font-weight: 700;
+  line-height: 17.07px;
+  color: var(--blue);
+  user-select: none;
+}
+
+.sectionTitleSumHeader {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  font-size: 16px;
+  font-weight: 600;
+  line-height: 19.5px;
+  color: var(--blue);
+  text-align: right;
+  background-color: var(--white);
+}
+
+.sectionSubTitleSumHeader {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  font-size: 14px;
+  font-weight: 700;
+  line-height: 17.07px;
+  text-align: right;
+  background-color: var(--white);
+}
+
+.sectionTitlePercentHeader {
+  display: flex;
+  align-items: center;
+  font-size: 14px;
+  font-weight: 700;
+  line-height: 17.07px;
+  color: var(--blue);
+  background-color: var(--white);
+}
+
+.sectionSubTitle {
+  display: flex;
+  align-items: center;
+  padding: 8px 0;
+  background-color: var(--white);
+}
+
+.sectionSubTitleText {
+  font-size: 13px;
+  font-weight: 500;
+  line-height: 15.85px;
+  color: var(--blue);
+  user-select: none;
+}
+
+.arrowButton {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 20px;
+  height: 20px;
+  margin: 0 8px;
+  cursor: pointer;
+  border-radius: 50%;
+  transform: rotate(270deg);
+}
+
+.arrowButtonOpen {
+  transform: rotate(0deg);
+}

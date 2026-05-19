@@ -1,5 +1,8 @@
 import { t } from '@/lib/i18n';
 
+export const HEADER_HEIGHT_DESKTOP = 70;
+export const HEADER_HEIGHT_MOBILE = 56;
+
 export const AUTH_TYPES = {
   google: 'GOOGLE',
   credentials: 'CREDENTIALS',
@@ -26,17 +29,17 @@ export const THEME = {
 export const VENDOR_TABS = [
   {
     key: 'dashboard',
-    label: t('DASHBOARD'),
+    labelKey: 'DASHBOARD',
   },
   {
     key: 'templates',
-    label: t('TEMPLATES'),
+    labelKey: 'TEMPLATES',
   },
   {
     key: 'rates',
-    label: t('RATES'),
+    labelKey: 'RATES',
   },
-];
+] as const;
 
 export const VENDOR_PROJECT_TAB_KEYS = {
   DETAILS: 'details',
@@ -52,29 +55,17 @@ export type VendorProjectTabKey = (typeof VENDOR_PROJECT_TAB_KEYS)[keyof typeof 
 export const VENDOR_PROJECT_TABS = [
   {
     key: VENDOR_PROJECT_TAB_KEYS.DETAILS,
-    label: t('PROJECT_DETAILS'),
+    labelKey: 'PROJECT_DETAILS',
   },
   {
     key: VENDOR_PROJECT_TAB_KEYS.ESTIMATION,
-    label: t('ESTIMATION'),
+    labelKey: 'ESTIMATION',
   },
   {
     key: VENDOR_PROJECT_TAB_KEYS.OFFER,
-    label: t('CLIENTS_OFFER'),
+    labelKey: 'CLIENTS_OFFER',
   },
-  // {
-  //   key: VENDOR_PROJECT_TAB_KEYS.TIMING,
-  //   label: t('TIMING'),
-  // },
-  // {
-  //   key: VENDOR_PROJECT_TAB_KEYS.PRESENTATION,
-  //   label: t('PRESENTATION'),
-  // },
-  // {
-  //   key: VENDOR_PROJECT_TAB_KEYS.ANALYSIS,
-  //   label: t('ANALYSIS'),
-  // },
-];
+] as const;
 
 export const NEW_BRIEF_SLUG = 'new-brief';
 
@@ -96,5 +87,4 @@ export const PROJECT_STATUS_LABEL: Record<string, () => string> = {
   [PROJECT_STATUS.CANCELLED]: () => t('STATUS_CANCELLED'),
 };
 
-export const getProjectStatusLabel = (status: string): string =>
-  PROJECT_STATUS_LABEL[status]?.() ?? status;
+export const getProjectStatusLabel = (status: string): string => PROJECT_STATUS_LABEL[status]?.() ?? status;

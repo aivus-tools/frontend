@@ -9,7 +9,7 @@ import styles from './form.module.css';
 import { useChangeGroup } from '@/hooks/useChangeGroup';
 import logger from '@/lib/logger';
 import { useSession } from 'next-auth/react';
-import Spinner from '@/components/Spinner';
+import { PageSpinner } from '@/components/PageSpinner';
 import { t } from '@/lib/i18n';
 import { logout } from '@/auth/actions/logout';
 import { getPendingBrief } from '@/helpers/pendingBrief';
@@ -49,7 +49,7 @@ export function Form() {
   }, [session.data?.user?.group]);
 
   if (session.data?.user?.group !== GROUPS.confirmed) {
-    return <Spinner />;
+    return <PageSpinner />;
   }
 
   return (

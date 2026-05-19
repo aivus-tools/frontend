@@ -51,19 +51,14 @@ interface Props {
   extraField?: SingleButton | DoubleButton | Input;
 }
 
-export const SidebarInput: React.FC<Props> = (props) => {
+export const SidebarInput = (props: Props) => {
   const renderSelect = (): React.JSX.Element | null => {
     if (!props.options) {
       return null;
     }
 
     return (
-      <Select
-        value={props.value}
-        options={props.options}
-        onChange={props.onChange}
-        style={{ width: props.width }}
-      />
+      <Select value={props.value} options={props.options} onChange={props.onChange} style={{ width: props.width }} />
     );
   };
 

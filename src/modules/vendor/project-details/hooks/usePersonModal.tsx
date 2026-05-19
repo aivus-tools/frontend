@@ -1,16 +1,8 @@
 import React, { useState } from 'react';
 import { Button, Col, Flex, Form, Input, Modal, Row, Select, Typography } from 'antd';
-import { styled } from 'styled-components';
 import { Person } from '@/types/brief.interface';
 
-const Text = styled(Typography.Text)`
-  font-size: 10px !important;
-  font-weight: 500 !important;
-  line-height: 12.19px !important;
-
-  margin-top: 36px;
-  vertical-align: bottom;
-`;
+import styles from './usePersonModal.module.css';
 
 interface OnSubmit {
   (person: Person): void;
@@ -33,34 +25,41 @@ export const usePersonModal = (onSubmit?: OnSubmit) => {
   };
 
   const modal = (
-    <Modal width={760} open={isModalOpen} destroyOnClose onCancel={handleCancel} footer={null}>
+    <Modal
+      width={760}
+      style={{ maxWidth: 'calc(100vw - 32px)' }}
+      open={isModalOpen}
+      destroyOnClose
+      onCancel={handleCancel}
+      footer={null}
+    >
       <Form<Person> layout='vertical' onFinish={handleOk}>
         <Row gutter={16}>
-          <Col span={12}>
+          <Col xs={24} sm={12}>
             <Form.Item name='email' label='Email' rules={[{ required: true }, { type: 'email' }]}>
               <Input placeholder='Email*' />
             </Form.Item>
           </Col>
-          <Col span={12}>
+          <Col xs={24} sm={12}>
             <Form.Item name='position' label='Position'>
               <Input placeholder='Producer, Project Manager etc.' />
             </Form.Item>
           </Col>
         </Row>
         <Row gutter={16}>
-          <Col span={12}>
+          <Col xs={24} sm={12}>
             <Form.Item name='firstName' label='First name' rules={[{ required: true }]}>
               <Input placeholder='First name*' />
             </Form.Item>
           </Col>
-          <Col span={12}>
+          <Col xs={24} sm={12}>
             <Form.Item name='surname' label='Surname' rules={[{ required: true }]}>
               <Input placeholder='Surname*' />
             </Form.Item>
           </Col>
         </Row>
         <Row gutter={16}>
-          <Col span={12}>
+          <Col xs={24} sm={12}>
             <Form.Item name='role' label='Role' rules={[{ required: true }]}>
               <Select
                 placeholder='Select a role'
@@ -74,11 +73,11 @@ export const usePersonModal = (onSubmit?: OnSubmit) => {
               />
             </Form.Item>
           </Col>
-          <Col span={12}>
+          <Col xs={24} sm={12}>
             <Flex vertical>
-              <Text type='secondary'>
+              <Typography.Text type='secondary' className={styles.helperText}>
                 Depending on the Role, the user will see or not see certain information. Choose one to find out.
-              </Text>
+              </Typography.Text>
             </Flex>
           </Col>
         </Row>

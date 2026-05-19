@@ -3,17 +3,8 @@ import { getLocale, t, tRich } from '@/lib/i18n';
 import { PreVendor } from '@/types/preVendor.interface';
 import { PreVendorCard } from './PreVendorCard';
 import { RatingRunetaLogo } from './RatingRunetaLogo';
-import {
-  Grid,
-  HeaderDescription,
-  HeaderHeading,
-  HeaderLogo,
-  HeaderTextBlock,
-  HeaderTitle,
-  HeaderTop,
-  Section,
-  SimpleHeader,
-} from './styles';
+
+import styles from './PreVendorsBlock.module.css';
 
 interface PreVendorsBlockProps {
   preVendors: PreVendor[];
@@ -34,29 +25,29 @@ export const PreVendorsBlock = forwardRef<HTMLElement, PreVendorsBlockProps>((pr
   const methodologyUrl = t('PRE_VENDORS_METHODOLOGY_URL');
 
   return (
-    <Section ref={ref}>
+    <section ref={ref} className={styles.section}>
       {isRu ? (
         <>
-          <HeaderTop>
-            <HeaderLogo>
+          <div className={styles.headerTop}>
+            <div className={styles.headerLogo}>
               <RatingRunetaLogo variant='header' height={26} />
-            </HeaderLogo>
-            <HeaderTitle>{t('PRE_VENDORS_BLOCK_TITLE')}</HeaderTitle>
-          </HeaderTop>
-          <HeaderTextBlock>
-            <HeaderHeading>{t('PRE_VENDORS_RATING_HEADING')}</HeaderHeading>
-            <HeaderDescription>
+            </div>
+            <h2 className={styles.headerTitle}>{t('PRE_VENDORS_BLOCK_TITLE')}</h2>
+          </div>
+          <div className={styles.headerTextBlock}>
+            <p className={styles.headerHeading}>{t('PRE_VENDORS_RATING_HEADING')}</p>
+            <p className={styles.headerDescription}>
               {tRich('PRE_VENDORS_RATING_DESCRIPTION', {
                 a: <a href={methodologyUrl} target='_blank' rel='noopener noreferrer' />,
               })}
-            </HeaderDescription>
-          </HeaderTextBlock>
+            </p>
+          </div>
         </>
       ) : (
-        <SimpleHeader>{t('PRE_VENDORS_BLOCK_TITLE')}</SimpleHeader>
+        <h2 className={styles.simpleHeader}>{t('PRE_VENDORS_BLOCK_TITLE')}</h2>
       )}
 
-      <Grid>
+      <div className={styles.grid}>
         {props.preVendors.map((x) => (
           <PreVendorCard
             key={x.id}
@@ -69,8 +60,8 @@ export const PreVendorsBlock = forwardRef<HTMLElement, PreVendorsBlockProps>((pr
             disabledPopoverTitle={props.disabledPopoverTitle}
           />
         ))}
-      </Grid>
-    </Section>
+      </div>
+    </section>
   );
 });
 

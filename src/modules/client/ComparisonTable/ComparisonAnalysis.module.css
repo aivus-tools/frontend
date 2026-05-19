@@ -1,0 +1,142 @@
+.analysisPanel {
+  display: flex;
+  flex-direction: column;
+  width: 320px;
+  min-width: 320px;
+  max-height: calc(100dvh - var(--aivus-header-h));
+  background: var(--white);
+  border-left: 1px solid var(--border-subtle);
+}
+
+@media (width <= 1023.98px) {
+  .analysisPanel {
+    flex: 1;
+    width: 100%;
+    min-width: 0;
+    max-height: none;
+    border-left: 0;
+  }
+}
+
+.analysisTabs {
+  display: flex;
+  border-bottom: 1px solid var(--border-subtle);
+}
+
+.analysisTab {
+  flex: 1;
+  padding: 14px 16px;
+  font-family: Montserrat, sans-serif;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--gray);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  cursor: pointer;
+  background: none;
+  border: 0;
+  border-bottom: 2px solid transparent;
+  transition: all 0.15s ease;
+}
+
+.analysisTabActive {
+  color: var(--blue);
+  border-bottom-color: var(--blue);
+}
+
+.analysisContent {
+  flex: 1;
+  padding: 20px;
+  overflow-y: auto;
+}
+
+.analysisTitle {
+  margin: 0 0 16px;
+  font-family: Montserrat, sans-serif;
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--blue);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.analysisText {
+  margin: 0 0 12px;
+  font-family: Montserrat, sans-serif;
+  font-size: 13px;
+  font-weight: 400;
+  line-height: 1.6;
+  color: var(--main);
+}
+
+.analysisPlaceholder {
+  font-style: italic;
+  color: var(--gray);
+}
+
+.highlightsHeader {
+  margin-bottom: 12px;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--main);
+}
+
+.highlightItem {
+  display: flex;
+  gap: 8px;
+  align-items: flex-start;
+  padding: 8px 12px;
+  margin-bottom: 8px;
+  font-family: Montserrat, sans-serif;
+  font-size: 12px;
+  line-height: 1.5;
+  color: var(--main);
+  background: var(--bg-blue-subtotal);
+  border-radius: 6px;
+}
+
+.highlightIcon {
+  flex-shrink: 0;
+  margin-top: 2px;
+  color: var(--compare-yellow);
+}
+
+.chatMessage {
+  padding: 8px 0;
+  border-bottom: 1px solid var(--bg-gray-page);
+}
+
+.chatRole {
+  margin-bottom: 4px;
+  font-size: 10px;
+  font-weight: 600;
+  text-transform: uppercase;
+}
+
+.chatRoleUser {
+  color: var(--blue);
+}
+
+.chatRoleAssistant {
+  color: var(--green-darker);
+}
+
+.analysisChatInput {
+  display: flex;
+  gap: 8px;
+  padding: 16px 20px;
+  border-top: 1px solid var(--border-subtle);
+}
+
+.questionInput {
+  font-family: Montserrat, sans-serif;
+  font-size: 13px;
+  border-radius: 8px;
+}
+
+.sendButton {
+  color: var(--white);
+  background: var(--orange);
+  border-color: var(--orange);
+  border-radius: 8px;
+}

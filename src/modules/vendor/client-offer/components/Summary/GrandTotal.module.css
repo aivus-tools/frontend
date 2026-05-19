@@ -1,0 +1,15 @@
+.label {
+  padding-left: 8px;
+  font-size: 14px;
+  font-weight: 700;
+  line-height: 17px;
+  color: var(--main);
+  text-transform: uppercase;
+}
+
+.value {
+  font-size: 18px;
+  font-weight: 700;
+  line-height: 22px;
+  color: var(--green);
+}

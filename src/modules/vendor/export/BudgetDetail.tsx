@@ -1,4 +1,3 @@
-import React from 'react';
 import { OfferExportData } from '@/types/exportData.interface';
 import { BudgetSection } from './BudgetSection';
 
@@ -9,26 +8,25 @@ interface BudgetDetailProps {
   data: OfferExportData;
 }
 
-export const BudgetDetail: React.FC<BudgetDetailProps> = props => {
+export const BudgetDetail = (props: BudgetDetailProps) => {
   return (
     <div style={{ maxWidth: 1210, margin: '0 auto', padding: '0 32px', fontFamily: FONT_FAMILY }}>
-      <div style={{
-        fontWeight: 700,
-        fontSize: 20,
-        color: TEXT_COLOR,
-        fontFamily: FONT_FAMILY,
-        marginBottom: 16,
-        lineHeight: '30px',
-      }}>
+      <div
+        style={{
+          fontWeight: 700,
+          fontSize: 20,
+          color: TEXT_COLOR,
+          fontFamily: FONT_FAMILY,
+          marginBottom: 16,
+          lineHeight: '30px',
+        }}
+      >
         Budget Detail
       </div>
       {props.data.categories
-        .filter(x => x.entries.length > 0 && x.parentCategoryId != null)
-        .map(x => (
-          <BudgetSection
-            key={x.id}
-            section={x}
-          />
+        .filter((x) => x.entries.length > 0 && x.parentCategoryId != null)
+        .map((x) => (
+          <BudgetSection key={x.id} section={x} />
         ))}
     </div>
   );

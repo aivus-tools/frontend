@@ -3,7 +3,7 @@
 import { useState, useCallback, useEffect, useRef, useMemo } from 'react';
 import { Input } from 'antd';
 import { SearchOutlined } from '@ant-design/icons';
-import Spinner from '@/components/Spinner';
+import { PageSpinner } from '@/components/PageSpinner';
 import { RateHeader } from './components/Header';
 import { Section } from './components/Section';
 import { useRateCardData, CatalogSection } from './useRateCardData';
@@ -92,14 +92,14 @@ export function RateTable() {
   }, [catalogSections]);
 
   if (isLoading) {
-    return <Spinner />;
+    return <PageSpinner />;
   }
 
   return (
     <div className={styles.rateTable}>
       <div style={{ marginBottom: 12 }}>
         <Input
-          prefix={<SearchOutlined style={{ color: '#99A1B7' }} />}
+          prefix={<SearchOutlined style={{ color: 'var(--gray-light)' }} />}
           placeholder={t('RATES_SEARCH_PLACEHOLDER')}
           value={searchQuery}
           onChange={(event) => setSearchQuery(event.target.value)}
@@ -122,7 +122,7 @@ export function RateTable() {
         />
       ))}
       {filteredSections.length === 0 && searchQuery.trim() && (
-        <div style={{ textAlign: 'center', padding: '32px 0', color: '#99A1B7', fontSize: 14 }}>
+        <div style={{ textAlign: 'center', padding: '32px 0', color: 'var(--gray-light)', fontSize: 14 }}>
           {t('RATES_NO_RESULTS', searchQuery)}
         </div>
       )}
