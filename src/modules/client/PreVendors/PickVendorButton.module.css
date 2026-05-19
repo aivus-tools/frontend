@@ -24,3 +24,23 @@
 .pickVendorButtonRu:hover:not(:disabled) {
   background: var(--red);
 }
+
+@media (width <=1023.98px) {
+  .pickVendorButtonRu {
+    box-sizing: border-box;
+    width: 100%;
+    min-width: 0;
+    height: 32px !important;
+    min-height: 32px !important;
+    max-height: 32px !important;
+    padding: 0 12px;
+    overflow: hidden;
+  }
+
+  .pickVendorButtonRu > span {
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+}

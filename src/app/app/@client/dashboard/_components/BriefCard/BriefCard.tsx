@@ -3,8 +3,10 @@
 import React, { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { App, Button, Dropdown, Input, Modal, theme } from 'antd';
-import { CalendarOutlined, MessageOutlined, MoreOutlined, ShoppingCartOutlined } from '@ant-design/icons';
-import { format, formatDistanceToNow } from 'date-fns';
+// import { CalendarOutlined, MessageOutlined, MoreOutlined, ShoppingCartOutlined } from '@ant-design/icons';
+import { MoreOutlined } from '@ant-design/icons';
+// import { format, formatDistanceToNow } from 'date-fns';
+import { format } from 'date-fns';
 import { PrStatus } from '@/components/PrStatus/PrStatus';
 import { t } from '@/lib/i18n';
 import { PROJECT_STATUS } from '@/constants/constants';
@@ -12,7 +14,7 @@ import { AppRoute } from '@/constants/appRoute';
 import { ProjectStatus } from '@/types/project.interface';
 import { useDeleteBriefAiMutation, useRenameBriefAiMutation } from '@/services/client/briefAiApi';
 import { BriefV3ListItem, ConversationStatus } from '@/types/briefAi.interface';
-import { useBreakpoint } from '@/hooks/useBreakpoint';
+// import { useBreakpoint } from '@/hooks/useBreakpoint';
 
 import styles from './BriefCard.module.css';
 
@@ -79,8 +81,8 @@ export const BriefCard = (props: BriefCardProps) => {
   const palette = useStatusPalette(brief.status);
   const title = brief.title || t('UNTITLED_BRIEF');
   const formattedCreated = brief.createdAt ? format(new Date(brief.createdAt), 'MMM dd, yyyy') : '';
-  const relativeCreated = brief.createdAt ? formatDistanceToNow(new Date(brief.createdAt), { addSuffix: true }) : '';
-  const { isMobile } = useBreakpoint();
+  // const relativeCreated = brief.createdAt ? formatDistanceToNow(new Date(brief.createdAt), { addSuffix: true }) : '';
+  // const { isMobile } = useBreakpoint();
 
   const handleClick = () => {
     router.push(AppRoute.BRIEF_DETAIL(brief.id));
@@ -180,7 +182,7 @@ export const BriefCard = (props: BriefCardProps) => {
           <div className={styles.dateValue}>{formattedCreated}</div>
         </div>
 
-        {isMobile ? (
+        {/* {isMobile ? (
           <div className={styles.metaRow}>
             {relativeCreated ? (
               <span className={styles.metaItem}>
@@ -203,7 +205,7 @@ export const BriefCard = (props: BriefCardProps) => {
               {t('BRIEF_LIST_OFFERS_COUNT', String(brief.offersCount))}
             </span>
           </div>
-        ) : null}
+        ) : null} */}
 
         <div className={styles.actionsCell} onClick={stopPropagation} role='presentation'>
           <Dropdown menu={{ items: menuItems }} trigger={['click']} placement='bottomRight'>
