@@ -1,6 +1,7 @@
 'use client';
 
 import React, { forwardRef, useEffect, useImperativeHandle, useRef, useState } from 'react';
+import { createPortal } from 'react-dom';
 import { App, Button, Popover, Switch } from 'antd';
 import { CopyOutlined, DownloadOutlined, ShareAltOutlined } from '@ant-design/icons';
 import { useEditor, EditorContent, Editor } from '@tiptap/react';
@@ -47,6 +48,7 @@ interface BriefFinalPackageProps {
   package: BriefFinalPackageType;
   onRegenerate?: (() => void) | null;
   isRegenerating?: boolean;
+  mobileActionsSlot?: HTMLElement | null;
 }
 
 const htmlToPlainText = (html: string): string => {
@@ -407,7 +409,7 @@ const saveStatusClass = (state: SaveState): string => {
 };
 
 export const BriefFinalPackage = (props: BriefFinalPackageProps) => {
-  const { briefId, package: pkg, onRegenerate, isRegenerating } = props;
+  const { briefId, package: pkg, onRegenerate, isRegenerating, mobileActionsSlot } = props;
   const { isMobile } = useBreakpoint();
   const byKind = new Map(pkg.documents.map((x) => [x.kind, x]));
 
@@ -470,8 +472,33 @@ export const BriefFinalPackage = (props: BriefFinalPackageProps) => {
           ? t('BRIEF_V3_SAVE_FAILED')
           : '';
 
+  const actionsNode = (
+    <>
+      <span className={saveStatusClass(saveState)}>{saveLabel}</span>
+      {hasPreVendors ? (
+        <div className={isMobile ? styles.pickVendorMobileWrap : styles.pickVendorWrap}>
+          <PickVendorButton onClick={handlePickVendor} />
+        </div>
+      ) : null}
+      <ShareControl briefId={briefId} compact={isMobile} />
+      <Button
+        type='primary'
+        icon={<DownloadOutlined />}
+        onClick={() => editorRef.current?.download()}
+        disabled={!activeDoc}
+        aria-label={t('BRIEF_V3_DOWNLOAD_PDF')}
+        className={isMobile ? styles.iconOnlyButton : undefined}
+      >
+        {isMobile ? null : t('BRIEF_V3_DOWNLOAD_PDF')}
+      </Button>
+    </>
+  );
+
+  const showActionsInline = !isMobile || !mobileActionsSlot;
+
   return (
     <div className={styles.outerScroll}>
+      {isMobile && mobileActionsSlot ? createPortal(actionsNode, mobileActionsSlot) : null}
       <div className={styles.wrapper}>
         <div className={styles.tabsHeader}>
           <div className={styles.tabsList}>
@@ -486,21 +513,7 @@ export const BriefFinalPackage = (props: BriefFinalPackageProps) => {
               </button>
             ))}
           </div>
-          <div className={styles.headerActions}>
-            <span className={saveStatusClass(saveState)}>{saveLabel}</span>
-            {hasPreVendors ? <PickVendorButton onClick={handlePickVendor} /> : null}
-            <ShareControl briefId={briefId} compact={isMobile} />
-            <Button
-              type='primary'
-              icon={<DownloadOutlined />}
-              onClick={() => editorRef.current?.download()}
-              disabled={!activeDoc}
-              aria-label={t('BRIEF_V3_DOWNLOAD_PDF')}
-              className={isMobile ? styles.iconOnlyButton : undefined}
-            >
-              {isMobile ? null : t('BRIEF_V3_DOWNLOAD_PDF')}
-            </Button>
-          </div>
+          {showActionsInline ? <div className={styles.headerActions}>{actionsNode}</div> : null}
         </div>
 
         {activeDoc ? (

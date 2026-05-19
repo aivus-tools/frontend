@@ -2,7 +2,7 @@
 
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
-import { App, Button, Badge, Empty } from 'antd';
+import { App, Button, Empty } from 'antd';
 import Link from 'next/link';
 import { AppRoute } from '@/constants/appRoute';
 import { useAppDispatch } from '@/store/hooks';
@@ -14,7 +14,6 @@ import { FileUploadZone } from './components/FileUploadZone';
 import { BriefFinalPackage } from './BriefFinalPackage';
 import { BriefSettings } from './BriefSettings';
 import { EditableBriefTitle } from './components/EditableBriefTitle';
-import { computeChatBadge, nextLastSeenOnTabSwitch } from './briefChatBadge';
 import {
   briefAiApi,
   useCreateBriefAiDraftMutation,
@@ -106,12 +105,12 @@ export const BriefEditorLayout = (props: BriefEditorLayoutProps) => {
   const [stage, setStage] = useState<Stage>(props.briefId ? 'chat' : 'start');
   const [hasMounted, setHasMounted] = useState(false);
   const [headerSlot, setHeaderSlot] = useState<HTMLElement | null>(null);
+  const mobileActionsSlotRef = useRef<HTMLDivElement | null>(null);
   const { dismissed: footerDismissed } = useBetaFooter();
   const footerVisible = !footerDismissed;
   const footerHeight = useBetaFooterHeight();
   const { isMobile } = useBreakpoint();
   const [mobileTab, setMobileTab] = useState<'brief' | 'chat'>('brief');
-  const [lastSeenAssistantMessageId, setLastSeenAssistantMessageId] = useState<string | null>(null);
 
   useEffect(() => {
     setHasMounted(true);
@@ -187,27 +186,8 @@ export const BriefEditorLayout = (props: BriefEditorLayoutProps) => {
     }
   }, [authDetail, publicDetail, isAuth, hydrateFromDetail]);
 
-  const chatBadge = computeChatBadge(messages, {
-    mobileTab,
-    lastSeenAssistantMessageId,
-  });
-
-  useEffect(() => {
-    if (mobileTab !== 'chat') {
-      return;
-    }
-    const next = nextLastSeenOnTabSwitch(messages, 'chat', lastSeenAssistantMessageId);
-    if (next !== lastSeenAssistantMessageId) {
-      setLastSeenAssistantMessageId(next);
-    }
-  }, [mobileTab, messages, lastSeenAssistantMessageId]);
-
   const handleSelectMobileTab = (tab: 'brief' | 'chat') => {
     setMobileTab(tab);
-    const next = nextLastSeenOnTabSwitch(messages, tab, lastSeenAssistantMessageId);
-    if (next !== lastSeenAssistantMessageId) {
-      setLastSeenAssistantMessageId(next);
-    }
   };
 
   const pollingRef = useRef<ReturnType<typeof setInterval> | null>(null);
@@ -857,6 +837,7 @@ export const BriefEditorLayout = (props: BriefEditorLayoutProps) => {
         {finalPackage ? (
           <div className={styles.finalContainer}>
             {inlineTitleBar}
+            <div ref={mobileActionsSlotRef} className={styles.mobileActions} />
             <div className={styles.mobileTabBar} role='tablist'>
               <button
                 type='button'
@@ -875,7 +856,6 @@ export const BriefEditorLayout = (props: BriefEditorLayoutProps) => {
                 onClick={() => handleSelectMobileTab('chat')}
               >
                 {t('BRIEF_TAB_CHAT')}
-                {chatBadge && mobileTab !== 'chat' ? <Badge dot offset={[2, -2]} /> : null}
               </button>
             </div>
             <div className={styles.finalSplit}>
@@ -885,6 +865,7 @@ export const BriefEditorLayout = (props: BriefEditorLayoutProps) => {
                   package={finalPackage}
                   onRegenerate={isAuth ? handleRegenerate : null}
                   isRegenerating={isRegenerating}
+                  mobileActionsSlot={mobileActionsSlotRef.current}
                 />
               </div>
               <div className={chatColumnClass}>

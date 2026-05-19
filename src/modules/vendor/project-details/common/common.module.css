@@ -19,6 +19,26 @@
   gap: 30px;
 }
 
+@media (width <= 1023.98px) {
+  .wrapper {
+    flex-direction: column;
+    gap: 16px;
+    padding: 16px;
+  }
+
+  .column {
+    flex: 1 1 100% !important;
+    gap: 16px;
+    width: 100%;
+    min-width: 0;
+  }
+
+  .content {
+    min-width: 0 !important;
+    padding: 16px;
+  }
+}
+
 .header {
   padding: 0 6px 4px;
   font-size: 14px;

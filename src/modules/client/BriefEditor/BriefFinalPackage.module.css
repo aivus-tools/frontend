@@ -68,39 +68,32 @@
   padding: 0;
 }
 
+.pickVendorWrap {
+  display: inline-flex;
+}
+
+.pickVendorMobileWrap {
+  display: inline-flex;
+  flex: 1 1 auto;
+  min-width: 0;
+}
+
+.pickVendorMobileWrap > :global(.ant-btn),
+.pickVendorMobileWrap > button {
+  flex: 1 1 auto;
+  width: 100%;
+  height: 40px;
+}
+
 @media (width <= 1023.98px) {
   .tabsHeader {
-    position: sticky;
-    top: 0;
-    z-index: 5;
-    flex-direction: column;
     gap: 8px;
-    align-items: stretch;
     padding: 8px 12px;
-    background: var(--bg-gray-page);
   }
 
   .tabsList {
     gap: 16px;
     width: 100%;
-  }
-
-  .headerActions {
-    display: flex;
-    flex-wrap: nowrap;
-    gap: 8px;
-    align-items: center;
-    width: 100%;
-    margin-left: 0;
-  }
-
-  .headerActions > :global(.ant-btn) {
-    height: 40px;
-  }
-
-  .headerActions > :not(.iconOnlyButton, .saveStatus) {
-    flex: 1 1 auto;
-    min-width: 0;
   }
 
   .saveStatus {

@@ -24,3 +24,13 @@
   overflow: hidden;
   border-radius: 8px;
 }
+
+.initialParametersContent {
+  min-width: 584px;
+}
+
+@media (width <= 1023.98px) {
+  .initialParametersContent {
+    min-width: 0;
+  }
+}

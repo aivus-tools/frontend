@@ -14,3 +14,9 @@
   display: flex;
   flex-direction: column;
 }
+
+@media (width <= 1023.98px) {
+  .wrapper {
+    width: 100%;
+  }
+}

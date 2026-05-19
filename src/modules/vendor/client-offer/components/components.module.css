@@ -10,6 +10,27 @@
   gap: 30px;
 }
 
+@media (width <= 1023.98px) {
+  .wrapper {
+    flex-direction: column;
+    gap: 16px;
+    padding: 10px 0 16px;
+    overflow-x: auto;
+  }
+
+  .column {
+    flex: 1 1 100% !important;
+    width: 100%;
+    min-width: 0;
+    padding: 0 16px;
+  }
+
+  .table {
+    min-width: max-content;
+    padding: 0 16px;
+  }
+}
+
 .section {
   display: flex;
   flex-direction: column;

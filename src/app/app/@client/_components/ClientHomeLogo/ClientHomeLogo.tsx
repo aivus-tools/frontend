@@ -32,9 +32,13 @@ export const ClientHomeLogo = (props: ClientHomeLogoProps) => {
     <Link href={AppRoute.DASHBOARD} prefetch={false}>
       <div className={wrapperClass}>
         <div className={groupClass}>
-          <HomeIcon />
+          <span className={styles.homeIcon}>
+            <HomeIcon />
+          </span>
           <LogoIcon />
-          <BetaBadge size='sm' />
+          <span className={styles.betaSlot}>
+            <BetaBadge size='sm' />
+          </span>
         </div>
       </div>
     </Link>

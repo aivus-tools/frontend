@@ -174,6 +174,25 @@
   }
 }
 
+.mobileActions {
+  display: none;
+}
+
+@media (width <= 1023.98px) {
+  .mobileActions {
+    position: sticky;
+    top: 44px;
+    z-index: 4;
+    display: flex;
+    flex-shrink: 0;
+    gap: 8px;
+    align-items: center;
+    padding: 8px 12px;
+    background: var(--white);
+    border-bottom: 1px solid var(--border-subtle);
+  }
+}
+
 .mobileTabBar {
   display: none;
 }
@@ -181,13 +200,15 @@
 @media (width <= 1023.98px) {
   .mobileTabBar {
     position: sticky;
-    top: 44px;
-    z-index: 4;
+    top: 100px;
+    z-index: 3;
     display: flex;
     flex-shrink: 0;
-    width: 100%;
-    background: var(--white);
-    border-bottom: 1px solid var(--border-subtle);
+    gap: 4px;
+    padding: 4px;
+    margin: 8px 12px 0;
+    background: var(--bg-gray-page);
+    border-radius: 10px;
   }
 }
 
@@ -197,7 +218,8 @@
   gap: 8px;
   align-items: center;
   justify-content: center;
-  min-height: 48px;
+  min-height: 40px;
+  padding: 0 16px;
   font-family: Montserrat, sans-serif;
   font-size: 14px;
   font-weight: 600;
@@ -205,19 +227,24 @@
   cursor: pointer;
   background: transparent;
   border: 0;
-  border-bottom: 2px solid transparent;
+  border-radius: 8px;
   transition:
     color 0.15s ease,
-    border-color 0.15s ease;
+    background 0.15s ease;
 }
 
 .mobileTabButton:hover {
-  color: var(--blue);
+  color: var(--main-dark);
 }
 
 .mobileTabButtonActive {
-  color: var(--blue);
-  border-bottom-color: var(--blue);
+  color: var(--main-dark);
+  background: var(--white);
+  box-shadow: 0 1px 3px rgb(0 0 0 / 8%);
+}
+
+.mobileTabButtonActive:hover {
+  color: var(--main-dark);
 }
 
 .finalSplit {

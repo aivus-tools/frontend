@@ -64,7 +64,7 @@ export default function Details() {
         <div className={commonStyles.column} style={{ flex: '1 1 70%' }}>
           <div className={commonStyles.section}>
             <div className={commonStyles.header}>{t('INITIAL_PARAMETERS')}</div>
-            <div className={commonStyles.content} style={{ minWidth: '584px' }}>
+            <div className={`${commonStyles.content} ${styles.initialParametersContent}`}>
               <Flex gap={30} align='start'>
                 {project.thumbnailUrl ? (
                   <div className={styles.thumbnail}>

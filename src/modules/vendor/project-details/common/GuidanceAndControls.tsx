@@ -3,6 +3,7 @@ import React, { useCallback } from 'react';
 
 import { Button, Flex, Typography, Form } from 'antd';
 import { useComponentSize } from '@/hooks/useComponentSize';
+import { useBreakpoint } from '@/hooks/useBreakpoint';
 import { useGuidance } from '@/context/GuidanceProvider';
 import { useAppDispatch, useAppSelector } from '@/store/hooks';
 import { selectMode, setMode } from '@/store/slices/project';
@@ -17,6 +18,7 @@ export const GuidanceAndControls = () => {
   const { focusedField } = useGuidance();
   const mode = useAppSelector(selectMode);
   const dispatch = useAppDispatch();
+  const { isMobile } = useBreakpoint();
 
   const reset = useCallback(() => {
     form.resetFields();
@@ -27,12 +29,19 @@ export const GuidanceAndControls = () => {
     dispatch(setMode('edit'));
   }, [dispatch]);
 
+  const controlsFixedStyle = isMobile
+    ? { width: '100%', minWidth: 0 }
+    : { position: 'fixed' as const, width: width, bottom: '24px', minWidth: '300px' };
+
+  const editButtonStyle = isMobile
+    ? { width: '100%', minWidth: 0 }
+    : { position: 'fixed' as const, width: width, bottom: '24px', minWidth: '300px' };
+
+  const guidanceStyle = isMobile ? undefined : { position: 'fixed' as const, width: width };
+
   const controls =
     mode === 'edit' ? (
-      <div
-        className={commonStyles.section}
-        style={{ position: 'fixed', width: width, bottom: '24px', minWidth: '300px' }}
-      >
+      <div className={commonStyles.section} style={controlsFixedStyle}>
         <div className={commonStyles.content}>
           <Flex gap={8} align='center' justify='space-between'>
             <Typography.Text type='secondary'>{t('SAVED_AT')}</Typography.Text>
@@ -48,13 +57,13 @@ export const GuidanceAndControls = () => {
         </div>
       </div>
     ) : (
-      <Flex
-        gap={8}
-        align='center'
-        justify='end'
-        style={{ position: 'fixed', width: width, bottom: '24px', minWidth: '300px' }}
-      >
-        <Button type='primary' onClick={edit} style={{ margin: '10px 30px' }}>
+      <Flex gap={8} align='center' justify='end' style={editButtonStyle}>
+        <Button
+          type='primary'
+          onClick={edit}
+          style={isMobile ? { width: '100%' } : { margin: '10px 30px' }}
+          block={isMobile}
+        >
           {t('EDIT')}
         </Button>
       </Flex>
@@ -62,22 +71,24 @@ export const GuidanceAndControls = () => {
 
   return (
     <div className={styles.wrapper} ref={observedRef}>
-      <div className={commonStyles.section} style={{ position: 'fixed', width: width }}>
-        <div className={commonStyles.header}>{t('GUIDANCE')}</div>
-        <div className={commonStyles.content}>
-          {focusedField ? (
-            <>
-              <Typography.Text>{focusedField.label}</Typography.Text>
-              <div className={styles.borderDashedLine} />
-              <Typography.Text>{t('WHAT_IS_THIS_USED_FOR')}</Typography.Text>
-              <Typography.Text type='secondary' className={styles.description}>
-                {focusedField.description}
-              </Typography.Text>
-            </>
-          ) : (
-            <Typography.Text>{t('CLICK_ON_FIELD_FOR_GUIDANCE')}</Typography.Text>
-          )}
-        </div>
+      <div className={commonStyles.section} style={guidanceStyle}>
+        {!isMobile && <div className={commonStyles.header}>{t('GUIDANCE')}</div>}
+        {!isMobile && (
+          <div className={commonStyles.content}>
+            {focusedField ? (
+              <>
+                <Typography.Text>{focusedField.label}</Typography.Text>
+                <div className={styles.borderDashedLine} />
+                <Typography.Text>{t('WHAT_IS_THIS_USED_FOR')}</Typography.Text>
+                <Typography.Text type='secondary' className={styles.description}>
+                  {focusedField.description}
+                </Typography.Text>
+              </>
+            ) : (
+              <Typography.Text>{t('CLICK_ON_FIELD_FOR_GUIDANCE')}</Typography.Text>
+            )}
+          </div>
+        )}
       </div>
       {controls}
     </div>
