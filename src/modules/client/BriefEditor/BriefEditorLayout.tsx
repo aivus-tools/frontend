@@ -105,7 +105,7 @@ export const BriefEditorLayout = (props: BriefEditorLayoutProps) => {
   const [stage, setStage] = useState<Stage>(props.briefId ? 'chat' : 'start');
   const [hasMounted, setHasMounted] = useState(false);
   const [headerSlot, setHeaderSlot] = useState<HTMLElement | null>(null);
-  const mobileActionsSlotRef = useRef<HTMLDivElement | null>(null);
+  const [mobileActionsSlot, setMobileActionsSlot] = useState<HTMLDivElement | null>(null);
   const { dismissed: footerDismissed } = useBetaFooter();
   const footerVisible = !footerDismissed;
   const footerHeight = useBetaFooterHeight();
@@ -837,7 +837,7 @@ export const BriefEditorLayout = (props: BriefEditorLayoutProps) => {
         {finalPackage ? (
           <div className={styles.finalContainer}>
             {inlineTitleBar}
-            <div ref={mobileActionsSlotRef} className={styles.mobileActions} />
+            <div ref={setMobileActionsSlot} className={styles.mobileActions} />
             <div className={styles.mobileTabBar} role='tablist'>
               <button
                 type='button'
@@ -865,7 +865,7 @@ export const BriefEditorLayout = (props: BriefEditorLayoutProps) => {
                   package={finalPackage}
                   onRegenerate={isAuth ? handleRegenerate : null}
                   isRegenerating={isRegenerating}
-                  mobileActionsSlot={mobileActionsSlotRef.current}
+                  mobileActionsSlot={mobileActionsSlot}
                 />
               </div>
               <div className={chatColumnClass}>

@@ -10,6 +10,7 @@ import Eye from '@/icons/eye.svg';
 import { Details } from '@/types/brief.interface';
 import { useGuidance } from '@/context/GuidanceProvider';
 import { t } from '@/lib/i18n';
+import { useBreakpoint } from '@/hooks/useBreakpoint';
 
 const { TextArea } = Input;
 
@@ -17,6 +18,7 @@ export const Brief = () => {
   const form = Form.useFormInstance<Details>();
   const visibleForVendors = Form.useWatch('visibleForVendors', form);
   const { handleFocus } = useGuidance();
+  const { isMobile } = useBreakpoint();
 
   return (
     <>
@@ -36,7 +38,7 @@ export const Brief = () => {
               rules={[{ required: true, message: t('AT_LEAST_ONE_REFERENCE_VIDEO_REQUIRED') }]}
             >
               {fields.map((field) => (
-                <Flex gap={20} key={field.key}>
+                <Flex gap={isMobile ? 12 : 20} key={field.key} vertical={isMobile}>
                   <Form.Item
                     noStyle
                     name={[field.name, 'url']}
@@ -63,7 +65,7 @@ export const Brief = () => {
           )}
         </Form.List>
       </div>
-      <Flex gap={20}>
+      <Flex gap={isMobile ? 12 : 20} vertical={isMobile}>
         <Form.Item
           name='budget'
           className='budget'

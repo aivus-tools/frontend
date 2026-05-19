@@ -11,6 +11,7 @@ import HouseIcon from '@/icons/house.svg';
 import { t } from '@/lib/i18n';
 import { projectsApi } from '@/services/client/projectsApi';
 import { NEW_BRIEF_SLUG } from '@/constants/constants';
+import { useBreakpoint } from '@/hooks/useBreakpoint';
 
 import styles from './Details.module.css';
 
@@ -40,6 +41,7 @@ const Item = (props: ItemProps) => (
 
 export default function Details() {
   const params = useParams();
+  const { isMobile } = useBreakpoint();
   const projectId = params.projectId as string | undefined;
   const {
     data: project,
@@ -65,7 +67,7 @@ export default function Details() {
           <div className={commonStyles.section}>
             <div className={commonStyles.header}>{t('INITIAL_PARAMETERS')}</div>
             <div className={`${commonStyles.content} ${styles.initialParametersContent}`}>
-              <Flex gap={30} align='start'>
+              <Flex gap={isMobile ? 16 : 30} align={isMobile ? 'stretch' : 'start'} vertical={isMobile}>
                 {project.thumbnailUrl ? (
                   <div className={styles.thumbnail}>
                     <Image
@@ -79,22 +81,27 @@ export default function Details() {
                 ) : (
                   <HouseIcon />
                 )}
-                <Flex gap={20} align='center' style={{ flex: 1 }}>
+                <Flex
+                  gap={isMobile ? 16 : 20}
+                  align={isMobile ? 'stretch' : 'center'}
+                  style={{ flex: 1 }}
+                  vertical={isMobile}
+                >
                   <Item label={t('CRM_ID_LINK')} value={project.crmId} />
                 </Flex>
               </Flex>
               <Row align='middle' style={{ marginTop: 20 }}>
-                <Col span={24}>
+                <Col xs={24}>
                   <Item label={t('PROJECT_NAME')} value={project.name} />
                 </Col>
               </Row>
               <Row align='middle' style={{ marginTop: 20 }}>
-                <Col span={24}>
+                <Col xs={24}>
                   <Item label={t('DESCRIPTION')} value={project.description} />
                 </Col>
               </Row>
               <Row align='middle' style={{ marginTop: 20 }}>
-                <Col span={12}>
+                <Col xs={24} sm={12}>
                   <Item
                     label={t('COLLABORATORS')}
                     value={
@@ -122,10 +129,10 @@ export default function Details() {
             <div className={commonStyles.header}>{t('THE_CLIENT')}</div>
             <div className={commonStyles.content}>
               <Row align='middle' style={{ marginTop: 20 }}>
-                <Col span={12}>
+                <Col xs={24} sm={12}>
                   <Item label={t('CLIENT')} value={project.clientName} />
                 </Col>
-                <Col span={12}>
+                <Col xs={24} sm={12}>
                   <Item label={t('IRS_EIN')} value={project.irsEin} />
                 </Col>
               </Row>
@@ -133,16 +140,16 @@ export default function Details() {
                 ?.filter((manager) => manager.name || manager.position)
                 .map((manager, index) => (
                   <Row align='middle' style={{ marginTop: index === 0 ? 20 : 8 }} key={manager.id || index}>
-                    <Col span={12}>
+                    <Col xs={24} sm={12}>
                       <Item label={index === 0 ? t('CLIENTS_MANAGERS') : undefined} value={manager.name} />
                     </Col>
-                    <Col span={12}>
+                    <Col xs={24} sm={12}>
                       <Item label={index === 0 ? t('MANAGER_POSITION') : undefined} value={manager.position} />
                     </Col>
                   </Row>
                 ))}
               <Row align='middle' style={{ marginTop: 20 }}>
-                <Col span={12}>
+                <Col xs={24} sm={12}>
                   <Item label={t('BRAND_NAME')} value={project.brandName} />
                 </Col>
               </Row>
@@ -152,14 +159,14 @@ export default function Details() {
             <div className={commonStyles.header}>{t('THE_AGENCY')}</div>
             <div className={commonStyles.content}>
               <Row align='middle' style={{ marginTop: 20 }}>
-                <Col span={12}>
+                <Col xs={24} sm={12}>
                   <Item label={t('AGENCY_NAME')} value={project.agencyName} />
                 </Col>
               </Row>
               {project.collaborators &&
                 project.collaborators.filter((x) => x.role === 'agency_producer').length > 0 && (
                   <Row align='middle' style={{ marginTop: 20 }}>
-                    <Col span={12}>
+                    <Col xs={24} sm={12}>
                       <Item
                         label={t('AGENCY_PRODUCERS')}
                         value={project.collaborators

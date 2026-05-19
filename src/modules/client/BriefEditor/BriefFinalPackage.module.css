@@ -93,6 +93,7 @@
 
   .tabsList {
     gap: 16px;
+    justify-content: center;
     width: 100%;
   }
 

@@ -45,3 +45,18 @@
   background-color: var(--beige);
   border: 0;
 }
+
+.navFullWidth {
+  flex: 1;
+  gap: 0;
+  width: 100%;
+}
+
+.tabFullWidth {
+  flex: 1;
+  justify-content: center;
+  padding: 12px 8px;
+  font-size: 13px;
+  text-align: center;
+  border-radius: 0;
+}

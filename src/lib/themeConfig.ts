@@ -81,6 +81,7 @@ const theme: ThemeConfig = {
       headerBg: colors.bgContainer,
       triggerBg: colors.siderTrigger,
       headerHeight: 70,
+      headerPadding: 0,
     },
     Button: {
       fontWeight: 600,

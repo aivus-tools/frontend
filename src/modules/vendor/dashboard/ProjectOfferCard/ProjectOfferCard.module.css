@@ -252,3 +252,111 @@
 .alignRight {
   text-align: right;
 }
+
+@media (width <= 1023.98px) {
+  .cardContainer {
+    margin-bottom: 12px;
+    border-radius: 10px;
+  }
+
+  .cardHeader {
+    gap: 8px;
+    padding: 14px 16px 10px;
+  }
+
+  .projectTitle {
+    font-size: 13px;
+    letter-spacing: 0.2px;
+  }
+
+  .projectMeta {
+    gap: 8px;
+    margin-top: 4px;
+    font-size: 11px;
+  }
+
+  .kebabButton {
+    width: 28px;
+    height: 28px;
+    font-size: 16px;
+  }
+
+  .offersTable {
+    padding-bottom: 6px;
+    margin: 0 16px;
+  }
+
+  .offerTableHeader {
+    display: none;
+  }
+
+  .offerRow {
+    display: grid;
+    grid-template-areas:
+      'name name status'
+      'client expenses profit';
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) minmax(0, 1fr);
+    gap: 6px 10px;
+    padding: 10px 0;
+  }
+
+  .cellName {
+    grid-area: name;
+    min-width: 0;
+  }
+
+  .offerNameText {
+    font-size: 13px;
+  }
+
+  .cellStatus {
+    grid-area: status;
+    justify-self: end;
+  }
+
+  .cellClient,
+  .cellExpenses,
+  .cellProfit {
+    display: inline-flex;
+    flex-wrap: wrap;
+    gap: 4px;
+    align-items: baseline;
+    font-size: 12px;
+    font-weight: 600;
+  }
+
+  .cellClient {
+    grid-area: client;
+    justify-content: flex-start;
+    text-align: left;
+  }
+
+  .cellExpenses {
+    grid-area: expenses;
+    justify-content: center;
+    text-align: center;
+  }
+
+  .cellProfit {
+    grid-area: profit;
+    justify-content: flex-end;
+    text-align: right;
+  }
+
+  .cellClient::before,
+  .cellExpenses::before,
+  .cellProfit::before {
+    margin-right: 2px;
+    font-size: 10px;
+    font-weight: 500;
+    color: var(--gray-light);
+    text-transform: uppercase;
+    letter-spacing: 0.3px;
+    content: attr(data-label) ':';
+  }
+
+  .percentBadge {
+    padding: 0 4px;
+    font-size: 9px;
+  }
+}

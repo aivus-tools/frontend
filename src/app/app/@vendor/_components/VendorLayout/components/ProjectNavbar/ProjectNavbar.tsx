@@ -21,7 +21,13 @@ import { SaveTemplateModal } from '@/modules/vendor/SaveTemplateModal/SaveTempla
 import { useSession } from 'next-auth/react';
 import { useUpdateTemplateMutation } from '@/services/client/templatesApi';
 
-export const ProjectNavbar = () => {
+interface ProjectNavbarProps {
+  variant?: 'desktop' | 'mobile';
+}
+
+export const ProjectNavbar = (props: ProjectNavbarProps) => {
+  const variant = props.variant ?? 'desktop';
+  const isMobile = variant === 'mobile';
   const { message } = App.useApp();
   useSetProject();
   useSetVendor();
@@ -91,7 +97,7 @@ export const ProjectNavbar = () => {
           variant='borderless'
           className={styles.templateNameInput}
         />
-      ) : (
+      ) : isMobile ? null : (
         <ProjectTabs />
       )}
 

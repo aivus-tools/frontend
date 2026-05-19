@@ -1,15 +1,19 @@
 import { createContext, useContext, ReactNode, useState, useMemo, useCallback } from 'react';
 
+interface RowProps {
+  onMouseEnter: () => void;
+  onMouseLeave: () => void;
+  onFocus: () => void;
+  onBlur: () => void;
+  'data-hovered': boolean;
+  'data-focused': boolean;
+}
+
 interface HoverContextType {
   hoveredRow: string | null;
   focusedRow: string | null;
   focusRow: (id: string | null) => void;
-  getRowProps: (id: string) => {
-    onMouseEnter: () => void;
-    onMouseLeave: () => void;
-    $hovered: boolean;
-    $focused: boolean;
-  };
+  getRowProps: (id: string) => RowProps;
 }
 
 const HoverContext = createContext<HoverContextType | undefined>(undefined);
@@ -23,13 +27,13 @@ export const HoverProvider = (props: FocusProviderProps) => {
   const [focusedRow, setFocusedRow] = useState<string | null>(null);
 
   const getRowProps = useCallback(
-    (id: string) => ({
+    (id: string): RowProps => ({
       onMouseEnter: () => setHoveredRow(id),
       onMouseLeave: () => setHoveredRow(null),
       onFocus: () => setFocusedRow(id),
       onBlur: () => setFocusedRow(null),
-      $hovered: hoveredRow === id || focusedRow === id,
-      $focused: focusedRow === id,
+      'data-hovered': hoveredRow === id || focusedRow === id,
+      'data-focused': focusedRow === id,
     }),
     [focusedRow, hoveredRow]
   );

@@ -294,13 +294,23 @@
   min-width: 0;
 }
 
+.chatInputWrapper > :first-child :global(.ant-input) {
+  min-height: 56px;
+}
+
 .chatInputWrapper > button {
   align-self: stretch;
+  height: 56px;
   min-height: 56px;
 }
 
 @media (width <= 1023.98px) {
+  .chatInputWrapper > :first-child :global(.ant-input) {
+    min-height: 44px;
+  }
+
   .chatInputWrapper > button {
+    height: 44px;
     min-height: 44px;
   }
 }

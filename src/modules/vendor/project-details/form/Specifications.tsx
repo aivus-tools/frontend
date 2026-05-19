@@ -6,6 +6,7 @@ import RemoveIcon from '@/icons/minus.svg';
 import CrossIcon from '@/icons/cross.svg';
 import { useGuidance } from '@/context/GuidanceProvider';
 import { getLocale, t } from '@/lib/i18n';
+import { useBreakpoint } from '@/hooks/useBreakpoint';
 
 import i18n from 'i18n-iso-countries';
 import Flag from 'react-world-flags';
@@ -13,6 +14,7 @@ import { Details } from '@/types/brief.interface';
 
 export const Specifications = () => {
   const { handleFocus } = useGuidance();
+  const { isMobile } = useBreakpoint();
   const countries = i18n.getNames(getLocale(), { select: 'official' });
   const countryOptions = [
     {
@@ -49,7 +51,7 @@ export const Specifications = () => {
       >
         <Input placeholder={t('AD_PLACEMENTS')} onFocus={handleFocus('distributionAndAdPlacements')} />
       </Form.Item>
-      <Flex gap={16} style={{ width: '100%' }}>
+      <Flex gap={isMobile ? 0 : 16} style={{ width: '100%' }} vertical={isMobile}>
         <Form.Item
           name='territory'
           label={t('TERRITORY')}
@@ -93,7 +95,7 @@ export const Specifications = () => {
         extra={t('NUMBER_AND_LENGTH_OF_ORIGINAL_VIDEOS')}
         rules={[{ required: true, message: t('MAIN_VIDEO_DURATION_REQUIRED') }]}
       >
-        <Flex gap={16}>
+        <Flex gap={isMobile ? 8 : 16} vertical={isMobile}>
           <Flex gap={4} align='center'>
             <Form.Item name={['mainVideoDuration', 'number']} noStyle>
               <Input placeholder={t('NUMBER')} onFocus={handleFocus('mainVideoDuration')} />
@@ -140,7 +142,7 @@ export const Specifications = () => {
               extra={t('ADDITIONAL_VERSIONS_OF_MAIN_VIDEO')}
             >
               {fields.map((field) => (
-                <Flex key={field.key} gap={16}>
+                <Flex key={field.key} gap={isMobile ? 8 : 16} vertical={isMobile}>
                   <Flex gap={4} align='center'>
                     <Form.Item noStyle name={[field.name, 'number']}>
                       <Input placeholder={t('NUMBER')} onFocus={handleFocus('cuts')} />
@@ -186,7 +188,7 @@ export const Specifications = () => {
         extra={t('SHOOTING_DAYS_DESCRIPTION')}
         rules={[{ required: true, message: t('SHOOTING_DAYS_REQUIRED') }]}
       >
-        <Flex gap={16}>
+        <Flex gap={isMobile ? 8 : 16} vertical={isMobile}>
           <Flex gap={4} align='center'>
             <Form.Item name={['shootingDays', 'number']} noStyle>
               <Input placeholder={t('NUMBER')} onFocus={handleFocus('shootingDays')} />

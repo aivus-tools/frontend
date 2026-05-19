@@ -16,9 +16,9 @@ export const Entries = (props: EntriesProps) => {
       {props.data.map((offer, index) => (
         <Fragment key={offer.id}>
           <EntryRow offer={offer} isEven={index % 2 === 0} />
-          <div style={{ background: 'var(--white)' }} />
+          <div className={styles.entryRowSpacerStart} />
           <div className={styles.entryRowLine} />
-          <div style={{ background: 'var(--white)' }} />
+          <div className={styles.entryRowSpacerEnd} />
         </Fragment>
       ))}
     </>

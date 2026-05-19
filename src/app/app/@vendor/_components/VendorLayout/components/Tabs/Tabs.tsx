@@ -12,20 +12,30 @@ interface TabsProps {
   items: TabItem[];
   activeKey?: string;
   orientation?: 'horizontal' | 'vertical';
+  fullWidth?: boolean;
 }
 
 export const Tabs = (props: TabsProps) => {
   const orientation = props.orientation ?? 'horizontal';
   const isVertical = orientation === 'vertical';
-  const navClass = isVertical ? `${styles.nav} ${styles.navVertical}` : styles.nav;
+  const navClasses = [styles.nav];
+  if (isVertical) {
+    navClasses.push(styles.navVertical);
+  }
+  if (props.fullWidth && !isVertical) {
+    navClasses.push(styles.navFullWidth);
+  }
 
   return (
-    <nav className={navClass}>
+    <nav className={navClasses.join(' ')}>
       {props.items.map((x) => {
         const isActive = props.activeKey === x.key;
         const classes = [styles.tab];
         if (isVertical) {
           classes.push(styles.tabVertical);
+        }
+        if (props.fullWidth && !isVertical) {
+          classes.push(styles.tabFullWidth);
         }
         if (isActive) {
           classes.push(isVertical ? styles.tabVerticalActive : styles.tabActive);

@@ -11,6 +11,7 @@ import { t } from '@/lib/i18n';
 import { useAppSelector } from '@/store/hooks';
 import { selectIsNewBrief } from '@/store/slices/project';
 import { useGetTemplatesQuery } from '@/services/client/templatesApi';
+import { useBreakpoint } from '@/hooks/useBreakpoint';
 
 const { TextArea } = Input;
 
@@ -32,6 +33,7 @@ export const InitialParameters = (props: InitialParametersProps) => {
   const { handleFocus } = useGuidance();
   const form = Form.useFormInstance<ProjectFormData>();
   const { data: templates = [] } = useGetTemplatesQuery();
+  const { isMobile } = useBreakpoint();
 
   const templateOptions = templates.map((tmpl) => ({
     label: tmpl.name,
@@ -57,11 +59,11 @@ export const InitialParameters = (props: InitialParametersProps) => {
   return (
     <>
       {modal}
-      <Flex gap={30} style={{ width: '100%' }}>
+      <Flex gap={isMobile ? 16 : 30} style={{ width: '100%' }} vertical={isMobile}>
         <Form.Item name='previewImage' valuePropName='image' style={{ width: 'auto' }}>
           <Uploader thumbnailUrl={thumbnailUrl} />
         </Form.Item>
-        <Flex gap={20} flex={1}>
+        <Flex gap={isMobile ? 0 : 20} flex={1} vertical={isMobile}>
           <Form.Item
             name='crmId'
             label={t('CRM_ID_LINK')}
@@ -114,7 +116,7 @@ export const InitialParameters = (props: InitialParametersProps) => {
           const visibleCount = fields.filter((x) => collaborators[x.name]?.role !== 'agency_producer').length;
           return (
             <Row gutter={20}>
-              <Col span={12}>
+              <Col xs={24} sm={12}>
                 <Form.Item label={<LabelWithAdd text={t('COLLABORATORS')} onClick={() => showModal()} />}>
                   {visibleCount === 0 && <Typography.Text type='secondary'>{t('EMPTY')}</Typography.Text>}
                   {fields.map((field) => {
@@ -141,7 +143,7 @@ export const InitialParameters = (props: InitialParametersProps) => {
                   })}
                 </Form.Item>
               </Col>
-              <Col span={12}>
+              <Col xs={24} sm={12}>
                 <Typography.Text>
                   <b>{t('ADD_INTERNAL_MANAGERS')}</b> {t('INTERNAL_MANAGERS_DESCRIPTION')}
                 </Typography.Text>

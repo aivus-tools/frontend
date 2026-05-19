@@ -170,10 +170,10 @@ export const ProjectOfferCard = (props: ProjectOfferCardProps) => {
                   router.push(AppRoute.DASHBOARD_PROJECT_ESTIMATION(props.item.id) + '?offer=' + offer.id);
                 }}
               >
-                <div className={styles.offerName}>
+                <div className={`${styles.offerName} ${styles.cellName}`}>
                   <span className={styles.offerNameText}>{offer.projectName}</span>
                 </div>
-                <div className={styles.alignRight}>
+                <div className={`${styles.alignRight} ${styles.cellStatus}`}>
                   <Popover
                     open={statusPopoverId === offer.id}
                     onOpenChange={(open) => setStatusPopoverId(open ? offer.id : null)}
@@ -211,9 +211,16 @@ export const ProjectOfferCard = (props: ProjectOfferCardProps) => {
                     </span>
                   </Popover>
                 </div>
-                <div className={styles.offerValue}>{clientCost > 0 ? `$ ${formatPrice(clientCost)}` : '-'}</div>
-                <div className={styles.offerValue}>{expenses > 0 ? `$ ${formatPrice(expenses)}` : '-'}</div>
-                <div className={offerValueClass(profit > 0, profit < 0)}>
+                <div className={`${styles.offerValue} ${styles.cellClient}`} data-label={t('TOTAL_CLIENTS_COST')}>
+                  {clientCost > 0 ? `$ ${formatPrice(clientCost)}` : '-'}
+                </div>
+                <div className={`${styles.offerValue} ${styles.cellExpenses}`} data-label={t('EXPENSES')}>
+                  {expenses > 0 ? `$ ${formatPrice(expenses)}` : '-'}
+                </div>
+                <div
+                  className={`${offerValueClass(profit > 0, profit < 0)} ${styles.cellProfit}`}
+                  data-label={t('PROFIT')}
+                >
                   {profit !== 0 ? (
                     <>
                       {`$ ${formatPrice(profit)}`}

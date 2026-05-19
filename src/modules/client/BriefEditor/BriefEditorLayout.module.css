@@ -206,7 +206,7 @@
     flex-shrink: 0;
     gap: 4px;
     padding: 4px;
-    margin: 8px 12px 0;
+    margin: 8px 12px;
     background: var(--bg-gray-page);
     border-radius: 10px;
   }
@@ -327,6 +327,12 @@
   font-family: Montserrat, sans-serif;
   font-size: 13px;
   color: var(--gray);
+}
+
+@media (width <= 1023.98px) {
+  .generatingSubtitle {
+    text-align: center;
+  }
 }
 
 .spinner {

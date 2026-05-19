@@ -4,7 +4,11 @@ import { Tabs } from '@/app/app/@vendor/_components/VendorLayout/components/Tabs
 import { VENDOR_PROJECT_TABS, VENDOR_PROJECT_TAB_KEYS, NEW_BRIEF_SLUG } from '@/constants/constants';
 import React, { useMemo } from 'react';
 
-export const ProjectTabs = () => {
+interface ProjectTabsProps {
+  fullWidth?: boolean;
+}
+
+export const ProjectTabs = (props: ProjectTabsProps) => {
   const router = useRouter();
   const searchParams = useSearchParams();
   const [, projectId, tab] = useSelectedLayoutSegments();
@@ -24,5 +28,5 @@ export const ProjectTabs = () => {
     router.push(url);
   };
 
-  return <Tabs activeKey={tab} items={visibleTabs} onChange={handleClick} />;
+  return <Tabs activeKey={tab} items={visibleTabs} onChange={handleClick} fullWidth={props.fullWidth} />;
 };

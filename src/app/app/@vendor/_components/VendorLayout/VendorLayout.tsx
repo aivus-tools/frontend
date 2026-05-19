@@ -5,12 +5,18 @@ import { AppShell, useAppShell } from '@/components/layout/AppShell';
 import { Profile } from '@/components/Profile/Profile';
 import { Logo } from './components/Logo/Logo';
 import { ProjectNavbar } from './components/ProjectNavbar/ProjectNavbar';
+import { ProjectTabs } from './components/ProjectNavbar/components/ProjectTabs/ProjectTabs';
 import { VendorNavbar } from './components/VendorNavbar/VendorNavbar';
 import { GrandTotalSider } from '@/modules/vendor/sider/GrandTotalSider/GrandTotalSider';
+import {
+  GrandTotalMobileBar,
+  GRAND_TOTAL_MOBILE_BAR_HEIGHT,
+} from '@/modules/vendor/sider/GrandTotalSider/GrandTotalMobileBar';
 import { DashboardSidebar } from '@/modules/vendor/dashboard/DashboardSidebar/DashboardSidebar';
-import { BetaFooter, BETA_FOOTER_HEIGHT } from '@/components/BetaFooter/BetaFooter';
+import { BetaFooter, useBetaFooterHeight } from '@/components/BetaFooter/BetaFooter';
 import { BetaFooterProvider, useBetaFooter } from '@/components/BetaFooter/BetaFooterContext';
 import { PageTitleSync } from '@/components/PageTitleSync';
+import { useBreakpoint } from '@/hooks/useBreakpoint';
 import { THEME } from '@/constants/constants';
 
 import styles from './VendorLayout.module.css';
@@ -30,6 +36,11 @@ const VendorLayoutInner = (props: PropsWithChildren) => {
   const segments = useSelectedLayoutSegments();
   const isRoot = segments.length === 1;
   const { dismissed } = useBetaFooter();
+  const betaFooterHeight = useBetaFooterHeight();
+  const { isMobile, ready } = useBreakpoint();
+
+  const showMobileBar = ready && isMobile && !isRoot;
+  const mobileBarOffset = showMobileBar ? GRAND_TOTAL_MOBILE_BAR_HEIGHT : 0;
 
   const siderTheme = isRoot ? THEME.dark : THEME.light;
   const siderBody = isRoot ? <DashboardSidebar /> : <GrandTotalSider />;
@@ -41,7 +52,14 @@ const VendorLayoutInner = (props: PropsWithChildren) => {
       </span>
     </div>
   ) : (
-    <ProjectNavbar />
+    <>
+      <span className={styles.desktopOnly}>
+        <ProjectNavbar variant='desktop' />
+      </span>
+      <span className={styles.mobileOnly}>
+        <ProjectNavbar variant='mobile' />
+      </span>
+    </>
   );
 
   return (
@@ -59,9 +77,19 @@ const VendorLayoutInner = (props: PropsWithChildren) => {
         headerLeft={headerLeft}
         headerRight={<Profile />}
         contentBackground={isRoot ? undefined : 'var(--bg-gray-page)'}
-        contentPaddingBottom={dismissed ? 0 : BETA_FOOTER_HEIGHT}
-        footer={<BetaFooter />}
+        contentPaddingBottom={(dismissed ? 0 : betaFooterHeight) + mobileBarOffset}
+        footer={
+          <>
+            <BetaFooter />
+            {!isRoot && <GrandTotalMobileBar />}
+          </>
+        }
       >
+        {!isRoot && (
+          <div className={styles.mobileProjectTabsBar}>
+            <ProjectTabs fullWidth />
+          </div>
+        )}
         {props.children}
       </AppShell>
     </>

@@ -42,6 +42,7 @@ export const Profile = ({ className, ...props }: ProfileProps) => {
         positions={['bottom']}
         align='end'
         padding={8}
+        containerStyle={{ zIndex: '9999' }}
         onClickOutside={() => setIsPopoverOpen(false)}
         content={() => (
           <div className={cn(styles.popover)}>
