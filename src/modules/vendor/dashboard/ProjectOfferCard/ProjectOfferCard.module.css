@@ -320,36 +320,33 @@
   .cellClient,
   .cellExpenses,
   .cellProfit {
-    display: inline-flex;
-    flex-wrap: wrap;
-    gap: 4px;
-    align-items: baseline;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    align-items: stretch;
     font-size: 12px;
     font-weight: 600;
   }
 
   .cellClient {
     grid-area: client;
-    justify-content: flex-start;
     text-align: left;
   }
 
   .cellExpenses {
     grid-area: expenses;
-    justify-content: center;
     text-align: center;
   }
 
   .cellProfit {
     grid-area: profit;
-    justify-content: flex-end;
     text-align: right;
   }
 
   .cellClient::before,
   .cellExpenses::before,
   .cellProfit::before {
-    margin-right: 2px;
+    display: block;
     font-size: 10px;
     font-weight: 500;
     color: var(--gray-light);

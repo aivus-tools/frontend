@@ -2,6 +2,7 @@
 import { useRouter, useSelectedLayoutSegment } from 'next/navigation';
 import { Tabs } from '@/app/app/@vendor/_components/VendorLayout/components/Tabs/Tabs';
 import { VENDOR_TABS } from '@/constants/constants';
+import { t } from '@/lib/i18n';
 
 interface VendorTabsProps {
   orientation?: 'horizontal' | 'vertical';
@@ -18,5 +19,7 @@ export const VendorTabs = (props: VendorTabsProps) => {
     props.onNavigate?.();
   };
 
-  return <Tabs activeKey={tab!} items={VENDOR_TABS} orientation={props.orientation} onChange={handleClick} />;
+  const items = VENDOR_TABS.map((x) => ({ key: x.key, label: t(x.labelKey) }));
+
+  return <Tabs activeKey={tab!} items={items} orientation={props.orientation} onChange={handleClick} />;
 };

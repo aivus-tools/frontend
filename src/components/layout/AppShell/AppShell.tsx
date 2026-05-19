@@ -87,7 +87,13 @@ export const AppShell = (props: AppShellProps) => {
           </Sider>
         )}
         <Layout>
-          <Header className={styles.header} style={{ background: token.colorBgContainer }}>
+          <Header
+            className={styles.header}
+            style={{
+              background: token.colorBgContainer,
+              paddingInline: ready && isMobile ? 0 : 64,
+            }}
+          >
             <div className={styles.headerLeft}>
               {showMobileTrigger && (
                 <Button
