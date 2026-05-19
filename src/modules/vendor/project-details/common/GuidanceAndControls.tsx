@@ -43,8 +43,7 @@ export const GuidanceAndControls = () => {
     mode === 'edit' ? (
       <div className={commonStyles.section} style={controlsFixedStyle}>
         <div className={commonStyles.content}>
-          <Flex gap={8} align='center' justify='space-between'>
-            <Typography.Text type='secondary'>{t('SAVED_AT')}</Typography.Text>
+          <Flex gap={8} align='center' justify='end'>
             <Button type='text' onClick={reset}>
               {t('CANCEL')}
             </Button>
