@@ -35,9 +35,13 @@ const BriefClaimPage = () => {
 
     claimBrief({ briefId: params.briefId, token })
       .unwrap()
-      .then(() => {
+      .then((response) => {
         removePublicBriefToken(params.briefId);
-        router.replace(AppRoute.BRIEF_DETAIL(params.briefId));
+        const detailRoute = AppRoute.BRIEF_DETAIL(params.briefId);
+        const target = response.finalizingTaskId
+          ? `${detailRoute}?finalizingTask=${encodeURIComponent(response.finalizingTaskId)}`
+          : detailRoute;
+        router.replace(target);
       })
       .catch((error) => {
         logger.error('Failed to claim brief:', error);

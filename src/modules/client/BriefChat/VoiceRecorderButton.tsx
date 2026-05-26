@@ -129,7 +129,7 @@ export const VoiceRecorderButton = (props: VoiceRecorderButtonProps) => {
   }, [recorder.state, recorder.errorCode, messageApi]);
 
   const callTranscribe = useCallback(
-    async (blob: Blob, mimeType: string) => {
+    async (blob: Blob, mimeType: string, durationMs: number) => {
       const ctx = briefContextRef.current;
       if (!ctx.briefId) {
         messageApi.error(t('BRIEF_V3_VOICE_TRANSCRIBE_FAILED'));
@@ -145,12 +145,14 @@ export const VoiceRecorderButton = (props: VoiceRecorderButtonProps) => {
               audio: blob,
               mimeType,
               language,
+              durationMs,
             }).unwrap()
           : await transcribeAuth({
               briefId: ctx.briefId,
               audio: blob,
               mimeType,
               language,
+              durationMs,
             }).unwrap();
         const text = (result?.text ?? '').trim();
         if (!text) {
@@ -189,7 +191,7 @@ export const VoiceRecorderButton = (props: VoiceRecorderButtonProps) => {
     if (recorder.state === 'recording') {
       const result = await recorder.stop();
       if (result) {
-        await callTranscribe(result.blob, result.mimeType);
+        await callTranscribe(result.blob, result.mimeType, result.durationMs);
       }
     }
   }, [callTranscribe, isProcessing, props, recorder]);
@@ -200,7 +202,7 @@ export const VoiceRecorderButton = (props: VoiceRecorderButtonProps) => {
     }
     const result = await recorder.stop();
     if (result) {
-      await callTranscribe(result.blob, result.mimeType);
+      await callTranscribe(result.blob, result.mimeType, result.durationMs);
     }
   }, [callTranscribe, recorder]);
 

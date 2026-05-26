@@ -344,6 +344,76 @@
   animation: spinner-rotate 0.8s linear infinite;
 }
 
+.finalizingProgressTrack {
+  width: 100%;
+  max-width: 420px;
+  height: 6px;
+  margin-top: 4px;
+  overflow: hidden;
+  background: var(--border-subtle);
+  border-radius: 999px;
+}
+
+.finalizingProgressBar {
+  height: 100%;
+  background: var(--blue);
+  border-radius: 999px;
+  transition: width 0.4s ease;
+}
+
+.finalizingStageList {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  width: 100%;
+  max-width: 420px;
+  padding: 0;
+  margin: 8px 0 0;
+  list-style: none;
+}
+
+.finalizingStage {
+  position: relative;
+  padding-left: 22px;
+  font-family: Montserrat, sans-serif;
+  font-size: 13px;
+  color: var(--gray);
+  transition: color 0.2s ease;
+}
+
+.finalizingStage::before {
+  position: absolute;
+  top: 5px;
+  left: 4px;
+  display: block;
+  width: 8px;
+  height: 8px;
+  content: '';
+  background: var(--border-subtle);
+  border-radius: 50%;
+  transition:
+    background 0.2s ease,
+    transform 0.2s ease;
+}
+
+.finalizingStageDone {
+  color: var(--main);
+}
+
+.finalizingStageDone::before {
+  background: var(--green-darker);
+}
+
+.finalizingStageActive {
+  font-weight: 600;
+  color: var(--main-dark);
+}
+
+.finalizingStageActive::before {
+  background: var(--blue);
+  transform: scale(1.2);
+}
+
 @keyframes spinner-rotate {
   from {
     transform: rotate(0deg);

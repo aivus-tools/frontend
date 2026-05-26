@@ -135,7 +135,7 @@ export const briefAiApi = createApi({
 
     transcribeBriefAi: builder.mutation<
       { text: string; language: string; model: string },
-      { briefId: string; audio: Blob; mimeType: string; language?: string }
+      { briefId: string; audio: Blob; mimeType: string; language?: string; durationMs?: number }
     >({
       query: (args) => {
         const formData = new FormData();
@@ -143,6 +143,9 @@ export const briefAiApi = createApi({
         formData.append('audio', args.audio, filename);
         if (args.language) {
           formData.append('language', args.language);
+        }
+        if (args.durationMs !== undefined) {
+          formData.append('durationMs', String(Math.round(args.durationMs)));
         }
         return {
           url: ApiRoute.BRIEF_AI_TRANSCRIBE(args.briefId),

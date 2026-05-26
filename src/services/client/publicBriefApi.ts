@@ -3,8 +3,8 @@ import { ApiRoute } from '@/constants/apiRoute';
 import { guessAudioExtension } from '@/services/client/briefAiApi';
 import {
   BriefAttachment,
-  BriefV3,
   BriefV3ChatResponse,
+  BriefV3ClaimResponse,
   BriefV3Detail,
   BriefV3StartResponse,
   BriefV3TaskStatus,
@@ -167,7 +167,7 @@ export const publicBriefApi = createApi({
 
     transcribePublicBrief: builder.mutation<
       { text: string; language: string; model: string },
-      { briefId: string; token: string; audio: Blob; mimeType: string; language?: string }
+      { briefId: string; token: string; audio: Blob; mimeType: string; language?: string; durationMs?: number }
     >({
       query: (args) => {
         const formData = new FormData();
@@ -175,6 +175,9 @@ export const publicBriefApi = createApi({
         formData.append('audio', args.audio, filename);
         if (args.language) {
           formData.append('language', args.language);
+        }
+        if (args.durationMs !== undefined) {
+          formData.append('durationMs', String(Math.round(args.durationMs)));
         }
         return {
           url: ApiRoute.PUBLIC_BRIEF_AI_TRANSCRIBE(args.briefId),
@@ -193,7 +196,7 @@ export const publicBriefApi = createApi({
       }),
     }),
 
-    claimPublicBrief: builder.mutation<BriefV3, { briefId: string; token: string }>({
+    claimPublicBrief: builder.mutation<BriefV3ClaimResponse, { briefId: string; token: string }>({
       query: (args) => ({
         url: ApiRoute.PUBLIC_BRIEF_AI_CLAIM(args.briefId),
         method: 'POST',

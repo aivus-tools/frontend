@@ -77,6 +77,10 @@ export interface BriefV3Detail extends BriefV3 {
   messages: ChatMessageV3[];
 }
 
+export interface BriefV3ClaimResponse extends BriefV3Detail {
+  finalizingTaskId?: string;
+}
+
 export interface BriefV3ListItem {
   id: string;
   status: string;

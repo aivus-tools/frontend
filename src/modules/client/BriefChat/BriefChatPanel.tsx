@@ -42,7 +42,6 @@ interface BriefChatPanelProps {
   onSendMessage: (message: string, attachmentIds: string[]) => void;
   onFeedback: ((messageId: string, rating: 'up' | 'down') => void) | null;
   onFeedbackComment: ((messageId: string, rating: 'up' | 'down', comment: string) => void) | null;
-  onFinalize: (() => void) | null;
   onRegenerate?: (() => void) | null;
   isRegenerating?: boolean;
   onShowPackage?: (() => void) | null;
@@ -296,33 +295,6 @@ export const BriefChatPanel = (props: BriefChatPanelProps) => {
         ) : null}
       </div>
 
-      {props.conversationStatus === 'ready_to_finalize' && props.onFinalize ? (
-        <div className={`${styles.statusBar} ${styles.statusBarReady}`}>
-          <span className={`${styles.statusBarText} ${styles.statusBarTextReady}`}>
-            {t('BRIEF_V3_READY_TO_FINALIZE')}
-          </span>
-          <Button
-            type='primary'
-            onClick={() => {
-              const confirmCallback = props.onFinalize;
-              if (!confirmCallback) {
-                return;
-              }
-              modal.confirm({
-                title: t('BRIEF_V3_FINALIZE_CONFIRM_TITLE'),
-                content: t('BRIEF_V3_FINALIZE_CONFIRM_BODY'),
-                okText: t('BRIEF_V3_FINALIZE_CONFIRM_OK'),
-                cancelText: t('BRIEF_V3_FINALIZE_CONFIRM_CANCEL'),
-                okButtonProps: { type: 'primary' },
-                onOk: confirmCallback,
-              });
-            }}
-          >
-            {t('BRIEF_V3_FINALIZE')}
-          </Button>
-        </div>
-      ) : null}
-
       {props.conversationStatus === 'finalized' && (props.onRegenerate || props.onShowPackage) ? (
         <div className={`${styles.statusBar} ${styles.statusBarFinalized}`}>
           {props.onRegenerate ? (
@@ -337,7 +309,7 @@ export const BriefChatPanel = (props: BriefChatPanelProps) => {
                   title: t('BRIEF_V3_REGENERATE_CONFIRM_TITLE'),
                   content: t('BRIEF_V3_REGENERATE_CONFIRM_BODY'),
                   okText: t('BRIEF_V3_REGENERATE_CONFIRM_OK'),
-                  cancelText: t('BRIEF_V3_FINALIZE_CONFIRM_CANCEL'),
+                  cancelText: t('CANCEL'),
                   okButtonProps: { type: 'primary' },
                   onOk: regen,
                 });

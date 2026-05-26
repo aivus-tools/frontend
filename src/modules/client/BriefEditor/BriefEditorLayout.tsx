@@ -87,11 +87,79 @@ const GeneratingView = (props: GeneratingViewProps) => {
   );
 };
 
+const FINALIZING_STAGE_KEYS = [
+  'BRIEF_V3_FINALIZING_STAGE_ANALYZING',
+  'BRIEF_V3_FINALIZING_STAGE_BRIEF',
+  'BRIEF_V3_FINALIZING_STAGE_EMAIL',
+  'BRIEF_V3_FINALIZING_STAGE_CHECKLIST',
+  'BRIEF_V3_FINALIZING_STAGE_REVIEW',
+] as const;
+
+const FINALIZING_STAGE_TOTAL_MS = 60_000;
+const FINALIZING_PROGRESS_CEILING = 95;
+
+const FinalizingView = () => {
+  const [elapsedMs, setElapsedMs] = useState(0);
+
+  useEffect(() => {
+    const startedAt = Date.now();
+    const interval = setInterval(() => {
+      setElapsedMs(Date.now() - startedAt);
+    }, 250);
+    return () => clearInterval(interval);
+  }, []);
+
+  const stageCount = FINALIZING_STAGE_KEYS.length;
+  const perStageMs = FINALIZING_STAGE_TOTAL_MS / stageCount;
+  const stageIndex = Math.min(stageCount - 1, Math.floor(elapsedMs / perStageMs));
+  const linearProgress = Math.min(FINALIZING_PROGRESS_CEILING, (elapsedMs / FINALIZING_STAGE_TOTAL_MS) * 100);
+  const stageLabels = FINALIZING_STAGE_KEYS.map((key, index) => ({
+    key,
+    label: t(key),
+    isActive: index === stageIndex,
+    isDone: index < stageIndex,
+  }));
+
+  return (
+    <div className={styles.generatingOverlay}>
+      <div className={styles.spinner} />
+      <h3 className={styles.generatingTitle}>{t('BRIEF_V3_FINALIZING_TITLE')}</h3>
+      <p className={styles.generatingSubtitle}>{t('BRIEF_V3_FINALIZING_ETA')}</p>
+      <div
+        className={styles.finalizingProgressTrack}
+        role='progressbar'
+        aria-valuemin={0}
+        aria-valuemax={100}
+        aria-valuenow={Math.round(linearProgress)}
+      >
+        <div className={styles.finalizingProgressBar} style={{ width: `${linearProgress}%` }} />
+      </div>
+      <ul className={styles.finalizingStageList}>
+        {stageLabels.map((stage) => (
+          <li
+            key={stage.key}
+            className={
+              stage.isActive
+                ? `${styles.finalizingStage} ${styles.finalizingStageActive}`
+                : stage.isDone
+                  ? `${styles.finalizingStage} ${styles.finalizingStageDone}`
+                  : styles.finalizingStage
+            }
+          >
+            {stage.label}
+          </li>
+        ))}
+      </ul>
+    </div>
+  );
+};
+
 interface BriefEditorLayoutProps {
   mode: 'authenticated' | 'anonymous';
   briefId?: string | null;
   token?: string | null;
   initialTaskId?: string | null;
+  initialFinalizingTaskId?: string | null;
   onBriefCreated?: (briefId: string, token?: string) => void;
   onRegisterClick?: (briefId: string | null, token: string | null) => void;
 }
@@ -102,7 +170,9 @@ export const BriefEditorLayout = (props: BriefEditorLayoutProps) => {
   const isAuth = props.mode === 'authenticated';
 
   const [briefId, setBriefId] = useState<string | null>(props.briefId ?? null);
-  const [stage, setStage] = useState<Stage>(props.briefId ? 'chat' : 'start');
+  const initialStage: Stage = props.briefId ? (props.initialFinalizingTaskId ? 'finalizing' : 'chat') : 'start';
+  const [stage, setStage] = useState<Stage>(initialStage);
+  const autoFinalizingRef = useRef(false);
   const [hasMounted, setHasMounted] = useState(false);
   const [headerSlot, setHeaderSlot] = useState<HTMLElement | null>(null);
   const [mobileActionsSlot, setMobileActionsSlot] = useState<HTMLDivElement | null>(null);
@@ -265,6 +335,15 @@ export const BriefEditorLayout = (props: BriefEditorLayoutProps) => {
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [props.briefId, props.initialTaskId]);
+
+  useEffect(() => {
+    if (props.briefId && props.initialFinalizingTaskId && !pollingRef.current) {
+      autoFinalizingRef.current = true;
+      setStage('finalizing');
+      pollFinalDocuments(props.briefId, props.initialFinalizingTaskId, props.token ?? '');
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [props.briefId, props.initialFinalizingTaskId]);
 
   const pollFinalDocuments = useCallback(
     (currentBriefId: string, taskId: string, currentToken?: string) => {
@@ -623,6 +702,23 @@ export const BriefEditorLayout = (props: BriefEditorLayoutProps) => {
     }
   }, [briefId, finalizeAuth, isAuth, messageApi, pollFinalDocuments]);
 
+  useEffect(() => {
+    if (!isAuth || !briefId) {
+      return;
+    }
+    if (stage !== 'chat') {
+      return;
+    }
+    if (conversationStatus !== 'ready_to_finalize') {
+      return;
+    }
+    if (autoFinalizingRef.current) {
+      return;
+    }
+    autoFinalizingRef.current = true;
+    void handleFinalize();
+  }, [isAuth, briefId, stage, conversationStatus, handleFinalize]);
+
   const [isRegenerating, setIsRegenerating] = useState(false);
   const handleRegenerate = useCallback(async () => {
     if (!briefId || !isAuth || isRegenerating) {
@@ -754,13 +850,18 @@ export const BriefEditorLayout = (props: BriefEditorLayoutProps) => {
     );
   }
 
-  if (stage === 'generating' || stage === 'finalizing') {
+  if (stage === 'generating') {
     return (
       <OuterWrapper footerVisible={footerVisible} footerHeight={footerHeight}>
-        <GeneratingView
-          title={stage === 'generating' ? t('BRIEF_V3_GENERATING_TITLE') : t('BRIEF_V3_FINALIZING_TITLE')}
-          subtitle={stage === 'generating' ? t('BRIEF_V3_GENERATING_SUBTITLE') : t('BRIEF_V3_FINALIZING_SUBTITLE')}
-        />
+        <GeneratingView title={t('BRIEF_V3_GENERATING_TITLE')} subtitle={t('BRIEF_V3_GENERATING_SUBTITLE')} />
+      </OuterWrapper>
+    );
+  }
+
+  if (stage === 'finalizing') {
+    return (
+      <OuterWrapper footerVisible={footerVisible} footerHeight={footerHeight}>
+        <FinalizingView />
       </OuterWrapper>
     );
   }
@@ -888,7 +989,6 @@ export const BriefEditorLayout = (props: BriefEditorLayoutProps) => {
                   onSendMessage={handleSendMessage}
                   onFeedback={isAuth ? handleFeedback : null}
                   onFeedbackComment={isAuth ? handleFeedbackComment : null}
-                  onFinalize={null}
                   onRegenerate={null}
                   isRegenerating={isRegenerating}
                   onShowPackage={null}
@@ -945,7 +1045,6 @@ export const BriefEditorLayout = (props: BriefEditorLayoutProps) => {
             onSendMessage={handleSendMessage}
             onFeedback={isAuth ? handleFeedback : null}
             onFeedbackComment={isAuth ? handleFeedbackComment : null}
-            onFinalize={isAuth ? handleFinalize : null}
             onRegenerate={isAuth && conversationStatus === 'finalized' ? handleRegenerate : null}
             isRegenerating={isRegenerating}
             onShowPackage={isAuth && conversationStatus === 'finalized' ? () => setStage('finalized') : null}

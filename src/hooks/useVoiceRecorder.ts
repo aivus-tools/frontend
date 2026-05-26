@@ -160,6 +160,9 @@ export const useVoiceRecorder = (options: UseVoiceRecorderOptions = {}): UseVoic
     return new Promise<VoiceRecorderResult | null>((resolve) => {
       stopResolverRef.current = resolve;
       try {
+        if (recorder.state === 'recording') {
+          recorder.requestData();
+        }
         recorder.stop();
       } catch {
         stopResolverRef.current = null;
@@ -336,7 +339,7 @@ export const useVoiceRecorder = (options: UseVoiceRecorderOptions = {}): UseVoic
 
     startedAtRef.current = Date.now();
     try {
-      recorder.start();
+      recorder.start(1000);
     } catch (ex) {
       console.error('[useVoiceRecorder] recorder.start failed:', ex);
       setErrorCode(mapMediaError(ex));

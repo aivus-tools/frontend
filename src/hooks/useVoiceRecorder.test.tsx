@@ -22,6 +22,10 @@ class FakeMediaRecorder {
     this.state = 'recording';
   }
 
+  requestData() {
+    this.ondataavailable?.({ data: new Blob([new Uint8Array([1, 2, 3])], { type: this.mimeType }) });
+  }
+
   stop() {
     this.state = 'inactive';
     this.ondataavailable?.({ data: new Blob([new Uint8Array([1, 2, 3])], { type: this.mimeType }) });
