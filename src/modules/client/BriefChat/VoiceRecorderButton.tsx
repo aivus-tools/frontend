@@ -4,7 +4,7 @@ import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { App, Tooltip } from 'antd';
 import { AudioOutlined, CheckOutlined, CloseOutlined, LoadingOutlined } from '@ant-design/icons';
 import { getLocale, t } from '@/lib/i18n';
-import { useVoiceRecorder, VoiceRecorderError } from '@/hooks/useVoiceRecorder';
+import { useVoiceRecorder, VoiceRecorderError, VoiceRecorderResult } from '@/hooks/useVoiceRecorder';
 import { useTranscribeBriefAiMutation } from '@/services/client/briefAiApi';
 import { useTranscribePublicBriefMutation } from '@/services/client/publicBriefApi';
 
@@ -96,37 +96,8 @@ export const VoiceRecorderButton = (props: VoiceRecorderButtonProps) => {
     briefContextRef.current = { briefId: props.briefId, token: props.publicToken };
   }, [props.briefId, props.publicToken]);
 
-  const onAutoStop = useCallback(() => {
-    messageApi.warning(t('BRIEF_V3_VOICE_LIMIT_REACHED'));
-  }, [messageApi]);
-
-  const recorder = useVoiceRecorder({ maxDurationMs: MAX_DURATION_MS, onAutoStop });
-
   const [transcribeAuth] = useTranscribeBriefAiMutation();
   const [transcribePublic] = useTranscribePublicBriefMutation();
-
-  useEffect(() => {
-    if (recorder.state !== 'recording') {
-      sampleBufferRef.current = Array(WAVE_BARS).fill(0);
-      setWaveSamples(sampleBufferRef.current);
-      return;
-    }
-    sampleBufferRef.current = [...sampleBufferRef.current.slice(1), recorder.audioLevel];
-    setWaveSamples(sampleBufferRef.current);
-  }, [recorder.audioLevel, recorder.elapsedMs, recorder.state]);
-
-  const isRecording = recorder.state === 'recording' || recorder.state === 'stopping';
-  const isBusy = isRecording || isProcessing;
-
-  useEffect(() => {
-    props.onBusyChange?.(isBusy);
-  }, [isBusy, props]);
-
-  useEffect(() => {
-    if (recorder.state === 'error' && recorder.errorCode) {
-      messageApi.error(t(errorToI18nKey(recorder.errorCode)));
-    }
-  }, [recorder.state, recorder.errorCode, messageApi]);
 
   const callTranscribe = useCallback(
     async (blob: Blob, mimeType: string, durationMs: number) => {
@@ -169,6 +140,41 @@ export const VoiceRecorderButton = (props: VoiceRecorderButtonProps) => {
     },
     [messageApi, props, transcribeAuth, transcribePublic]
   );
+
+  const onAutoStop = useCallback(
+    (result: VoiceRecorderResult | null) => {
+      messageApi.warning(t('BRIEF_V3_VOICE_LIMIT_REACHED'));
+      if (result && result.blob.size > 0) {
+        void callTranscribe(result.blob, result.mimeType, result.durationMs);
+      }
+    },
+    [messageApi, callTranscribe]
+  );
+
+  const recorder = useVoiceRecorder({ maxDurationMs: MAX_DURATION_MS, onAutoStop });
+
+  useEffect(() => {
+    if (recorder.state !== 'recording') {
+      sampleBufferRef.current = Array(WAVE_BARS).fill(0);
+      setWaveSamples(sampleBufferRef.current);
+      return;
+    }
+    sampleBufferRef.current = [...sampleBufferRef.current.slice(1), recorder.audioLevel];
+    setWaveSamples(sampleBufferRef.current);
+  }, [recorder.audioLevel, recorder.elapsedMs, recorder.state]);
+
+  const isRecording = recorder.state === 'recording' || recorder.state === 'stopping';
+  const isBusy = isRecording || isProcessing;
+
+  useEffect(() => {
+    props.onBusyChange?.(isBusy);
+  }, [isBusy, props]);
+
+  useEffect(() => {
+    if (recorder.state === 'error' && recorder.errorCode) {
+      messageApi.error(t(errorToI18nKey(recorder.errorCode)));
+    }
+  }, [recorder.state, recorder.errorCode, messageApi]);
 
   const handleClick = useCallback(async () => {
     if (props.disabled || isProcessing) {

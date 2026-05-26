@@ -8,7 +8,7 @@ export type VoiceRecorderError = 'permission_denied' | 'no_device' | 'unsupporte
 
 export interface UseVoiceRecorderOptions {
   maxDurationMs?: number;
-  onAutoStop?: () => void;
+  onAutoStop?: (result: VoiceRecorderResult | null) => void;
 }
 
 export interface VoiceRecorderResult {
@@ -108,7 +108,7 @@ export const useVoiceRecorder = (options: UseVoiceRecorderOptions = {}): UseVoic
   const startedAtRef = useRef<number>(0);
   const chunksRef = useRef<Blob[]>([]);
   const lastLevelRef = useRef<number>(0);
-  const onAutoStopRef = useRef<(() => void) | null>(options.onAutoStop ?? null);
+  const onAutoStopRef = useRef<((result: VoiceRecorderResult | null) => void) | null>(options.onAutoStop ?? null);
   const stopResolverRef = useRef<((value: VoiceRecorderResult | null) => void) | null>(null);
   const cancelledRef = useRef<boolean>(false);
 
@@ -216,8 +216,9 @@ export const useVoiceRecorder = (options: UseVoiceRecorderOptions = {}): UseVoic
       }
     }
     if (elapsed >= maxDurationMs) {
-      onAutoStopRef.current?.();
-      void stop();
+      void stop().then((result) => {
+        onAutoStopRef.current?.(result);
+      });
       return;
     }
     rafRef.current = requestAnimationFrame(tickRaf);
