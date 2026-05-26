@@ -559,7 +559,6 @@ export const EN_LOCALES = {
   BRIEF_V3_FINALIZING_STAGE_ANALYZING: 'Analyzing the conversation',
   BRIEF_V3_FINALIZING_STAGE_BRIEF: 'Building the production brief',
   BRIEF_V3_FINALIZING_STAGE_EMAIL: 'Drafting the vendor email',
-  BRIEF_V3_FINALIZING_STAGE_CHECKLIST: 'Compiling the deliverables checklist',
   BRIEF_V3_FINALIZING_STAGE_REVIEW: 'Final review',
   BRIEF_V3_LOADING_BRIEF_TITLE: 'Loading the brief...',
   BRIEF_V3_LOADING_BRIEF_SUBTITLE: 'One moment, pulling the latest state.',

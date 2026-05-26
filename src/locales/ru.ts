@@ -560,7 +560,6 @@ export const RU_LOCALES = {
   BRIEF_V3_FINALIZING_STAGE_ANALYZING: 'Разбираю разговор',
   BRIEF_V3_FINALIZING_STAGE_BRIEF: 'Собираю production brief',
   BRIEF_V3_FINALIZING_STAGE_EMAIL: 'Готовлю письмо подрядчику',
-  BRIEF_V3_FINALIZING_STAGE_CHECKLIST: 'Составляю чек-лист deliverables',
   BRIEF_V3_FINALIZING_STAGE_REVIEW: 'Финальная сверка',
   BRIEF_V3_LOADING_BRIEF_TITLE: 'Подгружаю бриф...',
   BRIEF_V3_LOADING_BRIEF_SUBTITLE: 'Секунду, тяну актуальное состояние.',
