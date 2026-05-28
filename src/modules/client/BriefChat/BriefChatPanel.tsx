@@ -46,7 +46,8 @@ interface BriefChatPanelProps {
   isRegenerating?: boolean;
   onShowPackage?: (() => void) | null;
   showRegistrationButton?: boolean;
-  onRegisterClick?: () => void;
+  registrationEmail?: string | null;
+  onRegisterClick?: (email: string | null) => void;
 }
 
 const formatBytes = (bytes: number): string => {
@@ -326,14 +327,23 @@ export const BriefChatPanel = (props: BriefChatPanelProps) => {
         </div>
       ) : null}
 
-      {props.showRegistrationButton && props.onRegisterClick ? (
+      {props.showRegistrationButton ? (
         <div className={`${styles.statusBar} ${styles.statusBarRegister}`}>
           <span className={`${styles.statusBarText} ${styles.statusBarTextRegister}`}>
             {t('BRIEF_V3_REGISTER_TO_SAVE')}
           </span>
-          <Button type='primary' onClick={props.onRegisterClick}>
-            {t('BRIEF_V3_REGISTER')}
-          </Button>
+          {props.registrationEmail ? (
+            <>
+              <Button type='primary' onClick={() => props.onRegisterClick?.(props.registrationEmail ?? null)}>
+                {t('BRIEF_V3_REGISTER_WITH_EMAIL', props.registrationEmail)}
+              </Button>
+              <Button onClick={() => props.onRegisterClick?.(null)}>{t('BRIEF_V3_REGISTER_ANOTHER_EMAIL')}</Button>
+            </>
+          ) : (
+            <Button type='primary' onClick={() => props.onRegisterClick?.(null)}>
+              {t('BRIEF_V3_REGISTER')}
+            </Button>
+          )}
         </div>
       ) : null}
 

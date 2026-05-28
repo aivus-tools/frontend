@@ -539,6 +539,8 @@ export const EN_LOCALES = {
   BRIEF_V3_READY_TO_FINALIZE: 'Looks like we have everything we need.',
   BRIEF_V3_REGISTER_TO_SAVE: 'Sign up to receive your brief package.',
   BRIEF_V3_REGISTER: 'Sign up',
+  BRIEF_V3_REGISTER_WITH_EMAIL: (email: string) => `Register with ${email}`,
+  BRIEF_V3_REGISTER_ANOTHER_EMAIL: 'Register with another email',
   BRIEF_V3_CLAIMED: 'Brief saved to your dashboard.',
   BRIEF_V3_FEEDBACK_TITLE: 'Share feedback',
   BRIEF_V3_FEEDBACK_SUBMIT: 'Submit',

@@ -540,6 +540,8 @@ export const RU_LOCALES = {
   BRIEF_V3_READY_TO_FINALIZE: 'Похоже, информации уже достаточно.',
   BRIEF_V3_REGISTER_TO_SAVE: 'Зарегистрируйся, чтобы получить пакет документов.',
   BRIEF_V3_REGISTER: 'Зарегистрироваться',
+  BRIEF_V3_REGISTER_WITH_EMAIL: (email: string) => `Зарегистрироваться с ${email}`,
+  BRIEF_V3_REGISTER_ANOTHER_EMAIL: 'Зарегистрироваться с другим email',
   BRIEF_V3_CLAIMED: 'Бриф сохранён в твой кабинет.',
   BRIEF_V3_FEEDBACK_TITLE: 'Оставить отзыв',
   BRIEF_V3_FEEDBACK_SUBMIT: 'Отправить',

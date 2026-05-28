@@ -30,7 +30,7 @@ import {
 import {
   useCreatePublicBriefDraftMutation,
   useDeletePublicBriefAttachmentMutation,
-  useGetPublicBriefDetailQuery,
+  useLazyGetPublicBriefDetailQuery,
   useLazyGetPublicBriefStatusQuery,
   useSendPublicBriefChatMutation,
   useStartPublicBriefMutation,
@@ -160,7 +160,7 @@ interface BriefEditorLayoutProps {
   initialTaskId?: string | null;
   initialFinalizingTaskId?: string | null;
   onBriefCreated?: (briefId: string, token?: string) => void;
-  onRegisterClick?: (briefId: string | null, token: string | null) => void;
+  onRegisterClick?: (briefId: string | null, token: string | null, email: string | null) => void;
 }
 
 export const BriefEditorLayout = (props: BriefEditorLayoutProps) => {
@@ -228,10 +228,10 @@ export const BriefEditorLayout = (props: BriefEditorLayoutProps) => {
   const [sendChatPublic] = useSendPublicBriefChatMutation();
   const [uploadAttachPublic] = useUploadPublicBriefAttachmentMutation();
   const [deleteAttachPublic] = useDeletePublicBriefAttachmentMutation();
-  const { data: publicDetail } = useGetPublicBriefDetailQuery(
-    { briefId: briefId ?? '', token: token ?? '' },
-    { skip: !briefId || !token || isAuth || stage === 'start' || stage === 'generating' }
-  );
+  const [triggerFetchPublicDetail] = useLazyGetPublicBriefDetailQuery();
+  const [contactEmail, setContactEmail] = useState<string | null>(null);
+  const [publicHasHydrated, setPublicHasHydrated] = useState<boolean>(false);
+  const publicInitialFetchRef = useRef<boolean>(false);
 
   const hydrateFromDetail = useCallback((detail: BriefV3Detail | undefined) => {
     if (!detail) {
@@ -242,18 +242,46 @@ export const BriefEditorLayout = (props: BriefEditorLayoutProps) => {
     setTotalCostUsd(detail.totalCostUsd);
     setMessageCount(detail.messageCount);
     setShowCost(Boolean(detail.showCost));
+    setContactEmail(detail.contactEmail ?? null);
+    setPublicHasHydrated(true);
     if (detail.conversationStatus === 'finalized') {
       setStage((prev) => (prev === 'finalized' ? prev : 'finalized'));
     }
   }, []);
 
   useEffect(() => {
-    if (isAuth) {
-      hydrateFromDetail(authDetail);
-    } else {
-      hydrateFromDetail(publicDetail);
+    if (!isAuth) {
+      return;
     }
-  }, [authDetail, publicDetail, isAuth, hydrateFromDetail]);
+    hydrateFromDetail(authDetail);
+  }, [authDetail, isAuth, hydrateFromDetail]);
+
+  useEffect(() => {
+    if (isAuth || !briefId || !token) {
+      return;
+    }
+    if (props.initialTaskId || props.initialFinalizingTaskId) {
+      return;
+    }
+    if (publicInitialFetchRef.current) {
+      return;
+    }
+    publicInitialFetchRef.current = true;
+    triggerFetchPublicDetail({ briefId, token })
+      .unwrap()
+      .then((detail) => hydrateFromDetail(detail))
+      .catch(() => {
+        publicInitialFetchRef.current = false;
+      });
+  }, [
+    isAuth,
+    briefId,
+    token,
+    props.initialTaskId,
+    props.initialFinalizingTaskId,
+    triggerFetchPublicDetail,
+    hydrateFromDetail,
+  ]);
 
   const handleSelectMobileTab = (tab: 'brief' | 'chat') => {
     setMobileTab(tab);
@@ -787,9 +815,12 @@ export const BriefEditorLayout = (props: BriefEditorLayoutProps) => {
     refetchAuthFinal,
   ]);
 
-  const handleClaim = useCallback(() => {
-    props.onRegisterClick?.(briefId, token);
-  }, [briefId, props, token]);
+  const handleClaim = useCallback(
+    (email: string | null) => {
+      props.onRegisterClick?.(briefId, token, email);
+    },
+    [briefId, props, token]
+  );
 
   const finalPackage = isAuth ? authFinalDocs : null;
   const messageLimit = isAuth ? MESSAGE_LIMIT_AUTH : MESSAGE_LIMIT_ANON;
@@ -1010,7 +1041,7 @@ export const BriefEditorLayout = (props: BriefEditorLayoutProps) => {
     hasMounted &&
     stage === 'chat' &&
     briefId &&
-    ((isAuth && !authDetail && isAuthDetailFetching) || (!isAuth && token && !publicDetail));
+    ((isAuth && !authDetail && isAuthDetailFetching) || (!isAuth && token && !publicHasHydrated));
   if (isHydrating) {
     return (
       <OuterWrapper footerVisible={footerVisible} footerHeight={footerHeight}>
@@ -1048,6 +1079,7 @@ export const BriefEditorLayout = (props: BriefEditorLayoutProps) => {
             isRegenerating={isRegenerating}
             onShowPackage={isAuth && conversationStatus === 'finalized' ? () => setStage('finalized') : null}
             showRegistrationButton={showRegistrationButton}
+            registrationEmail={!isAuth ? contactEmail : null}
             onRegisterClick={!isAuth ? handleClaim : undefined}
           />
         </div>

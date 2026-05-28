@@ -4,32 +4,10 @@ import { Button, Form, Input, message, Tooltip } from 'antd';
 import { t } from '@/lib/i18n';
 import { useState } from 'react';
 import { Steps } from '@/types/auth.interface';
-import { AuthType } from '@/types/user.interface';
 import { AUTH_TYPES } from '@/constants/constants';
 import { useAuthType } from '@/context/AuthTypeProvider';
+import { checkEmail } from '@/helpers/checkEmail';
 import logger from '@/lib/logger';
-
-// TODO: Replace with checkEmail from src/services/server/authService.ts
-const checkEmail = async ({
-  email,
-}: {
-  email: string;
-}): Promise<{
-  exists: boolean;
-  authType: AuthType;
-}> => {
-  const response = await fetch('/service/auth/check-email', {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify({ email }),
-  });
-
-  if (!response.ok) throw new Error('Check email failed');
-
-  return await response.json();
-};
 
 export const EmailForm = ({ nextAction }: { nextAction: (step: Steps, email: string) => void }) => {
   const [messageApi, contextHolder] = message.useMessage();
@@ -43,7 +21,7 @@ export const EmailForm = ({ nextAction }: { nextAction: (step: Steps, email: str
     }
     try {
       setLoading(true);
-      const res = await checkEmail({ email });
+      const res = await checkEmail(email);
       if (res.exists) {
         if (res.authType === AUTH_TYPES.google) {
           setAuthType(res.authType);

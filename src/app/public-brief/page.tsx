@@ -28,11 +28,11 @@ export default function PublicBriefPage() {
     }
   };
 
-  const handleRegisterClick = (briefId: string | null, token: string | null) => {
+  const handleRegisterClick = (briefId: string | null, token: string | null, email: string | null) => {
     if (briefId && token) {
       setPendingBrief(briefId, token);
     }
-    router.push('/auth');
+    router.push(email ? `/auth?email=${encodeURIComponent(email)}` : '/auth');
   };
 
   return (
