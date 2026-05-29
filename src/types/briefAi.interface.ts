@@ -53,6 +53,7 @@ export interface BriefV3 {
   updatedAt: string | null;
   claimedAt: string | null;
   contactEmail?: string;
+  contactName?: string;
 }
 
 export interface BriefShareInfo {

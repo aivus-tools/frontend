@@ -541,6 +541,12 @@ export const EN_LOCALES = {
   BRIEF_V3_REGISTER: 'Sign up',
   BRIEF_V3_REGISTER_WITH_EMAIL: (email: string) => `Register with ${email}`,
   BRIEF_V3_REGISTER_ANOTHER_EMAIL: 'Register with another email',
+  BRIEF_V3_CLAIM_MODAL_TITLE: 'Add this brief to your account?',
+  BRIEF_V3_CLAIM_MODAL_BODY_WITH_CONTACT: (label: string) =>
+    `This brief was started anonymously by ${label}. Once added, it will show up in your dashboard.`,
+  BRIEF_V3_CLAIM_MODAL_BODY_PLAIN: 'This brief was started anonymously. Once added, it will show up in your dashboard.',
+  BRIEF_V3_CLAIM_MODAL_CONFIRM: 'Add to my account',
+  BRIEF_V3_CLAIM_MODAL_DECLINE: "It's not my brief",
   BRIEF_V3_CLAIMED: 'Brief saved to your dashboard.',
   BRIEF_V3_FEEDBACK_TITLE: 'Share feedback',
   BRIEF_V3_FEEDBACK_SUBMIT: 'Submit',
