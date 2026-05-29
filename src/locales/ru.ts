@@ -542,12 +542,6 @@ export const RU_LOCALES = {
   BRIEF_V3_REGISTER: 'Зарегистрироваться',
   BRIEF_V3_REGISTER_WITH_EMAIL: (email: string) => `Зарегистрироваться с ${email}`,
   BRIEF_V3_REGISTER_ANOTHER_EMAIL: 'Зарегистрироваться с другим email',
-  BRIEF_V3_CLAIM_MODAL_TITLE: 'Прикрепить этот бриф к твоему аккаунту?',
-  BRIEF_V3_CLAIM_MODAL_BODY_WITH_CONTACT: (label: string) =>
-    `Бриф создан анонимно от имени ${label}. После прикрепления он появится в твоём дашборде.`,
-  BRIEF_V3_CLAIM_MODAL_BODY_PLAIN: 'Бриф создан анонимно. После прикрепления он появится в твоём дашборде.',
-  BRIEF_V3_CLAIM_MODAL_CONFIRM: 'Прикрепить',
-  BRIEF_V3_CLAIM_MODAL_DECLINE: 'Это не мой бриф',
   BRIEF_V3_CLAIMED: 'Бриф сохранён в твой кабинет.',
   BRIEF_V3_FEEDBACK_TITLE: 'Оставить отзыв',
   BRIEF_V3_FEEDBACK_SUBMIT: 'Отправить',
