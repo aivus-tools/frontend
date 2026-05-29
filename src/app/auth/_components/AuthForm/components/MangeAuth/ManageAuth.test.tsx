@@ -88,8 +88,9 @@ describe('ManageAuth', () => {
     await waitFor(() => {
       expect(mockCheckEmail).toHaveBeenCalledWith('google@example.com');
     });
-
-    expect(screen.getByTestId('email-form')).toBeInTheDocument();
+    await waitFor(() => {
+      expect(screen.getByTestId('email-form')).toBeInTheDocument();
+    });
   });
 
   it('stays on EmailForm when checkEmail throws', async () => {
@@ -101,7 +102,8 @@ describe('ManageAuth', () => {
     await waitFor(() => {
       expect(mockCheckEmail).toHaveBeenCalledWith('fail@example.com');
     });
-
-    expect(screen.getByTestId('email-form')).toBeInTheDocument();
+    await waitFor(() => {
+      expect(screen.getByTestId('email-form')).toBeInTheDocument();
+    });
   });
 });
