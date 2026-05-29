@@ -206,6 +206,14 @@ export const BriefEditorLayout = (props: BriefEditorLayoutProps) => {
   const [deleteAttachAuth] = useDeleteBriefAiAttachmentMutation();
   const [sendFeedbackAuth] = useSendBriefAiFeedbackMutation();
   const [finalizeAuth] = useFinalizeBriefAiMutation();
+  const lastMessage = messages.length > 0 ? messages[messages.length - 1] : null;
+  const awaitingFirstReply =
+    stage === 'chat' &&
+    !isChatLoading &&
+    conversationStatus === 'in_progress' &&
+    lastMessage?.role === 'user' &&
+    !lastMessage.id.startsWith('local-');
+
   const {
     data: authDetail,
     isFetching: isAuthDetailFetching,
@@ -214,6 +222,7 @@ export const BriefEditorLayout = (props: BriefEditorLayoutProps) => {
   } = useGetBriefAiDetailQuery(briefId ?? '', {
     skip: !briefId || !isAuth || stage === 'start' || stage === 'generating',
     refetchOnMountOrArgChange: true,
+    pollingInterval: isAuth && awaitingFirstReply ? 1500 : 0,
   });
   const { data: authFinalDocs, refetch: refetchAuthFinal } = useGetBriefAiFinalDocumentsQuery(briefId ?? '', {
     skip: !briefId || !isAuth || stage !== 'finalized',
@@ -282,6 +291,19 @@ export const BriefEditorLayout = (props: BriefEditorLayoutProps) => {
     triggerFetchPublicDetail,
     hydrateFromDetail,
   ]);
+
+  useEffect(() => {
+    if (isAuth || !awaitingFirstReply || !briefId || !token) {
+      return;
+    }
+    const interval = setInterval(() => {
+      triggerFetchPublicDetail({ briefId, token })
+        .unwrap()
+        .then((detail) => hydrateFromDetail(detail))
+        .catch(() => {});
+    }, 1500);
+    return () => clearInterval(interval);
+  }, [isAuth, awaitingFirstReply, briefId, token, triggerFetchPublicDetail, hydrateFromDetail]);
 
   const handleSelectMobileTab = (tab: 'brief' | 'chat') => {
     setMobileTab(tab);
