@@ -108,7 +108,7 @@ export const ApiRoute = {
   PUBLIC_BRIEF_AI_ATTACHMENT_DELETE: (briefId: string, attachmentId: string) =>
     `/service/public/briefs/ai/${briefId}/attachments/${attachmentId}`,
   PUBLIC_BRIEF_AI_DETAIL: (briefId: string) => `/service/public/briefs/ai/${briefId}`,
-  PUBLIC_BRIEF_AI_CLAIM: (briefId: string) => `/service/public/briefs/ai/${briefId}/claim`,
+  CLIENT_BRIEF_AI_CLAIM: (briefId: string) => `/service/client/briefs/ai/${briefId}/claim`,
   // Pre-Vendors
   PRE_VENDORS: '/service/pre-vendors',
 } as const;

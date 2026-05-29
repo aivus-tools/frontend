@@ -9,7 +9,13 @@ const PublicBriefContent = ({ children }: { children: React.ReactNode }) => {
   const { dismissed } = useBetaFooter();
   const footerHeight = useBetaFooterHeight();
   return (
-    <div style={{ paddingBottom: dismissed ? 0 : footerHeight }}>
+    <div
+      style={{
+        minHeight: '100dvh',
+        background: 'var(--bg-gray-page)',
+        paddingBottom: dismissed ? 0 : footerHeight,
+      }}
+    >
       <App>{children}</App>
     </div>
   );

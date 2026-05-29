@@ -198,7 +198,7 @@ export const publicBriefApi = createApi({
 
     claimPublicBrief: builder.mutation<BriefV3ClaimResponse, { briefId: string; token: string }>({
       query: (args) => ({
-        url: ApiRoute.PUBLIC_BRIEF_AI_CLAIM(args.briefId),
+        url: ApiRoute.CLIENT_BRIEF_AI_CLAIM(args.briefId),
         method: 'POST',
         headers: { 'X-Brief-Token': args.token },
       }),
