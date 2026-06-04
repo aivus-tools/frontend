@@ -48,6 +48,7 @@ interface BriefChatPanelProps {
   showRegistrationButton?: boolean;
   registrationEmail?: string | null;
   onRegisterClick?: (email: string | null) => void;
+  composerDisabled?: boolean;
 }
 
 const formatBytes = (bytes: number): string => {
@@ -166,7 +167,13 @@ export const BriefChatPanel = (props: BriefChatPanelProps) => {
   const pendingIds = props.pendingAttachments.map((x) => x.id);
 
   const limitReached = props.messageCount >= props.messageLimit;
-  const canSend = draft.trim().length > 0 && !props.isLoading && !props.uploading && !limitReached && !isVoiceBusy;
+  const canSend =
+    draft.trim().length > 0 &&
+    !props.isLoading &&
+    !props.uploading &&
+    !limitReached &&
+    !isVoiceBusy &&
+    !props.composerDisabled;
 
   const appendToDraft = useCallback((text: string) => {
     if (!text) {
@@ -355,14 +362,14 @@ export const BriefChatPanel = (props: BriefChatPanelProps) => {
             onKeyDown={handleKeyDown}
             placeholder={t('BRIEF_V3_CHAT_PLACEHOLDER')}
             autoSize={{ minRows: 2, maxRows: 6 }}
-            disabled={limitReached || props.isLoading || isVoiceBusy}
+            disabled={limitReached || props.isLoading || isVoiceBusy || !!props.composerDisabled}
           />
           {props.briefId ? (
             <VoiceRecorderButton
               briefId={props.briefId}
               isPublic={props.isPublic}
               publicToken={props.publicToken}
-              disabled={limitReached || props.isLoading}
+              disabled={limitReached || props.isLoading || !!props.composerDisabled}
               onTranscript={appendToDraft}
               onBusyChange={setIsVoiceBusy}
             />

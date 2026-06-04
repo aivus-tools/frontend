@@ -94,7 +94,8 @@ const CSP = isDevelopment
 export default auth(async (req) => {
   if (
     req.nextUrl.pathname.startsWith('/external') ||
-    req.nextUrl.pathname.startsWith('/public') ||
+    req.nextUrl.pathname.startsWith('/public/') ||
+    req.nextUrl.pathname.startsWith('/public-brief') ||
     req.nextUrl.pathname.startsWith('/shared-brief')
   ) {
     // For public-facing routes (including shared-brief), still proxy /service/ calls but skip auth requirements

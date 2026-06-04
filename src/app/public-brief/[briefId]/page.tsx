@@ -3,22 +3,25 @@
 import React, { useEffect, useRef } from 'react';
 import { useParams, useRouter, useSearchParams } from 'next/navigation';
 import { useSession } from 'next-auth/react';
-import { BriefEditorLayout } from '@/modules/client/BriefEditor/BriefEditorLayout';
+import { App } from 'antd';
+import { AnonymousBriefEditor } from '@/modules/client/BriefEditor/AnonymousBriefEditor';
 import { getPublicBriefToken, savePublicBriefToken } from '@/services/client/publicBriefApi';
 import { setPendingBrief } from '@/helpers/pendingBrief';
 import { GROUPS } from '@/constants/constants';
 import { AppRoute } from '@/constants/appRoute';
+import { t } from '@/lib/i18n';
 import { PageSpinner } from '@/components/PageSpinner/PageSpinner';
 
 export default function PublicBriefDetailPage() {
   const params = useParams();
   const searchParams = useSearchParams();
   const router = useRouter();
+  const { message } = App.useApp();
   const { data: session, status: sessionStatus } = useSession();
   const briefId = params.briefId as string;
   const taskId = searchParams.get('taskId');
   const tokenFromQuery = searchParams.get('token');
-  const claimRedirectRef = useRef(false);
+  const redirectRef = useRef(false);
 
   useEffect(() => {
     if (!tokenFromQuery) {
@@ -35,26 +38,23 @@ export default function PublicBriefDetailPage() {
   const storedToken = typeof window !== 'undefined' ? getPublicBriefToken(briefId) : null;
   const token = tokenFromQuery ?? storedToken;
 
+  const group = session?.user?.group;
+
   useEffect(() => {
-    if (claimRedirectRef.current) {
+    if (redirectRef.current || sessionStatus === 'loading' || !briefId) {
       return;
     }
-    if (sessionStatus === 'loading') {
+    if (group === GROUPS.vendor) {
+      redirectRef.current = true;
+      message.warning(t('BRIEF_LINK_CLIENTS_ONLY'));
+      router.replace(AppRoute.DASHBOARD);
       return;
     }
-    if (session?.user?.group !== GROUPS.client) {
-      return;
+    if (group === GROUPS.client) {
+      redirectRef.current = true;
+      router.replace(token ? AppRoute.BRIEF_CLAIM(briefId) : AppRoute.BRIEF_DETAIL(briefId));
     }
-    if (!briefId) {
-      return;
-    }
-    claimRedirectRef.current = true;
-    if (!token) {
-      router.replace(AppRoute.BRIEF_DETAIL(briefId));
-      return;
-    }
-    router.replace(AppRoute.BRIEF_CLAIM(briefId));
-  }, [sessionStatus, session?.user?.group, briefId, token, router]);
+  }, [sessionStatus, group, briefId, token, router, message]);
 
   const handleRegisterClick = (currentBriefId: string | null, currentToken: string | null, email: string | null) => {
     const resolvedBriefId = currentBriefId ?? briefId;
@@ -65,13 +65,12 @@ export default function PublicBriefDetailPage() {
     router.push(email ? `/auth?email=${encodeURIComponent(email)}` : '/auth');
   };
 
-  if (session?.user?.group === GROUPS.client) {
+  if (group === GROUPS.client || group === GROUPS.vendor) {
     return <PageSpinner />;
   }
 
   return (
-    <BriefEditorLayout
-      mode='anonymous'
+    <AnonymousBriefEditor
       briefId={briefId}
       token={token}
       initialTaskId={taskId}

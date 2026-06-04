@@ -1,7 +1,7 @@
 'use client';
 
 import { AppRoute } from '@/constants/appRoute';
-import { BriefEditorLayout } from '@/modules/client/BriefEditor/BriefEditorLayout';
+import { AuthenticatedBriefEditor } from '@/modules/client/BriefEditor/AuthenticatedBriefEditor';
 
 export default function CreateBriefPage() {
   const handleBriefCreated = (briefId: string) => {
@@ -10,5 +10,5 @@ export default function CreateBriefPage() {
     }
   };
 
-  return <BriefEditorLayout mode='authenticated' onBriefCreated={handleBriefCreated} />;
+  return <AuthenticatedBriefEditor onBriefCreated={handleBriefCreated} />;
 }

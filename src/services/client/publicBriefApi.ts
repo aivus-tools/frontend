@@ -83,6 +83,7 @@ const publicBaseQuery = fetchBaseQuery({ baseUrl: '' });
 export const publicBriefApi = createApi({
   reducerPath: 'publicBriefApi',
   baseQuery: publicBaseQuery,
+  tagTypes: ['PublicBriefV3'],
   endpoints: (builder) => ({
     createPublicBriefDraft: builder.mutation<{ briefId: string; token: string }, void>({
       query: () => ({
@@ -111,6 +112,7 @@ export const publicBriefApi = createApi({
         },
         headers: { 'X-Brief-Token': args.token },
       }),
+      invalidatesTags: (_r, _e, args) => [{ type: 'PublicBriefV3', id: args.briefId }],
     }),
 
     getPublicBriefStatus: builder.query<BriefV3TaskStatus, { briefId: string; taskId: string; token: string }>({
@@ -139,6 +141,7 @@ export const publicBriefApi = createApi({
         },
         headers: { 'X-Brief-Token': args.token },
       }),
+      invalidatesTags: (_r, _e, args) => [{ type: 'PublicBriefV3', id: args.briefId }],
     }),
 
     uploadPublicBriefAttachment: builder.mutation<BriefAttachment, { briefId: string; token: string; file: File }>({
@@ -194,6 +197,7 @@ export const publicBriefApi = createApi({
         method: 'GET',
         headers: { 'X-Brief-Token': args.token },
       }),
+      providesTags: (_r, _e, args) => [{ type: 'PublicBriefV3', id: args.briefId }],
     }),
 
     claimPublicBrief: builder.mutation<BriefV3ClaimResponse, { briefId: string; token: string }>({
@@ -215,6 +219,5 @@ export const {
   useDeletePublicBriefAttachmentMutation,
   useTranscribePublicBriefMutation,
   useGetPublicBriefDetailQuery,
-  useLazyGetPublicBriefDetailQuery,
   useClaimPublicBriefMutation,
 } = publicBriefApi;
