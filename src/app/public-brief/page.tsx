@@ -5,7 +5,7 @@ import { useRouter } from 'next/navigation';
 import { useSession } from 'next-auth/react';
 import { GROUPS } from '@/constants/constants';
 import { AppRoute } from '@/constants/appRoute';
-import { BriefEditorLayout } from '@/modules/client/BriefEditor/BriefEditorLayout';
+import { AnonymousBriefEditor } from '@/modules/client/BriefEditor/AnonymousBriefEditor';
 import { setPendingBrief } from '@/helpers/pendingBrief';
 
 export default function PublicBriefPage() {
@@ -35,7 +35,5 @@ export default function PublicBriefPage() {
     router.push(email ? `/auth?email=${encodeURIComponent(email)}` : '/auth');
   };
 
-  return (
-    <BriefEditorLayout mode='anonymous' onBriefCreated={handleBriefCreated} onRegisterClick={handleRegisterClick} />
-  );
+  return <AnonymousBriefEditor onBriefCreated={handleBriefCreated} onRegisterClick={handleRegisterClick} />;
 }

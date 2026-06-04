@@ -10,11 +10,14 @@ const PublicBriefContent = ({ children }: { children: React.ReactNode }) => {
   const footerHeight = useBetaFooterHeight();
   return (
     <div
-      style={{
-        minHeight: '100dvh',
-        background: 'var(--bg-gray-page)',
-        paddingBottom: dismissed ? 0 : footerHeight,
-      }}
+      style={
+        {
+          '--aivus-header-h': '0px',
+          minHeight: '100dvh',
+          background: 'var(--bg-gray-page)',
+          paddingBottom: dismissed ? 0 : footerHeight,
+        } as React.CSSProperties
+      }
     >
       <App>{children}</App>
     </div>

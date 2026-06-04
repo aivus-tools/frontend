@@ -13,6 +13,8 @@ import { AppRoute } from '@/constants/appRoute';
 import { t } from '@/lib/i18n';
 import logger from '@/lib/logger';
 
+const CLAIM_TIMEOUT_MS = 10000;
+
 const BriefClaimPage = () => {
   const params = useParams<{ briefId: string }>();
   const router = useRouter();
@@ -33,21 +35,39 @@ const BriefClaimPage = () => {
       return;
     }
 
+    let settled = false;
+    const timeoutId = setTimeout(() => {
+      if (settled) {
+        return;
+      }
+      settled = true;
+      message.error(t('UNEXPECTED_ERROR'));
+      router.replace(AppRoute.DASHBOARD);
+    }, CLAIM_TIMEOUT_MS);
+
     claimBrief({ briefId: params.briefId, token })
       .unwrap()
-      .then((response) => {
+      .then(() => {
+        if (settled) {
+          return;
+        }
+        settled = true;
+        clearTimeout(timeoutId);
         removePublicBriefToken(params.briefId);
-        const detailRoute = AppRoute.BRIEF_DETAIL(params.briefId);
-        const target = response.finalizingTaskId
-          ? `${detailRoute}?finalizingTask=${encodeURIComponent(response.finalizingTaskId)}`
-          : detailRoute;
-        router.replace(target);
+        router.replace(AppRoute.BRIEF_DETAIL(params.briefId));
       })
       .catch((error) => {
+        if (settled) {
+          return;
+        }
+        settled = true;
+        clearTimeout(timeoutId);
         logger.error('Failed to claim brief:', error);
         message.error(t('UNEXPECTED_ERROR'));
         router.replace(AppRoute.DASHBOARD);
       });
+
+    return () => clearTimeout(timeoutId);
   }, [params.briefId]);
 
   return <PageSpinner />;

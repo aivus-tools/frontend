@@ -52,6 +52,7 @@ export interface BriefV3 {
   createdAt: string | null;
   updatedAt: string | null;
   claimedAt: string | null;
+  pendingTaskId?: string | null;
   contactEmail?: string;
   contactName?: string;
 }
