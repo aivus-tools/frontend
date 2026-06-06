@@ -1,5 +1,9 @@
 import { test as setup, expect } from '@playwright/test';
 
+// Local-dev convenience defaults only — the throwaway CLIENT account a developer
+// has in their local Docker DB. CI/staging override both via env
+// (secrets.STAGING_CLIENT_EMAIL / STAGING_CLIENT_PASSWORD). No reachable
+// (staging/prod) account must ever use these published credentials.
 const email = process.env.E2E_CLIENT_EMAIL ?? 'a@a.aa';
 const password = process.env.E2E_CLIENT_PASSWORD ?? 'iiiijjjj';
 

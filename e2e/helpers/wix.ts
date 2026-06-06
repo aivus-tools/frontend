@@ -1,4 +1,8 @@
 const BACKEND_URL = process.env.BACKEND_URL ?? 'http://localhost:8000';
+// Local-dev convenience default only — mirrors the local `.envs/.local/.django`
+// value so `make e2e-flows` works out of the box. CI/staging override it via
+// the WIX_WEBHOOK_SECRET env (secrets.STAGING_WIX_SECRET). A real environment's
+// backend WIX_WEBHOOK_SECRET must NEVER be set to this published string.
 const WIX_SECRET = process.env.WIX_WEBHOOK_SECRET ?? 'local-dev-wix-secret';
 
 interface WixWebhookResponse {
