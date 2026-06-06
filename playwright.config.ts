@@ -37,7 +37,7 @@ export default defineConfig({
     },
     {
       name: 'chromium',
-      testIgnore: /smoke\.spec\.ts/,
+      testIgnore: [/smoke\.spec\.ts/, /brief-flows\//],
       use: {
         ...devices['Desktop Chrome'],
         storageState: 'e2e/.auth/user.json',
@@ -51,6 +51,28 @@ export default defineConfig({
         ...devices['Desktop Chrome'],
         storageState: { cookies: [], origins: [] },
       },
+    },
+    {
+      name: 'client-setup',
+      testMatch: /client-auth\.setup\.ts/,
+    },
+    {
+      // Live LLM brief flows (public-brief, registration, logged-in, Wix webhook).
+      // Long-running and opt-in via `npm run test:e2e:flows`; excluded from the
+      // default suite. Fake media devices let the voice recorder run headless.
+      name: 'brief-flows',
+      testMatch: /brief-flows\/.*\.spec\.ts/,
+      timeout: 720_000,
+      retries: 0,
+      use: {
+        ...devices['Desktop Chrome'],
+        storageState: { cookies: [], origins: [] },
+        permissions: ['microphone'],
+        launchOptions: {
+          args: ['--use-fake-ui-for-media-stream', '--use-fake-device-for-media-stream'],
+        },
+      },
+      dependencies: ['client-setup'],
     },
   ],
   webServer: isExternalTarget

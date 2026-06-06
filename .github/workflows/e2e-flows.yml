@@ -1,0 +1,53 @@
+name: E2E brief flows
+
+# Live-LLM brief flows (public create, registration + confirm, logged-in,
+# Wix webhook). Slow and Gemini-billed, so this is opt-in and runs against a
+# NON-production target only — never the prod post-deploy smoke.
+on:
+  workflow_dispatch:
+    inputs:
+      target_url:
+        description: 'Frontend base URL (staging). Falls back to STAGING_URL secret.'
+        required: false
+        type: string
+  # Uncomment to also run nightly against staging:
+  # schedule:
+  #   - cron: "0 3 * * *"
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  brief-flows:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+      - run: npm ci
+      - run: npx playwright install chromium
+      - run: npm run test:e2e:flows
+        env:
+          # Frontend baseURL (manual input wins, else the staging secret).
+          SMOKE_TEST_URL: ${{ inputs.target_url || secrets.STAGING_URL }}
+          # Backend base for the Wix webhook + confirmation-token endpoint.
+          BACKEND_URL: ${{ secrets.STAGING_BACKEND_URL }}
+          WIX_WEBHOOK_SECRET: ${{ secrets.STAGING_WIX_SECRET }}
+          # Existing CLIENT account on the target (analogue of local a@a.aa).
+          E2E_CLIENT_EMAIL: ${{ secrets.STAGING_CLIENT_EMAIL }}
+          E2E_CLIENT_PASSWORD: ${{ secrets.STAGING_CLIENT_PASSWORD }}
+          # Staging has no Mailpit (real Resend) -> read the token from the
+          # hard-gated backend endpoint instead of the inbox.
+          E2E_TOKEN_SOURCE: endpoint
+          E2E_CONFIRMATION_TOKEN_SECRET: ${{ secrets.STAGING_E2E_TOKEN_SECRET }}
+      - uses: actions/upload-artifact@v4
+        if: failure()
+        with:
+          name: e2e-flows-results
+          path: |
+            test-results/
+            playwright-report/
+          retention-days: 7
