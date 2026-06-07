@@ -339,18 +339,12 @@ export const BriefChatPanel = (props: BriefChatPanelProps) => {
           <span className={`${styles.statusBarText} ${styles.statusBarTextRegister}`}>
             {t('BRIEF_V3_REGISTER_TO_SAVE')}
           </span>
+          <Button type='primary' onClick={() => props.onRegisterClick?.(props.registrationEmail ?? null)}>
+            {t('BRIEF_V3_SIGN_UP_TO_DOWNLOAD')}
+          </Button>
           {props.registrationEmail ? (
-            <>
-              <Button type='primary' onClick={() => props.onRegisterClick?.(props.registrationEmail ?? null)}>
-                {t('BRIEF_V3_REGISTER_WITH_EMAIL', props.registrationEmail)}
-              </Button>
-              <Button onClick={() => props.onRegisterClick?.(null)}>{t('BRIEF_V3_REGISTER_ANOTHER_EMAIL')}</Button>
-            </>
-          ) : (
-            <Button type='primary' onClick={() => props.onRegisterClick?.(null)}>
-              {t('BRIEF_V3_REGISTER')}
-            </Button>
-          )}
+            <Button onClick={() => props.onRegisterClick?.(null)}>{t('BRIEF_V3_REGISTER_ANOTHER_EMAIL')}</Button>
+          ) : null}
         </div>
       ) : null}
 

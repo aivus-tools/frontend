@@ -54,6 +54,7 @@ export const DashboardSidebar = () => {
         {t('ARCHIVE')}
       </div>
 
+      {/* Stage 1 (Hide Offers/Estimates): by-offer-status filter hidden, re-enable at Stage 4.
       <div className={styles.separator} />
 
       <div className={styles.sectionLabel}>{t('BY_STATUS')}</div>
@@ -71,6 +72,7 @@ export const DashboardSidebar = () => {
           {label()}
         </div>
       ))}
+      */}
     </div>
   );
 };

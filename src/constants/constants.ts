@@ -31,14 +31,15 @@ export const VENDOR_TABS = [
     key: 'dashboard',
     labelKey: 'DASHBOARD',
   },
-  {
-    key: 'templates',
-    labelKey: 'TEMPLATES',
-  },
-  {
-    key: 'rates',
-    labelKey: 'RATES',
-  },
+  // Stage 1 (Hide Offers/Estimates): templates/rates temporarily hidden, re-enable at Stage 4.
+  // {
+  //   key: 'templates',
+  //   labelKey: 'TEMPLATES',
+  // },
+  // {
+  //   key: 'rates',
+  //   labelKey: 'RATES',
+  // },
 ] as const;
 
 export const VENDOR_PROJECT_TAB_KEYS = {
@@ -57,14 +58,15 @@ export const VENDOR_PROJECT_TABS = [
     key: VENDOR_PROJECT_TAB_KEYS.DETAILS,
     labelKey: 'PROJECT_DETAILS',
   },
-  {
-    key: VENDOR_PROJECT_TAB_KEYS.ESTIMATION,
-    labelKey: 'ESTIMATION',
-  },
-  {
-    key: VENDOR_PROJECT_TAB_KEYS.OFFER,
-    labelKey: 'CLIENTS_OFFER',
-  },
+  // Stage 1 (Hide Offers/Estimates): estimation/offer tabs temporarily hidden, re-enable at Stage 4.
+  // {
+  //   key: VENDOR_PROJECT_TAB_KEYS.ESTIMATION,
+  //   labelKey: 'ESTIMATION',
+  // },
+  // {
+  //   key: VENDOR_PROJECT_TAB_KEYS.OFFER,
+  //   labelKey: 'CLIENTS_OFFER',
+  // },
 ] as const;
 
 export const NEW_BRIEF_SLUG = 'new-brief';

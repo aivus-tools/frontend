@@ -146,7 +146,8 @@ export const ProjectOfferCard = (props: ProjectOfferCardProps) => {
         </div>
       </div>
 
-      {props.offers.length > 0 ? (
+      {/* Stage 1 (Hide Offers/Estimates): offers section hidden, re-enable at Stage 4. */}
+      {false && props.offers.length > 0 ? (
         <div className={styles.offersTable}>
           <div className={styles.offerTableHeader}>
             <span>{t('OFFER')}</span>
@@ -243,9 +244,7 @@ export const ProjectOfferCard = (props: ProjectOfferCardProps) => {
             );
           })}
         </div>
-      ) : (
-        <div className={styles.emptyOffers}>{t('NO_OFFERS_YET')}</div>
-      )}
+      ) : null}
     </div>
   );
 };

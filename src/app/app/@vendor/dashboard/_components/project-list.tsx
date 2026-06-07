@@ -76,7 +76,8 @@ export const ProjectList = () => {
 
   useEffect(() => {
     filteredData.forEach((item: ProjectListItem) => {
-      router.prefetch(AppRoute.DASHBOARD_PROJECT_ESTIMATION(item.id));
+      // Stage 1 (Hide Offers/Estimates): open project details (brief) instead of estimation. Revert at Stage 4.
+      router.prefetch(AppRoute.DASHBOARD_PROJECT_DETAILS(item.id));
     });
   }, [router, filteredData]);
 
@@ -129,7 +130,8 @@ export const ProjectList = () => {
               item={item}
               offers={visibleOffers}
               isArchived={isArchiveView}
-              onClick={() => router.push(AppRoute.DASHBOARD_PROJECT_ESTIMATION(item.id))}
+              // Stage 1 (Hide Offers/Estimates): open project details (brief) instead of estimation. Revert at Stage 4.
+              onClick={() => router.push(AppRoute.DASHBOARD_PROJECT_DETAILS(item.id))}
             />
           );
         })}

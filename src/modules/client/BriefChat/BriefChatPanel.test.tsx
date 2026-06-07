@@ -58,7 +58,7 @@ describe('BriefChatPanel registration buttons', () => {
     vi.clearAllMocks();
   });
 
-  it('renders two buttons when registrationEmail provided and showRegistrationButton is true', () => {
+  it('renders download CTA plus secondary button when registrationEmail provided', () => {
     const onRegisterClick = vi.fn();
     render(
       <BriefChatPanel
@@ -69,11 +69,12 @@ describe('BriefChatPanel registration buttons', () => {
       />
     );
 
-    expect(screen.getByText('Register with user@example.com')).toBeInTheDocument();
+    expect(screen.getByText('Sign up for free to download')).toBeInTheDocument();
     expect(screen.getByText('Register with another email')).toBeInTheDocument();
+    expect(screen.queryByText('Register with user@example.com')).not.toBeInTheDocument();
   });
 
-  it('clicking primary button calls onRegisterClick with email', async () => {
+  it('clicking primary CTA calls onRegisterClick with the email when present', async () => {
     const onRegisterClick = vi.fn();
     render(
       <BriefChatPanel
@@ -84,7 +85,7 @@ describe('BriefChatPanel registration buttons', () => {
       />
     );
 
-    await userEvent.click(screen.getByText('Register with user@example.com'));
+    await userEvent.click(screen.getByText('Sign up for free to download'));
     expect(onRegisterClick).toHaveBeenCalledWith('user@example.com');
   });
 
@@ -103,7 +104,7 @@ describe('BriefChatPanel registration buttons', () => {
     expect(onRegisterClick).toHaveBeenCalledWith(null);
   });
 
-  it('renders one button when registrationEmail is null and showRegistrationButton is true', () => {
+  it('renders only the download CTA when registrationEmail is null', () => {
     const onRegisterClick = vi.fn();
     render(
       <BriefChatPanel
@@ -114,11 +115,11 @@ describe('BriefChatPanel registration buttons', () => {
       />
     );
 
-    expect(screen.getByText('Sign up')).toBeInTheDocument();
+    expect(screen.getByText('Sign up for free to download')).toBeInTheDocument();
     expect(screen.queryByText('Register with another email')).not.toBeInTheDocument();
   });
 
-  it('clicking single button calls onRegisterClick with null when no email', async () => {
+  it('clicking the CTA calls onRegisterClick with null when no email', async () => {
     const onRegisterClick = vi.fn();
     render(
       <BriefChatPanel
@@ -129,7 +130,7 @@ describe('BriefChatPanel registration buttons', () => {
       />
     );
 
-    await userEvent.click(screen.getByText('Sign up'));
+    await userEvent.click(screen.getByText('Sign up for free to download'));
     expect(onRegisterClick).toHaveBeenCalledWith(null);
   });
 
@@ -143,7 +144,7 @@ describe('BriefChatPanel registration buttons', () => {
       />
     );
 
-    expect(screen.queryByText('Register with user@example.com')).not.toBeInTheDocument();
-    expect(screen.queryByText('Sign up')).not.toBeInTheDocument();
+    expect(screen.queryByText('Sign up for free to download')).not.toBeInTheDocument();
+    expect(screen.queryByText('Register with another email')).not.toBeInTheDocument();
   });
 });

@@ -39,7 +39,8 @@ export const userBubbles = (page: Page): Locator => page.locator('[class*="messa
 export const attachmentChips = (page: Page): Locator => page.locator('[class*="attachmentChip"]');
 
 export const signUpCtaText = (page: Page): Locator => page.getByText('Sign up to receive your brief package.');
-export const signUpButton = (page: Page): Locator => page.getByRole('button', { name: 'Sign up', exact: true });
+export const signUpButton = (page: Page): Locator =>
+  page.getByRole('button', { name: 'Sign up for free to download', exact: true });
 
 export const productionBriefTab = (page: Page): Locator =>
   page.getByRole('button', { name: 'Production Brief', exact: true });

@@ -74,6 +74,7 @@ export const InitialParameters = (props: InitialParametersProps) => {
           >
             <Input placeholder={t('CRM_ID_LINK')} onFocus={handleFocus('crmId')} />
           </Form.Item>
+          {/* Stage 1 (Hide Offers/Estimates): estimation template selector hidden, re-enable at Stage 4.
           <Form.Item
             name='estimationTemplate'
             label={t('CHOOSE_TEMPLATE')}
@@ -90,6 +91,7 @@ export const InitialParameters = (props: InitialParametersProps) => {
               notFoundContent={t('NO_TEMPLATES')}
             />
           </Form.Item>
+          */}
         </Flex>
       </Flex>
       <Form.Item

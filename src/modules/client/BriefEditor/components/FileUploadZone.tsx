@@ -8,8 +8,18 @@ import { BriefAttachment } from '@/types/briefAi.interface';
 
 import styles from './FileUploadZone.module.css';
 
-const ACCEPT = 'application/pdf,image/jpeg,image/png,image/webp,image/gif,text/plain';
-const ALLOWED = new Set(ACCEPT.split(','));
+const DOCX_MIME = 'application/vnd.openxmlformats-officedocument.wordprocessingml.document';
+const ALLOWED_MIME_TYPES = [
+  'application/pdf',
+  'image/jpeg',
+  'image/png',
+  'image/webp',
+  'image/gif',
+  'text/plain',
+  DOCX_MIME,
+];
+const ALLOWED = new Set(ALLOWED_MIME_TYPES);
+const ACCEPT = ALLOWED_MIME_TYPES.concat('.docx').join(',');
 const MAX_FILE_SIZE = 10 * 1024 * 1024;
 
 const formatBytes = (bytes: number): string => {
@@ -51,7 +61,7 @@ export const FileUploadZone = (props: FileUploadZoneProps) => {
       if (file.size > MAX_FILE_SIZE) {
         return t('BRIEF_V3_ATTACH_TOO_LARGE');
       }
-      if (!ALLOWED.has(file.type)) {
+      if (!ALLOWED.has(file.type) && !file.name.toLowerCase().endsWith('.docx')) {
         return t('BRIEF_V3_ATTACH_WRONG_TYPE');
       }
       return null;
