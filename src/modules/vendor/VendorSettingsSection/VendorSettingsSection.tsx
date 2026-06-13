@@ -1,15 +1,22 @@
 'use client';
 
-import { useEffect, useRef } from 'react';
-import { Form, Input, InputNumber, Button, App, Spin } from 'antd';
-import { CameraOutlined } from '@ant-design/icons';
+import { useCallback, useEffect, useRef, useState } from 'react';
+import { Form, Input, InputNumber, Button, App, Spin, Popconfirm, Typography } from 'antd';
+import { CameraOutlined, CopyOutlined } from '@ant-design/icons';
+import { t } from '@/lib/i18n';
 import {
   useGetVendorSettingsQuery,
   useUpdateVendorSettingsMutation,
   useUploadVendorLogoMutation,
+  useLazySuggestVendorSlugQuery,
+  useGetVendorWebhookKeyQuery,
+  useRotateVendorWebhookKeyMutation,
 } from '@/services/client/vendorSettingsApi';
 
 import styles from './VendorSettingsSection.module.css';
+
+const SLUG_DEBOUNCE_MS = 600;
+const SLUG_PATTERN = /^[a-z0-9][a-z0-9-]{1,38}[a-z0-9]$|^[a-z0-9]{3,40}$/;
 
 interface VendorSettingsFormValues {
   companyName: string;
@@ -22,19 +29,91 @@ interface VendorSettingsFormValues {
   postMarkupPercent: string;
   postInsurancePercent: string;
   postTaxPercent: string;
+  slug: string;
+  leadNotificationEmail: string;
 }
+
+type SlugStatus = 'idle' | 'checking' | 'available' | 'taken' | 'invalid';
+
+const WebhookKeySection = () => {
+  const { message: messageApi } = App.useApp();
+  const { data: webhookKey, isLoading } = useGetVendorWebhookKeyQuery();
+  const [rotate, { isLoading: isRotating }] = useRotateVendorWebhookKeyMutation();
+  const [keyCopied, setKeyCopied] = useState(false);
+
+  const handleCopyKey = async () => {
+    if (!webhookKey?.key) {
+      return;
+    }
+    try {
+      await navigator.clipboard.writeText(webhookKey.key);
+      setKeyCopied(true);
+      setTimeout(() => setKeyCopied(false), 2000);
+    } catch {
+      messageApi.error(t('UNEXPECTED_ERROR'));
+    }
+  };
+
+  const handleRotate = async () => {
+    try {
+      await rotate().unwrap();
+    } catch {
+      messageApi.error(t('UNEXPECTED_ERROR'));
+    }
+  };
+
+  if (isLoading) {
+    return <Spin size='small' />;
+  }
+
+  return (
+    <div className={styles.webhookSection}>
+      <h4 className={styles.subTitleCompact}>{t('VENDOR_SETTINGS_WEBHOOK_KEY_LABEL')}</h4>
+      {webhookKey?.key ? (
+        <div className={styles.webhookRow}>
+          <Input.Password readOnly value={webhookKey.key} className={styles.webhookInput} />
+          <Button icon={<CopyOutlined />} onClick={handleCopyKey}>
+            {keyCopied ? t('VENDOR_SETTINGS_WEBHOOK_KEY_COPIED') : t('VENDOR_SETTINGS_WEBHOOK_KEY_COPY')}
+          </Button>
+          <Popconfirm
+            title={t('VENDOR_SETTINGS_WEBHOOK_KEY_REGENERATE_CONFIRM')}
+            onConfirm={handleRotate}
+            okText={t('VENDOR_SETTINGS_WEBHOOK_KEY_REGENERATE')}
+          >
+            <Button loading={isRotating}>{t('VENDOR_SETTINGS_WEBHOOK_KEY_REGENERATE')}</Button>
+          </Popconfirm>
+        </div>
+      ) : (
+        <div className={styles.webhookRow}>
+          <Typography.Text type='secondary'>{t('VENDOR_SETTINGS_WEBHOOK_KEY_NONE')}</Typography.Text>
+          <Popconfirm title={t('VENDOR_SETTINGS_WEBHOOK_KEY_REGENERATE_CONFIRM')} onConfirm={handleRotate}>
+            <Button type='primary' loading={isRotating}>
+              {t('VENDOR_SETTINGS_WEBHOOK_KEY_GENERATE')}
+            </Button>
+          </Popconfirm>
+        </div>
+      )}
+    </div>
+  );
+};
 
 export const VendorSettingsSection = () => {
   const { message } = App.useApp();
   const [form] = Form.useForm<VendorSettingsFormValues>();
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const slugDebounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const originalSlugRef = useRef<string | null>(null);
 
   const { data: settings, isLoading } = useGetVendorSettingsQuery();
   const [updateSettings, { isLoading: isUpdating }] = useUpdateVendorSettingsMutation();
   const [uploadLogo, { isLoading: isUploadingLogo }] = useUploadVendorLogoMutation();
+  const [suggestSlug] = useLazySuggestVendorSlugQuery();
+
+  const [slugStatus, setSlugStatus] = useState<SlugStatus>('idle');
 
   useEffect(() => {
     if (settings) {
+      originalSlugRef.current = settings.slug;
       form.setFieldsValue({
         companyName: settings.companyName || '',
         agencyName: settings.agencyName || '',
@@ -46,13 +125,79 @@ export const VendorSettingsSection = () => {
         postMarkupPercent: settings.postMarkupPercent || '0',
         postInsurancePercent: settings.postInsurancePercent || '0',
         postTaxPercent: settings.postTaxPercent || '0',
+        slug: settings.slug || '',
+        leadNotificationEmail: settings.leadNotificationEmail || '',
       });
     }
   }, [settings, form]);
 
-  const handleSubmit = async (values: VendorSettingsFormValues) => {
+  const handleSlugSuggest = async () => {
     try {
-      await updateSettings(values).unwrap();
+      const result = await suggestSlug().unwrap();
+      form.setFieldValue('slug', result.slug);
+      setSlugStatus('available');
+    } catch {
+      message.error(t('UNEXPECTED_ERROR'));
+    }
+  };
+
+  const validateSlugRemote = useCallback(
+    async (value: string) => {
+      if (!SLUG_PATTERN.test(value)) {
+        setSlugStatus('invalid');
+        return;
+      }
+      if (value === originalSlugRef.current) {
+        setSlugStatus('available');
+        return;
+      }
+      setSlugStatus('checking');
+      try {
+        const result = await suggestSlug().unwrap();
+        if (result.slug === value) {
+          setSlugStatus('available');
+        } else {
+          setSlugStatus('taken');
+        }
+      } catch {
+        setSlugStatus('idle');
+      }
+    },
+    [suggestSlug]
+  );
+
+  const handleSlugChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const value = event.target.value.trim();
+    if (slugDebounceRef.current) {
+      clearTimeout(slugDebounceRef.current);
+    }
+    if (!value) {
+      setSlugStatus('idle');
+      return;
+    }
+    slugDebounceRef.current = setTimeout(() => validateSlugRemote(value), SLUG_DEBOUNCE_MS);
+  };
+
+  const handleSubmit = async (values: VendorSettingsFormValues) => {
+    if (slugStatus === 'taken' || slugStatus === 'invalid') {
+      return;
+    }
+    try {
+      await updateSettings({
+        companyName: values.companyName,
+        agencyName: values.agencyName,
+        fringesPercent: values.fringesPercent,
+        handlingPercent: values.handlingPercent,
+        markupPercent: values.markupPercent,
+        productionInsurancePercent: values.productionInsurancePercent,
+        productionFeePercent: values.productionFeePercent,
+        postMarkupPercent: values.postMarkupPercent,
+        postInsurancePercent: values.postInsurancePercent,
+        postTaxPercent: values.postTaxPercent,
+        slug: values.slug || null,
+        leadNotificationEmail: values.leadNotificationEmail,
+      }).unwrap();
+      originalSlugRef.current = values.slug || null;
       message.success('Company settings saved');
     } catch {
       message.error('Failed to save settings');
@@ -79,6 +224,18 @@ export const VendorSettingsSection = () => {
       message.error('Failed to upload logo');
     }
   };
+
+  const slugHelp =
+    slugStatus === 'checking'
+      ? t('VENDOR_SETTINGS_SLUG_CHECKING')
+      : slugStatus === 'taken'
+        ? t('VENDOR_SETTINGS_SLUG_TAKEN')
+        : slugStatus === 'invalid'
+          ? t('VENDOR_SETTINGS_SLUG_INVALID')
+          : '';
+
+  const slugValidateStatus =
+    slugStatus === 'taken' || slugStatus === 'invalid' ? 'error' : slugStatus === 'checking' ? 'validating' : '';
 
   if (isLoading) {
     return <Spin size='large' className={styles.spinner} />;
@@ -118,6 +275,30 @@ export const VendorSettingsSection = () => {
           </Form.Item>
         </div>
 
+        <h4 className={styles.subTitle}>{t('VENDOR_SETTINGS_SLUG_LABEL')}</h4>
+
+        <Form.Item
+          name='slug'
+          validateStatus={slugValidateStatus}
+          help={slugHelp || (settings?.slug ? t('VENDOR_SETTINGS_SLUG_CHANGE_WARNING') : '')}
+        >
+          <Input
+            addonBefore={t('VENDOR_SETTINGS_SLUG_ADDON')}
+            placeholder={t('VENDOR_SETTINGS_SLUG_PLACEHOLDER')}
+            size='large'
+            onChange={handleSlugChange}
+            suffix={
+              <Button type='link' size='small' onClick={handleSlugSuggest} className={styles.suggestButton}>
+                {t('VENDOR_SETTINGS_SLUG_SUGGEST')}
+              </Button>
+            }
+          />
+        </Form.Item>
+
+        <Form.Item name='leadNotificationEmail' label={t('VENDOR_SETTINGS_NOTIFICATION_EMAIL_LABEL')}>
+          <Input type='email' placeholder={t('VENDOR_SETTINGS_NOTIFICATION_EMAIL_PLACEHOLDER')} size='large' />
+        </Form.Item>
+
         <h4 className={styles.subTitle}>Default Production Percentages</h4>
         <div className={styles.percentsRow}>
           <Form.Item name='fringesPercent' label='Fringes %' className={styles.percentItem120}>
@@ -154,6 +335,8 @@ export const VendorSettingsSection = () => {
           Save Company Settings
         </Button>
       </Form>
+
+      <WebhookKeySection />
     </div>
   );
 };
