@@ -122,9 +122,9 @@ describe('SendBriefModal', () => {
     });
   });
 
-  it('shows already-sent error message on 409 response', async () => {
+  it('shows already-sent error message on code=already_sent', async () => {
     mocks.sendPublic.mockReturnValue({
-      unwrap: () => Promise.reject({ status: 409, data: { error: 'already_sent' } }),
+      unwrap: () => Promise.reject({ status: 409, data: { code: 'already_sent' } }),
     });
     renderModal();
     const input = screen.getByPlaceholderText('email@example.com');
@@ -134,6 +134,96 @@ describe('SendBriefModal', () => {
     });
     await waitFor(() => {
       expect(screen.getByText('This brief was already sent to this vendor.')).toBeTruthy();
+    });
+  });
+
+  it('shows still-generating error message on code=still_generating', async () => {
+    mocks.sendPublic.mockReturnValue({
+      unwrap: () => Promise.reject({ status: 409, data: { code: 'still_generating' } }),
+    });
+    renderModal();
+    const input = screen.getByPlaceholderText('email@example.com');
+    await act(async () => {
+      fireEvent.change(input, { target: { value: 'test@example.com' } });
+      fireEvent.click(screen.getByText('Send brief'));
+    });
+    await waitFor(() => {
+      expect(screen.getByText('The brief is still being prepared. Try again in a moment.')).toBeTruthy();
+    });
+  });
+
+  it('shows still-generating error message on code=already_being_sent', async () => {
+    mocks.sendPublic.mockReturnValue({
+      unwrap: () => Promise.reject({ status: 409, data: { code: 'already_being_sent' } }),
+    });
+    renderModal();
+    const input = screen.getByPlaceholderText('email@example.com');
+    await act(async () => {
+      fireEvent.change(input, { target: { value: 'test@example.com' } });
+      fireEvent.click(screen.getByText('Send brief'));
+    });
+    await waitFor(() => {
+      expect(screen.getByText('The brief is still being prepared. Try again in a moment.')).toBeTruthy();
+    });
+  });
+
+  it('shows not-ready error message on code=not_ready', async () => {
+    mocks.sendPublic.mockReturnValue({
+      unwrap: () => Promise.reject({ status: 400, data: { code: 'not_ready' } }),
+    });
+    renderModal();
+    const input = screen.getByPlaceholderText('email@example.com');
+    await act(async () => {
+      fireEvent.change(input, { target: { value: 'test@example.com' } });
+      fireEvent.click(screen.getByText('Send brief'));
+    });
+    await waitFor(() => {
+      expect(screen.getByText('The brief is not ready to send yet.')).toBeTruthy();
+    });
+  });
+
+  it('shows invalid-email error message on code=invalid_email', async () => {
+    mocks.sendPublic.mockReturnValue({
+      unwrap: () => Promise.reject({ status: 400, data: { code: 'invalid_email' } }),
+    });
+    renderModal();
+    const input = screen.getByPlaceholderText('email@example.com');
+    await act(async () => {
+      fireEvent.change(input, { target: { value: 'test@example.com' } });
+      fireEvent.click(screen.getByText('Send brief'));
+    });
+    await waitFor(() => {
+      expect(screen.getByText('Please provide a valid email address.')).toBeTruthy();
+    });
+  });
+
+  it('shows no-agency error message on code=agency_not_found', async () => {
+    mocks.sendPublic.mockReturnValue({
+      unwrap: () => Promise.reject({ status: 404, data: { code: 'agency_not_found' } }),
+    });
+    renderModal();
+    const input = screen.getByPlaceholderText('email@example.com');
+    await act(async () => {
+      fireEvent.change(input, { target: { value: 'test@example.com' } });
+      fireEvent.click(screen.getByText('Send brief'));
+    });
+    await waitFor(() => {
+      expect(screen.getByText('This agency is no longer accepting briefs.')).toBeTruthy();
+    });
+  });
+
+  it('shows generic error message on code=vendor_mismatch', async () => {
+    mocks.sendPublic.mockReturnValue({
+      unwrap: () => Promise.reject({ status: 400, data: { code: 'vendor_mismatch' } }),
+    });
+    renderModal();
+    const input = screen.getByPlaceholderText('email@example.com');
+    await act(async () => {
+      fireEvent.change(input, { target: { value: 'test@example.com' } });
+      fireEvent.click(screen.getByText('Send brief'));
+    });
+    await waitFor(() => {
+      expect(screen.getByText('Failed to send. Please try again.')).toBeTruthy();
     });
   });
 

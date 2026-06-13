@@ -17,6 +17,26 @@ const POLL_TIMEOUT_MS = 120_000;
 const getSendErrorMessage = (error: unknown): string => {
   const fetchError = error as FetchBaseQueryError;
   if (fetchError && typeof fetchError === 'object' && 'status' in fetchError) {
+    const data = (fetchError.data as { code?: string } | undefined) ?? {};
+    const code = data.code ?? '';
+    if (code === 'already_sent') {
+      return t('BRANDED_BRIEF_SEND_ERROR_ALREADY_SENT');
+    }
+    if (code === 'still_generating' || code === 'already_being_sent') {
+      return t('BRANDED_BRIEF_SEND_ERROR_STILL_GENERATING');
+    }
+    if (code === 'not_ready') {
+      return t('BRANDED_BRIEF_SEND_ERROR_NOT_READY');
+    }
+    if (code === 'invalid_email' || code === 'email_required') {
+      return t('BRANDED_BRIEF_SEND_ERROR_INVALID_EMAIL');
+    }
+    if (code === 'agency_not_found') {
+      return t('BRANDED_BRIEF_SEND_ERROR_NO_AGENCY');
+    }
+    if (code === 'vendor_mismatch' || code === 'brief_not_found') {
+      return t('BRANDED_BRIEF_SEND_ERROR_VENDOR_MISMATCH');
+    }
     const status = fetchError.status;
     if (status === 409) {
       return t('BRANDED_BRIEF_SEND_ERROR_ALREADY_SENT');
@@ -76,7 +96,8 @@ export const SendBriefModal = (props: SendBriefModalProps) => {
       const elapsed = Date.now() - startedAtRef.current;
       if (elapsed > POLL_TIMEOUT_MS) {
         setIsSending(false);
-        messageApi.error(t('BRANDED_BRIEF_SEND_ERROR'));
+        props.onChange(false);
+        messageApi.info(t('BRANDED_BRIEF_SEND_TIMEOUT_INFO'));
         return;
       }
 
