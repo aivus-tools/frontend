@@ -187,4 +187,31 @@ describe('AnonymousBriefEditor', () => {
     const panel = await screen.findByTestId('chat-panel');
     expect(panel.getAttribute('data-composer-disabled')).toBe('true');
   });
+
+  it('whiteLabel: hides registration button even when status is ready_to_finalize', async () => {
+    detailData = makeDetail({ conversationStatus: 'ready_to_finalize', pendingTaskId: null });
+
+    render(<AnonymousBriefEditor briefId='b1' token='tok' whiteLabel={true} />);
+
+    const panel = await screen.findByTestId('chat-panel');
+    expect(panel.getAttribute('data-registration')).toBe('false');
+  });
+
+  it('whiteLabel: hides registration button when status is finalized', async () => {
+    detailData = makeDetail({ conversationStatus: 'finalized', pendingTaskId: null });
+
+    render(<AnonymousBriefEditor briefId='b1' token='tok' whiteLabel={true} />);
+
+    const panel = await screen.findByTestId('chat-panel');
+    expect(panel.getAttribute('data-registration')).toBe('false');
+  });
+
+  it('no whiteLabel: shows registration button when status is finalized', async () => {
+    detailData = makeDetail({ conversationStatus: 'finalized', pendingTaskId: null });
+
+    render(<AnonymousBriefEditor briefId='b1' token='tok' whiteLabel={false} />);
+
+    const panel = await screen.findByTestId('chat-panel');
+    expect(panel.getAttribute('data-registration')).toBe('true');
+  });
 });

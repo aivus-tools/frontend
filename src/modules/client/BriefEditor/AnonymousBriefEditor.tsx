@@ -35,6 +35,8 @@ interface AnonymousBriefEditorProps {
   briefId?: string | null;
   token?: string | null;
   initialTaskId?: string | null;
+  whiteLabel?: boolean;
+  getLatestDocumentHtml?: () => string | null;
   onBriefCreated?: (briefId: string, token?: string) => void;
   onRegisterClick?: (briefId: string | null, token: string | null, email: string | null) => void;
 }
@@ -228,7 +230,9 @@ export const AnonymousBriefEditor = (props: AnonymousBriefEditorProps) => {
         })
       );
       setPendingAttachments((prev) => prev.filter((x) => !attachmentIds.includes(x.id)));
-      const productionBriefHtml = finalDocuments?.documents.find((x) => x.kind === 'production_brief')?.html ?? null;
+      const latestHtml = props.getLatestDocumentHtml?.() ?? null;
+      const productionBriefHtml =
+        latestHtml ?? finalDocuments?.documents.find((x) => x.kind === 'production_brief')?.html ?? null;
       try {
         await sendChat({ briefId, token, message: text, attachmentIds, documentHtml: productionBriefHtml }).unwrap();
       } catch {
@@ -238,7 +242,18 @@ export const AnonymousBriefEditor = (props: AnonymousBriefEditorProps) => {
         setIsChatLoading(false);
       }
     },
-    [briefId, dispatch, finalDocuments, isChatLoading, messageApi, pendingAttachments, pendingTaskId, sendChat, token]
+    [
+      briefId,
+      dispatch,
+      finalDocuments,
+      isChatLoading,
+      messageApi,
+      pendingAttachments,
+      pendingTaskId,
+      props,
+      sendChat,
+      token,
+    ]
   );
 
   const handleRegisterClick = useCallback(
@@ -303,7 +318,8 @@ export const AnonymousBriefEditor = (props: AnonymousBriefEditorProps) => {
     );
   }
 
-  const showRegistrationButton = conversationStatus === 'ready_to_finalize' || conversationStatus === 'finalized';
+  const showRegistrationButton =
+    !props.whiteLabel && (conversationStatus === 'ready_to_finalize' || conversationStatus === 'finalized');
 
   return (
     <OuterWrapper footerVisible={footerVisible} footerHeight={footerHeight}>

@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { useParams, useRouter, useSearchParams } from 'next/navigation';
 import { useSession } from 'next-auth/react';
 import { App, Button, Empty, Spin, Tabs, Typography } from 'antd';
@@ -14,11 +14,14 @@ import {
   useGetPublicBriefDetailQuery,
 } from '@/services/client/publicBriefApi';
 import { useGetBriefAiDetailQuery, useGetSentBriefIdsToVendorQuery } from '@/services/client/briefAiApi';
-import { setPendingBrief } from '@/helpers/pendingBrief';
+import { setPendingBrief, isBriefSent, markBriefAsSent } from '@/helpers/pendingBrief';
 import { GROUPS } from '@/constants/constants';
 import { AnonymousBriefEditor } from '@/modules/client/BriefEditor/AnonymousBriefEditor';
 import { AuthenticatedBriefEditor } from '@/modules/client/BriefEditor/AuthenticatedBriefEditor';
-import { WhiteLabelDocumentPanel } from '@/modules/client/BriefEditor/WhiteLabelDocumentPanel';
+import {
+  WhiteLabelDocumentPanel,
+  WhiteLabelDocumentHandle,
+} from '@/modules/client/BriefEditor/WhiteLabelDocumentPanel';
 import { SendBriefModal } from '@/modules/client/BriefEditor/SendBriefModal';
 import { useBreakpoint } from '@/hooks/useBreakpoint';
 import { PageSpinner } from '@/components/PageSpinner/PageSpinner';
@@ -37,6 +40,11 @@ export default function BrandedBriefDetailPage() {
   const isEmbed = searchParams.get('embed') === '1';
   const [mobileTab, setMobileTab] = useState<'brief' | 'chat'>('chat');
   const [sendModalOpen, setSendModalOpen] = useState(false);
+  const docPanelRef = useRef<WhiteLabelDocumentHandle | null>(null);
+
+  const getLatestDocumentHtml = useCallback((): string | null => {
+    return docPanelRef.current?.getLatestHtml() ?? null;
+  }, []);
   const tokenFromStorage = typeof window !== 'undefined' ? getPublicBriefToken(briefId) : null;
   const [token, setToken] = useState<string | null>(tokenFromStorage);
 
@@ -71,7 +79,8 @@ export default function BrandedBriefDetailPage() {
     : (publicDetail?.conversationStatus ?? 'in_progress');
 
   const documentReady = conversationStatus === 'ready_to_finalize' || conversationStatus === 'finalized';
-  const alreadySent = isClient && !!(sentBriefIdsData?.briefIds ?? []).includes(briefId);
+  const anonAlreadySent = !isClient && isBriefSent(briefId);
+  const alreadySent = isClient ? !!(sentBriefIdsData?.briefIds ?? []).includes(briefId) : anonAlreadySent;
   const isSendEnabled = documentReady && !alreadySent;
 
   const handleBriefCreated = (newBriefId: string, newToken?: string) => {
@@ -90,6 +99,9 @@ export default function BrandedBriefDetailPage() {
   };
 
   const handleSendSuccess = () => {
+    if (!isClient) {
+      markBriefAsSent(briefId);
+    }
     router.push(AppRoute.BRANDED_BRIEF_SUCCESS(slug) + (isEmbed ? '?embed=1' : ''));
   };
 
@@ -129,7 +141,7 @@ export default function BrandedBriefDetailPage() {
 
   const anonDocumentPanel = token ? (
     documentReady ? (
-      <WhiteLabelDocumentPanel briefId={briefId} token={token} />
+      <WhiteLabelDocumentPanel ref={docPanelRef} briefId={briefId} token={token} />
     ) : (
       <div className={styles.centerWrapper}>
         <Typography.Text type='secondary'>{t('BRIEF_V3_DOCUMENT_NOT_READY')}</Typography.Text>
@@ -195,6 +207,8 @@ export default function BrandedBriefDetailPage() {
             <AnonymousBriefEditor
               briefId={briefId}
               token={token}
+              whiteLabel={true}
+              getLatestDocumentHtml={getLatestDocumentHtml}
               onBriefCreated={handleBriefCreated}
               onRegisterClick={handleRegisterClick}
             />
@@ -227,6 +241,8 @@ export default function BrandedBriefDetailPage() {
           <AnonymousBriefEditor
             briefId={briefId}
             token={token}
+            whiteLabel={true}
+            getLatestDocumentHtml={getLatestDocumentHtml}
             onBriefCreated={handleBriefCreated}
             onRegisterClick={handleRegisterClick}
           />
