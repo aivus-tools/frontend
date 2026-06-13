@@ -587,6 +587,7 @@ export const RU_LOCALES = {
   BRIEF_V3_TAB_VENDOR_EMAIL: 'Письмо вендорам',
   BRIEF_V3_TAB_DELIVERABLES: 'Deliverables',
   BRIEF_V3_DOCUMENT_MISSING: 'Документ пока недоступен.',
+  BRIEF_V3_DOCUMENT_NOT_READY: 'Документ появится, когда бриф будет готов.',
   BETA_FOOTER_TITLE: 'Aivus в бета-версии — не потеряй свою работу',
   BETA_FOOTER_BODY:
     'Сохраняй сгенерированные документы в PDF у себя — мы ещё допиливаем платформу и пока не можем полностью гарантировать хранение.',
@@ -735,4 +736,6 @@ export const RU_LOCALES = {
   LEAD_STATUS_NEW: 'Новый лид',
   LEAD_EMAIL_YES: 'Email: есть',
   LEAD_EMAIL_NO: 'Email: нет',
+  PROJECT_STAGE_IN_PROGRESS: 'В работе',
+  PROJECT_STAGE_NEW_LEAD: 'Новый лид',
 };

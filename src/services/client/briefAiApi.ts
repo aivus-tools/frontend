@@ -320,6 +320,13 @@ export const briefAiApi = createApi({
       },
       invalidatesTags: ['BriefV3'],
     }),
+
+    getSentBriefIdsToVendor: builder.query<{ briefIds: string[] }, string>({
+      query: (slug) => ({
+        url: ApiRoute.CLIENT_BRIEFS_SENT_TO_VENDOR(slug),
+        method: 'GET',
+      }),
+    }),
   }),
 });
 
@@ -346,4 +353,5 @@ export const {
   useDeleteBriefAiMutation,
   useRenameBriefAiMutation,
   useUpdateBriefAiSettingsMutation,
+  useGetSentBriefIdsToVendorQuery,
 } = briefAiApi;

@@ -586,6 +586,7 @@ export const EN_LOCALES = {
   BRIEF_V3_TAB_VENDOR_EMAIL: 'Vendor Email',
   BRIEF_V3_TAB_DELIVERABLES: 'Deliverables',
   BRIEF_V3_DOCUMENT_MISSING: 'This document is not available.',
+  BRIEF_V3_DOCUMENT_NOT_READY: 'The document will appear when the brief is ready.',
   BETA_FOOTER_TITLE: "Aivus is in beta — don't lose your work",
   BETA_FOOTER_BODY:
     'Save the generated documents as PDF on your device — we are still polishing the platform and cannot fully guarantee storage just yet.',
@@ -728,6 +729,8 @@ export const EN_LOCALES = {
   LEAD_STATUS_NEW: 'New lead',
   LEAD_EMAIL_YES: 'Email: yes',
   LEAD_EMAIL_NO: 'Email: no',
+  PROJECT_STAGE_IN_PROGRESS: 'In progress',
+  PROJECT_STAGE_NEW_LEAD: 'New lead',
   BRIEF_TAB_BRIEF: 'Brief',
   BRIEF_TAB_CHAT: 'Chat',
   COMPARISON_OPEN_AI_ANALYSIS: 'Open AI Analysis',
