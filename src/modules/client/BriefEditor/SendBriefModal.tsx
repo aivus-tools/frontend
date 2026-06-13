@@ -2,6 +2,7 @@
 
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { App, Button, Form, Input, Modal } from 'antd';
+import type { FetchBaseQueryError } from '@reduxjs/toolkit/query';
 import { t } from '@/lib/i18n';
 import {
   useSendPublicBriefToVendorMutation,
@@ -12,6 +13,28 @@ import { useLazyGetBriefAiStatusQuery } from '@/services/client/briefAiApi';
 
 const POLL_INTERVAL_MS = 2000;
 const POLL_TIMEOUT_MS = 120_000;
+
+const getSendErrorMessage = (error: unknown): string => {
+  const fetchError = error as FetchBaseQueryError;
+  if (fetchError && typeof fetchError === 'object' && 'status' in fetchError) {
+    const status = fetchError.status;
+    const data = fetchError.data as { error?: string } | null;
+    const errorCode = data?.error;
+    if (status === 409) {
+      return t('BRANDED_BRIEF_SEND_ERROR_ALREADY_SENT');
+    }
+    if (status === 400 && errorCode === 'not_ready') {
+      return t('BRANDED_BRIEF_SEND_ERROR_NOT_READY');
+    }
+    if (status === 404 && errorCode === 'agency_not_found') {
+      return t('BRANDED_BRIEF_SEND_ERROR_NO_AGENCY');
+    }
+    if (errorCode === 'failed') {
+      return t('BRANDED_BRIEF_SEND_ERROR_FAILED');
+    }
+  }
+  return t('BRANDED_BRIEF_SEND_ERROR');
+};
 
 interface SendBriefModalProps {
   value: boolean;
@@ -94,14 +117,14 @@ export const SendBriefModal = (props: SendBriefModalProps) => {
 
         if (status === 'failed') {
           setIsSending(false);
-          messageApi.error(t('BRANDED_BRIEF_SEND_ERROR'));
+          messageApi.error(t('BRANDED_BRIEF_SEND_ERROR_FAILED'));
           return;
         }
 
         pollTimerRef.current = setTimeout(() => pollUntilDone(taskId), POLL_INTERVAL_MS);
-      } catch {
+      } catch (error) {
         setIsSending(false);
-        messageApi.error(t('BRANDED_BRIEF_SEND_ERROR'));
+        messageApi.error(getSendErrorMessage(error));
       }
     },
     [getAuthStatus, getPublicStatus, messageApi, props]
@@ -145,9 +168,9 @@ export const SendBriefModal = (props: SendBriefModalProps) => {
         props.onChange(false);
         props.onSuccess();
       }
-    } catch {
+    } catch (error) {
       setIsSending(false);
-      messageApi.error(t('BRANDED_BRIEF_SEND_ERROR'));
+      messageApi.error(getSendErrorMessage(error));
     }
   };
 

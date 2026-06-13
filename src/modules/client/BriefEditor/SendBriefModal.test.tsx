@@ -121,4 +121,41 @@ describe('SendBriefModal', () => {
       expect(mocks.sendClient).not.toHaveBeenCalled();
     });
   });
+
+  it('shows already-sent error message on 409 response', async () => {
+    mocks.sendPublic.mockReturnValue({
+      unwrap: () => Promise.reject({ status: 409, data: { error: 'already_sent' } }),
+    });
+    renderModal();
+    const input = screen.getByPlaceholderText('email@example.com');
+    await act(async () => {
+      fireEvent.change(input, { target: { value: 'test@example.com' } });
+      fireEvent.click(screen.getByText('Send brief'));
+    });
+    await waitFor(() => {
+      expect(screen.getByText('This brief was already sent to this vendor.')).toBeTruthy();
+    });
+  });
+
+  it('shows failed-task error message when poll returns status=failed', async () => {
+    mocks.sendPublic.mockReturnValue({
+      unwrap: () => Promise.resolve({ ok: true, finalizingTaskId: 'task-1' }),
+    });
+    mocks.getPublicStatus.mockReturnValue({
+      unwrap: () => Promise.resolve({ status: 'failed', result: null, error: null }),
+    });
+
+    renderModal();
+    const input = screen.getByPlaceholderText('email@example.com');
+    await act(async () => {
+      fireEvent.change(input, { target: { value: 'test@example.com' } });
+      fireEvent.click(screen.getByText('Send brief'));
+    });
+    await waitFor(
+      () => {
+        expect(screen.getByText('Sending failed. Please try again.')).toBeTruthy();
+      },
+      { timeout: 5000 }
+    );
+  });
 });
