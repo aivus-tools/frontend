@@ -108,7 +108,7 @@ export default auth(async (req) => {
     req.nextUrl.pathname.startsWith('/brief')
   ) {
     const response = createPageResponse(req);
-    const isBriefEmbed = req.nextUrl.pathname.startsWith('/brief') && req.nextUrl.searchParams.get('embed') === '1';
+    const isBriefEmbed = req.nextUrl.pathname.startsWith('/brief/') && req.nextUrl.searchParams.get('embed') === '1';
     response.headers.set('Content-Security-Policy', isBriefEmbed ? EMBED_CSP : CSP);
     return ensureLocaleCookie(req, response);
   }
