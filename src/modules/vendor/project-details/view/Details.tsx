@@ -1,17 +1,20 @@
 'use client';
-import { ReactNode } from 'react';
+import { ReactNode, useState } from 'react';
 import { useParams } from 'next/navigation';
 
 import { GuidanceAndControls } from '../common/GuidanceAndControls';
 import commonStyles from '../common/common.module.css';
-import { Col, Flex, Image, Row, Typography } from 'antd';
+import { App, Button, Col, Flex, Image, Row, Typography } from 'antd';
+import { DownloadOutlined } from '@ant-design/icons';
 import { GuidanceProvider } from '@/context/GuidanceProvider';
 import { PageSpinner } from '@/components/PageSpinner';
 import HouseIcon from '@/icons/house.svg';
 import { t } from '@/lib/i18n';
-import { projectsApi } from '@/services/client/projectsApi';
+import { projectsApi, useGetVendorProjectBriefDocumentsQuery } from '@/services/client/projectsApi';
 import { NEW_BRIEF_SLUG } from '@/constants/constants';
 import { useBreakpoint } from '@/hooks/useBreakpoint';
+import { ApiRoute } from '@/constants/apiRoute';
+import { downloadPdf } from '@/helpers/downloadPdf';
 
 import styles from './Details.module.css';
 
@@ -42,7 +45,10 @@ const Item = (props: ItemProps) => (
 export default function Details() {
   const params = useParams();
   const { isMobile } = useBreakpoint();
+  const { message: messageApi } = App.useApp();
   const projectId = params.projectId as string | undefined;
+  const [isDownloading, setIsDownloading] = useState(false);
+
   const {
     data: project,
     isLoading,
@@ -52,6 +58,25 @@ export default function Details() {
     refetchOnMountOrArgChange: true,
   });
 
+  const { data: briefDocuments } = useGetVendorProjectBriefDocumentsQuery(projectId ?? '', {
+    skip: !projectId || projectId === NEW_BRIEF_SLUG || !project?.briefId,
+  });
+
+  const handleDownloadBriefPdf = async () => {
+    if (!projectId || !briefDocuments?.length) {
+      return;
+    }
+    const doc = briefDocuments.find((x) => x.kind === 'production_brief') ?? briefDocuments[0];
+    setIsDownloading(true);
+    try {
+      await downloadPdf(ApiRoute.VENDOR_PROJECT_BRIEF_DOCUMENT_PDF(projectId, doc.id), 'brief.pdf');
+    } catch {
+      messageApi.error(t('UNEXPECTED_ERROR'));
+    } finally {
+      setIsDownloading(false);
+    }
+  };
+
   if (isLoading || isFetching) {
     return <PageSpinner />;
   }
@@ -60,12 +85,28 @@ export default function Details() {
     return null;
   }
 
+  const hasBriefDocuments = !!briefDocuments?.length;
+
   return (
     <GuidanceProvider>
       <div className={commonStyles.wrapper}>
         <div className={commonStyles.column} style={{ flex: '1 1 70%' }}>
           <div className={commonStyles.section}>
-            <div className={commonStyles.header}>{t('INITIAL_PARAMETERS')}</div>
+            <div className={commonStyles.header}>
+              <Flex align='center' justify='space-between'>
+                <span>{t('INITIAL_PARAMETERS')}</span>
+                {hasBriefDocuments ? (
+                  <Button
+                    icon={<DownloadOutlined />}
+                    size='small'
+                    loading={isDownloading}
+                    onClick={handleDownloadBriefPdf}
+                  >
+                    {t('VENDOR_PROJECT_DOWNLOAD_BRIEF_PDF')}
+                  </Button>
+                ) : null}
+              </Flex>
+            </div>
             <div className={`${commonStyles.content} ${styles.initialParametersContent}`}>
               <Flex gap={isMobile ? 16 : 30} align={isMobile ? 'stretch' : 'start'} vertical={isMobile}>
                 {project.thumbnailUrl ? (

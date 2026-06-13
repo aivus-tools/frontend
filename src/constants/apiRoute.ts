@@ -122,6 +122,10 @@ export const ApiRoute = {
     `/service/public/briefs/ai/${briefId}/attachments/${attachmentId}`,
   PUBLIC_BRIEF_AI_DETAIL: (briefId: string) => `/service/public/briefs/ai/${briefId}`,
   CLIENT_BRIEF_AI_CLAIM: (briefId: string) => `/service/client/briefs/ai/${briefId}/claim`,
+  // Vendor project brief documents
+  VENDOR_PROJECT_BRIEF_DOCUMENTS: (projectId: string) => `/service/vendor/projects/${projectId}/brief/documents`,
+  VENDOR_PROJECT_BRIEF_DOCUMENT_PDF: (projectId: string, documentId: string) =>
+    `/service/vendor/projects/${projectId}/brief/documents/${documentId}/pdf`,
   // Pre-Vendors
   PRE_VENDORS: '/service/pre-vendors',
 } as const;

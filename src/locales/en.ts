@@ -567,6 +567,7 @@ export const EN_LOCALES = {
   BRIEF_V3_LOADING_BRIEF_TITLE: 'Loading the brief...',
   BRIEF_V3_LOADING_BRIEF_SUBTITLE: 'One moment, pulling the latest state.',
   BRIEF_V3_GENERATING_DOCUMENT: 'Preparing your brief...',
+  VENDOR_PROJECT_DOWNLOAD_BRIEF_PDF: 'Download brief PDF',
   BRIEF_V3_LOADING_DOCS_TITLE: 'Loading documents...',
   BRIEF_V3_LOADING_DOCS_SUBTITLE: 'Fetching the latest version from the server.',
   BRIEF_V3_FINALIZE_FAILED: 'Could not finalize the brief. Please try again.',

@@ -1,6 +1,7 @@
 import { Project, NewProject } from '@/types/project.interface';
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
 import { ApiRoute } from '@/constants/apiRoute';
+import { BriefFinalDocument } from '@/types/briefAi.interface';
 
 export const projectsApi = createApi({
   reducerPath: 'projectsApi',
@@ -61,6 +62,9 @@ export const projectsApi = createApi({
       }),
       invalidatesTags: ['Project'],
     }),
+    getVendorProjectBriefDocuments: builder.query<BriefFinalDocument[], string>({
+      query: (projectId) => ApiRoute.VENDOR_PROJECT_BRIEF_DOCUMENTS(projectId),
+    }),
   }),
 });
 
@@ -73,4 +77,5 @@ export const {
   useUploadThumbnailMutation,
   useGetArchivedProjectsQuery,
   useRestoreProjectMutation,
+  useGetVendorProjectBriefDocumentsQuery,
 } = projectsApi;
