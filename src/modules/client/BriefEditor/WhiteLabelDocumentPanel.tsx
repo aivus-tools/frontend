@@ -1,0 +1,297 @@
+'use client';
+
+import React, { forwardRef, useEffect, useImperativeHandle, useRef, useState } from 'react';
+import { useEditor, EditorContent, Editor } from '@tiptap/react';
+import StarterKit from '@tiptap/starter-kit';
+import Link from '@tiptap/extension-link';
+import Underline from '@tiptap/extension-underline';
+import Placeholder from '@tiptap/extension-placeholder';
+import { App, Spin } from 'antd';
+import { t } from '@/lib/i18n';
+import {
+  useGetPublicBriefFinalDocumentsQuery,
+  useUpdatePublicBriefFinalDocumentMutation,
+} from '@/services/client/publicBriefApi';
+import { BriefFinalDocument } from '@/types/briefAi.interface';
+
+import styles from './BriefFinalPackage.module.css';
+
+const AUTOSAVE_DEBOUNCE_MS = 1200;
+
+type SaveState = 'idle' | 'saving' | 'saved' | 'error';
+
+export interface WhiteLabelDocumentHandle {
+  getLatestHtml: () => string;
+}
+
+interface WhiteLabelDocumentEditorProps {
+  briefId: string;
+  document: BriefFinalDocument;
+  token: string;
+  onSaveStateChange: (state: SaveState) => void;
+}
+
+const htmlToPlainText = (html: string): string => {
+  if (typeof document === 'undefined') {
+    return html;
+  }
+  const temp = document.createElement('div');
+  temp.innerHTML = html;
+  return temp.innerText;
+};
+
+const WhiteLabelDocumentEditor = forwardRef<WhiteLabelDocumentHandle, WhiteLabelDocumentEditorProps>((props, ref) => {
+  const { briefId, document: doc, token, onSaveStateChange } = props;
+  const { message: messageApi } = App.useApp();
+  const [updateDoc] = useUpdatePublicBriefFinalDocumentMutation();
+  const saveTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const latestHtmlRef = useRef<string>(doc.html);
+  const onSaveStateChangeRef = useRef(onSaveStateChange);
+  onSaveStateChangeRef.current = onSaveStateChange;
+
+  const setSaveState = (state: SaveState) => {
+    onSaveStateChangeRef.current(state);
+  };
+
+  const editor = useEditor({
+    immediatelyRender: false,
+    extensions: [
+      StarterKit,
+      Underline,
+      Link.configure({
+        openOnClick: false,
+        HTMLAttributes: { rel: 'noopener noreferrer', target: '_blank' },
+      }),
+      Placeholder.configure({
+        placeholder: t('BRIEF_V3_EDITOR_PLACEHOLDER'),
+      }),
+    ],
+    content: doc.html,
+    onUpdate: ({ editor: current }) => {
+      const html = current.getHTML();
+      latestHtmlRef.current = html;
+      setSaveState('saving');
+      if (saveTimerRef.current) {
+        clearTimeout(saveTimerRef.current);
+      }
+      saveTimerRef.current = setTimeout(async () => {
+        try {
+          await updateDoc({
+            briefId,
+            documentId: doc.id,
+            html,
+            plainText: htmlToPlainText(html),
+            token,
+          }).unwrap();
+          setSaveState('saved');
+        } catch {
+          setSaveState('error');
+        }
+      }, AUTOSAVE_DEBOUNCE_MS);
+    },
+  });
+
+  useEffect(() => {
+    return () => {
+      if (saveTimerRef.current) {
+        clearTimeout(saveTimerRef.current);
+      }
+    };
+  }, []);
+
+  useEffect(() => {
+    if (!editor) {
+      return;
+    }
+    if (editor.getHTML() === doc.html) {
+      return;
+    }
+    editor.commands.setContent(doc.html, { emitUpdate: false });
+    latestHtmlRef.current = doc.html;
+  }, [doc.html, doc.id, editor]);
+
+  useImperativeHandle(
+    ref,
+    () => ({
+      getLatestHtml: () => latestHtmlRef.current,
+    }),
+    []
+  );
+
+  if (!editor) {
+    return null;
+  }
+
+  return (
+    <div className={styles.documentPane}>
+      <div className={styles.stickyBar}>
+        <EditorToolbar editor={editor} />
+      </div>
+      <div className={styles.scrollArea}>
+        <div className={styles.editorCard}>
+          <EditorContent editor={editor} />
+        </div>
+      </div>
+    </div>
+  );
+});
+
+WhiteLabelDocumentEditor.displayName = 'WhiteLabelDocumentEditor';
+
+interface EditorToolbarProps {
+  editor: Editor;
+}
+
+const toolButtonClass = (active: boolean): string => {
+  return active ? `${styles.toolButton} ${styles.toolButtonActive}` : styles.toolButton;
+};
+
+const EditorToolbar = (props: EditorToolbarProps) => {
+  const { editor } = props;
+  return (
+    <div className={styles.toolbar}>
+      <button
+        type='button'
+        className={toolButtonClass(editor.isActive('bold'))}
+        onClick={() => editor.chain().focus().toggleBold().run()}
+      >
+        Bold
+      </button>
+      <button
+        type='button'
+        className={toolButtonClass(editor.isActive('italic'))}
+        onClick={() => editor.chain().focus().toggleItalic().run()}
+      >
+        Italic
+      </button>
+      <button
+        type='button'
+        className={toolButtonClass(editor.isActive('underline'))}
+        onClick={() => editor.chain().focus().toggleUnderline().run()}
+      >
+        Underline
+      </button>
+      <button
+        type='button'
+        className={toolButtonClass(editor.isActive('heading', { level: 1 }))}
+        onClick={() => editor.chain().focus().toggleHeading({ level: 1 }).run()}
+      >
+        H1
+      </button>
+      <button
+        type='button'
+        className={toolButtonClass(editor.isActive('heading', { level: 2 }))}
+        onClick={() => editor.chain().focus().toggleHeading({ level: 2 }).run()}
+      >
+        H2
+      </button>
+      <button
+        type='button'
+        className={toolButtonClass(editor.isActive('bulletList'))}
+        onClick={() => editor.chain().focus().toggleBulletList().run()}
+      >
+        List
+      </button>
+      <button
+        type='button'
+        className={styles.toolButton}
+        onClick={() => editor.chain().focus().undo().run()}
+        disabled={!editor.can().undo()}
+      >
+        Undo
+      </button>
+      <button
+        type='button'
+        className={styles.toolButton}
+        onClick={() => editor.chain().focus().redo().run()}
+        disabled={!editor.can().redo()}
+      >
+        Redo
+      </button>
+    </div>
+  );
+};
+
+const saveStatusClass = (state: SaveState): string => {
+  if (state === 'saved') {
+    return `${styles.saveStatus} ${styles.saveStatusSaved}`;
+  }
+  if (state === 'error') {
+    return `${styles.saveStatus} ${styles.saveStatusError}`;
+  }
+  return styles.saveStatus;
+};
+
+interface WhiteLabelDocumentPanelProps {
+  briefId: string;
+  token: string;
+  onReadyHtmlChange?: (html: string) => void;
+}
+
+export const WhiteLabelDocumentPanel = (props: WhiteLabelDocumentPanelProps) => {
+  const { briefId, token } = props;
+  const { message: messageApi } = App.useApp();
+  const [saveState, setSaveState] = useState<SaveState>('idle');
+  const editorRef = useRef<WhiteLabelDocumentHandle | null>(null);
+
+  const {
+    data: pkg,
+    isLoading,
+    isError,
+  } = useGetPublicBriefFinalDocumentsQuery({ briefId, token }, { skip: !briefId || !token });
+
+  useEffect(() => {
+    if (isError) {
+      messageApi.error(t('UNEXPECTED_ERROR'));
+    }
+  }, [isError, messageApi]);
+
+  if (isLoading) {
+    return (
+      <div className={styles.loadingWrapper}>
+        <Spin size='large' />
+        <div className={styles.loadingLabel}>{t('BRIEF_V3_LOADING_DOCS_TITLE')}</div>
+      </div>
+    );
+  }
+
+  const productionBrief = pkg?.documents.find((x) => x.kind === 'production_brief');
+
+  if (!productionBrief) {
+    return <div className={styles.missingDoc}>{t('BRIEF_V3_DOCUMENT_MISSING')}</div>;
+  }
+
+  const saveLabel =
+    saveState === 'saving'
+      ? t('BRIEF_V3_SAVING')
+      : saveState === 'saved'
+        ? t('BRIEF_V3_SAVED')
+        : saveState === 'error'
+          ? t('BRIEF_V3_SAVE_FAILED')
+          : '';
+
+  return (
+    <div className={styles.outerScroll}>
+      <div className={styles.wrapper}>
+        <div className={styles.tabsHeader}>
+          <div className={styles.tabsList}>
+            <span className={`${styles.tabButton} ${styles.tabButtonActive}`}>
+              {t('BRIEF_V3_TAB_PRODUCTION_BRIEF')}
+            </span>
+          </div>
+          <div className={styles.headerActions}>
+            <span className={saveStatusClass(saveState)}>{saveLabel}</span>
+          </div>
+        </div>
+        <WhiteLabelDocumentEditor
+          key={productionBrief.id}
+          ref={editorRef}
+          briefId={briefId}
+          document={productionBrief}
+          token={token}
+          onSaveStateChange={setSaveState}
+        />
+      </div>
+    </div>
+  );
+};
