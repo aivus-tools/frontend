@@ -10,7 +10,7 @@ import { useGetVendorSettingsQuery } from '@/services/client/vendorSettingsApi';
 
 import styles from './PersonalLinkPanel.module.css';
 
-const BASE_URL = typeof window !== 'undefined' ? window.location.origin : 'https://go.aivus.co';
+const BASE_URL = process.env.NEXT_PUBLIC_APP_URL ?? 'https://go.aivus.co';
 
 interface EmbedModalProps {
   value: boolean;
