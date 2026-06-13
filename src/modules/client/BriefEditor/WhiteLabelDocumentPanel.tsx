@@ -230,81 +230,93 @@ interface WhiteLabelDocumentPanelProps {
   onReadyHtmlChange?: (html: string) => void;
 }
 
-export const WhiteLabelDocumentPanel = (props: WhiteLabelDocumentPanelProps) => {
-  const { briefId, token } = props;
-  const { message: messageApi } = App.useApp();
-  const [saveState, setSaveState] = useState<SaveState>('idle');
-  const [pollingInterval, setPollingInterval] = useState(0);
-  const editorRef = useRef<WhiteLabelDocumentHandle | null>(null);
+export const WhiteLabelDocumentPanel = forwardRef<WhiteLabelDocumentHandle, WhiteLabelDocumentPanelProps>(
+  (props, ref) => {
+    const { briefId, token } = props;
+    const { message: messageApi } = App.useApp();
+    const [saveState, setSaveState] = useState<SaveState>('idle');
+    const [pollingInterval, setPollingInterval] = useState(0);
+    const editorRef = useRef<WhiteLabelDocumentHandle | null>(null);
 
-  const {
-    data: pkg,
-    isLoading,
-    isError,
-  } = useGetPublicBriefFinalDocumentsQuery(
-    { briefId, token },
-    {
-      skip: !briefId || !token,
-      pollingInterval,
+    useImperativeHandle(
+      ref,
+      () => ({
+        getLatestHtml: () => editorRef.current?.getLatestHtml() ?? '',
+      }),
+      []
+    );
+
+    const {
+      data: pkg,
+      isLoading,
+      isError,
+    } = useGetPublicBriefFinalDocumentsQuery(
+      { briefId, token },
+      {
+        skip: !briefId || !token,
+        pollingInterval,
+      }
+    );
+
+    useEffect(() => {
+      setPollingInterval(pkg?.generating ? GENERATING_POLL_INTERVAL_MS : 0);
+    }, [pkg?.generating]);
+
+    useEffect(() => {
+      if (isError) {
+        messageApi.error(t('UNEXPECTED_ERROR'));
+      }
+    }, [isError, messageApi]);
+
+    if (isLoading || pkg?.generating) {
+      return (
+        <div className={styles.loadingWrapper}>
+          <Spin size='large' />
+          <div className={styles.loadingLabel}>{t('BRIEF_V3_GENERATING_DOCUMENT')}</div>
+        </div>
+      );
     }
-  );
 
-  useEffect(() => {
-    setPollingInterval(pkg?.generating ? GENERATING_POLL_INTERVAL_MS : 0);
-  }, [pkg?.generating]);
+    const productionBrief = pkg?.documents.find((x) => x.kind === 'production_brief');
 
-  useEffect(() => {
-    if (isError) {
-      messageApi.error(t('UNEXPECTED_ERROR'));
+    if (!productionBrief) {
+      return <div className={styles.missingDoc}>{t('BRIEF_V3_DOCUMENT_MISSING')}</div>;
     }
-  }, [isError, messageApi]);
 
-  if (isLoading || pkg?.generating) {
+    const saveLabel =
+      saveState === 'saving'
+        ? t('BRIEF_V3_SAVING')
+        : saveState === 'saved'
+          ? t('BRIEF_V3_SAVED')
+          : saveState === 'error'
+            ? t('BRIEF_V3_SAVE_FAILED')
+            : '';
+
     return (
-      <div className={styles.loadingWrapper}>
-        <Spin size='large' />
-        <div className={styles.loadingLabel}>{t('BRIEF_V3_GENERATING_DOCUMENT')}</div>
+      <div className={styles.outerScroll}>
+        <div className={styles.wrapper}>
+          <div className={styles.tabsHeader}>
+            <div className={styles.tabsList}>
+              <span className={`${styles.tabButton} ${styles.tabButtonActive}`}>
+                {t('BRIEF_V3_TAB_PRODUCTION_BRIEF')}
+              </span>
+            </div>
+            <div className={styles.headerActions}>
+              <span className={saveStatusClass(saveState)}>{saveLabel}</span>
+            </div>
+          </div>
+          <WhiteLabelDocumentEditor
+            key={productionBrief.id}
+            ref={editorRef}
+            briefId={briefId}
+            document={productionBrief}
+            token={token}
+            onSaveStateChange={setSaveState}
+          />
+        </div>
       </div>
     );
   }
+);
 
-  const productionBrief = pkg?.documents.find((x) => x.kind === 'production_brief');
-
-  if (!productionBrief) {
-    return <div className={styles.missingDoc}>{t('BRIEF_V3_DOCUMENT_MISSING')}</div>;
-  }
-
-  const saveLabel =
-    saveState === 'saving'
-      ? t('BRIEF_V3_SAVING')
-      : saveState === 'saved'
-        ? t('BRIEF_V3_SAVED')
-        : saveState === 'error'
-          ? t('BRIEF_V3_SAVE_FAILED')
-          : '';
-
-  return (
-    <div className={styles.outerScroll}>
-      <div className={styles.wrapper}>
-        <div className={styles.tabsHeader}>
-          <div className={styles.tabsList}>
-            <span className={`${styles.tabButton} ${styles.tabButtonActive}`}>
-              {t('BRIEF_V3_TAB_PRODUCTION_BRIEF')}
-            </span>
-          </div>
-          <div className={styles.headerActions}>
-            <span className={saveStatusClass(saveState)}>{saveLabel}</span>
-          </div>
-        </div>
-        <WhiteLabelDocumentEditor
-          key={productionBrief.id}
-          ref={editorRef}
-          briefId={briefId}
-          document={productionBrief}
-          token={token}
-          onSaveStateChange={setSaveState}
-        />
-      </div>
-    </div>
-  );
-};
+WhiteLabelDocumentPanel.displayName = 'WhiteLabelDocumentPanel';
