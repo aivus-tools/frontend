@@ -34,13 +34,12 @@ export const PasswordForm = ({ email, prevStepAction }: { email: string; prevSte
         form.resetFields();
         form.setFields([{ name: 'password', errors: [''] }]);
       } else {
-        const returnUrl = consumeAuthReturnUrl();
-        if (returnUrl) {
-          window.location.href = returnUrl;
-        } else if (pending) {
+        if (pending) {
+          consumeAuthReturnUrl();
           window.location.href = AppRoute.BRIEF_DETAIL(pending.briefId);
         } else {
-          window.location.href = CALLBACK_URL || AppRoute.HOME;
+          const returnUrl = consumeAuthReturnUrl();
+          window.location.href = returnUrl ?? CALLBACK_URL ?? AppRoute.HOME;
         }
       }
     } catch (error) {
