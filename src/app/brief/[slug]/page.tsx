@@ -75,6 +75,8 @@ export default function BrandedBriefStartPage() {
     );
   }
 
+  const embedSuffix = isEmbed ? '?embed=1' : '';
+
   const handleAnonStart = async () => {
     if (isStarting) {
       return;
@@ -84,7 +86,7 @@ export default function BrandedBriefStartPage() {
       const result = await createAnonDraft(slug).unwrap();
       savePublicBriefToken(result.briefId, result.token);
       setPendingBrief(result.briefId, result.token);
-      router.push(AppRoute.BRANDED_BRIEF_DETAIL(slug, result.briefId));
+      router.push(AppRoute.BRANDED_BRIEF_DETAIL(slug, result.briefId) + embedSuffix);
     } catch {
       message.error(t('UNEXPECTED_ERROR'));
       setIsStarting(false);
@@ -98,7 +100,7 @@ export default function BrandedBriefStartPage() {
     setIsStarting(true);
     try {
       const result = await createAuthDraft().unwrap();
-      router.push(AppRoute.BRANDED_BRIEF_DETAIL(slug, result.briefId));
+      router.push(AppRoute.BRANDED_BRIEF_DETAIL(slug, result.briefId) + embedSuffix);
     } catch {
       message.error(t('UNEXPECTED_ERROR'));
       setIsStarting(false);
@@ -106,7 +108,7 @@ export default function BrandedBriefStartPage() {
   };
 
   const handleAuthSelectExisting = (briefId: string) => {
-    router.push(AppRoute.BRANDED_BRIEF_DETAIL(slug, briefId));
+    router.push(AppRoute.BRANDED_BRIEF_DETAIL(slug, briefId) + embedSuffix);
   };
 
   const handleLogin = () => {

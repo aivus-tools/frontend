@@ -4,10 +4,16 @@ import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { App } from 'antd';
 
+const navMocks = vi.hoisted(() => ({
+  push: vi.fn(),
+  replace: vi.fn(),
+  searchParamsGet: vi.fn().mockReturnValue(null),
+}));
+
 vi.mock('next/navigation', () => ({
   useParams: () => ({ slug: 'test-agency' }),
-  useRouter: () => ({ push: vi.fn(), replace: vi.fn() }),
-  useSearchParams: () => ({ get: () => null }),
+  useRouter: () => ({ push: navMocks.push, replace: navMocks.replace }),
+  useSearchParams: () => ({ get: navMocks.searchParamsGet }),
 }));
 
 vi.mock('next-auth/react', () => ({
@@ -71,12 +77,17 @@ const renderPage = () =>
 
 describe('BrandedBriefStartPage', () => {
   beforeEach(() => {
+    navMocks.push.mockReset();
+    navMocks.replace.mockReset();
+    navMocks.searchParamsGet.mockReturnValue(null);
     mocks.getBySlug.mockReturnValue({
       data: mockSlugInfo,
       isLoading: false,
       isError: false,
     });
-    mocks.createDraft.mockResolvedValue({ data: { briefId: 'brief-1', token: 'tok-1' } });
+    mocks.createDraft.mockReturnValue({
+      unwrap: () => Promise.resolve({ briefId: 'brief-1', token: 'tok-1' }),
+    });
   });
 
   it('renders vendor name and start button', () => {
@@ -110,6 +121,25 @@ describe('BrandedBriefStartPage', () => {
     await userEvent.click(screen.getByText('Start brief'));
     await waitFor(() => {
       expect(mocks.createDraft).toHaveBeenCalledWith('test-agency');
+    });
+  });
+
+  it('navigates to detail without embed suffix when embed=0', async () => {
+    navMocks.searchParamsGet.mockReturnValue(null);
+    renderPage();
+    await userEvent.click(screen.getByText('Start brief'));
+    await waitFor(() => {
+      expect(navMocks.push).toHaveBeenCalledWith(expect.stringContaining('/brief/test-agency/brief-1'));
+    });
+    expect(navMocks.push.mock.calls[0][0]).not.toContain('embed=1');
+  });
+
+  it('appends ?embed=1 to detail navigation when embed=1', async () => {
+    navMocks.searchParamsGet.mockImplementation((key: string) => (key === 'embed' ? '1' : null));
+    renderPage();
+    await userEvent.click(screen.getByText('Start brief'));
+    await waitFor(() => {
+      expect(navMocks.push).toHaveBeenCalledWith(expect.stringContaining('?embed=1'));
     });
   });
 });

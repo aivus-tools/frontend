@@ -13,7 +13,7 @@ import {
   useGetPublicBriefBySlugQuery,
   useGetPublicBriefDetailQuery,
 } from '@/services/client/publicBriefApi';
-import { useGetBriefAiDetailQuery } from '@/services/client/briefAiApi';
+import { useGetBriefAiDetailQuery, useGetSentBriefIdsToVendorQuery } from '@/services/client/briefAiApi';
 import { setPendingBrief } from '@/helpers/pendingBrief';
 import { GROUPS } from '@/constants/constants';
 import { AnonymousBriefEditor } from '@/modules/client/BriefEditor/AnonymousBriefEditor';
@@ -64,12 +64,15 @@ export default function BrandedBriefDetailPage() {
     refetchOnMountOrArgChange: true,
   });
 
+  const { data: sentBriefIdsData } = useGetSentBriefIdsToVendorQuery(slug, { skip: !isClient });
+
   const conversationStatus = isClient
     ? (authDetail?.conversationStatus ?? 'in_progress')
     : (publicDetail?.conversationStatus ?? 'in_progress');
 
   const documentReady = conversationStatus === 'ready_to_finalize' || conversationStatus === 'finalized';
-  const isSendEnabled = documentReady;
+  const alreadySent = isClient && !!(sentBriefIdsData?.briefIds ?? []).includes(briefId);
+  const isSendEnabled = documentReady && !alreadySent;
 
   const handleBriefCreated = (newBriefId: string, newToken?: string) => {
     if (newToken) {
@@ -87,7 +90,7 @@ export default function BrandedBriefDetailPage() {
   };
 
   const handleSendSuccess = () => {
-    router.push(AppRoute.BRANDED_BRIEF_SUCCESS(slug));
+    router.push(AppRoute.BRANDED_BRIEF_SUCCESS(slug) + (isEmbed ? '?embed=1' : ''));
   };
 
   if (isVendor) {
