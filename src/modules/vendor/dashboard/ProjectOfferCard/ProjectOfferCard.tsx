@@ -71,6 +71,16 @@ const offerValueClass = (highlight: boolean, negative: boolean): string => {
   return base;
 };
 
+const leadStatusBadgeClass = (status: string | null): string => {
+  if (status === 'finalized') {
+    return `${styles.leadBadge} ${styles.leadBadgeNew}`;
+  }
+  if (status === 'in_progress') {
+    return `${styles.leadBadge} ${styles.leadBadgeInProgress}`;
+  }
+  return '';
+};
+
 export const ProjectOfferCard = (props: ProjectOfferCardProps) => {
   const router = useRouter();
   const { modal } = App.useApp();
@@ -137,6 +147,21 @@ export const ProjectOfferCard = (props: ProjectOfferCardProps) => {
             <span>{props.item.createdAt}</span>
           </div>
         </div>
+        {props.item.briefConversationStatus ? (
+          <div className={styles.leadBadges}>
+            <span className={leadStatusBadgeClass(props.item.briefConversationStatus)}>
+              {props.item.briefConversationStatus === 'finalized' ? t('LEAD_STATUS_NEW') : t('LEAD_STATUS_IN_PROGRESS')}
+            </span>
+            {props.item.briefConversationStatus === 'finalized' ? (
+              <span
+                className={`${styles.leadBadge} ${props.item.hasContactEmail ? styles.leadBadgeEmailYes : styles.leadBadgeEmailNo}`}
+              >
+                {props.item.hasContactEmail ? t('LEAD_EMAIL_YES') : t('LEAD_EMAIL_NO')}
+              </span>
+            ) : null}
+          </div>
+        ) : null}
+
         <div className={styles.headerActions}>
           <Dropdown menu={{ items: menuItems, onClick: handleMenuClick }} trigger={['click']} placement='bottomRight'>
             <div className={styles.kebabButton} onClick={(event) => event.stopPropagation()}>
