@@ -12,13 +12,17 @@ const mocks = vi.hoisted(() => ({
   savePublicBriefTokenFn: vi.fn(),
   updateQueryDataFn: vi.fn(),
   pollingStopFn: vi.fn(),
+  getFinalDocumentsFn: vi.fn(),
 }));
 
 let detailData: BriefV3Detail | undefined;
 
 vi.mock('@/services/client/publicBriefApi', () => ({
   useGetPublicBriefDetailQuery: () => ({ data: detailData, isFetching: false }),
-  useGetPublicBriefFinalDocumentsQuery: () => ({ data: undefined }),
+  useGetPublicBriefFinalDocumentsQuery: (_args: unknown, options: { skip?: boolean }) => {
+    mocks.getFinalDocumentsFn(options);
+    return { data: undefined };
+  },
   useCreatePublicBriefDraftMutation: () => [mocks.createDraftFn, {}],
   useStartPublicBriefMutation: () => [mocks.startBriefFn, {}],
   useSendPublicBriefChatMutation: () => [mocks.sendChatFn, {}],
@@ -214,5 +218,23 @@ describe('AnonymousBriefEditor', () => {
 
     const panel = await screen.findByTestId('chat-panel');
     expect(panel.getAttribute('data-registration')).toBe('true');
+  });
+
+  it('MF-1: final-documents query is skipped when whiteLabel is not set', async () => {
+    detailData = makeDetail({ conversationStatus: 'in_progress' });
+
+    render(<AnonymousBriefEditor briefId='b1' token='tok' />);
+
+    await screen.findByTestId('chat-panel');
+    expect(mocks.getFinalDocumentsFn).toHaveBeenCalledWith(expect.objectContaining({ skip: true }));
+  });
+
+  it('MF-1: final-documents query is not skipped when whiteLabel=true and detail is available', async () => {
+    detailData = makeDetail({ conversationStatus: 'in_progress' });
+
+    render(<AnonymousBriefEditor briefId='b1' token='tok' whiteLabel={true} />);
+
+    await screen.findByTestId('chat-panel');
+    expect(mocks.getFinalDocumentsFn).toHaveBeenCalledWith(expect.objectContaining({ skip: false }));
   });
 });

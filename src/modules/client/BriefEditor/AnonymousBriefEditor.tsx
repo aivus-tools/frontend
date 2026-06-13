@@ -74,7 +74,7 @@ export const AnonymousBriefEditor = (props: AnonymousBriefEditorProps) => {
   const canQueryDetail = !!briefId && !!token;
   const { data: finalDocuments } = useGetPublicBriefFinalDocumentsQuery(
     { briefId: briefId ?? '', token: token ?? '' },
-    { skip: !canQueryDetail }
+    { skip: !canQueryDetail || !props.whiteLabel }
   );
   const { data: detail, isFetching: isDetailFetching } = useGetPublicBriefDetailQuery(
     { briefId: briefId ?? '', token: token ?? '' },
@@ -231,8 +231,10 @@ export const AnonymousBriefEditor = (props: AnonymousBriefEditorProps) => {
       );
       setPendingAttachments((prev) => prev.filter((x) => !attachmentIds.includes(x.id)));
       const latestHtml = props.getLatestDocumentHtml?.() ?? null;
-      const productionBriefHtml =
-        latestHtml ?? finalDocuments?.documents.find((x) => x.kind === 'production_brief')?.html ?? null;
+      const whiteLabelFallback = props.whiteLabel
+        ? (finalDocuments?.documents.find((x) => x.kind === 'production_brief')?.html ?? null)
+        : null;
+      const productionBriefHtml = latestHtml ?? whiteLabelFallback;
       try {
         await sendChat({ briefId, token, message: text, attachmentIds, documentHtml: productionBriefHtml }).unwrap();
       } catch {
