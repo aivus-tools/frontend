@@ -1,7 +1,7 @@
 'use client';
 
 import { useCallback, useEffect, useRef, useState } from 'react';
-import { Form, Input, InputNumber, Button, App, Spin, Popconfirm, Typography } from 'antd';
+import { Form, Input, InputNumber, Button, App, Spin, Popconfirm } from 'antd';
 import { CameraOutlined, CopyOutlined } from '@ant-design/icons';
 import { t } from '@/lib/i18n';
 import {
@@ -70,30 +70,19 @@ const WebhookKeySection = () => {
   return (
     <div className={styles.webhookSection}>
       <h4 className={styles.subTitleCompact}>{t('VENDOR_SETTINGS_WEBHOOK_KEY_LABEL')}</h4>
-      {webhookKey?.key ? (
-        <div className={styles.webhookRow}>
-          <Input.Password readOnly value={webhookKey.key} className={styles.webhookInput} />
-          <Button icon={<CopyOutlined />} onClick={handleCopyKey}>
-            {keyCopied ? t('VENDOR_SETTINGS_WEBHOOK_KEY_COPIED') : t('VENDOR_SETTINGS_WEBHOOK_KEY_COPY')}
-          </Button>
-          <Popconfirm
-            title={t('VENDOR_SETTINGS_WEBHOOK_KEY_REGENERATE_CONFIRM')}
-            onConfirm={handleRotate}
-            okText={t('VENDOR_SETTINGS_WEBHOOK_KEY_REGENERATE')}
-          >
-            <Button loading={isRotating}>{t('VENDOR_SETTINGS_WEBHOOK_KEY_REGENERATE')}</Button>
-          </Popconfirm>
-        </div>
-      ) : (
-        <div className={styles.webhookRow}>
-          <Typography.Text type='secondary'>{t('VENDOR_SETTINGS_WEBHOOK_KEY_NONE')}</Typography.Text>
-          <Popconfirm title={t('VENDOR_SETTINGS_WEBHOOK_KEY_REGENERATE_CONFIRM')} onConfirm={handleRotate}>
-            <Button type='primary' loading={isRotating}>
-              {t('VENDOR_SETTINGS_WEBHOOK_KEY_GENERATE')}
-            </Button>
-          </Popconfirm>
-        </div>
-      )}
+      <div className={styles.webhookRow}>
+        <Input.Password readOnly value={webhookKey?.key ?? ''} className={styles.webhookInput} />
+        <Button icon={<CopyOutlined />} onClick={handleCopyKey} disabled={!webhookKey?.key}>
+          {keyCopied ? t('VENDOR_SETTINGS_WEBHOOK_KEY_COPIED') : t('VENDOR_SETTINGS_WEBHOOK_KEY_COPY')}
+        </Button>
+        <Popconfirm
+          title={t('VENDOR_SETTINGS_WEBHOOK_KEY_REGENERATE_CONFIRM')}
+          onConfirm={handleRotate}
+          okText={t('VENDOR_SETTINGS_WEBHOOK_KEY_REGENERATE')}
+        >
+          <Button loading={isRotating}>{t('VENDOR_SETTINGS_WEBHOOK_KEY_REGENERATE')}</Button>
+        </Popconfirm>
+      </div>
     </div>
   );
 };
@@ -165,7 +154,7 @@ export const VendorSettingsSection = () => {
   );
 
   const handleSlugChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const value = event.target.value.trim();
+    const value = event.target.value.trim().toLowerCase();
     if (slugDebounceRef.current) {
       clearTimeout(slugDebounceRef.current);
     }

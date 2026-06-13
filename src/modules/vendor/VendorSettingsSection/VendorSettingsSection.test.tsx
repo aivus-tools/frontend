@@ -88,9 +88,9 @@ describe('VendorSettingsSection', () => {
     expect(screen.getByText('Lead notification email')).toBeTruthy();
   });
 
-  it('renders webhook section with Generate key when no key', () => {
+  it('renders webhook section with Regenerate button when no key', () => {
     renderSection();
-    expect(screen.getByText('Generate key')).toBeTruthy();
+    expect(screen.getAllByText('Regenerate').length).toBeGreaterThan(0);
   });
 
   it('renders Copy and Regenerate when key present', () => {
