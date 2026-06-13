@@ -59,3 +59,7 @@ export interface VendorWebhookKey {
 export interface SlugSuggestResponse {
   slug: string;
 }
+
+export interface SlugAvailableResponse {
+  available: boolean;
+}

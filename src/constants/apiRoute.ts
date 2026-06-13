@@ -108,6 +108,9 @@ export const ApiRoute = {
   PUBLIC_BRIEF_AI_SEND: (briefId: string) => `/service/public/briefs/ai/${briefId}/send`,
   CLIENT_BRIEF_AI_SEND: (briefId: string) => `/service/client/briefs/ai/${briefId}/send`,
   VENDOR_SETTINGS_SLUG_SUGGEST: '/service/vendor/settings/slug/suggest',
+  VENDOR_SETTINGS_SLUG_CHECK: '/service/vendor/settings/slug/check',
+  CLIENT_BRIEFS_SENT_TO_VENDOR: (slug: string) =>
+    `/service/client/briefs/ai/sent-to-vendor?slug=${encodeURIComponent(slug)}`,
   VENDOR_WEBHOOK_KEY: '/service/vendor/webhook-key',
   VENDOR_WEBHOOK_KEY_ROTATE: '/service/vendor/webhook-key/rotate',
   PUBLIC_BRIEF_AI_START: (briefId: string) => `/service/public/briefs/ai/${briefId}/start`,

@@ -1,6 +1,7 @@
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
 import { ApiRoute } from '@/constants/apiRoute';
 import {
+  SlugAvailableResponse,
   SlugSuggestResponse,
   UpdateVendorSettingsPayload,
   VendorSettings,
@@ -39,6 +40,12 @@ export const vendorSettingsApi = createApi({
     suggestVendorSlug: builder.query<SlugSuggestResponse, void>({
       query: () => ApiRoute.VENDOR_SETTINGS_SLUG_SUGGEST,
     }),
+    checkVendorSlug: builder.query<SlugAvailableResponse, string>({
+      query: (slug) => ({
+        url: `${ApiRoute.VENDOR_SETTINGS_SLUG_CHECK}?slug=${encodeURIComponent(slug)}`,
+        method: 'GET',
+      }),
+    }),
     getVendorWebhookKey: builder.query<VendorWebhookKey, void>({
       query: () => ApiRoute.VENDOR_WEBHOOK_KEY,
       providesTags: ['VendorWebhookKey'],
@@ -58,6 +65,7 @@ export const {
   useUpdateVendorSettingsMutation,
   useUploadVendorLogoMutation,
   useLazySuggestVendorSlugQuery,
+  useLazyCheckVendorSlugQuery,
   useGetVendorWebhookKeyQuery,
   useRotateVendorWebhookKeyMutation,
 } = vendorSettingsApi;
