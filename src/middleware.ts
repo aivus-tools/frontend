@@ -10,6 +10,10 @@ const MOCK_ENDPOINTS: string[] = []; // Removed briefs from mock
 const userGroups = new Set<string | undefined>([GROUPS.client, GROUPS.vendor]);
 const HMAC_SECRET = process.env.HMAC_SECRET;
 
+const CLAIM_PATH_PREFIX = '/app/brief/claim/';
+const PENDING_BRIEF_COOKIE_NAME = 'aivus_pending_brief';
+const PENDING_BRIEF_COOKIE_MAX_AGE = 3600;
+
 const SUPPORTED_LOCALES = ['en', 'ru'] as const;
 const DEFAULT_LOCALE = 'en';
 const LOCALE_COOKIE_MAX_AGE = 60 * 60 * 24 * 365;
@@ -218,6 +222,26 @@ export default auth(async (req) => {
   }
 
   if (pathname.startsWith('/app') && (!id || !group)) {
+    if (pathname.startsWith(CLAIM_PATH_PREFIX)) {
+      const briefId = pathname.slice(CLAIM_PATH_PREFIX.length).split('/')[0];
+      const token = req.nextUrl.searchParams.get('token');
+      const email = req.nextUrl.searchParams.get('email');
+      const authUrl = new URL(AppRoute.AUTH, req.url);
+      if (email) {
+        authUrl.searchParams.set('email', email);
+      }
+      const response = NextResponse.redirect(authUrl);
+      if (briefId && token) {
+        const cookieValue = encodeURIComponent(`${briefId}:${token}`);
+        response.cookies.set(PENDING_BRIEF_COOKIE_NAME, cookieValue, {
+          path: '/',
+          maxAge: PENDING_BRIEF_COOKIE_MAX_AGE,
+          sameSite: 'lax',
+        });
+      }
+      response.headers.set('Content-Security-Policy', CSP);
+      return ensureLocaleCookie(req, response);
+    }
     const response = NextResponse.redirect(new URL(AppRoute.AUTH, req.url));
     response.headers.set('Content-Security-Policy', CSP);
     return ensureLocaleCookie(req, response);
@@ -227,6 +251,22 @@ export default auth(async (req) => {
   if (pathname.startsWith('/app') && id && group) {
     // If user is UNCONFIRMED, they can only be on /app/confirm
     if (group === GROUPS.unconfirmed && !pathname.startsWith(AppRoute.CONFIRM)) {
+      if (pathname.startsWith(CLAIM_PATH_PREFIX)) {
+        const briefId = pathname.slice(CLAIM_PATH_PREFIX.length).split('/')[0];
+        const token = req.nextUrl.searchParams.get('token');
+        const confirmUrl = new URL(AppRoute.CONFIRM, req.url);
+        const response = NextResponse.redirect(confirmUrl);
+        if (briefId && token) {
+          const cookieValue = encodeURIComponent(`${briefId}:${token}`);
+          response.cookies.set(PENDING_BRIEF_COOKIE_NAME, cookieValue, {
+            path: '/',
+            maxAge: PENDING_BRIEF_COOKIE_MAX_AGE,
+            sameSite: 'lax',
+          });
+        }
+        response.headers.set('Content-Security-Policy', CSP);
+        return ensureLocaleCookie(req, response);
+      }
       const response = NextResponse.redirect(new URL(AppRoute.CONFIRM, req.url));
       response.headers.set('Content-Security-Policy', CSP);
       return ensureLocaleCookie(req, response);

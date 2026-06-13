@@ -57,7 +57,7 @@ const ClientLayoutInner = (props: PropsWithChildren) => {
     const pending = getPendingBrief();
     if (pending) {
       clearPendingBrief();
-      window.location.href = AppRoute.BRIEF_DETAIL(pending.briefId);
+      router.replace(`${AppRoute.BRIEF_CLAIM(pending.briefId)}?token=${encodeURIComponent(pending.token)}`);
     }
   }, [router]);
 
