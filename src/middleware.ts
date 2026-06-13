@@ -105,7 +105,8 @@ export default auth(async (req) => {
     req.nextUrl.pathname.startsWith('/public/') ||
     req.nextUrl.pathname.startsWith('/public-brief') ||
     req.nextUrl.pathname.startsWith('/shared-brief') ||
-    req.nextUrl.pathname.startsWith('/brief')
+    req.nextUrl.pathname === '/brief' ||
+    req.nextUrl.pathname.startsWith('/brief/')
   ) {
     const response = createPageResponse(req);
     const isBriefEmbed = req.nextUrl.pathname.startsWith('/brief/') && req.nextUrl.searchParams.get('embed') === '1';
