@@ -81,6 +81,20 @@ const leadStatusBadgeClass = (status: string | null): string => {
   return '';
 };
 
+const projectStageBadgeClass = (status: string): string => {
+  if (status === 'RFP') {
+    return `${styles.leadBadge} ${styles.leadBadgeNew}`;
+  }
+  return `${styles.leadBadge} ${styles.leadBadgeInProgress}`;
+};
+
+const projectStageLabel = (status: string): string => {
+  if (status === 'RFP') {
+    return t('PROJECT_STAGE_NEW_LEAD');
+  }
+  return t('PROJECT_STAGE_IN_PROGRESS');
+};
+
 export const ProjectOfferCard = (props: ProjectOfferCardProps) => {
   const router = useRouter();
   const { modal } = App.useApp();
@@ -147,20 +161,25 @@ export const ProjectOfferCard = (props: ProjectOfferCardProps) => {
             <span>{props.item.createdAt}</span>
           </div>
         </div>
-        {props.item.briefConversationStatus ? (
-          <div className={styles.leadBadges}>
-            <span className={leadStatusBadgeClass(props.item.briefConversationStatus)}>
-              {props.item.briefConversationStatus === 'finalized' ? t('LEAD_STATUS_NEW') : t('LEAD_STATUS_IN_PROGRESS')}
-            </span>
-            {props.item.briefConversationStatus === 'finalized' ? (
-              <span
-                className={`${styles.leadBadge} ${props.item.hasContactEmail ? styles.leadBadgeEmailYes : styles.leadBadgeEmailNo}`}
-              >
-                {props.item.hasContactEmail ? t('LEAD_EMAIL_YES') : t('LEAD_EMAIL_NO')}
+        <div className={styles.leadBadges}>
+          <span className={projectStageBadgeClass(props.item.status)}>{projectStageLabel(props.item.status)}</span>
+          {props.item.briefConversationStatus ? (
+            <>
+              <span className={leadStatusBadgeClass(props.item.briefConversationStatus)}>
+                {props.item.briefConversationStatus === 'finalized'
+                  ? t('LEAD_STATUS_NEW')
+                  : t('LEAD_STATUS_IN_PROGRESS')}
               </span>
-            ) : null}
-          </div>
-        ) : null}
+              {props.item.briefConversationStatus === 'finalized' ? (
+                <span
+                  className={`${styles.leadBadge} ${props.item.hasContactEmail ? styles.leadBadgeEmailYes : styles.leadBadgeEmailNo}`}
+                >
+                  {props.item.hasContactEmail ? t('LEAD_EMAIL_YES') : t('LEAD_EMAIL_NO')}
+                </span>
+              ) : null}
+            </>
+          ) : null}
+        </div>
 
         <div className={styles.headerActions}>
           <Dropdown menu={{ items: menuItems, onClick: handleMenuClick }} trigger={['click']} placement='bottomRight'>

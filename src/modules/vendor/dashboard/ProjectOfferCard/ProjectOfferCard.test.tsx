@@ -53,22 +53,29 @@ const renderCard = (item: ProjectListItem) =>
   );
 
 describe('ProjectOfferCard lead markers', () => {
-  it('shows no lead badges when briefConversationStatus is null', () => {
+  it('shows New lead stage badge for RFP status', () => {
     renderCard(baseItem);
-    expect(screen.queryByText('New lead')).toBeNull();
-    expect(screen.queryByText('In progress')).toBeNull();
-  });
-
-  it('shows New lead badge when status is finalized', () => {
-    renderCard({ ...baseItem, briefConversationStatus: 'finalized', hasContactEmail: true });
     expect(screen.getByText('New lead')).toBeTruthy();
-    expect(screen.getByText('Email: yes')).toBeTruthy();
+    expect(screen.queryByText('In progress')).toBeNull();
+    expect(screen.queryByText('Email: yes')).toBeNull();
   });
 
-  it('shows In progress badge when status is in_progress', () => {
-    renderCard({ ...baseItem, briefConversationStatus: 'in_progress' });
-    expect(screen.getByText('In progress')).toBeTruthy();
+  it('shows In progress stage badge for DRAFT status', () => {
+    renderCard({ ...baseItem, status: 'DRAFT', briefConversationStatus: null });
     expect(screen.queryByText('New lead')).toBeNull();
+    expect(screen.getByText('In progress')).toBeTruthy();
+  });
+
+  it('shows both stage and brief badges when briefConversationStatus is finalized', () => {
+    renderCard({ ...baseItem, status: 'DRAFT', briefConversationStatus: 'finalized', hasContactEmail: true });
+    expect(screen.getAllByText('New lead')).toHaveLength(1);
+    expect(screen.getByText('Email: yes')).toBeTruthy();
+    expect(screen.getByText('In progress')).toBeTruthy();
+  });
+
+  it('shows In progress brief badge when briefConversationStatus is in_progress', () => {
+    renderCard({ ...baseItem, briefConversationStatus: 'in_progress' });
+    expect(screen.getAllByText('In progress')).toHaveLength(1);
   });
 
   it('shows Email: no when finalized but no contact email', () => {
