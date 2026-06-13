@@ -117,7 +117,12 @@ export const SendBriefModal = (props: SendBriefModalProps) => {
     try {
       let finalizingTaskId: string | null = null;
 
-      if (props.isAnon && props.token) {
+      if (props.isAnon) {
+        if (!props.token) {
+          setIsSending(false);
+          messageApi.error(t('BRANDED_BRIEF_SEND_ERROR'));
+          return;
+        }
         const result = await sendPublic({
           briefId: props.briefId,
           token: props.token,

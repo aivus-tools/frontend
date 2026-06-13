@@ -1,7 +1,7 @@
 'use client';
 
 import React from 'react';
-import { Button, Card, List, Modal, Tag, Typography } from 'antd';
+import { Card, List, Modal, Tag, Typography } from 'antd';
 import { PlusOutlined } from '@ant-design/icons';
 import { t } from '@/lib/i18n';
 import { useGetBriefAiListQuery } from '@/services/client/briefAiApi';

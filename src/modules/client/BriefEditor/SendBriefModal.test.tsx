@@ -57,6 +57,8 @@ const renderModal = (overrides: Partial<React.ComponentProps<typeof SendBriefMod
 
 describe('SendBriefModal', () => {
   beforeEach(() => {
+    mocks.sendPublic.mockClear();
+    mocks.sendClient.mockClear();
     mocks.sendPublic.mockResolvedValue({ data: { ok: true, finalizingTaskId: null } });
     mocks.sendClient.mockResolvedValue({ data: { ok: true, finalizingTaskId: null } });
   });
@@ -104,6 +106,19 @@ describe('SendBriefModal', () => {
       expect(mocks.sendClient).toHaveBeenCalledWith(
         expect.objectContaining({ slug: 'test-agency', briefId: 'brief-1' })
       );
+    });
+  });
+
+  it('does not call sendPublic when isAnon=true but token=null', async () => {
+    renderModal({ isAnon: true, token: null });
+    const input = screen.getByPlaceholderText('email@example.com');
+    await act(async () => {
+      fireEvent.change(input, { target: { value: 'test@example.com' } });
+      fireEvent.click(screen.getByText('Send brief'));
+    });
+    await waitFor(() => {
+      expect(mocks.sendPublic).not.toHaveBeenCalled();
+      expect(mocks.sendClient).not.toHaveBeenCalled();
     });
   });
 });
