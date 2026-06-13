@@ -439,7 +439,7 @@ export const BriefFinalPackage = (props: BriefFinalPackageProps) => {
 
   const preVendorsLanguage: PreVendorLanguage = getLocale() === 'ru' ? 'ru' : 'en';
 
-  const { data: preVendorsResponse } = useGetPreVendorsQuery({ language: preVendorsLanguage });
+  const { data: preVendorsResponse } = useGetPreVendorsQuery({ language: preVendorsLanguage }, { skip: isWhiteLabel });
   const preVendors = preVendorsResponse?.preVendors ?? [];
   const hasPreVendors = preVendors.length > 0;
 

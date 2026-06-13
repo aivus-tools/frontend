@@ -27,6 +27,7 @@ const mocks = vi.hoisted(() => ({
   updateShare: vi.fn(),
   updateDocument: vi.fn(),
   getPreVendors: vi.fn(),
+  getPreVendorsRaw: vi.fn(),
 }));
 
 vi.mock('@/services/client/briefAiApi', () => ({
@@ -38,7 +39,10 @@ vi.mock('@/services/client/briefAiApi', () => ({
 }));
 
 vi.mock('@/services/client/preVendorsApi', () => ({
-  useGetPreVendorsQuery: mocks.getPreVendors,
+  useGetPreVendorsQuery: (_args: unknown, options?: { skip?: boolean }) => {
+    mocks.getPreVendorsRaw(options);
+    return mocks.getPreVendors(_args, options);
+  },
 }));
 
 vi.mock('@/hooks/useBreakpoint', () => ({
@@ -92,6 +96,7 @@ describe('BriefFinalPackage', () => {
     mocks.getBriefDetail.mockReturnValue({ data: { title: 'Test Brief' } });
     mocks.getBriefShare.mockReturnValue({ data: null, isFetching: false });
     mocks.getPreVendors.mockReturnValue({ data: { preVendors: [] } });
+    mocks.getPreVendorsRaw.mockClear();
   });
 
   describe('without whiteLabel', () => {
@@ -149,6 +154,44 @@ describe('BriefFinalPackage', () => {
       });
       renderPackage(true);
       expect(screen.queryByText('Vendor A')).toBeNull();
+    });
+
+    it('SF-8: pre-vendors query is skipped when isWhiteLabel=true', () => {
+      renderPackage(true);
+      expect(mocks.getPreVendorsRaw).toHaveBeenCalledWith(expect.objectContaining({ skip: true }));
+    });
+  });
+
+  describe('without whiteLabel (SF-8)', () => {
+    it('pre-vendors query is not skipped when isWhiteLabel=false', () => {
+      renderPackage(false);
+      expect(mocks.getPreVendorsRaw).toHaveBeenCalledWith(expect.objectContaining({ skip: false }));
+    });
+  });
+
+  describe('SF-15: deliverables_checklist in package', () => {
+    it('renders without errors when package contains deliverables_checklist', () => {
+      const packageWithChecklist: BriefFinalPackageType = {
+        ...mockPackage,
+        documents: [
+          ...mockPackage.documents,
+          {
+            id: 'doc-3',
+            kind: 'deliverables_checklist',
+            html: '<p>Checklist</p>',
+            plainText: 'Checklist',
+            createdAt: null,
+            updatedAt: null,
+          },
+        ],
+      };
+      const { unmount } = render(
+        <App>
+          <BriefFinalPackage briefId='brief-1' package={packageWithChecklist} />
+        </App>
+      );
+      expect(screen.getByText('Production Brief')).toBeTruthy();
+      unmount();
     });
   });
 });
