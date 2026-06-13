@@ -128,7 +128,9 @@ export default function BrandedBriefDetailPage() {
 
   const vendorName = slugInfo.vendorName;
 
-  const sendButton = (
+  const sendButton = alreadySent ? (
+    <span className={styles.alreadySentLabel}>{t('BRANDED_BRIEF_ALREADY_SENT')}</span>
+  ) : (
     <Button
       type='primary'
       icon={<SendOutlined />}

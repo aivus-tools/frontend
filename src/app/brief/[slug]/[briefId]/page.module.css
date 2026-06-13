@@ -110,6 +110,11 @@
   display: none !important;
 }
 
+.alreadySentLabel {
+  font-size: 13px;
+  color: var(--gray);
+}
+
 @media (width >= 1024px) {
   .desktopHeader {
     height: 56px;
