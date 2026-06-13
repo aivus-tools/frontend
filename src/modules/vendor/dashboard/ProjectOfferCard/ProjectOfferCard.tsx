@@ -25,28 +25,28 @@ interface ProjectOfferCardProps {
 const statusAccent = (status?: string): string => {
   switch (status) {
     case 'RFP':
-      return '#2288FF';
+      return 'var(--blue)';
     case 'REVIEWING':
-      return '#F0A020';
+      return 'var(--orange)';
     case 'ONGOING':
     case 'COMPLETED':
-      return '#52C41A';
+      return 'var(--green-darker)';
     default:
-      return '#B5B5C3';
+      return 'var(--gray-light)';
   }
 };
 
 const statusBg = (status?: string): string => {
   switch (status) {
     case 'RFP':
-      return 'linear-gradient(135deg, #f0f7ff 0%, #f8fbff 100%)';
+      return 'var(--bg-blue-subtotal)';
     case 'REVIEWING':
-      return 'linear-gradient(135deg, #fffbf5 0%, #fefcf9 100%)';
+      return 'var(--bg-orange)';
     case 'ONGOING':
     case 'COMPLETED':
-      return 'linear-gradient(135deg, #f6fcf0 0%, #fafdf7 100%)';
+      return 'var(--bg-green)';
     default:
-      return '#f9fafb';
+      return 'var(--bg-gray-page)';
   }
 };
 
@@ -69,16 +69,6 @@ const offerValueClass = (highlight: boolean, negative: boolean): string => {
     return `${base} ${styles.offerValueHighlight}`;
   }
   return base;
-};
-
-const leadStatusBadgeClass = (status: string | null): string => {
-  if (status === 'finalized') {
-    return `${styles.leadBadge} ${styles.leadBadgeNew}`;
-  }
-  if (status === 'in_progress') {
-    return `${styles.leadBadge} ${styles.leadBadgeInProgress}`;
-  }
-  return '';
 };
 
 const projectStageBadgeClass = (status: string): string => {
@@ -163,22 +153,11 @@ export const ProjectOfferCard = (props: ProjectOfferCardProps) => {
         </div>
         <div className={styles.leadBadges}>
           <span className={projectStageBadgeClass(props.item.status)}>{projectStageLabel(props.item.status)}</span>
-          {props.item.briefConversationStatus ? (
-            <>
-              <span className={leadStatusBadgeClass(props.item.briefConversationStatus)}>
-                {props.item.briefConversationStatus === 'finalized'
-                  ? t('LEAD_STATUS_NEW')
-                  : t('LEAD_STATUS_IN_PROGRESS')}
-              </span>
-              {props.item.briefConversationStatus === 'finalized' ? (
-                <span
-                  className={`${styles.leadBadge} ${props.item.hasContactEmail ? styles.leadBadgeEmailYes : styles.leadBadgeEmailNo}`}
-                >
-                  {props.item.hasContactEmail ? t('LEAD_EMAIL_YES') : t('LEAD_EMAIL_NO')}
-                </span>
-              ) : null}
-            </>
-          ) : null}
+          <span
+            className={`${styles.leadBadge} ${props.item.hasContactEmail ? styles.leadBadgeEmailYes : styles.leadBadgeEmailNo}`}
+          >
+            {props.item.hasContactEmail ? t('LEAD_EMAIL_YES') : t('LEAD_EMAIL_NO')}
+          </span>
         </div>
 
         <div className={styles.headerActions}>
