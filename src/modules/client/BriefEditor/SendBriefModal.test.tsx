@@ -22,13 +22,18 @@ beforeAll(() => {
 const mocks = vi.hoisted(() => ({
   sendPublic: vi.fn(),
   sendClient: vi.fn(),
-  getStatus: vi.fn(),
+  getPublicStatus: vi.fn(),
+  getAuthStatus: vi.fn(),
 }));
 
 vi.mock('@/services/client/publicBriefApi', () => ({
   useSendPublicBriefToVendorMutation: () => [mocks.sendPublic, {}],
   useSendClientBriefToVendorMutation: () => [mocks.sendClient, {}],
-  useLazyGetPublicBriefStatusQuery: () => [mocks.getStatus, {}],
+  useLazyGetPublicBriefStatusQuery: () => [mocks.getPublicStatus, {}],
+}));
+
+vi.mock('@/services/client/briefAiApi', () => ({
+  useLazyGetBriefAiStatusQuery: () => [mocks.getAuthStatus, {}],
 }));
 
 import { SendBriefModal } from './SendBriefModal';

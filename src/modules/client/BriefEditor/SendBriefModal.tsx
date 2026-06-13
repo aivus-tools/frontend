@@ -8,6 +8,7 @@ import {
   useSendClientBriefToVendorMutation,
   useLazyGetPublicBriefStatusQuery,
 } from '@/services/client/publicBriefApi';
+import { useLazyGetBriefAiStatusQuery } from '@/services/client/briefAiApi';
 
 const POLL_INTERVAL_MS = 2000;
 const POLL_TIMEOUT_MS = 120_000;
@@ -36,7 +37,8 @@ export const SendBriefModal = (props: SendBriefModalProps) => {
 
   const [sendPublic] = useSendPublicBriefToVendorMutation();
   const [sendClient] = useSendClientBriefToVendorMutation();
-  const [getStatus] = useLazyGetPublicBriefStatusQuery();
+  const [getPublicStatus] = useLazyGetPublicBriefStatusQuery();
+  const [getAuthStatus] = useLazyGetBriefAiStatusQuery();
 
   const cleanupTimer = () => {
     if (pollTimerRef.current) {
@@ -60,25 +62,37 @@ export const SendBriefModal = (props: SendBriefModalProps) => {
         return;
       }
 
-      if (!props.token) {
-        return;
-      }
-
       try {
-        const result = await getStatus({
-          briefId: props.briefId,
-          taskId,
-          token: props.token,
-        }).unwrap();
+        let status: string;
 
-        if (result.status === 'done') {
+        if (props.isAnon) {
+          if (!props.token) {
+            setIsSending(false);
+            messageApi.error(t('BRANDED_BRIEF_SEND_ERROR'));
+            return;
+          }
+          const result = await getPublicStatus({
+            briefId: props.briefId,
+            taskId,
+            token: props.token,
+          }).unwrap();
+          status = result.status;
+        } else {
+          const result = await getAuthStatus({
+            briefId: props.briefId,
+            taskId,
+          }).unwrap();
+          status = result.status;
+        }
+
+        if (status === 'done') {
           setIsSending(false);
           props.onChange(false);
           props.onSuccess();
           return;
         }
 
-        if (result.status === 'failed') {
+        if (status === 'failed') {
           setIsSending(false);
           messageApi.error(t('BRANDED_BRIEF_SEND_ERROR'));
           return;
@@ -90,7 +104,7 @@ export const SendBriefModal = (props: SendBriefModalProps) => {
         messageApi.error(t('BRANDED_BRIEF_SEND_ERROR'));
       }
     },
-    [getStatus, messageApi, props]
+    [getAuthStatus, getPublicStatus, messageApi, props]
   );
 
   const handleSubmit = async (values: FormValues) => {
