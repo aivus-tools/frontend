@@ -1,6 +1,6 @@
 import React from 'react';
 import { describe, it, expect, vi, beforeAll, beforeEach } from 'vitest';
-import { render, screen } from '@testing-library/react';
+import { render, screen, act, fireEvent, waitFor, within } from '@testing-library/react';
 import { App } from 'antd';
 
 beforeAll(() => {
@@ -101,5 +101,26 @@ describe('VendorSettingsSection', () => {
     renderSection();
     expect(screen.getByText('Copy')).toBeTruthy();
     expect(screen.getAllByText('Regenerate').length).toBeGreaterThan(0);
+  });
+
+  it('does not call updateSettings when slug is taken (validates after suggest)', async () => {
+    mocks.checkSlug.mockReturnValue({ unwrap: () => Promise.resolve({ available: false }) });
+    mocks.suggestSlug.mockReturnValue({ unwrap: () => Promise.resolve({ slug: 'existing-slug' }) });
+    renderSection();
+
+    await act(async () => {
+      fireEvent.click(screen.getByText('Suggest'));
+    });
+
+    await waitFor(() => {
+      expect(screen.queryByText('This link is taken.')).toBeTruthy();
+    });
+
+    mocks.updateSettings.mockClear();
+    await act(async () => {
+      fireEvent.click(screen.getByText('Save Company Settings'));
+    });
+
+    expect(mocks.updateSettings).not.toHaveBeenCalled();
   });
 });

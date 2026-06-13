@@ -137,7 +137,7 @@ export const VendorSettingsSection = () => {
     try {
       const result = await suggestSlug().unwrap();
       form.setFieldValue('slug', result.slug);
-      setSlugStatus('available');
+      await validateSlugRemote(result.slug);
     } catch {
       message.error(t('UNEXPECTED_ERROR'));
     }
@@ -178,6 +178,7 @@ export const VendorSettingsSection = () => {
 
   const handleSubmit = async (values: VendorSettingsFormValues) => {
     if (slugStatus === 'taken' || slugStatus === 'invalid') {
+      form.scrollToField('slug');
       return;
     }
     try {
