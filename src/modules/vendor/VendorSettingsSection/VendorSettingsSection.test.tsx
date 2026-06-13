@@ -24,6 +24,7 @@ const mocks = vi.hoisted(() => ({
   updateSettings: vi.fn(),
   uploadLogo: vi.fn(),
   suggestSlug: vi.fn(),
+  checkSlug: vi.fn(),
   getWebhookKey: vi.fn(),
   rotateWebhookKey: vi.fn(),
 }));
@@ -33,6 +34,7 @@ vi.mock('@/services/client/vendorSettingsApi', () => ({
   useUpdateVendorSettingsMutation: () => [mocks.updateSettings, { isLoading: false }],
   useUploadVendorLogoMutation: () => [mocks.uploadLogo, { isLoading: false }],
   useLazySuggestVendorSlugQuery: () => [mocks.suggestSlug, {}],
+  useLazyCheckVendorSlugQuery: () => [mocks.checkSlug, {}],
   useGetVendorWebhookKeyQuery: mocks.getWebhookKey,
   useRotateVendorWebhookKeyMutation: () => [mocks.rotateWebhookKey, { isLoading: false }],
 }));

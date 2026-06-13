@@ -9,6 +9,7 @@ import {
   useUpdateVendorSettingsMutation,
   useUploadVendorLogoMutation,
   useLazySuggestVendorSlugQuery,
+  useLazyCheckVendorSlugQuery,
   useGetVendorWebhookKeyQuery,
   useRotateVendorWebhookKeyMutation,
 } from '@/services/client/vendorSettingsApi';
@@ -16,7 +17,7 @@ import {
 import styles from './VendorSettingsSection.module.css';
 
 const SLUG_DEBOUNCE_MS = 600;
-const SLUG_PATTERN = /^[a-z0-9][a-z0-9-]{1,38}[a-z0-9]$|^[a-z0-9]{3,40}$/;
+const SLUG_PATTERN = /^[a-z0-9](?:[a-z0-9]|-[a-z0-9]){1,38}[a-z0-9]$|^[a-z0-9]{3,40}$/;
 
 interface VendorSettingsFormValues {
   companyName: string;
@@ -108,6 +109,7 @@ export const VendorSettingsSection = () => {
   const [updateSettings, { isLoading: isUpdating }] = useUpdateVendorSettingsMutation();
   const [uploadLogo, { isLoading: isUploadingLogo }] = useUploadVendorLogoMutation();
   const [suggestSlug] = useLazySuggestVendorSlugQuery();
+  const [checkSlug] = useLazyCheckVendorSlugQuery();
 
   const [slugStatus, setSlugStatus] = useState<SlugStatus>('idle');
 
@@ -153,17 +155,13 @@ export const VendorSettingsSection = () => {
       }
       setSlugStatus('checking');
       try {
-        const result = await suggestSlug().unwrap();
-        if (result.slug === value) {
-          setSlugStatus('available');
-        } else {
-          setSlugStatus('taken');
-        }
+        const result = await checkSlug(value).unwrap();
+        setSlugStatus(result.available ? 'available' : 'taken');
       } catch {
         setSlugStatus('idle');
       }
     },
-    [suggestSlug]
+    [checkSlug]
   );
 
   const handleSlugChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -199,8 +197,14 @@ export const VendorSettingsSection = () => {
       }).unwrap();
       originalSlugRef.current = values.slug || null;
       message.success('Company settings saved');
-    } catch {
-      message.error('Failed to save settings');
+    } catch (error: unknown) {
+      const status =
+        typeof error === 'object' && error != null && 'status' in error ? (error as { status: number }).status : null;
+      if (status === 409) {
+        setSlugStatus('taken');
+      } else {
+        message.error('Failed to save settings');
+      }
     }
   };
 
