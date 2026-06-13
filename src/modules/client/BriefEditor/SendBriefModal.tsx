@@ -18,19 +18,14 @@ const getSendErrorMessage = (error: unknown): string => {
   const fetchError = error as FetchBaseQueryError;
   if (fetchError && typeof fetchError === 'object' && 'status' in fetchError) {
     const status = fetchError.status;
-    const data = fetchError.data as { error?: string } | null;
-    const errorCode = data?.error;
     if (status === 409) {
       return t('BRANDED_BRIEF_SEND_ERROR_ALREADY_SENT');
     }
-    if (status === 400 && errorCode === 'not_ready') {
+    if (status === 400) {
       return t('BRANDED_BRIEF_SEND_ERROR_NOT_READY');
     }
-    if (status === 404 && errorCode === 'agency_not_found') {
+    if (status === 404) {
       return t('BRANDED_BRIEF_SEND_ERROR_NO_AGENCY');
-    }
-    if (errorCode === 'failed') {
-      return t('BRANDED_BRIEF_SEND_ERROR_FAILED');
     }
   }
   return t('BRANDED_BRIEF_SEND_ERROR');
