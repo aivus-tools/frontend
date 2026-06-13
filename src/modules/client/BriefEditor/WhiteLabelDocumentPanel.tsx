@@ -1,6 +1,6 @@
 'use client';
 
-import React, { forwardRef, useEffect, useImperativeHandle, useRef, useState, useCallback } from 'react';
+import React, { forwardRef, useEffect, useImperativeHandle, useRef, useState } from 'react';
 import { useEditor, EditorContent, Editor } from '@tiptap/react';
 import StarterKit from '@tiptap/starter-kit';
 import Link from '@tiptap/extension-link';
@@ -234,32 +234,24 @@ export const WhiteLabelDocumentPanel = (props: WhiteLabelDocumentPanelProps) => 
   const { briefId, token } = props;
   const { message: messageApi } = App.useApp();
   const [saveState, setSaveState] = useState<SaveState>('idle');
+  const [pollingInterval, setPollingInterval] = useState(0);
   const editorRef = useRef<WhiteLabelDocumentHandle | null>(null);
-  const pollTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const {
     data: pkg,
     isLoading,
     isError,
-    refetch,
-  } = useGetPublicBriefFinalDocumentsQuery({ briefId, token }, { skip: !briefId || !token });
-
-  const scheduleRefetch = useCallback(() => {
-    pollTimerRef.current = setTimeout(() => {
-      void refetch();
-    }, GENERATING_POLL_INTERVAL_MS);
-  }, [refetch]);
+  } = useGetPublicBriefFinalDocumentsQuery(
+    { briefId, token },
+    {
+      skip: !briefId || !token,
+      pollingInterval,
+    }
+  );
 
   useEffect(() => {
-    if (pkg?.generating) {
-      scheduleRefetch();
-    }
-    return () => {
-      if (pollTimerRef.current) {
-        clearTimeout(pollTimerRef.current);
-      }
-    };
-  }, [pkg?.generating, scheduleRefetch]);
+    setPollingInterval(pkg?.generating ? GENERATING_POLL_INTERVAL_MS : 0);
+  }, [pkg?.generating]);
 
   useEffect(() => {
     if (isError) {

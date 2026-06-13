@@ -103,4 +103,26 @@ describe('WhiteLabelDocumentPanel', () => {
     renderPanel();
     expect(screen.getByText('This document is not available.')).toBeTruthy();
   });
+
+  it('passes pollingInterval > 0 to query hook when generating is true', () => {
+    mocks.getDocuments.mockReturnValue({
+      data: { ...mockPackage, generating: true, documents: [] },
+      isLoading: false,
+      isError: false,
+      refetch: mocks.refetch,
+    });
+    renderPanel();
+    const allCalls: unknown[][] = mocks.getDocuments.mock.calls;
+    const lastCall = allCalls[allCalls.length - 1];
+    const options = lastCall?.[1] as { pollingInterval?: number; skip?: boolean } | undefined;
+    expect(options?.pollingInterval).toBeGreaterThan(0);
+  });
+
+  it('passes pollingInterval 0 to query hook when not generating', () => {
+    renderPanel();
+    const allCalls: unknown[][] = mocks.getDocuments.mock.calls;
+    const lastCall = allCalls[allCalls.length - 1];
+    const options = lastCall?.[1] as { pollingInterval?: number; skip?: boolean } | undefined;
+    expect(!options?.pollingInterval || options.pollingInterval === 0).toBe(true);
+  });
 });
