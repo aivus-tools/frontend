@@ -12,7 +12,8 @@ import {
   useCreatePublicBriefDraftBySlugMutation,
   savePublicBriefToken,
 } from '@/services/client/publicBriefApi';
-import { useCreateBriefAiDraftMutation } from '@/services/client/briefAiApi';
+import { setPendingBrief, setAuthReturnUrl } from '@/helpers/pendingBrief';
+import { useCreateBriefAiDraftMutation, useGetSentBriefIdsToVendorQuery } from '@/services/client/briefAiApi';
 import { GROUPS } from '@/constants/constants';
 import { BriefSelectModal } from '@/modules/client/BriefEditor/BriefSelectModal';
 
@@ -37,6 +38,8 @@ export default function BrandedBriefStartPage() {
   const group = session?.user?.group;
   const isClient = sessionStatus === 'authenticated' && group === GROUPS.client;
   const isVendor = sessionStatus === 'authenticated' && group === GROUPS.vendor;
+
+  const { data: sentBriefIdsData } = useGetSentBriefIdsToVendorQuery(slug, { skip: !isClient });
 
   useEffect(() => {
     if (isVendor) {
@@ -80,6 +83,7 @@ export default function BrandedBriefStartPage() {
     try {
       const result = await createAnonDraft(slug).unwrap();
       savePublicBriefToken(result.briefId, result.token);
+      setPendingBrief(result.briefId, result.token);
       router.push(AppRoute.BRANDED_BRIEF_DETAIL(slug, result.briefId));
     } catch {
       message.error(t('UNEXPECTED_ERROR'));
@@ -106,7 +110,8 @@ export default function BrandedBriefStartPage() {
   };
 
   const handleLogin = () => {
-    const loginUrl = `/auth/login?next=${encodeURIComponent(AppRoute.BRANDED_BRIEF(slug))}`;
+    setAuthReturnUrl(AppRoute.BRANDED_BRIEF(slug));
+    const loginUrl = AppRoute.AUTH;
     if (isEmbed) {
       window.open(loginUrl, '_blank');
     } else {
@@ -146,7 +151,7 @@ export default function BrandedBriefStartPage() {
           value={selectModalOpen}
           onChange={setSelectModalOpen}
           vendorName={slugInfo.vendorName}
-          sentBriefIds={[]}
+          sentBriefIds={sentBriefIdsData?.briefIds ?? []}
           onSelectNew={handleAuthNewBrief}
           onSelectExisting={handleAuthSelectExisting}
         />

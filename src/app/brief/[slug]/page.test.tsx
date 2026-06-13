@@ -26,9 +26,15 @@ vi.mock('@/services/client/publicBriefApi', () => ({
   savePublicBriefToken: mocks.saveToken,
 }));
 
+vi.mock('@/helpers/pendingBrief', () => ({
+  setPendingBrief: vi.fn(),
+  setAuthReturnUrl: vi.fn(),
+}));
+
 vi.mock('@/services/client/briefAiApi', () => ({
   useCreateBriefAiDraftMutation: () => [vi.fn(), {}],
   useGetBriefAiListQuery: () => ({ data: [], isLoading: false }),
+  useGetSentBriefIdsToVendorQuery: () => ({ data: undefined, isLoading: false }),
 }));
 
 import BrandedBriefStartPage from './page';

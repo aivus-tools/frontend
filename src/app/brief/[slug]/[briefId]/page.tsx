@@ -3,7 +3,7 @@
 import React, { useEffect, useState } from 'react';
 import { useParams, useRouter, useSearchParams } from 'next/navigation';
 import { useSession } from 'next-auth/react';
-import { App, Button, Empty, Spin, Tabs } from 'antd';
+import { App, Button, Empty, Spin, Tabs, Typography } from 'antd';
 import { SendOutlined } from '@ant-design/icons';
 import { t } from '@/lib/i18n';
 import { AppRoute } from '@/constants/appRoute';
@@ -13,6 +13,8 @@ import {
   useGetPublicBriefBySlugQuery,
   useGetPublicBriefDetailQuery,
 } from '@/services/client/publicBriefApi';
+import { useGetBriefAiDetailQuery } from '@/services/client/briefAiApi';
+import { setPendingBrief } from '@/helpers/pendingBrief';
 import { GROUPS } from '@/constants/constants';
 import { AnonymousBriefEditor } from '@/modules/client/BriefEditor/AnonymousBriefEditor';
 import { AuthenticatedBriefEditor } from '@/modules/client/BriefEditor/AuthenticatedBriefEditor';
@@ -52,13 +54,22 @@ export default function BrandedBriefDetailPage() {
   }, [isVendor, message, router]);
 
   const canQueryDetail = !!briefId && !!token;
-  const { data: detail } = useGetPublicBriefDetailQuery(
+  const { data: publicDetail } = useGetPublicBriefDetailQuery(
     { briefId, token: token ?? '' },
     { skip: !canQueryDetail || isClient }
   );
 
-  const conversationStatus = detail?.conversationStatus ?? 'in_progress';
-  const isSendEnabled = conversationStatus === 'ready_to_finalize' || conversationStatus === 'finalized';
+  const { data: authDetail } = useGetBriefAiDetailQuery(briefId, {
+    skip: !isClient || !briefId,
+    refetchOnMountOrArgChange: true,
+  });
+
+  const conversationStatus = isClient
+    ? (authDetail?.conversationStatus ?? 'in_progress')
+    : (publicDetail?.conversationStatus ?? 'in_progress');
+
+  const documentReady = conversationStatus === 'ready_to_finalize' || conversationStatus === 'finalized';
+  const isSendEnabled = documentReady;
 
   const handleBriefCreated = (newBriefId: string, newToken?: string) => {
     if (newToken) {
@@ -70,6 +81,7 @@ export default function BrandedBriefDetailPage() {
   const handleRegisterClick = (currentBriefId: string | null, currentToken: string | null, email: string | null) => {
     if (currentBriefId && currentToken) {
       savePublicBriefToken(currentBriefId, currentToken);
+      setPendingBrief(currentBriefId, currentToken);
     }
     router.push(email ? `/auth?email=${encodeURIComponent(email)}` : '/auth');
   };
@@ -100,10 +112,6 @@ export default function BrandedBriefDetailPage() {
 
   const vendorName = slugInfo.vendorName;
 
-  if (isClient) {
-    return <AuthenticatedBriefEditor briefId={briefId} whiteLabel={true} />;
-  }
-
   const sendButton = (
     <Button
       type='primary'
@@ -115,6 +123,41 @@ export default function BrandedBriefDetailPage() {
       {t('BRANDED_BRIEF_SEND')}
     </Button>
   );
+
+  const documentPanel = isClient ? (
+    documentReady ? (
+      <AuthenticatedBriefEditor briefId={briefId} whiteLabel={true} />
+    ) : (
+      <div className={styles.centerWrapper}>
+        <Typography.Text type='secondary'>{t('BRIEF_V3_DOCUMENT_NOT_READY')}</Typography.Text>
+      </div>
+    )
+  ) : token ? (
+    documentReady ? (
+      <WhiteLabelDocumentPanel briefId={briefId} token={token} />
+    ) : (
+      <div className={styles.centerWrapper}>
+        <Typography.Text type='secondary'>{t('BRIEF_V3_DOCUMENT_NOT_READY')}</Typography.Text>
+      </div>
+    )
+  ) : (
+    <div className={styles.centerWrapper}>
+      <Empty description={t('BRIEF_V3_DOCUMENT_MISSING')} />
+    </div>
+  );
+
+  const sendModal = sendModalOpen ? (
+    <SendBriefModal
+      value={sendModalOpen}
+      onChange={setSendModalOpen}
+      briefId={briefId}
+      slug={slug}
+      vendorName={vendorName}
+      isAnon={!isClient}
+      token={token}
+      onSuccess={handleSendSuccess}
+    />
+  ) : null;
 
   if (isMobile) {
     return (
@@ -135,37 +178,22 @@ export default function BrandedBriefDetailPage() {
 
         {mobileTab === 'chat' ? (
           <div className={styles.mobileChatPane}>
-            <AnonymousBriefEditor
-              briefId={briefId}
-              token={token}
-              onBriefCreated={handleBriefCreated}
-              onRegisterClick={handleRegisterClick}
-            />
-          </div>
-        ) : (
-          <div className={styles.mobileDocPane}>
-            {token ? (
-              <WhiteLabelDocumentPanel briefId={briefId} token={token} />
+            {isClient ? (
+              <AuthenticatedBriefEditor briefId={briefId} whiteLabel={true} />
             ) : (
-              <div className={styles.centerWrapper}>
-                <Empty description={t('BRIEF_V3_DOCUMENT_MISSING')} />
-              </div>
+              <AnonymousBriefEditor
+                briefId={briefId}
+                token={token}
+                onBriefCreated={handleBriefCreated}
+                onRegisterClick={handleRegisterClick}
+              />
             )}
           </div>
+        ) : (
+          <div className={styles.mobileDocPane}>{documentPanel}</div>
         )}
 
-        {sendModalOpen ? (
-          <SendBriefModal
-            value={sendModalOpen}
-            onChange={setSendModalOpen}
-            briefId={briefId}
-            slug={slug}
-            vendorName={vendorName}
-            isAnon={!isClient}
-            token={token}
-            onSuccess={handleSendSuccess}
-          />
-        ) : null}
+        {sendModal}
       </div>
     );
   }
@@ -184,37 +212,22 @@ export default function BrandedBriefDetailPage() {
         </div>
       )}
       <div className={styles.desktopContent}>
-        <div className={styles.desktopDocPane}>
-          {token ? (
-            <WhiteLabelDocumentPanel briefId={briefId} token={token} />
-          ) : (
-            <div className={styles.centerWrapper}>
-              <Empty description={t('BRIEF_V3_DOCUMENT_MISSING')} />
-            </div>
-          )}
-        </div>
+        <div className={styles.desktopDocPane}>{documentPanel}</div>
         <div className={styles.desktopChatPane}>
-          <AnonymousBriefEditor
-            briefId={briefId}
-            token={token}
-            onBriefCreated={handleBriefCreated}
-            onRegisterClick={handleRegisterClick}
-          />
+          {isClient ? (
+            <AuthenticatedBriefEditor briefId={briefId} whiteLabel={true} />
+          ) : (
+            <AnonymousBriefEditor
+              briefId={briefId}
+              token={token}
+              onBriefCreated={handleBriefCreated}
+              onRegisterClick={handleRegisterClick}
+            />
+          )}
         </div>
       </div>
 
-      {sendModalOpen ? (
-        <SendBriefModal
-          value={sendModalOpen}
-          onChange={setSendModalOpen}
-          briefId={briefId}
-          slug={slug}
-          vendorName={vendorName}
-          isAnon={!isClient}
-          token={token}
-          onSuccess={handleSendSuccess}
-        />
-      ) : null}
+      {sendModal}
     </div>
   );
 }

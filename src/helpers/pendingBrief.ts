@@ -30,3 +30,21 @@ export const clearPendingBrief = (): void => {
 };
 
 export const PENDING_BRIEF_COOKIE_NAME = COOKIE_NAME;
+
+const RETURN_URL_KEY = 'aivus_auth_return_url';
+
+export const setAuthReturnUrl = (url: string): void => {
+  if (typeof window === 'undefined') {
+    return;
+  }
+  sessionStorage.setItem(RETURN_URL_KEY, url);
+};
+
+export const consumeAuthReturnUrl = (): string | null => {
+  if (typeof window === 'undefined') {
+    return null;
+  }
+  const value = sessionStorage.getItem(RETURN_URL_KEY);
+  sessionStorage.removeItem(RETURN_URL_KEY);
+  return value;
+};
