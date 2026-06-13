@@ -59,10 +59,28 @@ describe('ProjectOfferCard lead markers', () => {
     expect(screen.queryByText('In progress')).toBeNull();
   });
 
-  it('shows In progress stage badge for DRAFT status', () => {
+  it('shows In progress stage badge only for DRAFT status', () => {
     renderCard({ ...baseItem, status: 'DRAFT' });
     expect(screen.queryByText('New lead')).toBeNull();
     expect(screen.getByText('In progress')).toBeTruthy();
+  });
+
+  it('hides stage badge for REVIEWING status', () => {
+    renderCard({ ...baseItem, status: 'REVIEWING' });
+    expect(screen.queryByText('New lead')).toBeNull();
+    expect(screen.queryByText('In progress')).toBeNull();
+  });
+
+  it('hides stage badge for ONGOING status', () => {
+    renderCard({ ...baseItem, status: 'ONGOING' });
+    expect(screen.queryByText('New lead')).toBeNull();
+    expect(screen.queryByText('In progress')).toBeNull();
+  });
+
+  it('hides stage badge for COMPLETED status', () => {
+    renderCard({ ...baseItem, status: 'COMPLETED' });
+    expect(screen.queryByText('New lead')).toBeNull();
+    expect(screen.queryByText('In progress')).toBeNull();
   });
 
   it('shows email badge always when hasContactEmail is true', () => {

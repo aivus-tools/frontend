@@ -78,11 +78,14 @@ const projectStageBadgeClass = (status: string): string => {
   return `${styles.leadBadge} ${styles.leadBadgeInProgress}`;
 };
 
-const projectStageLabel = (status: string): string => {
+const projectStageLabel = (status: string): string | null => {
   if (status === 'RFP') {
     return t('PROJECT_STAGE_NEW_LEAD');
   }
-  return t('PROJECT_STAGE_IN_PROGRESS');
+  if (status === 'DRAFT') {
+    return t('PROJECT_STAGE_IN_PROGRESS');
+  }
+  return null;
 };
 
 export const ProjectOfferCard = (props: ProjectOfferCardProps) => {
@@ -153,7 +156,9 @@ export const ProjectOfferCard = (props: ProjectOfferCardProps) => {
         </div>
         {props.item.briefConversationStatus != null ? (
           <div className={styles.leadBadges}>
-            <span className={projectStageBadgeClass(props.item.status)}>{projectStageLabel(props.item.status)}</span>
+            {projectStageLabel(props.item.status) != null ? (
+              <span className={projectStageBadgeClass(props.item.status)}>{projectStageLabel(props.item.status)}</span>
+            ) : null}
             <span
               className={`${styles.leadBadge} ${props.item.hasContactEmail ? styles.leadBadgeEmailYes : styles.leadBadgeEmailNo}`}
             >
