@@ -14,7 +14,7 @@ import {
   useGetPublicBriefDetailQuery,
 } from '@/services/client/publicBriefApi';
 import { useGetBriefAiDetailQuery, useGetSentBriefIdsToVendorQuery } from '@/services/client/briefAiApi';
-import { setPendingBrief, isBriefSent, markBriefAsSent } from '@/helpers/pendingBrief';
+import { setPendingBrief, isBriefSent, markBriefAsSent, clearDraftForSlug } from '@/helpers/pendingBrief';
 import { GROUPS } from '@/constants/constants';
 import { AnonymousBriefEditor } from '@/modules/client/BriefEditor/AnonymousBriefEditor';
 import { AuthenticatedBriefEditor } from '@/modules/client/BriefEditor/AuthenticatedBriefEditor';
@@ -101,6 +101,7 @@ export default function BrandedBriefDetailPage() {
   const handleSendSuccess = () => {
     if (!isClient) {
       markBriefAsSent(briefId);
+      clearDraftForSlug(slug);
     }
     router.push(AppRoute.BRANDED_BRIEF_SUCCESS(slug) + (isEmbed ? '?embed=1' : ''));
   };
@@ -202,20 +203,19 @@ export default function BrandedBriefDetailPage() {
           <div className={styles.mobileSendAction}>{sendButton}</div>
         </div>
 
-        {mobileTab === 'chat' ? (
-          <div className={styles.mobileChatPane}>
-            <AnonymousBriefEditor
-              briefId={briefId}
-              token={token}
-              whiteLabel={true}
-              getLatestDocumentHtml={getLatestDocumentHtml}
-              onBriefCreated={handleBriefCreated}
-              onRegisterClick={handleRegisterClick}
-            />
-          </div>
-        ) : (
-          <div className={styles.mobileDocPane}>{anonDocumentPanel}</div>
-        )}
+        <div className={`${styles.mobileChatPane}${mobileTab !== 'chat' ? ` ${styles.mobileHidden}` : ''}`}>
+          <AnonymousBriefEditor
+            briefId={briefId}
+            token={token}
+            whiteLabel={true}
+            getLatestDocumentHtml={getLatestDocumentHtml}
+            onBriefCreated={handleBriefCreated}
+            onRegisterClick={handleRegisterClick}
+          />
+        </div>
+        <div className={`${styles.mobileDocPane}${mobileTab !== 'brief' ? ` ${styles.mobileHidden}` : ''}`}>
+          {anonDocumentPanel}
+        </div>
 
         {sendModal}
       </div>

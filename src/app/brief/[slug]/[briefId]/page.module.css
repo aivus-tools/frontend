@@ -106,6 +106,10 @@
   overflow: hidden;
 }
 
+.mobileHidden {
+  display: none !important;
+}
+
 @media (width >= 1024px) {
   .desktopHeader {
     height: 56px;
