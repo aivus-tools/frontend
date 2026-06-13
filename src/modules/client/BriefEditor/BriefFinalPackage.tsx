@@ -49,6 +49,7 @@ interface BriefFinalPackageProps {
   onRegenerate?: (() => void) | null;
   isRegenerating?: boolean;
   mobileActionsSlot?: HTMLElement | null;
+  whiteLabel?: boolean;
 }
 
 const htmlToPlainText = (html: string): string => {
@@ -410,10 +411,11 @@ const saveStatusClass = (state: SaveState): string => {
 
 export const BriefFinalPackage = (props: BriefFinalPackageProps) => {
   const { briefId, package: pkg, onRegenerate, isRegenerating, mobileActionsSlot } = props;
+  const isWhiteLabel = props.whiteLabel ?? false;
   const { isMobile } = useBreakpoint();
   const byKind = new Map(pkg.documents.map((x) => [x.kind, x]));
 
-  const tabs: { key: 'production_brief' | 'vendor_email'; label: string; document?: BriefFinalDocument }[] = [
+  const allTabs: { key: 'production_brief' | 'vendor_email'; label: string; document?: BriefFinalDocument }[] = [
     {
       key: 'production_brief',
       label: t('BRIEF_V3_TAB_PRODUCTION_BRIEF'),
@@ -425,6 +427,7 @@ export const BriefFinalPackage = (props: BriefFinalPackageProps) => {
       document: byKind.get('vendor_email'),
     },
   ];
+  const tabs = isWhiteLabel ? allTabs.filter((x) => x.key !== 'vendor_email') : allTabs;
 
   const [activeKey, setActiveKey] = useState<'production_brief' | 'vendor_email'>('production_brief');
   const [saveState, setSaveState] = useState<SaveState>('idle');
@@ -475,22 +478,24 @@ export const BriefFinalPackage = (props: BriefFinalPackageProps) => {
   const actionsNode = (
     <>
       <span className={saveStatusClass(saveState)}>{saveLabel}</span>
-      {hasPreVendors ? (
+      {!isWhiteLabel && hasPreVendors ? (
         <div className={isMobile ? styles.pickVendorMobileWrap : styles.pickVendorWrap}>
           <PickVendorButton onClick={handlePickVendor} />
         </div>
       ) : null}
-      <ShareControl briefId={briefId} compact={isMobile} />
-      <Button
-        type='primary'
-        icon={<DownloadOutlined />}
-        onClick={() => editorRef.current?.download()}
-        disabled={!activeDoc}
-        aria-label={t('BRIEF_V3_DOWNLOAD_PDF')}
-        className={isMobile ? styles.iconOnlyButton : undefined}
-      >
-        {isMobile ? null : t('BRIEF_V3_DOWNLOAD_PDF')}
-      </Button>
+      {!isWhiteLabel ? <ShareControl briefId={briefId} compact={isMobile} /> : null}
+      {!isWhiteLabel ? (
+        <Button
+          type='primary'
+          icon={<DownloadOutlined />}
+          onClick={() => editorRef.current?.download()}
+          disabled={!activeDoc}
+          aria-label={t('BRIEF_V3_DOWNLOAD_PDF')}
+          className={isMobile ? styles.iconOnlyButton : undefined}
+        >
+          {isMobile ? null : t('BRIEF_V3_DOWNLOAD_PDF')}
+        </Button>
+      ) : null}
     </>
   );
 
@@ -529,7 +534,7 @@ export const BriefFinalPackage = (props: BriefFinalPackageProps) => {
         )}
       </div>
 
-      {hasPreVendors ? (
+      {!isWhiteLabel && hasPreVendors ? (
         <PreVendorsBlock
           ref={preVendorsRef}
           preVendors={preVendors}

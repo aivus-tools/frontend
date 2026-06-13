@@ -1,7 +1,7 @@
 'use client';
 
-import React, { useEffect, useRef, useState } from 'react';
-import { useParams, useRouter } from 'next/navigation';
+import React, { useEffect, useState } from 'react';
+import { useParams, useRouter, useSearchParams } from 'next/navigation';
 import { useSession } from 'next-auth/react';
 import { App, Button, Empty, Spin, Tabs } from 'antd';
 import { SendOutlined } from '@ant-design/icons';
@@ -15,6 +15,7 @@ import {
 } from '@/services/client/publicBriefApi';
 import { GROUPS } from '@/constants/constants';
 import { AnonymousBriefEditor } from '@/modules/client/BriefEditor/AnonymousBriefEditor';
+import { AuthenticatedBriefEditor } from '@/modules/client/BriefEditor/AuthenticatedBriefEditor';
 import { WhiteLabelDocumentPanel } from '@/modules/client/BriefEditor/WhiteLabelDocumentPanel';
 import { SendBriefModal } from '@/modules/client/BriefEditor/SendBriefModal';
 import { useBreakpoint } from '@/hooks/useBreakpoint';
@@ -25,11 +26,13 @@ import styles from './page.module.css';
 export default function BrandedBriefDetailPage() {
   const params = useParams();
   const router = useRouter();
+  const searchParams = useSearchParams();
   const { message } = App.useApp();
   const { data: session, status: sessionStatus } = useSession();
   const { isMobile, ready: breakpointReady } = useBreakpoint();
   const slug = params.slug as string;
   const briefId = params.briefId as string;
+  const isEmbed = searchParams.get('embed') === '1';
   const [mobileTab, setMobileTab] = useState<'brief' | 'chat'>('chat');
   const [sendModalOpen, setSendModalOpen] = useState(false);
   const tokenFromStorage = typeof window !== 'undefined' ? getPublicBriefToken(briefId) : null;
@@ -75,10 +78,6 @@ export default function BrandedBriefDetailPage() {
     router.push(AppRoute.BRANDED_BRIEF_SUCCESS(slug));
   };
 
-  if (isClient) {
-    return <PageSpinner />;
-  }
-
   if (isVendor) {
     return <PageSpinner />;
   }
@@ -100,6 +99,10 @@ export default function BrandedBriefDetailPage() {
   }
 
   const vendorName = slugInfo.vendorName;
+
+  if (isClient) {
+    return <AuthenticatedBriefEditor briefId={briefId} whiteLabel={true} />;
+  }
 
   const sendButton = (
     <Button
@@ -169,10 +172,17 @@ export default function BrandedBriefDetailPage() {
 
   return (
     <div className={styles.desktopWrapper}>
-      <div className={styles.desktopHeader}>
-        <div className={styles.desktopHeaderTitle}>{t('BRANDED_BRIEF_FOR', vendorName)}</div>
-        <div className={styles.desktopHeaderActions}>{sendButton}</div>
-      </div>
+      {!isEmbed ? (
+        <div className={styles.desktopHeader}>
+          <div className={styles.desktopHeaderTitle}>{t('BRANDED_BRIEF_FOR', vendorName)}</div>
+          <div className={styles.desktopHeaderActions}>{sendButton}</div>
+        </div>
+      ) : (
+        <div className={styles.desktopHeader}>
+          <div className={styles.desktopHeaderTitle} />
+          <div className={styles.desktopHeaderActions}>{sendButton}</div>
+        </div>
+      )}
       <div className={styles.desktopContent}>
         <div className={styles.desktopDocPane}>
           {token ? (

@@ -1,0 +1,65 @@
+.container {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding-top: 8px;
+}
+
+.newCard {
+  cursor: pointer;
+  border: 2px dashed var(--blue-text);
+  border-radius: 8px;
+}
+
+.newCard:hover {
+  border-color: var(--blue);
+}
+
+.newCardContent {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  justify-content: center;
+  padding: 8px;
+}
+
+.newIcon {
+  font-size: 18px;
+  color: var(--blue-text);
+}
+
+.orLabel {
+  display: block;
+  font-size: 12px;
+  text-align: center;
+}
+
+.listItem {
+  padding: 8px 12px;
+  cursor: pointer;
+  border-radius: 6px;
+  transition: background 0.15s ease;
+}
+
+.listItem:hover {
+  background: var(--bg-blue-subtotal);
+}
+
+.sentItem {
+  padding: 8px 12px;
+  cursor: not-allowed;
+  opacity: 0.5;
+}
+
+.briefRow {
+  display: flex;
+  flex: 1;
+  gap: 8px;
+  align-items: center;
+  min-width: 0;
+}
+
+.briefTitle {
+  flex: 1;
+  min-width: 0;
+}

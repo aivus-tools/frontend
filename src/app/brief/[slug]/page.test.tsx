@@ -7,6 +7,7 @@ import { App } from 'antd';
 vi.mock('next/navigation', () => ({
   useParams: () => ({ slug: 'test-agency' }),
   useRouter: () => ({ push: vi.fn(), replace: vi.fn() }),
+  useSearchParams: () => ({ get: () => null }),
 }));
 
 vi.mock('next-auth/react', () => ({
@@ -23,6 +24,11 @@ vi.mock('@/services/client/publicBriefApi', () => ({
   useGetPublicBriefBySlugQuery: mocks.getBySlug,
   useCreatePublicBriefDraftBySlugMutation: () => [mocks.createDraft, {}],
   savePublicBriefToken: mocks.saveToken,
+}));
+
+vi.mock('@/services/client/briefAiApi', () => ({
+  useCreateBriefAiDraftMutation: () => [vi.fn(), {}],
+  useGetBriefAiListQuery: () => ({ data: [], isLoading: false }),
 }));
 
 import BrandedBriefStartPage from './page';

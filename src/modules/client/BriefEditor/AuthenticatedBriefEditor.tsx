@@ -40,6 +40,7 @@ import styles from './BriefEditor.module.css';
 interface AuthenticatedBriefEditorProps {
   briefId?: string | null;
   onBriefCreated?: (briefId: string) => void;
+  whiteLabel?: boolean;
 }
 
 const isFinalizeContext = (detail: BriefV3Detail | undefined): boolean => {
@@ -467,6 +468,7 @@ export const AuthenticatedBriefEditor = (props: AuthenticatedBriefEditorProps) =
                   onRegenerate={handleRegenerate}
                   isRegenerating={isRegenerating}
                   mobileActionsSlot={mobileActionsSlot}
+                  whiteLabel={props.whiteLabel}
                 />
               </div>
               <div className={chatColumnClass}>
