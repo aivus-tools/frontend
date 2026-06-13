@@ -567,6 +567,7 @@ export const RU_LOCALES = {
   BRIEF_V3_FINALIZING_STAGE_REVIEW: 'Финальная сверка',
   BRIEF_V3_LOADING_BRIEF_TITLE: 'Подгружаю бриф...',
   BRIEF_V3_LOADING_BRIEF_SUBTITLE: 'Секунду, тяну актуальное состояние.',
+  BRIEF_V3_GENERATING_DOCUMENT: 'Готовим ваш бриф...',
   BRIEF_V3_LOADING_DOCS_TITLE: 'Подгружаю документы...',
   BRIEF_V3_LOADING_DOCS_SUBTITLE: 'Беру свежую версию с сервера.',
   BRIEF_V3_FINALIZE_FAILED: 'Не удалось сформировать бриф. Попробуй ещё раз.',

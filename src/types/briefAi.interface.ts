@@ -144,6 +144,7 @@ export interface BriefFinalPackage {
   briefId: string;
   conversationStatus: ConversationStatus;
   documents: BriefFinalDocument[];
+  generating?: boolean;
 }
 
 export interface LLMCallTraceEntry {

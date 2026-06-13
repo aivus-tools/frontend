@@ -22,6 +22,7 @@ beforeAll(() => {
 const mocks = vi.hoisted(() => ({
   getDocuments: vi.fn(),
   updateDocument: vi.fn(),
+  refetch: vi.fn(),
 }));
 
 vi.mock('@/services/client/publicBriefApi', () => ({
@@ -44,6 +45,7 @@ const mockPackage = {
       updatedAt: null,
     },
   ],
+  generating: false,
 };
 
 const renderPanel = () =>
@@ -59,6 +61,7 @@ describe('WhiteLabelDocumentPanel', () => {
       data: mockPackage,
       isLoading: false,
       isError: false,
+      refetch: mocks.refetch,
     });
   });
 
@@ -72,9 +75,22 @@ describe('WhiteLabelDocumentPanel', () => {
       data: undefined,
       isLoading: true,
       isError: false,
+      refetch: mocks.refetch,
     });
     renderPanel();
     expect(document.querySelector('.ant-spin')).toBeTruthy();
+  });
+
+  it('shows generating spinner when generating is true', () => {
+    mocks.getDocuments.mockReturnValue({
+      data: { ...mockPackage, generating: true, documents: [] },
+      isLoading: false,
+      isError: false,
+      refetch: mocks.refetch,
+    });
+    renderPanel();
+    expect(document.querySelector('.ant-spin')).toBeTruthy();
+    expect(screen.getByText('Preparing your brief...')).toBeTruthy();
   });
 
   it('shows missing doc message when no production_brief document', () => {
@@ -82,6 +98,7 @@ describe('WhiteLabelDocumentPanel', () => {
       data: { ...mockPackage, documents: [] },
       isLoading: false,
       isError: false,
+      refetch: mocks.refetch,
     });
     renderPanel();
     expect(screen.getByText('This document is not available.')).toBeTruthy();

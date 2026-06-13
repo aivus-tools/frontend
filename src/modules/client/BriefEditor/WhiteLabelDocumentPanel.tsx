@@ -1,6 +1,6 @@
 'use client';
 
-import React, { forwardRef, useEffect, useImperativeHandle, useRef, useState } from 'react';
+import React, { forwardRef, useEffect, useImperativeHandle, useRef, useState, useCallback } from 'react';
 import { useEditor, EditorContent, Editor } from '@tiptap/react';
 import StarterKit from '@tiptap/starter-kit';
 import Link from '@tiptap/extension-link';
@@ -222,6 +222,8 @@ const saveStatusClass = (state: SaveState): string => {
   return styles.saveStatus;
 };
 
+const GENERATING_POLL_INTERVAL_MS = 3000;
+
 interface WhiteLabelDocumentPanelProps {
   briefId: string;
   token: string;
@@ -233,12 +235,31 @@ export const WhiteLabelDocumentPanel = (props: WhiteLabelDocumentPanelProps) => 
   const { message: messageApi } = App.useApp();
   const [saveState, setSaveState] = useState<SaveState>('idle');
   const editorRef = useRef<WhiteLabelDocumentHandle | null>(null);
+  const pollTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const {
     data: pkg,
     isLoading,
     isError,
+    refetch,
   } = useGetPublicBriefFinalDocumentsQuery({ briefId, token }, { skip: !briefId || !token });
+
+  const scheduleRefetch = useCallback(() => {
+    pollTimerRef.current = setTimeout(() => {
+      void refetch();
+    }, GENERATING_POLL_INTERVAL_MS);
+  }, [refetch]);
+
+  useEffect(() => {
+    if (pkg?.generating) {
+      scheduleRefetch();
+    }
+    return () => {
+      if (pollTimerRef.current) {
+        clearTimeout(pollTimerRef.current);
+      }
+    };
+  }, [pkg?.generating, scheduleRefetch]);
 
   useEffect(() => {
     if (isError) {
@@ -246,11 +267,11 @@ export const WhiteLabelDocumentPanel = (props: WhiteLabelDocumentPanelProps) => 
     }
   }, [isError, messageApi]);
 
-  if (isLoading) {
+  if (isLoading || pkg?.generating) {
     return (
       <div className={styles.loadingWrapper}>
         <Spin size='large' />
-        <div className={styles.loadingLabel}>{t('BRIEF_V3_LOADING_DOCS_TITLE')}</div>
+        <div className={styles.loadingLabel}>{t('BRIEF_V3_GENERATING_DOCUMENT')}</div>
       </div>
     );
   }
