@@ -121,12 +121,12 @@ export default function BrandedBriefStartPage() {
   };
 
   const handleLogin = () => {
-    setAuthReturnUrl(AppRoute.BRANDED_BRIEF(slug));
-    const loginUrl = AppRoute.AUTH;
+    const returnUrl = AppRoute.BRANDED_BRIEF(slug);
     if (isEmbed) {
-      window.open(loginUrl, '_blank');
+      window.open(`${AppRoute.AUTH}?next=${encodeURIComponent(returnUrl)}`, '_blank');
     } else {
-      router.push(loginUrl);
+      setAuthReturnUrl(returnUrl);
+      router.push(AppRoute.AUTH);
     }
   };
 

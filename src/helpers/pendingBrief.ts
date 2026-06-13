@@ -127,6 +127,12 @@ export const consumeAuthReturnUrl = (): string | null => {
   if (typeof window === 'undefined') {
     return null;
   }
+  const params = new URLSearchParams(window.location.search);
+  const nextFromQuery = params.get('next');
+  if (nextFromQuery) {
+    sessionStorage.removeItem(RETURN_URL_KEY);
+    return nextFromQuery;
+  }
   const value = sessionStorage.getItem(RETURN_URL_KEY);
   sessionStorage.removeItem(RETURN_URL_KEY);
   return value;
