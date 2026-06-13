@@ -46,7 +46,7 @@ export interface BriefDraftBySlugResponse {
 
 export interface BriefSendResponse {
   ok: boolean;
-  finalizingTaskId: string | null;
+  finalizingTaskId?: string | null;
 }
 
 export interface VendorWebhookKey {

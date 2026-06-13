@@ -124,13 +124,13 @@ export const SendBriefModal = (props: SendBriefModalProps) => {
           email: values.email,
           slug: props.slug,
         }).unwrap();
-        finalizingTaskId = result.finalizingTaskId;
+        finalizingTaskId = result.finalizingTaskId ?? null;
       } else {
         const result = await sendClient({
           briefId: props.briefId,
           slug: props.slug,
         }).unwrap();
-        finalizingTaskId = result.finalizingTaskId;
+        finalizingTaskId = result.finalizingTaskId ?? null;
       }
 
       if (finalizingTaskId) {
