@@ -28,7 +28,8 @@ const BriefClaimPage = () => {
     }
     claimed.current = true;
 
-    const token = getPublicBriefToken(params.briefId);
+    const urlToken = typeof window === 'undefined' ? null : new URLSearchParams(window.location.search).get('token');
+    const token = urlToken || getPublicBriefToken(params.briefId);
     if (!token) {
       message.error(t('UNEXPECTED_ERROR'));
       router.replace(AppRoute.DASHBOARD);
