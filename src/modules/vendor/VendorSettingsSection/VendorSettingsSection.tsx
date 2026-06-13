@@ -17,7 +17,7 @@ import {
 import styles from './VendorSettingsSection.module.css';
 
 const SLUG_DEBOUNCE_MS = 600;
-const SLUG_PATTERN = /^[a-z0-9](?:[a-z0-9]|-[a-z0-9]){1,38}[a-z0-9]$|^[a-z0-9]{3,40}$/;
+const SLUG_PATTERN = /^[a-z0-9](?:[a-z0-9]|-(?=[a-z0-9])){1,38}[a-z0-9]$|^[a-z0-9]{3}$/;
 
 interface VendorSettingsFormValues {
   companyName: string;
