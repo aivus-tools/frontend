@@ -151,14 +151,16 @@ export const ProjectOfferCard = (props: ProjectOfferCardProps) => {
             <span>{props.item.createdAt}</span>
           </div>
         </div>
-        <div className={styles.leadBadges}>
-          <span className={projectStageBadgeClass(props.item.status)}>{projectStageLabel(props.item.status)}</span>
-          <span
-            className={`${styles.leadBadge} ${props.item.hasContactEmail ? styles.leadBadgeEmailYes : styles.leadBadgeEmailNo}`}
-          >
-            {props.item.hasContactEmail ? t('LEAD_EMAIL_YES') : t('LEAD_EMAIL_NO')}
-          </span>
-        </div>
+        {props.item.briefConversationStatus != null ? (
+          <div className={styles.leadBadges}>
+            <span className={projectStageBadgeClass(props.item.status)}>{projectStageLabel(props.item.status)}</span>
+            <span
+              className={`${styles.leadBadge} ${props.item.hasContactEmail ? styles.leadBadgeEmailYes : styles.leadBadgeEmailNo}`}
+            >
+              {props.item.hasContactEmail ? t('LEAD_EMAIL_YES') : t('LEAD_EMAIL_NO')}
+            </span>
+          </div>
+        ) : null}
 
         <div className={styles.headerActions}>
           <Dropdown menu={{ items: menuItems, onClick: handleMenuClick }} trigger={['click']} placement='bottomRight'>

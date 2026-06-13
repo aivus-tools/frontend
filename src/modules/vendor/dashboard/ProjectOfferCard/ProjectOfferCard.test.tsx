@@ -41,7 +41,7 @@ const baseItem: ProjectListItem = {
   clientName: 'ACME',
   status: 'RFP',
   createdAt: '2026-01-01',
-  briefConversationStatus: null,
+  briefConversationStatus: 'finalized',
   hasContactEmail: false,
 };
 
@@ -79,5 +79,17 @@ describe('ProjectOfferCard lead markers', () => {
     renderCard({ ...baseItem, status: 'DRAFT', briefConversationStatus: 'in_progress', hasContactEmail: true });
     expect(screen.getByText('Email: yes')).toBeTruthy();
     expect(screen.getByText('In progress')).toBeTruthy();
+  });
+
+  it('hides lead badges for regular projects with null briefConversationStatus', () => {
+    renderCard({ ...baseItem, status: 'RFP', briefConversationStatus: null });
+    expect(screen.queryByText('New lead')).toBeNull();
+    expect(screen.queryByText('Email: no')).toBeNull();
+  });
+
+  it('shows lead badges when briefConversationStatus is set', () => {
+    renderCard({ ...baseItem, status: 'RFP', briefConversationStatus: 'finalized', hasContactEmail: false });
+    expect(screen.getByText('New lead')).toBeTruthy();
+    expect(screen.getByText('Email: no')).toBeTruthy();
   });
 });
