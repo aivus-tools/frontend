@@ -49,9 +49,10 @@ export default function BrandedBriefStartPage() {
 
   useEffect(() => {
     if (isClient && !isAuthed) {
-      router.replace(AppRoute.BRANDED_BRIEF(slug) + '?authed=1');
+      const embedPart = isEmbed ? '&embed=1' : '';
+      router.replace(AppRoute.BRANDED_BRIEF(slug) + '?authed=1' + embedPart);
     }
-  }, [isClient, isAuthed, router, slug]);
+  }, [isClient, isAuthed, isEmbed, router, slug]);
 
   useEffect(() => {
     if (isClient && isAuthed && slugInfo?.valid) {
