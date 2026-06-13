@@ -38,6 +38,8 @@ export interface ChatMessageV3 {
   createdAt: string | null;
 }
 
+export type BriefSource = 'direct' | 'personal_link' | 'webhook' | 'wix';
+
 export interface BriefV3 {
   id: string;
   status: string;
@@ -49,6 +51,7 @@ export interface BriefV3 {
   totalCostUsd: string;
   messageCount: number;
   showCost: boolean;
+  source: BriefSource;
   createdAt: string | null;
   updatedAt: string | null;
   claimedAt: string | null;
