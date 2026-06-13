@@ -12,7 +12,7 @@ import {
   useCreatePublicBriefDraftBySlugMutation,
   savePublicBriefToken,
 } from '@/services/client/publicBriefApi';
-import { setPendingBrief, setAuthReturnUrl } from '@/helpers/pendingBrief';
+import { setPendingBrief, setAuthReturnUrl, saveDraftForSlug, getDraftForSlug } from '@/helpers/pendingBrief';
 import { useCreateBriefAiDraftMutation, useGetSentBriefIdsToVendorQuery } from '@/services/client/briefAiApi';
 import { GROUPS } from '@/constants/constants';
 import { BriefSelectModal } from '@/modules/client/BriefEditor/BriefSelectModal';
@@ -81,11 +81,19 @@ export default function BrandedBriefStartPage() {
     if (isStarting) {
       return;
     }
+
+    const existing = getDraftForSlug(slug);
+    if (existing) {
+      router.push(AppRoute.BRANDED_BRIEF_DETAIL(slug, existing.briefId) + embedSuffix);
+      return;
+    }
+
     setIsStarting(true);
     try {
       const result = await createAnonDraft(slug).unwrap();
       savePublicBriefToken(result.briefId, result.token);
       setPendingBrief(result.briefId, result.token);
+      saveDraftForSlug(slug, result.briefId, result.token);
       router.push(AppRoute.BRANDED_BRIEF_DETAIL(slug, result.briefId) + embedSuffix);
     } catch {
       message.error(t('UNEXPECTED_ERROR'));

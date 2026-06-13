@@ -35,6 +35,8 @@ vi.mock('@/services/client/publicBriefApi', () => ({
 vi.mock('@/helpers/pendingBrief', () => ({
   setPendingBrief: vi.fn(),
   setAuthReturnUrl: vi.fn(),
+  saveDraftForSlug: vi.fn(),
+  getDraftForSlug: vi.fn().mockReturnValue(null),
 }));
 
 vi.mock('@/services/client/briefAiApi', () => ({

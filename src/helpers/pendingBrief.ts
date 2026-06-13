@@ -31,6 +31,89 @@ export const clearPendingBrief = (): void => {
 
 export const PENDING_BRIEF_COOKIE_NAME = COOKIE_NAME;
 
+const SENT_BRIEFS_KEY = 'aivus_sent_briefs';
+
+export const markBriefAsSent = (briefId: string): void => {
+  if (typeof window === 'undefined') {
+    return;
+  }
+  try {
+    const stored = localStorage.getItem(SENT_BRIEFS_KEY);
+    const sent: string[] = stored ? JSON.parse(stored) : [];
+    if (!sent.includes(briefId)) {
+      sent.push(briefId);
+      localStorage.setItem(SENT_BRIEFS_KEY, JSON.stringify(sent));
+    }
+  } catch {
+    // noop
+  }
+};
+
+export const isBriefSent = (briefId: string): boolean => {
+  if (typeof window === 'undefined') {
+    return false;
+  }
+  try {
+    const stored = localStorage.getItem(SENT_BRIEFS_KEY);
+    if (!stored) {
+      return false;
+    }
+    const sent: string[] = JSON.parse(stored);
+    return sent.includes(briefId);
+  } catch {
+    return false;
+  }
+};
+
+const DRAFT_BY_SLUG_KEY = 'aivus_draft_by_slug';
+
+export const saveDraftForSlug = (slug: string, briefId: string, token: string): void => {
+  if (typeof window === 'undefined') {
+    return;
+  }
+  try {
+    const stored = sessionStorage.getItem(DRAFT_BY_SLUG_KEY);
+    const drafts: Record<string, { briefId: string; token: string }> = stored ? JSON.parse(stored) : {};
+    drafts[slug] = { briefId, token };
+    sessionStorage.setItem(DRAFT_BY_SLUG_KEY, JSON.stringify(drafts));
+  } catch {
+    // noop
+  }
+};
+
+export const getDraftForSlug = (slug: string): { briefId: string; token: string } | null => {
+  if (typeof window === 'undefined') {
+    return null;
+  }
+  try {
+    const stored = sessionStorage.getItem(DRAFT_BY_SLUG_KEY);
+    if (!stored) {
+      return null;
+    }
+    const drafts: Record<string, { briefId: string; token: string }> = JSON.parse(stored);
+    return drafts[slug] ?? null;
+  } catch {
+    return null;
+  }
+};
+
+export const clearDraftForSlug = (slug: string): void => {
+  if (typeof window === 'undefined') {
+    return;
+  }
+  try {
+    const stored = sessionStorage.getItem(DRAFT_BY_SLUG_KEY);
+    if (!stored) {
+      return;
+    }
+    const drafts: Record<string, { briefId: string; token: string }> = JSON.parse(stored);
+    delete drafts[slug];
+    sessionStorage.setItem(DRAFT_BY_SLUG_KEY, JSON.stringify(drafts));
+  } catch {
+    // noop
+  }
+};
+
 const RETURN_URL_KEY = 'aivus_auth_return_url';
 
 export const setAuthReturnUrl = (url: string): void => {
