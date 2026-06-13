@@ -234,6 +234,7 @@ export const publicBriefApi = createApi({
         message: string;
         token: string;
         attachmentIds?: string[];
+        documentHtml?: string | null;
       }
     >({
       query: (args) => ({
@@ -242,6 +243,7 @@ export const publicBriefApi = createApi({
         body: {
           message: args.message,
           attachmentIds: args.attachmentIds ?? [],
+          ...(args.documentHtml != null ? { documentHtml: args.documentHtml } : {}),
         },
         headers: { 'X-Brief-Token': args.token },
       }),

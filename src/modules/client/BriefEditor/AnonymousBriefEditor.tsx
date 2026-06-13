@@ -13,6 +13,7 @@ import {
   useCreatePublicBriefDraftMutation,
   useDeletePublicBriefAttachmentMutation,
   useGetPublicBriefDetailQuery,
+  useGetPublicBriefFinalDocumentsQuery,
   useSendPublicBriefChatMutation,
   useStartPublicBriefMutation,
   useUploadPublicBriefAttachmentMutation,
@@ -69,6 +70,10 @@ export const AnonymousBriefEditor = (props: AnonymousBriefEditorProps) => {
   }, []);
 
   const canQueryDetail = !!briefId && !!token;
+  const { data: finalDocuments } = useGetPublicBriefFinalDocumentsQuery(
+    { briefId: briefId ?? '', token: token ?? '' },
+    { skip: !canQueryDetail }
+  );
   const { data: detail, isFetching: isDetailFetching } = useGetPublicBriefDetailQuery(
     { briefId: briefId ?? '', token: token ?? '' },
     { skip: !canQueryDetail, refetchOnMountOrArgChange: true }
@@ -223,8 +228,9 @@ export const AnonymousBriefEditor = (props: AnonymousBriefEditorProps) => {
         })
       );
       setPendingAttachments((prev) => prev.filter((x) => !attachmentIds.includes(x.id)));
+      const productionBriefHtml = finalDocuments?.documents.find((x) => x.kind === 'production_brief')?.html ?? null;
       try {
-        await sendChat({ briefId, token, message: text, attachmentIds }).unwrap();
+        await sendChat({ briefId, token, message: text, attachmentIds, documentHtml: productionBriefHtml }).unwrap();
       } catch {
         patch.undo();
         messageApi.error(t('UNEXPECTED_ERROR'));
@@ -232,7 +238,7 @@ export const AnonymousBriefEditor = (props: AnonymousBriefEditorProps) => {
         setIsChatLoading(false);
       }
     },
-    [briefId, dispatch, isChatLoading, messageApi, pendingAttachments, pendingTaskId, sendChat, token]
+    [briefId, dispatch, finalDocuments, isChatLoading, messageApi, pendingAttachments, pendingTaskId, sendChat, token]
   );
 
   const handleRegisterClick = useCallback(

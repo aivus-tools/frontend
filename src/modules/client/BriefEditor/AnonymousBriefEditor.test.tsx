@@ -18,6 +18,7 @@ let detailData: BriefV3Detail | undefined;
 
 vi.mock('@/services/client/publicBriefApi', () => ({
   useGetPublicBriefDetailQuery: () => ({ data: detailData, isFetching: false }),
+  useGetPublicBriefFinalDocumentsQuery: () => ({ data: undefined }),
   useCreatePublicBriefDraftMutation: () => [mocks.createDraftFn, {}],
   useStartPublicBriefMutation: () => [mocks.startBriefFn, {}],
   useSendPublicBriefChatMutation: () => [mocks.sendChatFn, {}],
