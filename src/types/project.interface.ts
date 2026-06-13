@@ -37,6 +37,8 @@ export interface Project {
   clientManagers?: ClientManager[];
   createdAt: string;
   updatedAt: string | null;
+  briefConversationStatus?: string | null;
+  hasContactEmail?: boolean;
 }
 
 export interface NewProjectCollaborator {
@@ -75,4 +77,6 @@ export interface ProjectListItem {
   clientName: string;
   status: ProjectStatus;
   createdAt: string;
+  briefConversationStatus: string | null;
+  hasContactEmail: boolean;
 }

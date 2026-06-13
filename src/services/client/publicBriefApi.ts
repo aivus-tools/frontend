@@ -3,12 +3,15 @@ import { ApiRoute } from '@/constants/apiRoute';
 import { guessAudioExtension } from '@/services/client/briefAiApi';
 import {
   BriefAttachment,
+  BriefFinalDocument,
+  BriefFinalPackage,
   BriefV3ChatResponse,
   BriefV3ClaimResponse,
   BriefV3Detail,
   BriefV3StartResponse,
   BriefV3TaskStatus,
 } from '@/types/briefAi.interface';
+import { BrandedBriefSlugInfo, BriefDraftBySlugResponse, BriefSendResponse } from '@/types/vendorSettings.interface';
 
 const PUBLIC_BRIEF_STORAGE_KEY = 'aivus_briefs';
 
@@ -83,8 +86,109 @@ const publicBaseQuery = fetchBaseQuery({ baseUrl: '' });
 export const publicBriefApi = createApi({
   reducerPath: 'publicBriefApi',
   baseQuery: publicBaseQuery,
-  tagTypes: ['PublicBriefV3'],
+  tagTypes: ['PublicBriefV3', 'PublicBriefFinalDocuments'],
   endpoints: (builder) => ({
+    getPublicBriefBySlug: builder.query<BrandedBriefSlugInfo, string>({
+      query: (slug) => ({
+        url: ApiRoute.PUBLIC_BRIEF_AI_BY_SLUG(slug),
+        method: 'GET',
+      }),
+    }),
+
+    createPublicBriefDraftBySlug: builder.mutation<BriefDraftBySlugResponse, string>({
+      query: (slug) => ({
+        url: ApiRoute.PUBLIC_BRIEF_AI_BY_SLUG_DRAFT(slug),
+        method: 'POST',
+      }),
+    }),
+
+    getPublicBriefFinalDocuments: builder.query<BriefFinalPackage, { briefId: string; token: string }>({
+      query: (args) => ({
+        url: ApiRoute.PUBLIC_BRIEF_AI_FINAL_DOCUMENTS(args.briefId),
+        method: 'GET',
+        headers: { 'X-Brief-Token': args.token },
+      }),
+      providesTags: (_r, _e, args) => [{ type: 'PublicBriefFinalDocuments', id: args.briefId }],
+    }),
+
+    updatePublicBriefFinalDocument: builder.mutation<
+      BriefFinalDocument,
+      { briefId: string; documentId: string; html: string; plainText?: string; token: string }
+    >({
+      query: (args) => ({
+        url: ApiRoute.PUBLIC_BRIEF_AI_FINAL_DOCUMENT(args.briefId, args.documentId),
+        method: 'PATCH',
+        body: { html: args.html, plainText: args.plainText },
+        headers: { 'X-Brief-Token': args.token },
+      }),
+      async onQueryStarted(args, { dispatch, queryFulfilled }) {
+        const patch = dispatch(
+          publicBriefApi.util.updateQueryData(
+            'getPublicBriefFinalDocuments',
+            { briefId: args.briefId, token: args.token },
+            (draft) => {
+              const doc = draft.documents.find((x) => x.id === args.documentId);
+              if (doc) {
+                doc.html = args.html;
+                if (args.plainText !== undefined) {
+                  doc.plainText = args.plainText;
+                }
+              }
+            }
+          )
+        );
+        try {
+          const { data } = await queryFulfilled;
+          dispatch(
+            publicBriefApi.util.updateQueryData(
+              'getPublicBriefFinalDocuments',
+              { briefId: args.briefId, token: args.token },
+              (draft) => {
+                const doc = draft.documents.find((x) => x.id === args.documentId);
+                if (doc) {
+                  doc.html = data.html;
+                  doc.plainText = data.plainText;
+                  doc.updatedAt = data.updatedAt;
+                }
+              }
+            )
+          );
+        } catch {
+          patch.undo();
+        }
+      },
+    }),
+
+    sendPublicBriefToVendor: builder.mutation<
+      BriefSendResponse,
+      { briefId: string; token: string; email?: string; slug?: string; idempotencyKey?: string }
+    >({
+      query: (args) => ({
+        url: ApiRoute.PUBLIC_BRIEF_AI_SEND(args.briefId),
+        method: 'POST',
+        body: {
+          ...(args.email ? { email: args.email } : {}),
+          ...(args.slug ? { slug: args.slug } : {}),
+          ...(args.idempotencyKey ? { idempotencyKey: args.idempotencyKey } : {}),
+        },
+        headers: { 'X-Brief-Token': args.token },
+      }),
+    }),
+
+    sendClientBriefToVendor: builder.mutation<
+      BriefSendResponse,
+      { briefId: string; slug: string; idempotencyKey?: string }
+    >({
+      query: (args) => ({
+        url: ApiRoute.CLIENT_BRIEF_AI_SEND(args.briefId),
+        method: 'POST',
+        body: {
+          slug: args.slug,
+          ...(args.idempotencyKey ? { idempotencyKey: args.idempotencyKey } : {}),
+        },
+      }),
+    }),
+
     createPublicBriefDraft: builder.mutation<{ briefId: string; token: string }, void>({
       query: () => ({
         url: ApiRoute.PUBLIC_BRIEF_AI_DRAFT,
@@ -211,6 +315,14 @@ export const publicBriefApi = createApi({
 });
 
 export const {
+  useGetPublicBriefBySlugQuery,
+  useLazyGetPublicBriefBySlugQuery,
+  useCreatePublicBriefDraftBySlugMutation,
+  useGetPublicBriefFinalDocumentsQuery,
+  useLazyGetPublicBriefFinalDocumentsQuery,
+  useUpdatePublicBriefFinalDocumentMutation,
+  useSendPublicBriefToVendorMutation,
+  useSendClientBriefToVendorMutation,
   useCreatePublicBriefDraftMutation,
   useStartPublicBriefMutation,
   useLazyGetPublicBriefStatusQuery,

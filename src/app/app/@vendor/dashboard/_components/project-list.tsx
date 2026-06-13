@@ -29,6 +29,8 @@ const mapProjectsToListItems = (projects: Project[]): ProjectListItem[] => {
     clientName: project.clientName || '',
     status: project.status,
     createdAt: format(new Date(project.createdAt), 'MM/dd/yyyy'),
+    briefConversationStatus: project.briefConversationStatus ?? null,
+    hasContactEmail: project.hasContactEmail ?? false,
   }));
 };
 

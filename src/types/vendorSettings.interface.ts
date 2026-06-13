@@ -13,6 +13,8 @@ export interface VendorSettings {
   postInsurancePercent: string;
   postTaxPercent: string;
   updatedAt: string;
+  slug: string | null;
+  leadNotificationEmail: string;
 }
 
 export interface UpdateVendorSettingsPayload {
@@ -26,4 +28,34 @@ export interface UpdateVendorSettingsPayload {
   postMarkupPercent?: string;
   postInsurancePercent?: string;
   postTaxPercent?: string;
+  slug?: string | null;
+  leadNotificationEmail?: string;
+}
+
+export interface BrandedBriefSlugInfo {
+  valid: boolean;
+  vendorName: string;
+  vendorLogoUrl: string | null;
+  slug: string;
+}
+
+export interface BriefDraftBySlugResponse {
+  briefId: string;
+  token: string;
+}
+
+export interface BriefSendResponse {
+  ok: boolean;
+  finalizingTaskId: string | null;
+}
+
+export interface VendorWebhookKey {
+  key: string;
+  isActive: boolean;
+  createdAt: string | null;
+  rotatedAt: string | null;
+}
+
+export interface SlugSuggestResponse {
+  slug: string;
 }

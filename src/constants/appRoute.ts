@@ -28,6 +28,9 @@ export const AppRoute = {
   PUBLIC_BRIEF: '/public-brief',
   PUBLIC_BRIEF_DETAIL: (briefId: string) => `/public-brief/${briefId}`,
   SHARED_BRIEF: (token: string) => `/shared-brief/${token}`,
+  BRANDED_BRIEF: (slug: string) => `/brief/${slug}`,
+  BRANDED_BRIEF_DETAIL: (slug: string, briefId: string) => `/brief/${slug}/${briefId}`,
+  BRANDED_BRIEF_SUCCESS: (slug: string) => `/brief/${slug}/success`,
 } as const;
 
 export type AppRouteValue = (typeof AppRoute)[keyof typeof AppRoute];

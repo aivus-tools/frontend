@@ -1,6 +1,11 @@
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
 import { ApiRoute } from '@/constants/apiRoute';
-import { VendorSettings, UpdateVendorSettingsPayload } from '@/types/vendorSettings.interface';
+import {
+  SlugSuggestResponse,
+  UpdateVendorSettingsPayload,
+  VendorSettings,
+  VendorWebhookKey,
+} from '@/types/vendorSettings.interface';
 
 export interface LogoUploadResponse {
   logoUrl: string;
@@ -9,7 +14,7 @@ export interface LogoUploadResponse {
 export const vendorSettingsApi = createApi({
   reducerPath: 'vendorSettingsApi',
   baseQuery: fetchBaseQuery({ baseUrl: '' }),
-  tagTypes: ['VendorSettings'],
+  tagTypes: ['VendorSettings', 'VendorWebhookKey'],
   endpoints: (builder) => ({
     getVendorSettings: builder.query<VendorSettings, void>({
       query: () => ApiRoute.VENDOR_SETTINGS,
@@ -31,6 +36,20 @@ export const vendorSettingsApi = createApi({
       }),
       invalidatesTags: ['VendorSettings'],
     }),
+    suggestVendorSlug: builder.query<SlugSuggestResponse, void>({
+      query: () => ApiRoute.VENDOR_SETTINGS_SLUG_SUGGEST,
+    }),
+    getVendorWebhookKey: builder.query<VendorWebhookKey, void>({
+      query: () => ApiRoute.VENDOR_WEBHOOK_KEY,
+      providesTags: ['VendorWebhookKey'],
+    }),
+    rotateVendorWebhookKey: builder.mutation<VendorWebhookKey, void>({
+      query: () => ({
+        url: ApiRoute.VENDOR_WEBHOOK_KEY_ROTATE,
+        method: 'POST',
+      }),
+      invalidatesTags: ['VendorWebhookKey'],
+    }),
   }),
 });
 
@@ -38,4 +57,7 @@ export const {
   useGetVendorSettingsQuery,
   useUpdateVendorSettingsMutation,
   useUploadVendorLogoMutation,
+  useLazySuggestVendorSlugQuery,
+  useGetVendorWebhookKeyQuery,
+  useRotateVendorWebhookKeyMutation,
 } = vendorSettingsApi;

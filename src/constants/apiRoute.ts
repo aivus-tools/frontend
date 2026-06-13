@@ -100,6 +100,16 @@ export const ApiRoute = {
   PUBLIC_BRIEF_SHARE_DOCUMENT_PDF: (token: string, documentId: string) =>
     `/service/public/brief-shares/${token}/documents/${documentId}/pdf`,
   PUBLIC_BRIEF_AI_DRAFT: '/service/public/briefs/ai/drafts',
+  PUBLIC_BRIEF_AI_BY_SLUG: (slug: string) => `/service/public/briefs/ai/by-slug/${slug}`,
+  PUBLIC_BRIEF_AI_BY_SLUG_DRAFT: (slug: string) => `/service/public/briefs/ai/by-slug/${slug}/drafts`,
+  PUBLIC_BRIEF_AI_FINAL_DOCUMENTS: (briefId: string) => `/service/public/briefs/ai/${briefId}/final-documents`,
+  PUBLIC_BRIEF_AI_FINAL_DOCUMENT: (briefId: string, documentId: string) =>
+    `/service/public/briefs/ai/${briefId}/final-documents/${documentId}`,
+  PUBLIC_BRIEF_AI_SEND: (briefId: string) => `/service/public/briefs/ai/${briefId}/send`,
+  CLIENT_BRIEF_AI_SEND: (briefId: string) => `/service/client/briefs/ai/${briefId}/send`,
+  VENDOR_SETTINGS_SLUG_SUGGEST: '/service/vendor/settings/slug/suggest',
+  VENDOR_WEBHOOK_KEY: '/service/vendor/webhook-key',
+  VENDOR_WEBHOOK_KEY_ROTATE: '/service/vendor/webhook-key/rotate',
   PUBLIC_BRIEF_AI_START: (briefId: string) => `/service/public/briefs/ai/${briefId}/start`,
   PUBLIC_BRIEF_AI_STATUS: (briefId: string) => `/service/public/briefs/ai/${briefId}/status`,
   PUBLIC_BRIEF_AI_CHAT: (briefId: string) => `/service/public/briefs/ai/${briefId}/chat`,
