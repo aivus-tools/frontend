@@ -124,15 +124,7 @@ export default function BrandedBriefDetailPage() {
     </Button>
   );
 
-  const documentPanel = isClient ? (
-    documentReady ? (
-      <AuthenticatedBriefEditor briefId={briefId} whiteLabel={true} />
-    ) : (
-      <div className={styles.centerWrapper}>
-        <Typography.Text type='secondary'>{t('BRIEF_V3_DOCUMENT_NOT_READY')}</Typography.Text>
-      </div>
-    )
-  ) : token ? (
+  const anonDocumentPanel = token ? (
     documentReady ? (
       <WhiteLabelDocumentPanel briefId={briefId} token={token} />
     ) : (
@@ -159,6 +151,25 @@ export default function BrandedBriefDetailPage() {
     />
   ) : null;
 
+  if (isClient) {
+    return (
+      <div className={styles.desktopWrapper}>
+        <div className={styles.desktopHeader}>
+          {!isEmbed ? (
+            <div className={styles.desktopHeaderTitle}>{t('BRANDED_BRIEF_FOR', vendorName)}</div>
+          ) : (
+            <div className={styles.desktopHeaderTitle} />
+          )}
+          <div className={styles.desktopHeaderActions}>{sendButton}</div>
+        </div>
+        <div className={styles.desktopContent}>
+          <AuthenticatedBriefEditor briefId={briefId} whiteLabel={true} />
+        </div>
+        {sendModal}
+      </div>
+    );
+  }
+
   if (isMobile) {
     return (
       <div className={styles.mobileWrapper}>
@@ -178,19 +189,15 @@ export default function BrandedBriefDetailPage() {
 
         {mobileTab === 'chat' ? (
           <div className={styles.mobileChatPane}>
-            {isClient ? (
-              <AuthenticatedBriefEditor briefId={briefId} whiteLabel={true} />
-            ) : (
-              <AnonymousBriefEditor
-                briefId={briefId}
-                token={token}
-                onBriefCreated={handleBriefCreated}
-                onRegisterClick={handleRegisterClick}
-              />
-            )}
+            <AnonymousBriefEditor
+              briefId={briefId}
+              token={token}
+              onBriefCreated={handleBriefCreated}
+              onRegisterClick={handleRegisterClick}
+            />
           </div>
         ) : (
-          <div className={styles.mobileDocPane}>{documentPanel}</div>
+          <div className={styles.mobileDocPane}>{anonDocumentPanel}</div>
         )}
 
         {sendModal}
@@ -212,18 +219,14 @@ export default function BrandedBriefDetailPage() {
         </div>
       )}
       <div className={styles.desktopContent}>
-        <div className={styles.desktopDocPane}>{documentPanel}</div>
+        <div className={styles.desktopDocPane}>{anonDocumentPanel}</div>
         <div className={styles.desktopChatPane}>
-          {isClient ? (
-            <AuthenticatedBriefEditor briefId={briefId} whiteLabel={true} />
-          ) : (
-            <AnonymousBriefEditor
-              briefId={briefId}
-              token={token}
-              onBriefCreated={handleBriefCreated}
-              onRegisterClick={handleRegisterClick}
-            />
-          )}
+          <AnonymousBriefEditor
+            briefId={briefId}
+            token={token}
+            onBriefCreated={handleBriefCreated}
+            onRegisterClick={handleRegisterClick}
+          />
         </div>
       </div>
 
