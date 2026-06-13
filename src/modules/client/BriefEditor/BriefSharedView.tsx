@@ -77,21 +77,16 @@ interface BriefSharedViewProps {
   data: BriefShareView;
 }
 
+const CLIENT_FACING_KINDS = ['production_brief', 'deliverables_checklist'] as const;
+
 export const BriefSharedView = (props: BriefSharedViewProps) => {
   const byKind = new Map(props.data.documents.map((x) => [x.kind, x]));
 
-  const items = [
-    {
-      key: 'production_brief',
-      label: t('BRIEF_V3_TAB_PRODUCTION_BRIEF'),
-      document: byKind.get('production_brief'),
-    },
-    {
-      key: 'vendor_email',
-      label: t('BRIEF_V3_TAB_VENDOR_EMAIL'),
-      document: byKind.get('vendor_email'),
-    },
-  ];
+  const items = CLIENT_FACING_KINDS.map((kind) => ({
+    key: kind,
+    label: kind === 'production_brief' ? t('BRIEF_V3_TAB_PRODUCTION_BRIEF') : t('BRIEF_V3_TAB_DELIVERABLES'),
+    document: byKind.get(kind),
+  })).filter((x) => !!x.document);
 
   return (
     <div className={styles.wrapper}>
