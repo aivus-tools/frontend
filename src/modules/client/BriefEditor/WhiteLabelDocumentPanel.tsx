@@ -40,12 +40,21 @@ const htmlToPlainText = (html: string): string => {
   return temp.innerText;
 };
 
+const is409Error = (error: unknown): boolean => {
+  if (typeof error !== 'object' || error == null) {
+    return false;
+  }
+  const status = (error as { status?: unknown }).status;
+  return status === 409;
+};
+
 const WhiteLabelDocumentEditor = forwardRef<WhiteLabelDocumentHandle, WhiteLabelDocumentEditorProps>((props, ref) => {
   const { briefId, document: doc, token, onSaveStateChange } = props;
   const { message: messageApi } = App.useApp();
   const [updateDoc] = useUpdatePublicBriefFinalDocumentMutation();
   const saveTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const latestHtmlRef = useRef<string>(doc.html);
+  const saveBlockedRef = useRef<boolean>(false);
   const onSaveStateChangeRef = useRef(onSaveStateChange);
   onSaveStateChangeRef.current = onSaveStateChange;
 
@@ -68,6 +77,9 @@ const WhiteLabelDocumentEditor = forwardRef<WhiteLabelDocumentHandle, WhiteLabel
     ],
     content: doc.html,
     onUpdate: ({ editor: current }) => {
+      if (saveBlockedRef.current) {
+        return;
+      }
       const html = current.getHTML();
       latestHtmlRef.current = html;
       setSaveState('saving');
@@ -75,6 +87,9 @@ const WhiteLabelDocumentEditor = forwardRef<WhiteLabelDocumentHandle, WhiteLabel
         clearTimeout(saveTimerRef.current);
       }
       saveTimerRef.current = setTimeout(async () => {
+        if (saveBlockedRef.current) {
+          return;
+        }
         try {
           await updateDoc({
             briefId,
@@ -84,8 +99,14 @@ const WhiteLabelDocumentEditor = forwardRef<WhiteLabelDocumentHandle, WhiteLabel
             token,
           }).unwrap();
           setSaveState('saved');
-        } catch {
-          setSaveState('error');
+        } catch (error) {
+          if (is409Error(error)) {
+            saveBlockedRef.current = true;
+            setSaveState('error');
+            messageApi.warning(t('BRIEF_ALREADY_SENT_EDIT_BLOCKED'));
+          } else {
+            setSaveState('error');
+          }
         }
       }, AUTOSAVE_DEBOUNCE_MS);
     },
@@ -227,7 +248,6 @@ const GENERATING_POLL_INTERVAL_MS = 3000;
 interface WhiteLabelDocumentPanelProps {
   briefId: string;
   token: string;
-  onReadyHtmlChange?: (html: string) => void;
 }
 
 export const WhiteLabelDocumentPanel = forwardRef<WhiteLabelDocumentHandle, WhiteLabelDocumentPanelProps>(
