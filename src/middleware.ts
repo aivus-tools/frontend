@@ -91,16 +91,21 @@ const CSP = isDevelopment
   ? `default-src 'self'; script-src 'self' 'unsafe-eval' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https:; font-src 'self' data:; connect-src 'self' data: ${connectSrcDev}; frame-ancestors 'self' https://www.vilkaservice.com https://app.aivus.co`
   : "default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https:; font-src 'self' data:; connect-src 'self' data: https://api.aivus.co; frame-ancestors 'self' https://www.vilkaservice.com https://app.aivus.co";
 
+const EMBED_CSP = isDevelopment
+  ? `default-src 'self'; script-src 'self' 'unsafe-eval' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https:; font-src 'self' data:; connect-src 'self' data: ${connectSrcDev}; frame-ancestors *`
+  : "default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https:; font-src 'self' data:; connect-src 'self' data: https://api.aivus.co; frame-ancestors *";
+
 export default auth(async (req) => {
   if (
     req.nextUrl.pathname.startsWith('/external') ||
     req.nextUrl.pathname.startsWith('/public/') ||
     req.nextUrl.pathname.startsWith('/public-brief') ||
-    req.nextUrl.pathname.startsWith('/shared-brief')
+    req.nextUrl.pathname.startsWith('/shared-brief') ||
+    req.nextUrl.pathname.startsWith('/brief')
   ) {
-    // For public-facing routes (including shared-brief), still proxy /service/ calls but skip auth requirements
     const response = createPageResponse(req);
-    response.headers.set('Content-Security-Policy', CSP);
+    const isEmbed = req.nextUrl.searchParams.get('embed') === '1';
+    response.headers.set('Content-Security-Policy', isEmbed ? EMBED_CSP : CSP);
     return ensureLocaleCookie(req, response);
   }
 
