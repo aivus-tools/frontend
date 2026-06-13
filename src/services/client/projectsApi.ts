@@ -3,6 +3,13 @@ import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
 import { ApiRoute } from '@/constants/apiRoute';
 import { BriefFinalDocument } from '@/types/briefAi.interface';
 
+interface VendorProjectBriefDocumentsResponse {
+  projectId: string;
+  briefId: string;
+  conversationStatus: string;
+  documents: BriefFinalDocument[];
+}
+
 export const projectsApi = createApi({
   reducerPath: 'projectsApi',
   baseQuery: fetchBaseQuery({ baseUrl: '' }),
@@ -64,6 +71,7 @@ export const projectsApi = createApi({
     }),
     getVendorProjectBriefDocuments: builder.query<BriefFinalDocument[], string>({
       query: (projectId) => ApiRoute.VENDOR_PROJECT_BRIEF_DOCUMENTS(projectId),
+      transformResponse: (response: VendorProjectBriefDocumentsResponse) => response.documents,
     }),
   }),
 });
