@@ -161,7 +161,7 @@ export const publicBriefApi = createApi({
 
     sendPublicBriefToVendor: builder.mutation<
       BriefSendResponse,
-      { briefId: string; token: string; email?: string; slug?: string; idempotencyKey?: string }
+      { briefId: string; token: string; email?: string; slug?: string }
     >({
       query: (args) => ({
         url: ApiRoute.PUBLIC_BRIEF_AI_SEND(args.briefId),
@@ -169,23 +169,16 @@ export const publicBriefApi = createApi({
         body: {
           ...(args.email ? { email: args.email } : {}),
           ...(args.slug ? { slug: args.slug } : {}),
-          ...(args.idempotencyKey ? { idempotencyKey: args.idempotencyKey } : {}),
         },
         headers: { 'X-Brief-Token': args.token },
       }),
     }),
 
-    sendClientBriefToVendor: builder.mutation<
-      BriefSendResponse,
-      { briefId: string; slug: string; idempotencyKey?: string }
-    >({
+    sendClientBriefToVendor: builder.mutation<BriefSendResponse, { briefId: string; slug: string }>({
       query: (args) => ({
         url: ApiRoute.CLIENT_BRIEF_AI_SEND(args.briefId),
         method: 'POST',
-        body: {
-          slug: args.slug,
-          ...(args.idempotencyKey ? { idempotencyKey: args.idempotencyKey } : {}),
-        },
+        body: { slug: args.slug },
       }),
     }),
 
