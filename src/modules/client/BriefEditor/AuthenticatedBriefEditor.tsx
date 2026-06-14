@@ -45,6 +45,7 @@ interface AuthenticatedBriefEditorProps {
   briefId?: string | null;
   onBriefCreated?: (briefId: string) => void;
   whiteLabel?: boolean;
+  alreadySent?: boolean;
 }
 
 const isFinalizeContext = (detail: BriefV3Detail | undefined): boolean => {
@@ -260,9 +261,14 @@ export const AuthenticatedBriefEditor = forwardRef<AuthenticatedBriefEditorHandl
         setPendingAttachments((prev) => prev.filter((x) => !attachmentIds.includes(x.id)));
         try {
           await sendChat({ briefId, message: text, attachmentIds }).unwrap();
-        } catch {
+        } catch (error) {
           patch.undo();
-          messageApi.error(t('UNEXPECTED_ERROR'));
+          const status = typeof error === 'object' && error != null ? (error as { status?: unknown }).status : null;
+          if (status === 409) {
+            messageApi.warning(t('BRIEF_ALREADY_SENT_EDIT_BLOCKED'));
+          } else {
+            messageApi.error(t('UNEXPECTED_ERROR'));
+          }
         } finally {
           setIsChatLoading(false);
         }
@@ -433,7 +439,7 @@ export const AuthenticatedBriefEditor = forwardRef<AuthenticatedBriefEditorHandl
         </div>
       ) : null;
 
-    const composerLocked = !!pendingTaskId;
+    const composerLocked = !!pendingTaskId || !!props.alreadySent;
 
     if (stage === 'finalized') {
       const docsColumnClass =
