@@ -241,6 +241,32 @@ export const publicBriefApi = createApi({
         headers: { 'X-Brief-Token': args.token },
       }),
       invalidatesTags: (_r, _e, args) => [{ type: 'PublicBriefV3', id: args.briefId }],
+      async onQueryStarted(args, { dispatch, queryFulfilled }) {
+        try {
+          const { data } = await queryFulfilled;
+          if (!data.updatedDocuments?.length) {
+            return;
+          }
+          dispatch(
+            publicBriefApi.util.updateQueryData(
+              'getPublicBriefFinalDocuments',
+              { briefId: args.briefId, token: args.token },
+              (draft) => {
+                for (const updated of data.updatedDocuments) {
+                  const existing = draft.documents.find((x) => x.id === updated.id);
+                  if (existing) {
+                    existing.html = updated.html;
+                    existing.plainText = updated.plainText;
+                    existing.updatedAt = updated.updatedAt;
+                  }
+                }
+              }
+            )
+          );
+        } catch {
+          /* mutation failure — nothing to sync */
+        }
+      },
     }),
 
     uploadPublicBriefAttachment: builder.mutation<BriefAttachment, { briefId: string; token: string; file: File }>({
