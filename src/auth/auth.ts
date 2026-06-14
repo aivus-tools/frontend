@@ -7,6 +7,7 @@ import logger from '@/lib/logger';
 import { AUTH_TYPES, GROUPS } from '@/constants/constants';
 import { updateUserSession } from '@/services/server/userService';
 import { PENDING_BRIEF_COOKIE_NAME } from '@/helpers/pendingBrief';
+import { resolveClientIp } from '@/lib/resolveClientIp';
 import type { Groups } from '@/types/user.interface';
 
 // Get environment variables for Google OAuth
@@ -35,7 +36,10 @@ providers.push(
       briefId: {},
       briefToken: {},
     },
-    authorize: async (credentials) => {
+    authorize: async (credentials, request) => {
+      const xff = request.headers.get('x-forwarded-for');
+      const xRealIp = request.headers.get('x-real-ip');
+      const clientIp = resolveClientIp(xff, xRealIp) || undefined;
       try {
         const user = await login({
           email: credentials.email as string,
@@ -43,6 +47,7 @@ providers.push(
           authType: AUTH_TYPES.credentials,
           briefId: credentials.briefId as string | undefined,
           briefToken: credentials.briefToken as string | undefined,
+          clientIp,
         });
 
         return {

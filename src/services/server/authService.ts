@@ -10,11 +10,20 @@ type Credentials = Partial<Record<'email' | 'password', unknown>> & {
   authType: AuthType;
   briefId?: string;
   briefToken?: string;
+  clientIp?: string;
 };
-/**
- * Authenticate user.
- * @returns User data
- */
+
+const buildAuthHeaders = (clientIp?: string): Record<string, string> => {
+  const headers: Record<string, string> = { 'Content-Type': 'application/json' };
+  if (INTERNAL_SECRET) {
+    headers['X-Internal-Secret'] = INTERNAL_SECRET;
+  }
+  if (clientIp) {
+    headers['x-aivus-forwarded-client'] = clientIp;
+  }
+  return headers;
+};
+
 export async function login(credentials: Credentials): Promise<{
   id: string;
   name: string;
@@ -26,16 +35,11 @@ export async function login(credentials: Credentials): Promise<{
   isStaff?: boolean;
 }> {
   try {
-    const headers: Record<string, string> = {
-      'Content-Type': 'application/json',
-    };
-    if (INTERNAL_SECRET) {
-      headers['X-Internal-Secret'] = INTERNAL_SECRET;
-    }
+    const { clientIp, ...body } = credentials;
     const response = await fetch(`${API_URL}${ApiPathname.LOGIN}`, {
       method: 'POST',
-      headers,
-      body: JSON.stringify(credentials),
+      headers: buildAuthHeaders(clientIp),
+      body: JSON.stringify(body),
     });
     if (!response.ok) {
       throw new Error(`Failed to fetch ${ApiPathname.LOGIN}: ${response.statusText}`);
@@ -58,6 +62,7 @@ export async function register({
   password,
   briefId,
   briefToken,
+  clientIp,
 }: {
   name: string;
   email: string;
@@ -65,6 +70,7 @@ export async function register({
   password?: string;
   briefId?: string;
   briefToken?: string;
+  clientIp?: string;
 }): Promise<{
   message: string;
   group?: Groups;
@@ -74,15 +80,9 @@ export async function register({
 }> {
   try {
     logger.info('Registering user:', { name, email, authType });
-    const headers: Record<string, string> = {
-      'Content-Type': 'application/json',
-    };
-    if (INTERNAL_SECRET) {
-      headers['X-Internal-Secret'] = INTERNAL_SECRET;
-    }
     const response = await fetch(`${API_URL}${ApiPathname.REGISTER}`, {
       method: 'POST',
-      headers,
+      headers: buildAuthHeaders(clientIp),
       body: JSON.stringify({
         email,
         name,
@@ -108,7 +108,7 @@ export async function register({
  * Check if a user with the given email exists.
  * @returns boolean
  */
-export async function checkEmail({ email }: { email: string }): Promise<{
+export async function checkEmail({ email, clientIp }: { email: string; clientIp?: string }): Promise<{
   exists: boolean;
   authType: AuthType;
 }> {
@@ -116,9 +116,7 @@ export async function checkEmail({ email }: { email: string }): Promise<{
     const response = await fetch(`${API_URL}${ApiPathname.CHECK_EMAIL}`, {
       method: 'POST',
       body: JSON.stringify({ email }),
-      headers: {
-        'Content-Type': 'application/json',
-      },
+      headers: buildAuthHeaders(clientIp),
     });
     if (!response.ok) {
       throw new Error(`Failed to fetch ${ApiPathname.CHECK_EMAIL}: ${response.statusText}`);
