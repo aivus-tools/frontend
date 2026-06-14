@@ -5,6 +5,13 @@ import userEvent from '@testing-library/user-event';
 import { App } from 'antd';
 import type { WhiteLabelDocumentHandle } from './WhiteLabelDocumentPanel';
 
+const flushMicrotasks = () =>
+  new Promise<void>((resolve) => {
+    Promise.resolve().then(() => {
+      Promise.resolve().then(resolve);
+    });
+  });
+
 beforeAll(() => {
   Object.defineProperty(window, 'matchMedia', {
     writable: true,
@@ -20,6 +27,52 @@ beforeAll(() => {
     }),
   });
 });
+
+let registeredOnUpdate: ((args: { editor: { getHTML: () => string } }) => void) | null = null;
+const mockSetContent = vi.fn();
+const mockEditorCurrentHtml = { value: '<p>Brief content</p>' };
+const mockGetHTML = vi.fn(() => mockEditorCurrentHtml.value);
+const mockEditorInstance = {
+  getHTML: mockGetHTML,
+  commands: {
+    setContent: (html: string, opts?: unknown) => {
+      mockSetContent(html, opts);
+      mockEditorCurrentHtml.value = html;
+    },
+  },
+  isActive: () => false,
+  can: () => ({ undo: () => false, redo: () => false }),
+  chain: () => ({
+    focus: () => ({
+      toggleBold: () => ({ run: vi.fn() }),
+      toggleItalic: () => ({ run: vi.fn() }),
+      toggleUnderline: () => ({ run: vi.fn() }),
+      toggleHeading: () => ({ run: vi.fn() }),
+      toggleBulletList: () => ({ run: vi.fn() }),
+      undo: () => ({ run: vi.fn() }),
+      redo: () => ({ run: vi.fn() }),
+    }),
+  }),
+};
+
+let editorMounted = false;
+vi.mock('@tiptap/react', () => ({
+  useEditor: (config: { content?: string; onUpdate?: (args: { editor: { getHTML: () => string } }) => void }) => {
+    if (!editorMounted && config.content != null) {
+      mockEditorCurrentHtml.value = config.content;
+      editorMounted = true;
+    }
+    if (config.onUpdate) {
+      registeredOnUpdate = config.onUpdate;
+    }
+    return mockEditorInstance;
+  },
+  EditorContent: () => React.createElement('div', { 'data-testid': 'editor-content' }),
+}));
+vi.mock('@tiptap/starter-kit', () => ({ default: {} }));
+vi.mock('@tiptap/extension-link', () => ({ default: { configure: () => ({}) } }));
+vi.mock('@tiptap/extension-underline', () => ({ default: {} }));
+vi.mock('@tiptap/extension-placeholder', () => ({ default: { configure: () => ({}) } }));
 
 const mocks = vi.hoisted(() => ({
   getDocuments: vi.fn(),
@@ -59,6 +112,10 @@ const renderPanel = () =>
 
 describe('WhiteLabelDocumentPanel', () => {
   beforeEach(() => {
+    editorMounted = false;
+    mockEditorCurrentHtml.value = '<p>Brief content</p>';
+    mockSetContent.mockClear();
+    registeredOnUpdate = null;
     mocks.getDocuments.mockReturnValue({
       data: mockPackage,
       isLoading: false,
@@ -263,5 +320,138 @@ describe('WhiteLabelDocumentPanel', () => {
     const html = ref.current?.getProductionBriefHtml();
     expect(typeof html).toBe('string');
     expect(html).not.toContain('Deliverables');
+  });
+
+  describe('resync after autosave (R14-1-RESYNC-TEST-GAP)', () => {
+    it('applies AI edit via setContent after autosave timer completes (saveTimerRef=null)', async () => {
+      vi.useFakeTimers();
+
+      const docA = {
+        id: 'doc-1',
+        kind: 'production_brief' as const,
+        html: '<p>Brief content</p>',
+        plainText: 'A',
+        createdAt: null,
+        updatedAt: null,
+      };
+      const docB = {
+        id: 'doc-1',
+        kind: 'production_brief' as const,
+        html: '<p>B</p>',
+        plainText: 'B',
+        createdAt: null,
+        updatedAt: null,
+      };
+
+      mocks.getDocuments.mockReturnValue({
+        data: { ...mockPackage, documents: [docA] },
+        isLoading: false,
+        isError: false,
+        refetch: mocks.refetch,
+      });
+      mocks.updateDocument.mockReturnValue({ unwrap: () => Promise.resolve() });
+
+      const { rerender } = render(
+        <App>
+          <WhiteLabelDocumentPanel briefId='brief-1' token='tok-1' />
+        </App>
+      );
+
+      act(() => {
+        if (registeredOnUpdate) {
+          registeredOnUpdate({ editor: { getHTML: () => '<p>Brief content</p>' } });
+        }
+      });
+
+      await act(async () => {
+        await vi.runAllTimersAsync();
+      });
+
+      mockEditorCurrentHtml.value = '<p>Brief content</p>';
+
+      mocks.getDocuments.mockReturnValue({
+        data: { ...mockPackage, documents: [docB] },
+        isLoading: false,
+        isError: false,
+        refetch: mocks.refetch,
+      });
+
+      await act(async () => {
+        rerender(
+          <App>
+            <WhiteLabelDocumentPanel briefId='brief-1' token='tok-1' />
+          </App>
+        );
+        await Promise.resolve();
+      });
+
+      expect(mockSetContent).toHaveBeenCalledWith('<p>B</p>', { emitUpdate: false });
+
+      vi.useRealTimers();
+    });
+
+    it('does not apply AI edit via setContent while autosave timer is in flight (saveTimerRef active)', async () => {
+      vi.useFakeTimers();
+
+      const docA = {
+        id: 'doc-1',
+        kind: 'production_brief' as const,
+        html: '<p>Brief content</p>',
+        plainText: 'A',
+        createdAt: null,
+        updatedAt: null,
+      };
+      const docB = {
+        id: 'doc-1',
+        kind: 'production_brief' as const,
+        html: '<p>B</p>',
+        plainText: 'B',
+        createdAt: null,
+        updatedAt: null,
+      };
+
+      mocks.getDocuments.mockReturnValue({
+        data: { ...mockPackage, documents: [docA] },
+        isLoading: false,
+        isError: false,
+        refetch: mocks.refetch,
+      });
+
+      const { rerender } = render(
+        <App>
+          <WhiteLabelDocumentPanel briefId='brief-1' token='tok-1' />
+        </App>
+      );
+
+      act(() => {
+        if (registeredOnUpdate) {
+          registeredOnUpdate({ editor: { getHTML: () => '<p>Brief content</p>' } });
+        }
+      });
+
+      mocks.getDocuments.mockReturnValue({
+        data: { ...mockPackage, documents: [docB] },
+        isLoading: false,
+        isError: false,
+        refetch: mocks.refetch,
+      });
+
+      await act(async () => {
+        rerender(
+          <App>
+            <WhiteLabelDocumentPanel briefId='brief-1' token='tok-1' />
+          </App>
+        );
+        await Promise.resolve();
+      });
+
+      expect(mockSetContent).not.toHaveBeenCalled();
+
+      await act(async () => {
+        await vi.runAllTimersAsync();
+      });
+
+      vi.useRealTimers();
+    });
   });
 });
