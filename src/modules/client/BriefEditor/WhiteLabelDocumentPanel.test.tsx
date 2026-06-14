@@ -125,4 +125,34 @@ describe('WhiteLabelDocumentPanel', () => {
     const options = lastCall?.[1] as { pollingInterval?: number; skip?: boolean } | undefined;
     expect(!options?.pollingInterval || options.pollingInterval === 0).toBe(true);
   });
+
+  it('shows deliverables tab when deliverables_checklist document is present', () => {
+    mocks.getDocuments.mockReturnValue({
+      data: {
+        ...mockPackage,
+        documents: [
+          ...mockPackage.documents,
+          {
+            id: 'doc-2',
+            kind: 'deliverables_checklist' as const,
+            html: '<p>Deliverables</p>',
+            plainText: 'Deliverables',
+            createdAt: null,
+            updatedAt: null,
+          },
+        ],
+      },
+      isLoading: false,
+      isError: false,
+      refetch: mocks.refetch,
+    });
+    renderPanel();
+    expect(screen.getByText('Production Brief')).toBeTruthy();
+    expect(screen.getByText('Deliverables')).toBeTruthy();
+  });
+
+  it('does not show deliverables tab when only production_brief exists', () => {
+    renderPanel();
+    expect(screen.queryByText('Deliverables')).toBeNull();
+  });
 });

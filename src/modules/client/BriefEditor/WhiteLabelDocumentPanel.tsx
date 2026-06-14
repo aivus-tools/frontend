@@ -256,6 +256,7 @@ export const WhiteLabelDocumentPanel = forwardRef<WhiteLabelDocumentHandle, Whit
     const { message: messageApi } = App.useApp();
     const [saveState, setSaveState] = useState<SaveState>('idle');
     const [pollingInterval, setPollingInterval] = useState(0);
+    const [activeTab, setActiveTab] = useState<'production_brief' | 'deliverables_checklist'>('production_brief');
     const editorRef = useRef<WhiteLabelDocumentHandle | null>(null);
 
     useImperativeHandle(
@@ -298,6 +299,7 @@ export const WhiteLabelDocumentPanel = forwardRef<WhiteLabelDocumentHandle, Whit
     }
 
     const productionBrief = pkg?.documents.find((x) => x.kind === 'production_brief');
+    const deliverablesChecklist = pkg?.documents.find((x) => x.kind === 'deliverables_checklist');
 
     if (!productionBrief) {
       return <div className={styles.missingDoc}>{t('BRIEF_V3_DOCUMENT_MISSING')}</div>;
@@ -312,24 +314,40 @@ export const WhiteLabelDocumentPanel = forwardRef<WhiteLabelDocumentHandle, Whit
             ? t('BRIEF_V3_SAVE_FAILED')
             : '';
 
+    const activeDocument =
+      activeTab === 'deliverables_checklist' && deliverablesChecklist ? deliverablesChecklist : productionBrief;
+
     return (
       <div className={styles.outerScroll}>
         <div className={styles.wrapper}>
           <div className={styles.tabsHeader}>
             <div className={styles.tabsList}>
-              <span className={`${styles.tabButton} ${styles.tabButtonActive}`}>
+              <button
+                type='button'
+                className={`${styles.tabButton}${activeTab === 'production_brief' ? ` ${styles.tabButtonActive}` : ''}`}
+                onClick={() => setActiveTab('production_brief')}
+              >
                 {t('BRIEF_V3_TAB_PRODUCTION_BRIEF')}
-              </span>
+              </button>
+              {!!deliverablesChecklist && (
+                <button
+                  type='button'
+                  className={`${styles.tabButton}${activeTab === 'deliverables_checklist' ? ` ${styles.tabButtonActive}` : ''}`}
+                  onClick={() => setActiveTab('deliverables_checklist')}
+                >
+                  {t('BRIEF_V3_TAB_DELIVERABLES')}
+                </button>
+              )}
             </div>
             <div className={styles.headerActions}>
               <span className={saveStatusClass(saveState)}>{saveLabel}</span>
             </div>
           </div>
           <WhiteLabelDocumentEditor
-            key={productionBrief.id}
+            key={activeDocument.id}
             ref={editorRef}
             briefId={briefId}
-            document={productionBrief}
+            document={activeDocument}
             token={token}
             onSaveStateChange={setSaveState}
           />
