@@ -1,6 +1,6 @@
 'use client';
 
-import React, { forwardRef, useEffect, useImperativeHandle, useRef, useState } from 'react';
+import React, { forwardRef, useCallback, useEffect, useImperativeHandle, useRef, useState } from 'react';
 import { useEditor, EditorContent, Editor } from '@tiptap/react';
 import StarterKit from '@tiptap/starter-kit';
 import Link from '@tiptap/extension-link';
@@ -21,6 +21,7 @@ const AUTOSAVE_DEBOUNCE_MS = 1200;
 type SaveState = 'idle' | 'saving' | 'saved' | 'error';
 
 export interface WhiteLabelDocumentHandle {
+  getProductionBriefHtml: () => string;
   getLatestHtml: () => string;
   flush: () => Promise<void>;
 }
@@ -30,6 +31,7 @@ interface WhiteLabelDocumentEditorProps {
   document: BriefFinalDocument;
   token: string;
   onSaveStateChange: (state: SaveState) => void;
+  onHtmlChange?: (html: string) => void;
 }
 
 const htmlToPlainText = (html: string): string => {
@@ -50,7 +52,7 @@ const is409Error = (error: unknown): boolean => {
 };
 
 const WhiteLabelDocumentEditor = forwardRef<WhiteLabelDocumentHandle, WhiteLabelDocumentEditorProps>((props, ref) => {
-  const { briefId, document: doc, token, onSaveStateChange } = props;
+  const { briefId, document: doc, token, onSaveStateChange, onHtmlChange } = props;
   const { message: messageApi } = App.useApp();
   const [updateDoc] = useUpdatePublicBriefFinalDocumentMutation();
   const saveTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -91,6 +93,7 @@ const WhiteLabelDocumentEditor = forwardRef<WhiteLabelDocumentHandle, WhiteLabel
       }
       const html = current.getHTML();
       latestHtmlRef.current = html;
+      onHtmlChange?.(html);
       setSaveState('saving');
       if (saveTimerRef.current) {
         clearTimeout(saveTimerRef.current);
@@ -153,8 +156,7 @@ const WhiteLabelDocumentEditor = forwardRef<WhiteLabelDocumentHandle, WhiteLabel
       return;
     }
     if (saveTimerRef.current) {
-      clearTimeout(saveTimerRef.current);
-      saveTimerRef.current = null;
+      return;
     }
     editor.commands.setContent(doc.html, { emitUpdate: false });
     latestHtmlRef.current = doc.html;
@@ -163,6 +165,7 @@ const WhiteLabelDocumentEditor = forwardRef<WhiteLabelDocumentHandle, WhiteLabel
   useImperativeHandle(
     ref,
     () => ({
+      getProductionBriefHtml: () => latestHtmlRef.current,
       getLatestHtml: () => latestHtmlRef.current,
       flush: async () => {
         if (saveTimerRef.current) {
@@ -311,14 +314,25 @@ export const WhiteLabelDocumentPanel = forwardRef<WhiteLabelDocumentHandle, Whit
     const [pollingInterval, setPollingInterval] = useState(0);
     const [activeTab, setActiveTab] = useState<'production_brief' | 'deliverables_checklist'>('production_brief');
     const editorRef = useRef<WhiteLabelDocumentHandle | null>(null);
+    const productionBriefHtmlRef = useRef<string>('');
+
+    const handleProductionBriefHtmlChange = useCallback((html: string) => {
+      productionBriefHtmlRef.current = html;
+    }, []);
 
     useImperativeHandle(
       ref,
       () => ({
+        getProductionBriefHtml: () => {
+          if (activeTab === 'production_brief') {
+            return editorRef.current?.getLatestHtml() ?? productionBriefHtmlRef.current;
+          }
+          return productionBriefHtmlRef.current;
+        },
         getLatestHtml: () => editorRef.current?.getLatestHtml() ?? '',
         flush: () => editorRef.current?.flush() ?? Promise.resolve(),
       }),
-      []
+      [activeTab]
     );
 
     const {
@@ -342,6 +356,13 @@ export const WhiteLabelDocumentPanel = forwardRef<WhiteLabelDocumentHandle, Whit
         messageApi.error(t('UNEXPECTED_ERROR'));
       }
     }, [isError, messageApi]);
+
+    useEffect(() => {
+      const productionBriefDoc = pkg?.documents.find((x) => x.kind === 'production_brief');
+      if (productionBriefDoc && !productionBriefHtmlRef.current) {
+        productionBriefHtmlRef.current = productionBriefDoc.html;
+      }
+    }, [pkg]);
 
     if (isLoading || pkg?.generating) {
       return (
@@ -417,6 +438,7 @@ export const WhiteLabelDocumentPanel = forwardRef<WhiteLabelDocumentHandle, Whit
             document={activeDocument}
             token={token}
             onSaveStateChange={setSaveState}
+            onHtmlChange={activeTab === 'production_brief' ? handleProductionBriefHtmlChange : undefined}
           />
         </div>
       </div>

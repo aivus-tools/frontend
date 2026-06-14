@@ -226,4 +226,42 @@ describe('WhiteLabelDocumentPanel', () => {
     await userEvent.click(deliverablesTab);
     expect(screen.getAllByText('Deliverables').length).toBeGreaterThan(0);
   });
+
+  it('MF: getProductionBriefHtml returns production_brief html when deliverables tab is active', async () => {
+    const twoDocPackage = {
+      ...mockPackage,
+      documents: [
+        ...mockPackage.documents,
+        {
+          id: 'doc-2',
+          kind: 'deliverables_checklist' as const,
+          html: '<p>Deliverables</p>',
+          plainText: 'Deliverables',
+          createdAt: null,
+          updatedAt: null,
+        },
+      ],
+    };
+
+    mocks.getDocuments.mockReturnValue({
+      data: twoDocPackage,
+      isLoading: false,
+      isError: false,
+      refetch: mocks.refetch,
+    });
+
+    const ref = createRef<WhiteLabelDocumentHandle>();
+    render(
+      <App>
+        <WhiteLabelDocumentPanel ref={ref} briefId='brief-1' token='tok-1' />
+      </App>
+    );
+
+    const deliverablesTab = screen.getAllByText('Deliverables')[0];
+    await userEvent.click(deliverablesTab);
+
+    const html = ref.current?.getProductionBriefHtml();
+    expect(typeof html).toBe('string');
+    expect(html).not.toContain('Deliverables');
+  });
 });

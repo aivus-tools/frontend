@@ -55,7 +55,7 @@ export default function BrandedBriefDetailPage() {
   const authEditorRef = useRef<AuthenticatedBriefEditorHandle | null>(null);
 
   const getLatestDocumentHtml = useCallback((): string | null => {
-    return anonDocPanelRef.current?.getLatestHtml() ?? null;
+    return anonDocPanelRef.current?.getProductionBriefHtml() ?? null;
   }, []);
   const tokenFromStorage =
     typeof window !== 'undefined'
@@ -215,7 +215,7 @@ export default function BrandedBriefDetailPage() {
           <div className={styles.desktopHeaderActions}>{sendButton}</div>
         </div>
         <div className={styles.desktopContent}>
-          <AuthenticatedBriefEditor ref={authEditorRef} briefId={briefId} whiteLabel={true} />
+          <AuthenticatedBriefEditor ref={authEditorRef} briefId={briefId} whiteLabel={true} alreadySent={alreadySent} />
         </div>
         {sendModal}
       </div>
@@ -244,6 +244,7 @@ export default function BrandedBriefDetailPage() {
             briefId={briefId}
             token={token}
             whiteLabel={true}
+            alreadySent={alreadySent}
             getLatestDocumentHtml={getLatestDocumentHtml}
             onBriefCreated={handleBriefCreated}
             onRegisterClick={handleRegisterClick}
@@ -278,6 +279,7 @@ export default function BrandedBriefDetailPage() {
             briefId={briefId}
             token={token}
             whiteLabel={true}
+            alreadySent={alreadySent}
             getLatestDocumentHtml={getLatestDocumentHtml}
             onBriefCreated={handleBriefCreated}
             onRegisterClick={handleRegisterClick}
