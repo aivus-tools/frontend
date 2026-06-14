@@ -101,11 +101,20 @@ describe('draft cookie resume → localStorage sync (SF WL-DRAFT-COOKIE-RESUME)'
 describe('consumeAuthReturnUrl — open redirect guard (SEC-OPEN-REDIRECT-1)', () => {
   beforeEach(() => {
     sessionStorage.clear();
+    Object.defineProperty(window, 'location', {
+      value: { origin: 'http://localhost', search: '' },
+      writable: true,
+    });
   });
 
   it('returns relative path from sessionStorage', () => {
     setAuthReturnUrl('/brief/acme');
     expect(consumeAuthReturnUrl()).toBe('/brief/acme');
+  });
+
+  it('preserves query and hash from sessionStorage', () => {
+    setAuthReturnUrl('/brief/acme?x=1#y');
+    expect(consumeAuthReturnUrl()).toBe('/brief/acme?x=1#y');
   });
 
   it('blocks absolute URL from sessionStorage', () => {
@@ -118,9 +127,19 @@ describe('consumeAuthReturnUrl — open redirect guard (SEC-OPEN-REDIRECT-1)', (
     expect(consumeAuthReturnUrl()).toBeNull();
   });
 
+  it('blocks backslash vector from sessionStorage — /\\evil.com', () => {
+    setAuthReturnUrl('/\\evil.com');
+    expect(consumeAuthReturnUrl()).toBeNull();
+  });
+
+  it('blocks backslash-slash vector from sessionStorage — /\\/evil.com', () => {
+    setAuthReturnUrl('/\\/evil.com');
+    expect(consumeAuthReturnUrl()).toBeNull();
+  });
+
   it('blocks absolute URL from query param', () => {
     Object.defineProperty(window, 'location', {
-      value: { search: '?next=https://evil.com' },
+      value: { origin: 'http://localhost', search: '?next=https://evil.com' },
       writable: true,
     });
     expect(consumeAuthReturnUrl()).toBeNull();
@@ -128,7 +147,23 @@ describe('consumeAuthReturnUrl — open redirect guard (SEC-OPEN-REDIRECT-1)', (
 
   it('blocks protocol-relative URL from query param', () => {
     Object.defineProperty(window, 'location', {
-      value: { search: '?next=//evil.com' },
+      value: { origin: 'http://localhost', search: '?next=//evil.com' },
+      writable: true,
+    });
+    expect(consumeAuthReturnUrl()).toBeNull();
+  });
+
+  it('blocks backslash vector from query param — decoded /%5Cevil.com → /\\evil.com', () => {
+    Object.defineProperty(window, 'location', {
+      value: { origin: 'http://localhost', search: '?next=' + encodeURIComponent('/\\evil.com') },
+      writable: true,
+    });
+    expect(consumeAuthReturnUrl()).toBeNull();
+  });
+
+  it('blocks backslash-slash vector from query param — /%5C%2Fevil.com', () => {
+    Object.defineProperty(window, 'location', {
+      value: { origin: 'http://localhost', search: '?next=' + encodeURIComponent('/\\/evil.com') },
       writable: true,
     });
     expect(consumeAuthReturnUrl()).toBeNull();
@@ -136,10 +171,18 @@ describe('consumeAuthReturnUrl — open redirect guard (SEC-OPEN-REDIRECT-1)', (
 
   it('passes relative path from query param', () => {
     Object.defineProperty(window, 'location', {
-      value: { search: '?next=/brief/acme' },
+      value: { origin: 'http://localhost', search: '?next=/brief/acme' },
       writable: true,
     });
     expect(consumeAuthReturnUrl()).toBe('/brief/acme');
+  });
+
+  it('preserves query and hash from query param', () => {
+    Object.defineProperty(window, 'location', {
+      value: { origin: 'http://localhost', search: '?next=' + encodeURIComponent('/brief/acme?x=1#y') },
+      writable: true,
+    });
+    expect(consumeAuthReturnUrl()).toBe('/brief/acme?x=1#y');
   });
 });
 

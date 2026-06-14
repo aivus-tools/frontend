@@ -117,7 +117,15 @@ export const setAuthReturnUrl = (url: string): void => {
 };
 
 const sanitizeReturnUrl = (value: string | null): string | null => {
-  return value && value.startsWith('/') && !value.startsWith('//') ? value : null;
+  if (!value) {
+    return null;
+  }
+  try {
+    const parsed = new URL(value, window.location.origin);
+    return parsed.origin === window.location.origin ? parsed.pathname + parsed.search + parsed.hash : null;
+  } catch {
+    return null;
+  }
 };
 
 export const consumeAuthReturnUrl = (): string | null => {
