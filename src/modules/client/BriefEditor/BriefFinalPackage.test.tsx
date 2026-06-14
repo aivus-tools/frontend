@@ -194,4 +194,11 @@ describe('BriefFinalPackage', () => {
       unmount();
     });
   });
+
+  describe('SF-BE-3: 409 autosave blocking', () => {
+    it('renders DocumentEditor without crashing when updateDocument is provided', () => {
+      renderPackage(false);
+      expect(screen.getByText('Production Brief')).toBeTruthy();
+    });
+  });
 });

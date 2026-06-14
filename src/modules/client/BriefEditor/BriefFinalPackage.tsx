@@ -72,12 +72,21 @@ interface DocumentEditorProps {
   onSaveStateChange: (state: SaveState) => void;
 }
 
+const is409Error = (error: unknown): boolean => {
+  if (typeof error !== 'object' || error == null) {
+    return false;
+  }
+  const status = (error as { status?: unknown }).status;
+  return status === 409;
+};
+
 const DocumentEditor = forwardRef<DocumentEditorHandle, DocumentEditorProps>((props, ref) => {
   const { briefId, document: doc, onSaveStateChange } = props;
   const { message: messageApi } = App.useApp();
   const [updateDoc] = useUpdateBriefAiFinalDocumentMutation();
   const saveTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const latestHtmlRef = useRef<string>(doc.html);
+  const saveBlockedRef = useRef<boolean>(false);
   const onSaveStateChangeRef = useRef(onSaveStateChange);
   onSaveStateChangeRef.current = onSaveStateChange;
 
@@ -100,6 +109,9 @@ const DocumentEditor = forwardRef<DocumentEditorHandle, DocumentEditorProps>((pr
     ],
     content: doc.html,
     onUpdate: ({ editor: current }) => {
+      if (saveBlockedRef.current) {
+        return;
+      }
       const html = current.getHTML();
       latestHtmlRef.current = html;
       setSaveState('saving');
@@ -107,6 +119,9 @@ const DocumentEditor = forwardRef<DocumentEditorHandle, DocumentEditorProps>((pr
         clearTimeout(saveTimerRef.current);
       }
       saveTimerRef.current = setTimeout(async () => {
+        if (saveBlockedRef.current) {
+          return;
+        }
         try {
           await updateDoc({
             briefId,
@@ -115,8 +130,14 @@ const DocumentEditor = forwardRef<DocumentEditorHandle, DocumentEditorProps>((pr
             plainText: htmlToPlainText(html),
           }).unwrap();
           setSaveState('saved');
-        } catch {
-          setSaveState('error');
+        } catch (error) {
+          if (is409Error(error)) {
+            saveBlockedRef.current = true;
+            setSaveState('error');
+            messageApi.warning(t('BRIEF_ALREADY_SENT_EDIT_BLOCKED'));
+          } else {
+            setSaveState('error');
+          }
         }
       }, AUTOSAVE_DEBOUNCE_MS);
     },
@@ -177,6 +198,9 @@ const DocumentEditor = forwardRef<DocumentEditorHandle, DocumentEditorProps>((pr
         }
         clearTimeout(saveTimerRef.current);
         saveTimerRef.current = null;
+        if (saveBlockedRef.current) {
+          return;
+        }
         try {
           await updateDoc({
             briefId,
