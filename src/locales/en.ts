@@ -246,6 +246,7 @@ export const EN_LOCALES = {
   TIMING: 'Timing',
   TOTAL: 'Total',
   TOTAL_CLIENTS_COST: "Client's total cost",
+  BRIEF_CLAIM_EMAIL_MISMATCH: 'This brief was sent with a different email. You will be redirected to your dashboard.',
   UNEXPECTED_ERROR: 'An unexpected error occurred',
   UNFORESEEN_EXPENSES: 'Unforeseen expenses',
   UNIT: 'Unit',

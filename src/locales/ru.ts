@@ -246,6 +246,7 @@ export const RU_LOCALES = {
   TIMING: 'Сроки',
   TOTAL: 'ИТОГО',
   TOTAL_CLIENTS_COST: 'Общая стоимость клиента',
+  BRIEF_CLAIM_EMAIL_MISMATCH: 'Этот бриф был отправлен с другого email. Вы будете перенаправлены в кабинет.',
   UNEXPECTED_ERROR: 'Произошла непредвиденная ошибка',
   UNFORESEEN_EXPENSES: 'Непредвиденные расходы',
   UNIT: 'Блок',

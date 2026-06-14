@@ -85,6 +85,20 @@ describe('BriefClaimPage', () => {
     expect(mocks.replace).toHaveBeenCalledWith(expect.stringContaining('dashboard'));
   });
 
+  it('redirects to dashboard with warning on 403 (email mismatch)', async () => {
+    mocks.claimBrief.mockReturnValue({
+      unwrap: () => Promise.reject({ status: 403 }),
+    });
+    mocks.getPublicBriefToken.mockReturnValue(null);
+
+    renderPage('test-token');
+
+    await new Promise((x) => setTimeout(x, 50));
+
+    expect(mocks.replace).toHaveBeenCalledWith(expect.stringContaining('dashboard'));
+    expect(mocks.removePublicBriefToken).toHaveBeenCalledWith('brief-123');
+  });
+
   it('redirects to brief detail on success', async () => {
     mocks.claimBrief.mockReturnValue({
       unwrap: () => Promise.resolve({ id: 'brief-123' }),

@@ -69,6 +69,12 @@ const BriefClaimPage = () => {
           router.replace(AppRoute.BRIEF_DETAIL(params.briefId));
           return;
         }
+        if (status === 403) {
+          removePublicBriefToken(params.briefId);
+          message.warning(t('BRIEF_CLAIM_EMAIL_MISMATCH'));
+          router.replace(AppRoute.DASHBOARD);
+          return;
+        }
         logger.error('Failed to claim brief:', error);
         message.error(t('UNEXPECTED_ERROR'));
         router.replace(AppRoute.DASHBOARD);
