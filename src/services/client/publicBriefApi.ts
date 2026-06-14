@@ -240,7 +240,10 @@ export const publicBriefApi = createApi({
         },
         headers: { 'X-Brief-Token': args.token },
       }),
-      invalidatesTags: (_r, _e, args) => [{ type: 'PublicBriefV3', id: args.briefId }],
+      invalidatesTags: (_r, _e, args) => [
+        { type: 'PublicBriefV3', id: args.briefId },
+        { type: 'PublicBriefFinalDocuments', id: args.briefId },
+      ],
       async onQueryStarted(args, { dispatch, queryFulfilled }) {
         try {
           const { data } = await queryFulfilled;

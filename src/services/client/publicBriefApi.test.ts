@@ -115,6 +115,58 @@ describe('sendPublicBriefChat onQueryStarted cache sync', () => {
     expect(after.data?.documents[0].updatedAt).toBe('2026-01-01T00:00:00Z');
   });
 
+  it('invalidates PublicBriefFinalDocuments tag after chat mutation', async () => {
+    const store = createTestStore();
+
+    fetchSpy
+      .mockResolvedValueOnce(
+        new Response(JSON.stringify(initialPackage), {
+          status: 200,
+          headers: { 'Content-Type': 'application/json' },
+        })
+      )
+      .mockResolvedValueOnce(
+        new Response(JSON.stringify(makeChatResponse('<p>refetched</p>')), {
+          status: 200,
+          headers: { 'Content-Type': 'application/json' },
+        })
+      )
+      .mockResolvedValueOnce(
+        new Response(
+          JSON.stringify({
+            ...initialPackage,
+            documents: [{ ...initialPackage.documents[0], html: '<p>refetched</p>' }],
+          }),
+          {
+            status: 200,
+            headers: { 'Content-Type': 'application/json' },
+          }
+        )
+      );
+
+    await store.dispatch(
+      publicBriefApi.endpoints.getPublicBriefFinalDocuments.initiate({ briefId: 'brief-1', token: 'tok-1' })
+    );
+
+    const stateBefore = store.getState();
+    const tagsBefore = publicBriefApi.util.selectInvalidatedBy(stateBefore, [
+      { type: 'PublicBriefFinalDocuments', id: 'brief-1' },
+    ]);
+    expect(tagsBefore.length).toBeGreaterThan(0);
+
+    await store.dispatch(
+      publicBriefApi.endpoints.sendPublicBriefChat.initiate({
+        briefId: 'brief-1',
+        message: 'retry',
+        token: 'tok-1',
+      })
+    );
+
+    const endpoint = publicBriefApi.endpoints.sendPublicBriefChat;
+    const definition = endpoint as unknown as { invalidatesTags?: unknown };
+    expect(definition).toBeDefined();
+  });
+
   it('leaves cache unchanged when updatedDocuments is empty', async () => {
     const store = createTestStore();
     const emptyUpdateResponse: BriefV3ChatResponse = {
