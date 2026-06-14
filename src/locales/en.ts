@@ -571,6 +571,7 @@ export const EN_LOCALES = {
   BRIEF_V3_LOADING_DOCS_TITLE: 'Loading documents...',
   BRIEF_V3_LOADING_DOCS_SUBTITLE: 'Fetching the latest version from the server.',
   BRIEF_V3_FINALIZE_FAILED: 'Could not finalize the brief. Please try again.',
+  BRIEF_V3_FINALIZE_FAILED_HINT: 'Send a message in the chat to retry generation.',
   BRIEF_V3_FINALIZE_TIMEOUT: 'Finalization timed out. Please try again.',
   BRIEF_V3_REGENERATE_PACKAGE: 'Regenerate package',
   BRIEF_V3_REGENERATE_CONFIRM_TITLE: 'Regenerate package?',

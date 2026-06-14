@@ -148,6 +148,7 @@ export interface BriefFinalPackage {
   conversationStatus: ConversationStatus;
   documents: BriefFinalDocument[];
   generating?: boolean;
+  finalizeFailed?: boolean;
 }
 
 export interface LLMCallTraceEntry {

@@ -572,6 +572,7 @@ export const RU_LOCALES = {
   BRIEF_V3_LOADING_DOCS_TITLE: 'Подгружаю документы...',
   BRIEF_V3_LOADING_DOCS_SUBTITLE: 'Беру свежую версию с сервера.',
   BRIEF_V3_FINALIZE_FAILED: 'Не удалось сформировать бриф. Попробуй ещё раз.',
+  BRIEF_V3_FINALIZE_FAILED_HINT: 'Отправь сообщение в чате, чтобы повторить генерацию.',
   BRIEF_V3_FINALIZE_TIMEOUT: 'Финализация превысила лимит ожидания.',
   BRIEF_V3_REGENERATE_PACKAGE: 'Пересобрать пакет',
   BRIEF_V3_REGENERATE_CONFIRM_TITLE: 'Пересобрать пакет?',
