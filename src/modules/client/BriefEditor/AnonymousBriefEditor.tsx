@@ -36,6 +36,7 @@ interface AnonymousBriefEditorProps {
   token?: string | null;
   initialTaskId?: string | null;
   whiteLabel?: boolean;
+  alreadySent?: boolean;
   getLatestDocumentHtml?: () => string | null;
   onBriefCreated?: (briefId: string, token?: string) => void;
   onRegisterClick?: (briefId: string | null, token: string | null, email: string | null) => void;
@@ -237,9 +238,14 @@ export const AnonymousBriefEditor = (props: AnonymousBriefEditorProps) => {
       const productionBriefHtml = latestHtml ?? whiteLabelFallback;
       try {
         await sendChat({ briefId, token, message: text, attachmentIds, documentHtml: productionBriefHtml }).unwrap();
-      } catch {
+      } catch (error) {
         patch.undo();
-        messageApi.error(t('UNEXPECTED_ERROR'));
+        const status = typeof error === 'object' && error != null ? (error as { status?: unknown }).status : null;
+        if (status === 409) {
+          messageApi.warning(t('BRIEF_ALREADY_SENT_EDIT_BLOCKED'));
+        } else {
+          messageApi.error(t('UNEXPECTED_ERROR'));
+        }
       } finally {
         setIsChatLoading(false);
       }
@@ -351,7 +357,7 @@ export const AnonymousBriefEditor = (props: AnonymousBriefEditorProps) => {
             showRegistrationButton={showRegistrationButton}
             registrationEmail={registrationEmail}
             onRegisterClick={handleRegisterClick}
-            composerDisabled={!!pendingTaskId}
+            composerDisabled={!!pendingTaskId || !!props.alreadySent}
           />
         </div>
       </div>

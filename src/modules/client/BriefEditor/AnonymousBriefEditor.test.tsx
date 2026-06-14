@@ -237,4 +237,22 @@ describe('AnonymousBriefEditor', () => {
     await screen.findByTestId('chat-panel');
     expect(mocks.getFinalDocumentsFn).toHaveBeenCalledWith(expect.objectContaining({ skip: false }));
   });
+
+  it('alreadySent: composerDisabled is true when alreadySent prop is true', async () => {
+    detailData = makeDetail({ conversationStatus: 'finalized', pendingTaskId: null });
+
+    render(<AnonymousBriefEditor briefId='b1' token='tok' alreadySent={true} />);
+
+    const panel = await screen.findByTestId('chat-panel');
+    expect(panel.getAttribute('data-composer-disabled')).toBe('true');
+  });
+
+  it('alreadySent: composerDisabled is false when alreadySent prop is false', async () => {
+    detailData = makeDetail({ conversationStatus: 'finalized', pendingTaskId: null });
+
+    render(<AnonymousBriefEditor briefId='b1' token='tok' alreadySent={false} />);
+
+    const panel = await screen.findByTestId('chat-panel');
+    expect(panel.getAttribute('data-composer-disabled')).toBe('false');
+  });
 });
