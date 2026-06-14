@@ -116,6 +116,10 @@ export const setAuthReturnUrl = (url: string): void => {
   sessionStorage.setItem(RETURN_URL_KEY, url);
 };
 
+const sanitizeReturnUrl = (value: string | null): string | null => {
+  return value && value.startsWith('/') && !value.startsWith('//') ? value : null;
+};
+
 export const consumeAuthReturnUrl = (): string | null => {
   if (typeof window === 'undefined') {
     return null;
@@ -124,9 +128,9 @@ export const consumeAuthReturnUrl = (): string | null => {
   const nextFromQuery = params.get('next');
   if (nextFromQuery) {
     sessionStorage.removeItem(RETURN_URL_KEY);
-    return nextFromQuery;
+    return sanitizeReturnUrl(nextFromQuery);
   }
   const value = sessionStorage.getItem(RETURN_URL_KEY);
   sessionStorage.removeItem(RETURN_URL_KEY);
-  return value;
+  return sanitizeReturnUrl(value);
 };

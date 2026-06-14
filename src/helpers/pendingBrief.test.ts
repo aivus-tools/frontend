@@ -8,6 +8,8 @@ import {
   clearDraftForSlug,
   markBriefAsSent,
   isBriefSent,
+  setAuthReturnUrl,
+  consumeAuthReturnUrl,
 } from './pendingBrief';
 import { getPublicBriefToken, savePublicBriefToken } from '@/services/client/publicBriefApi';
 
@@ -93,6 +95,51 @@ describe('draft cookie resume → localStorage sync (SF WL-DRAFT-COOKIE-RESUME)'
     const draft = getDraftForSlug('vendor-slug');
     const isMatchingBrief = draft?.briefId === 'brief-b';
     expect(isMatchingBrief).toBe(false);
+  });
+});
+
+describe('consumeAuthReturnUrl — open redirect guard (SEC-OPEN-REDIRECT-1)', () => {
+  beforeEach(() => {
+    sessionStorage.clear();
+  });
+
+  it('returns relative path from sessionStorage', () => {
+    setAuthReturnUrl('/brief/acme');
+    expect(consumeAuthReturnUrl()).toBe('/brief/acme');
+  });
+
+  it('blocks absolute URL from sessionStorage', () => {
+    setAuthReturnUrl('https://evil.com');
+    expect(consumeAuthReturnUrl()).toBeNull();
+  });
+
+  it('blocks protocol-relative URL from sessionStorage', () => {
+    setAuthReturnUrl('//evil.com');
+    expect(consumeAuthReturnUrl()).toBeNull();
+  });
+
+  it('blocks absolute URL from query param', () => {
+    Object.defineProperty(window, 'location', {
+      value: { search: '?next=https://evil.com' },
+      writable: true,
+    });
+    expect(consumeAuthReturnUrl()).toBeNull();
+  });
+
+  it('blocks protocol-relative URL from query param', () => {
+    Object.defineProperty(window, 'location', {
+      value: { search: '?next=//evil.com' },
+      writable: true,
+    });
+    expect(consumeAuthReturnUrl()).toBeNull();
+  });
+
+  it('passes relative path from query param', () => {
+    Object.defineProperty(window, 'location', {
+      value: { search: '?next=/brief/acme' },
+      writable: true,
+    });
+    expect(consumeAuthReturnUrl()).toBe('/brief/acme');
   });
 });
 
