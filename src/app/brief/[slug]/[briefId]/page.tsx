@@ -15,7 +15,13 @@ import {
 } from '@/services/client/publicBriefApi';
 import { useGetBriefAiDetailQuery, useGetSentBriefIdsToVendorQuery, briefAiApi } from '@/services/client/briefAiApi';
 import { useAppDispatch } from '@/store/hooks';
-import { setPendingBrief, isBriefSent, markBriefAsSent, clearDraftForSlug } from '@/helpers/pendingBrief';
+import {
+  setPendingBrief,
+  isBriefSent,
+  markBriefAsSent,
+  clearDraftForSlug,
+  getDraftForSlug,
+} from '@/helpers/pendingBrief';
 import { GROUPS } from '@/constants/constants';
 import { AnonymousBriefEditor } from '@/modules/client/BriefEditor/AnonymousBriefEditor';
 import { AuthenticatedBriefEditor } from '@/modules/client/BriefEditor/AuthenticatedBriefEditor';
@@ -47,7 +53,21 @@ export default function BrandedBriefDetailPage() {
   const getLatestDocumentHtml = useCallback((): string | null => {
     return docPanelRef.current?.getLatestHtml() ?? null;
   }, []);
-  const tokenFromStorage = typeof window !== 'undefined' ? getPublicBriefToken(briefId) : null;
+  const tokenFromStorage =
+    typeof window !== 'undefined'
+      ? (() => {
+          const fromStorage = getPublicBriefToken(briefId);
+          if (fromStorage) {
+            return fromStorage;
+          }
+          const draft = getDraftForSlug(slug);
+          if (draft && draft.briefId === briefId) {
+            savePublicBriefToken(draft.briefId, draft.token);
+            return draft.token;
+          }
+          return null;
+        })()
+      : null;
   const [token, setToken] = useState<string | null>(tokenFromStorage);
 
   const { data: slugInfo, isLoading: isSlugLoading } = useGetPublicBriefBySlugQuery(slug);

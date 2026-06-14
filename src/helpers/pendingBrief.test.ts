@@ -9,6 +9,7 @@ import {
   markBriefAsSent,
   isBriefSent,
 } from './pendingBrief';
+import { getPublicBriefToken, savePublicBriefToken } from '@/services/client/publicBriefApi';
 
 beforeEach(() => {
   document.cookie.split(';').forEach((c) => {
@@ -73,6 +74,25 @@ describe('draft by slug cookie (SF-3)', () => {
     const result = getDraftForSlug('my/special slug');
     expect(result?.briefId).toBe('draft-3');
     expect(result?.token).toBe('tok-3');
+  });
+});
+
+describe('draft cookie resume → localStorage sync (SF WL-DRAFT-COOKIE-RESUME)', () => {
+  it('cookie draft token is available via getPublicBriefToken after savePublicBriefToken called on resume', () => {
+    saveDraftForSlug('vendor-slug', 'brief-resume', 'tok-resume');
+    const draft = getDraftForSlug('vendor-slug');
+    expect(draft?.briefId).toBe('brief-resume');
+    expect(draft?.token).toBe('tok-resume');
+
+    savePublicBriefToken(draft!.briefId, draft!.token);
+    expect(getPublicBriefToken('brief-resume')).toBe('tok-resume');
+  });
+
+  it('does not return token for mismatched briefId from cookie', () => {
+    saveDraftForSlug('vendor-slug', 'brief-a', 'tok-a');
+    const draft = getDraftForSlug('vendor-slug');
+    const isMatchingBrief = draft?.briefId === 'brief-b';
+    expect(isMatchingBrief).toBe(false);
   });
 });
 

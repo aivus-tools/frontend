@@ -85,6 +85,7 @@ export default function BrandedBriefStartPage() {
 
     const existing = getDraftForSlug(slug);
     if (existing) {
+      savePublicBriefToken(existing.briefId, existing.token);
       router.push(AppRoute.BRANDED_BRIEF_DETAIL(slug, existing.briefId) + embedSuffix);
       return;
     }
