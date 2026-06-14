@@ -69,6 +69,8 @@ export const VENDOR_PROJECT_TABS = [
   // },
 ] as const;
 
+export const PUBLIC_APP_URL = process.env.NEXT_PUBLIC_APP_URL ?? 'https://go.aivus.co';
+
 export const NEW_BRIEF_SLUG = 'new-brief';
 
 export const PROJECT_STATUS = {

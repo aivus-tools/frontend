@@ -7,10 +7,9 @@ import Link from 'next/link';
 import { t } from '@/lib/i18n';
 import { AppRoute } from '@/constants/appRoute';
 import { useGetVendorSettingsQuery } from '@/services/client/vendorSettingsApi';
+import { PUBLIC_APP_URL } from '@/constants/constants';
 
 import styles from './PersonalLinkPanel.module.css';
-
-const BASE_URL = process.env.NEXT_PUBLIC_APP_URL ?? 'https://go.aivus.co';
 
 interface EmbedModalProps {
   value: boolean;
@@ -22,7 +21,7 @@ const EmbedModal = (props: EmbedModalProps) => {
   const { message: messageApi } = App.useApp();
   const [copied, setCopied] = useState(false);
 
-  const snippetUrl = `${BASE_URL}${AppRoute.BRANDED_BRIEF(props.slug)}?embed=1`;
+  const snippetUrl = `${PUBLIC_APP_URL}${AppRoute.BRANDED_BRIEF(props.slug)}?embed=1`;
   const snippet = `<iframe src="${snippetUrl}" width="100%" height="700" frameborder="0"></iframe>`;
 
   const handleCopy = async () => {
@@ -58,7 +57,7 @@ export const PersonalLinkPanel = () => {
   const [copied, setCopied] = useState(false);
 
   const slug = settings?.slug ?? null;
-  const briefUrl = slug ? `${BASE_URL}${AppRoute.BRANDED_BRIEF(slug)}` : '';
+  const briefUrl = slug ? `${PUBLIC_APP_URL}${AppRoute.BRANDED_BRIEF(slug)}` : '';
 
   const handleCopy = async () => {
     if (!briefUrl) {
