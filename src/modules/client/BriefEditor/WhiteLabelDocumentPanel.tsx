@@ -22,6 +22,7 @@ type SaveState = 'idle' | 'saving' | 'saved' | 'error';
 
 export interface WhiteLabelDocumentHandle {
   getLatestHtml: () => string;
+  flush: () => Promise<void>;
 }
 
 interface WhiteLabelDocumentEditorProps {
@@ -151,6 +152,10 @@ const WhiteLabelDocumentEditor = forwardRef<WhiteLabelDocumentHandle, WhiteLabel
     if (editor.getHTML() === doc.html) {
       return;
     }
+    if (saveTimerRef.current) {
+      clearTimeout(saveTimerRef.current);
+      saveTimerRef.current = null;
+    }
     editor.commands.setContent(doc.html, { emitUpdate: false });
     latestHtmlRef.current = doc.html;
   }, [doc.html, doc.id, editor]);
@@ -159,6 +164,30 @@ const WhiteLabelDocumentEditor = forwardRef<WhiteLabelDocumentHandle, WhiteLabel
     ref,
     () => ({
       getLatestHtml: () => latestHtmlRef.current,
+      flush: async () => {
+        if (saveTimerRef.current) {
+          clearTimeout(saveTimerRef.current);
+          saveTimerRef.current = null;
+        }
+        if (saveBlockedRef.current) {
+          return;
+        }
+        const html = latestHtmlRef.current;
+        try {
+          await updateDocRef
+            .current({
+              briefId: briefIdRef.current,
+              documentId: docRef.current.id,
+              html,
+              plainText: htmlToPlainText(html),
+              token: tokenRef.current,
+            })
+            .unwrap();
+          setSaveState('saved');
+        } catch {
+          setSaveState('error');
+        }
+      },
     }),
     []
   );
@@ -287,6 +316,7 @@ export const WhiteLabelDocumentPanel = forwardRef<WhiteLabelDocumentHandle, Whit
       ref,
       () => ({
         getLatestHtml: () => editorRef.current?.getLatestHtml() ?? '',
+        flush: () => editorRef.current?.flush() ?? Promise.resolve(),
       }),
       []
     );

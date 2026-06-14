@@ -163,7 +163,10 @@ export default function BrandedBriefDetailPage() {
       icon={<SendOutlined />}
       disabled={!isSendEnabled}
       title={isSendEnabled ? undefined : t('BRANDED_BRIEF_SEND_DISABLED_HINT')}
-      onClick={() => setSendModalOpen(true)}
+      onClick={async () => {
+        await docPanelRef.current?.flush();
+        setSendModalOpen(true);
+      }}
     >
       {t('BRANDED_BRIEF_SEND')}
     </Button>

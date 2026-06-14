@@ -1,8 +1,9 @@
-import React from 'react';
+import React, { createRef } from 'react';
 import { describe, it, expect, vi, beforeEach, beforeAll } from 'vitest';
-import { render, screen } from '@testing-library/react';
+import { render, screen, act } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { App } from 'antd';
+import type { WhiteLabelDocumentHandle } from './WhiteLabelDocumentPanel';
 
 beforeAll(() => {
   Object.defineProperty(window, 'matchMedia', {
@@ -167,6 +168,29 @@ describe('WhiteLabelDocumentPanel', () => {
     renderPanel();
     expect(screen.getByText('Could not finalize the brief. Please try again.')).toBeTruthy();
     expect(screen.getByText('Send a message in the chat to retry generation.')).toBeTruthy();
+  });
+
+  it('exposes flush() method via ref that resolves without throwing', async () => {
+    const ref = createRef<WhiteLabelDocumentHandle>();
+    render(
+      <App>
+        <WhiteLabelDocumentPanel ref={ref} briefId='brief-1' token='tok-1' />
+      </App>
+    );
+    expect(ref.current).not.toBeNull();
+    await act(async () => {
+      await ref.current?.flush();
+    });
+  });
+
+  it('exposes getLatestHtml() method via ref', () => {
+    const ref = createRef<WhiteLabelDocumentHandle>();
+    render(
+      <App>
+        <WhiteLabelDocumentPanel ref={ref} briefId='brief-1' token='tok-1' />
+      </App>
+    );
+    expect(typeof ref.current?.getLatestHtml()).toBe('string');
   });
 
   it('switches tab without error when both documents present', async () => {
