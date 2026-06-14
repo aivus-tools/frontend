@@ -6,7 +6,7 @@ import StarterKit from '@tiptap/starter-kit';
 import Link from '@tiptap/extension-link';
 import Underline from '@tiptap/extension-underline';
 import Placeholder from '@tiptap/extension-placeholder';
-import { App, Spin } from 'antd';
+import { Alert, App, Spin } from 'antd';
 import { t } from '@/lib/i18n';
 import {
   useGetPublicBriefFinalDocumentsQuery,
@@ -57,6 +57,14 @@ const WhiteLabelDocumentEditor = forwardRef<WhiteLabelDocumentHandle, WhiteLabel
   const saveBlockedRef = useRef<boolean>(false);
   const onSaveStateChangeRef = useRef(onSaveStateChange);
   onSaveStateChangeRef.current = onSaveStateChange;
+  const updateDocRef = useRef(updateDoc);
+  updateDocRef.current = updateDoc;
+  const docRef = useRef(doc);
+  docRef.current = doc;
+  const briefIdRef = useRef(briefId);
+  briefIdRef.current = briefId;
+  const tokenRef = useRef(token);
+  tokenRef.current = token;
 
   const setSaveState = (state: SaveState) => {
     onSaveStateChangeRef.current(state);
@@ -116,6 +124,22 @@ const WhiteLabelDocumentEditor = forwardRef<WhiteLabelDocumentHandle, WhiteLabel
     return () => {
       if (saveTimerRef.current) {
         clearTimeout(saveTimerRef.current);
+        saveTimerRef.current = null;
+        if (!saveBlockedRef.current) {
+          const html = latestHtmlRef.current;
+          updateDocRef
+            .current({
+              briefId: briefIdRef.current,
+              documentId: docRef.current.id,
+              html,
+              plainText: htmlToPlainText(html),
+              token: tokenRef.current,
+            })
+            .unwrap()
+            .catch(() => {
+              /* flush on unmount — ignore errors */
+            });
+        }
       }
     };
   }, []);
@@ -294,6 +318,19 @@ export const WhiteLabelDocumentPanel = forwardRef<WhiteLabelDocumentHandle, Whit
         <div className={styles.loadingWrapper}>
           <Spin size='large' />
           <div className={styles.loadingLabel}>{t('BRIEF_V3_GENERATING_DOCUMENT')}</div>
+        </div>
+      );
+    }
+
+    if (pkg?.finalizeFailed) {
+      return (
+        <div className={styles.loadingWrapper}>
+          <Alert
+            type='error'
+            message={t('BRIEF_V3_FINALIZE_FAILED')}
+            description={t('BRIEF_V3_FINALIZE_FAILED_HINT')}
+            showIcon
+          />
         </div>
       );
     }

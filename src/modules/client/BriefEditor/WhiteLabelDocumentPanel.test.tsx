@@ -1,6 +1,7 @@
 import React from 'react';
 import { describe, it, expect, vi, beforeEach, beforeAll } from 'vitest';
 import { render, screen } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import { App } from 'antd';
 
 beforeAll(() => {
@@ -21,7 +22,7 @@ beforeAll(() => {
 
 const mocks = vi.hoisted(() => ({
   getDocuments: vi.fn(),
-  updateDocument: vi.fn(),
+  updateDocument: vi.fn(() => ({ unwrap: () => Promise.resolve() })),
   refetch: vi.fn(),
 }));
 
@@ -154,5 +155,51 @@ describe('WhiteLabelDocumentPanel', () => {
   it('does not show deliverables tab when only production_brief exists', () => {
     renderPanel();
     expect(screen.queryByText('Deliverables')).toBeNull();
+  });
+
+  it('shows finalize failed error when finalizeFailed is true', () => {
+    mocks.getDocuments.mockReturnValue({
+      data: { ...mockPackage, finalizeFailed: true, documents: [] },
+      isLoading: false,
+      isError: false,
+      refetch: mocks.refetch,
+    });
+    renderPanel();
+    expect(screen.getByText('Could not finalize the brief. Please try again.')).toBeTruthy();
+    expect(screen.getByText('Send a message in the chat to retry generation.')).toBeTruthy();
+  });
+
+  it('switches tab without error when both documents present', async () => {
+    const twoDocPackage = {
+      ...mockPackage,
+      documents: [
+        ...mockPackage.documents,
+        {
+          id: 'doc-2',
+          kind: 'deliverables_checklist' as const,
+          html: '<p>Deliverables</p>',
+          plainText: 'Deliverables',
+          createdAt: null,
+          updatedAt: null,
+        },
+      ],
+    };
+
+    mocks.getDocuments.mockReturnValue({
+      data: twoDocPackage,
+      isLoading: false,
+      isError: false,
+      refetch: mocks.refetch,
+    });
+
+    render(
+      <App>
+        <WhiteLabelDocumentPanel briefId='brief-1' token='tok-1' />
+      </App>
+    );
+
+    const deliverablesTab = screen.getAllByText('Deliverables')[0];
+    await userEvent.click(deliverablesTab);
+    expect(screen.getAllByText('Deliverables').length).toBeGreaterThan(0);
   });
 });
