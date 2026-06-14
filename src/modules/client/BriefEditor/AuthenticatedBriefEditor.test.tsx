@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { createRef } from 'react';
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { render, screen, waitFor, act } from '@testing-library/react';
 import { BriefV3Detail } from '@/types/briefAi.interface';
@@ -110,7 +110,7 @@ vi.mock('@/lib/i18n', () => ({
   getLocale: () => 'en',
 }));
 
-import { AuthenticatedBriefEditor } from './AuthenticatedBriefEditor';
+import { AuthenticatedBriefEditor, AuthenticatedBriefEditorHandle } from './AuthenticatedBriefEditor';
 
 const makeDetail = (overrides: Partial<BriefV3Detail> = {}): BriefV3Detail => ({
   id: 'b1',
@@ -189,6 +189,15 @@ describe('AuthenticatedBriefEditor', () => {
 
     await waitFor(() => {
       expect(screen.getByTestId('start-screen')).toBeInTheDocument();
+    });
+  });
+
+  it('exposes flush() via ref that resolves without throwing', async () => {
+    const ref = createRef<AuthenticatedBriefEditorHandle>();
+    render(<AuthenticatedBriefEditor ref={ref} briefId='b1' />);
+    expect(ref.current).not.toBeNull();
+    await act(async () => {
+      await ref.current?.flush();
     });
   });
 

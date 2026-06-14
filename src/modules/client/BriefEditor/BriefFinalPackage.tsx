@@ -35,6 +35,7 @@ type SaveState = 'idle' | 'saving' | 'saved' | 'error';
 interface DocumentEditorHandle {
   copy: (mode: 'html' | 'text') => Promise<void>;
   download: () => Promise<void>;
+  flush: () => Promise<void>;
 }
 
 const DOCUMENT_TITLES: Record<string, string> = {
@@ -42,6 +43,10 @@ const DOCUMENT_TITLES: Record<string, string> = {
   vendor_email: 'Vendor Outreach Email',
   deliverables_checklist: 'Deliverables Checklist',
 };
+
+export interface BriefFinalPackageHandle {
+  flush: () => Promise<void>;
+}
 
 interface BriefFinalPackageProps {
   briefId: string;
@@ -164,6 +169,23 @@ const DocumentEditor = forwardRef<DocumentEditorHandle, DocumentEditorProps>((pr
           await downloadPdf(url, `${DOCUMENT_TITLES[doc.kind] ?? 'Brief'}.pdf`);
         } catch {
           messageApi.error(t('UNEXPECTED_ERROR'));
+        }
+      },
+      flush: async () => {
+        if (!saveTimerRef.current) {
+          return;
+        }
+        clearTimeout(saveTimerRef.current);
+        saveTimerRef.current = null;
+        try {
+          await updateDoc({
+            briefId,
+            documentId: doc.id,
+            html: latestHtmlRef.current,
+            plainText: htmlToPlainText(latestHtmlRef.current),
+          }).unwrap();
+        } catch {
+          /* flush before send — ignore save errors */
         }
       },
     }),
@@ -409,7 +431,7 @@ const saveStatusClass = (state: SaveState): string => {
   return styles.saveStatus;
 };
 
-export const BriefFinalPackage = (props: BriefFinalPackageProps) => {
+export const BriefFinalPackage = forwardRef<BriefFinalPackageHandle, BriefFinalPackageProps>((props, ref) => {
   const { briefId, package: pkg, onRegenerate, isRegenerating, mobileActionsSlot } = props;
   const isWhiteLabel = props.whiteLabel ?? false;
   const { isMobile } = useBreakpoint();
@@ -432,6 +454,14 @@ export const BriefFinalPackage = (props: BriefFinalPackageProps) => {
   const [activeKey, setActiveKey] = useState<'production_brief' | 'vendor_email'>('production_brief');
   const [saveState, setSaveState] = useState<SaveState>('idle');
   const editorRef = useRef<DocumentEditorHandle | null>(null);
+
+  useImperativeHandle(
+    ref,
+    () => ({
+      flush: () => editorRef.current?.flush() ?? Promise.resolve(),
+    }),
+    []
+  );
   const preVendorsRef = useRef<HTMLElement | null>(null);
 
   const { data: briefDetail } = useGetBriefAiDetailQuery(briefId);
@@ -553,4 +583,6 @@ export const BriefFinalPackage = (props: BriefFinalPackageProps) => {
       ) : null}
     </div>
   );
-};
+});
+
+BriefFinalPackage.displayName = 'BriefFinalPackage';

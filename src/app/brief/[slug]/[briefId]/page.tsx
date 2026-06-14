@@ -24,7 +24,10 @@ import {
 } from '@/helpers/pendingBrief';
 import { GROUPS } from '@/constants/constants';
 import { AnonymousBriefEditor } from '@/modules/client/BriefEditor/AnonymousBriefEditor';
-import { AuthenticatedBriefEditor } from '@/modules/client/BriefEditor/AuthenticatedBriefEditor';
+import {
+  AuthenticatedBriefEditor,
+  AuthenticatedBriefEditorHandle,
+} from '@/modules/client/BriefEditor/AuthenticatedBriefEditor';
 import {
   WhiteLabelDocumentPanel,
   WhiteLabelDocumentHandle,
@@ -48,10 +51,11 @@ export default function BrandedBriefDetailPage() {
   const isEmbed = searchParams.get('embed') === '1';
   const [mobileTab, setMobileTab] = useState<'brief' | 'chat'>('chat');
   const [sendModalOpen, setSendModalOpen] = useState(false);
-  const docPanelRef = useRef<WhiteLabelDocumentHandle | null>(null);
+  const anonDocPanelRef = useRef<WhiteLabelDocumentHandle | null>(null);
+  const authEditorRef = useRef<AuthenticatedBriefEditorHandle | null>(null);
 
   const getLatestDocumentHtml = useCallback((): string | null => {
-    return docPanelRef.current?.getLatestHtml() ?? null;
+    return anonDocPanelRef.current?.getLatestHtml() ?? null;
   }, []);
   const tokenFromStorage =
     typeof window !== 'undefined'
@@ -164,7 +168,7 @@ export default function BrandedBriefDetailPage() {
       disabled={!isSendEnabled}
       title={isSendEnabled ? undefined : t('BRANDED_BRIEF_SEND_DISABLED_HINT')}
       onClick={async () => {
-        await docPanelRef.current?.flush();
+        await (isClient ? authEditorRef.current?.flush() : anonDocPanelRef.current?.flush());
         setSendModalOpen(true);
       }}
     >
@@ -174,7 +178,7 @@ export default function BrandedBriefDetailPage() {
 
   const anonDocumentPanel = token ? (
     documentReady ? (
-      <WhiteLabelDocumentPanel ref={docPanelRef} briefId={briefId} token={token} />
+      <WhiteLabelDocumentPanel ref={anonDocPanelRef} briefId={briefId} token={token} />
     ) : (
       <div className={styles.centerWrapper}>
         <Typography.Text type='secondary'>{t('BRIEF_V3_DOCUMENT_NOT_READY')}</Typography.Text>
@@ -211,7 +215,7 @@ export default function BrandedBriefDetailPage() {
           <div className={styles.desktopHeaderActions}>{sendButton}</div>
         </div>
         <div className={styles.desktopContent}>
-          <AuthenticatedBriefEditor briefId={briefId} whiteLabel={true} />
+          <AuthenticatedBriefEditor ref={authEditorRef} briefId={briefId} whiteLabel={true} />
         </div>
         {sendModal}
       </div>
