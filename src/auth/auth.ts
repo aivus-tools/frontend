@@ -1,7 +1,7 @@
 import NextAuth from 'next-auth';
 import Google from 'next-auth/providers/google';
 import Credentials from 'next-auth/providers/credentials';
-import { cookies } from 'next/headers';
+import { cookies, headers } from 'next/headers';
 import { checkEmail, login, register } from '@/services/server/authService';
 import logger from '@/lib/logger';
 import { AUTH_TYPES, GROUPS } from '@/constants/constants';
@@ -92,6 +92,16 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
             return false;
           }
 
+          let clientIp: string | undefined;
+          try {
+            const headerStore = await headers();
+            const xff = headerStore.get('x-forwarded-for');
+            const xRealIp = headerStore.get('x-real-ip');
+            clientIp = resolveClientIp(xff, xRealIp) || undefined;
+          } catch {
+            logger.warn('Google signIn: failed to read request headers for IP');
+          }
+
           let briefId: string | undefined;
           let briefToken: string | undefined;
           try {
@@ -110,12 +120,19 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
           }
 
           logger.info('Google signIn: checking email', { email });
-          const result = await checkEmail({ email: email as string });
+          const result = await checkEmail({ email: email as string, clientIp });
           logger.info('Google signIn: checkEmail result', result);
 
           if (result.exists) {
             logger.info('Google signIn: user exists, logging in');
-            const aivusUser = await login({ email, password: '', authType: AUTH_TYPES.google, briefId, briefToken });
+            const aivusUser = await login({
+              email,
+              password: '',
+              authType: AUTH_TYPES.google,
+              briefId,
+              briefToken,
+              clientIp,
+            });
             logger.info('Google signIn: login result', aivusUser);
             user.group = aivusUser.group;
             user.id = `${aivusUser.id}`;
@@ -134,6 +151,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
               password: '',
               briefId,
               briefToken,
+              clientIp,
             });
             logger.info('Google signIn: register result', aivusUser);
             user.group = aivusUser.group ?? GROUPS.confirmed;
