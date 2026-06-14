@@ -100,6 +100,7 @@ const WhiteLabelDocumentEditor = forwardRef<WhiteLabelDocumentHandle, WhiteLabel
       }
       saveTimerRef.current = setTimeout(async () => {
         if (saveBlockedRef.current) {
+          saveTimerRef.current = null;
           return;
         }
         try {
@@ -119,6 +120,8 @@ const WhiteLabelDocumentEditor = forwardRef<WhiteLabelDocumentHandle, WhiteLabel
           } else {
             setSaveState('error');
           }
+        } finally {
+          saveTimerRef.current = null;
         }
       }, AUTOSAVE_DEBOUNCE_MS);
     },
