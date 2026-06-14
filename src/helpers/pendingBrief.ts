@@ -65,53 +65,46 @@ export const isBriefSent = (briefId: string): boolean => {
   }
 };
 
-const DRAFT_BY_SLUG_KEY = 'aivus_draft_by_slug';
+const DRAFT_COOKIE_PREFIX = 'aivus_draft_';
+const DRAFT_MAX_AGE = 3600;
+
+const encodeDraftSlugKey = (slug: string): string => slug.replace(/[^a-zA-Z0-9_-]/g, '_');
 
 export const saveDraftForSlug = (slug: string, briefId: string, token: string): void => {
-  if (typeof window === 'undefined') {
+  if (typeof document === 'undefined') {
     return;
   }
-  try {
-    const stored = sessionStorage.getItem(DRAFT_BY_SLUG_KEY);
-    const drafts: Record<string, { briefId: string; token: string }> = stored ? JSON.parse(stored) : {};
-    drafts[slug] = { briefId, token };
-    sessionStorage.setItem(DRAFT_BY_SLUG_KEY, JSON.stringify(drafts));
-  } catch {
-    // noop
-  }
+  const key = `${DRAFT_COOKIE_PREFIX}${encodeDraftSlugKey(slug)}`;
+  const value = encodeURIComponent(`${briefId}:${token}`);
+  document.cookie = `${key}=${value};path=/;max-age=${DRAFT_MAX_AGE};samesite=lax`;
 };
 
 export const getDraftForSlug = (slug: string): { briefId: string; token: string } | null => {
-  if (typeof window === 'undefined') {
+  if (typeof document === 'undefined') {
     return null;
   }
-  try {
-    const stored = sessionStorage.getItem(DRAFT_BY_SLUG_KEY);
-    if (!stored) {
-      return null;
-    }
-    const drafts: Record<string, { briefId: string; token: string }> = JSON.parse(stored);
-    return drafts[slug] ?? null;
-  } catch {
+  const key = `${DRAFT_COOKIE_PREFIX}${encodeDraftSlugKey(slug)}`;
+  const match = document.cookie.match(new RegExp(`(?:^|;\\s*)${key}=([^;]*)`));
+  if (!match) {
     return null;
   }
+  const decoded = decodeURIComponent(match[1]);
+  const separatorIndex = decoded.indexOf(':');
+  if (separatorIndex === -1) {
+    return null;
+  }
+  return {
+    briefId: decoded.slice(0, separatorIndex),
+    token: decoded.slice(separatorIndex + 1),
+  };
 };
 
 export const clearDraftForSlug = (slug: string): void => {
-  if (typeof window === 'undefined') {
+  if (typeof document === 'undefined') {
     return;
   }
-  try {
-    const stored = sessionStorage.getItem(DRAFT_BY_SLUG_KEY);
-    if (!stored) {
-      return;
-    }
-    const drafts: Record<string, { briefId: string; token: string }> = JSON.parse(stored);
-    delete drafts[slug];
-    sessionStorage.setItem(DRAFT_BY_SLUG_KEY, JSON.stringify(drafts));
-  } catch {
-    // noop
-  }
+  const key = `${DRAFT_COOKIE_PREFIX}${encodeDraftSlugKey(slug)}`;
+  document.cookie = `${key}=;path=/;max-age=0`;
 };
 
 const RETURN_URL_KEY = 'aivus_auth_return_url';
