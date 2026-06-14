@@ -13,7 +13,8 @@ import {
   useGetPublicBriefBySlugQuery,
   useGetPublicBriefDetailQuery,
 } from '@/services/client/publicBriefApi';
-import { useGetBriefAiDetailQuery, useGetSentBriefIdsToVendorQuery } from '@/services/client/briefAiApi';
+import { useGetBriefAiDetailQuery, useGetSentBriefIdsToVendorQuery, briefAiApi } from '@/services/client/briefAiApi';
+import { useAppDispatch } from '@/store/hooks';
 import { setPendingBrief, isBriefSent, markBriefAsSent, clearDraftForSlug } from '@/helpers/pendingBrief';
 import { GROUPS } from '@/constants/constants';
 import { AnonymousBriefEditor } from '@/modules/client/BriefEditor/AnonymousBriefEditor';
@@ -35,6 +36,7 @@ export default function BrandedBriefDetailPage() {
   const { message } = App.useApp();
   const { data: session, status: sessionStatus } = useSession();
   const { isMobile, ready: breakpointReady } = useBreakpoint();
+  const dispatch = useAppDispatch();
   const slug = params.slug as string;
   const briefId = params.briefId as string;
   const isEmbed = searchParams.get('embed') === '1';
@@ -72,7 +74,10 @@ export default function BrandedBriefDetailPage() {
     refetchOnMountOrArgChange: true,
   });
 
-  const { data: sentBriefIdsData } = useGetSentBriefIdsToVendorQuery(slug, { skip: !isClient });
+  const { data: sentBriefIdsData } = useGetSentBriefIdsToVendorQuery(slug, {
+    skip: !isClient,
+    refetchOnMountOrArgChange: true,
+  });
 
   const conversationStatus = isClient
     ? (authDetail?.conversationStatus ?? 'in_progress')
@@ -99,7 +104,9 @@ export default function BrandedBriefDetailPage() {
   };
 
   const handleSendSuccess = () => {
-    if (!isClient) {
+    if (isClient) {
+      dispatch(briefAiApi.util.invalidateTags([{ type: 'SentBriefIds', id: slug }]));
+    } else {
       markBriefAsSent(briefId);
       clearDraftForSlug(slug);
     }

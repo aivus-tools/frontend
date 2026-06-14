@@ -39,7 +39,7 @@ export const guessAudioExtension = (mimeType: string): string => {
 export const briefAiApi = createApi({
   reducerPath: 'briefAiApi',
   baseQuery: fetchBaseQuery({ baseUrl: '' }),
-  tagTypes: ['BriefV3', 'BriefFinalDocuments', 'BriefShare', 'BriefShareView'],
+  tagTypes: ['BriefV3', 'BriefFinalDocuments', 'BriefShare', 'BriefShareView', 'SentBriefIds'],
   endpoints: (builder) => ({
     createBriefAiDraft: builder.mutation<{ briefId: string }, void>({
       query: () => ({
@@ -326,6 +326,7 @@ export const briefAiApi = createApi({
         url: ApiRoute.CLIENT_BRIEFS_SENT_TO_VENDOR(slug),
         method: 'GET',
       }),
+      providesTags: (_r, _e, slug) => [{ type: 'SentBriefIds', id: slug }],
     }),
   }),
 });
