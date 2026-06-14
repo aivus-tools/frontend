@@ -3,6 +3,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { GROUPS } from '@/constants/constants';
 import logger from './lib/logger';
 import { createHmacSHA256 } from './lib/hmac';
+import { resolveClientIp } from './lib/resolveClientIp';
 import { AppRoute } from '@/constants/appRoute';
 
 const changePathname = (pathname: string) => pathname.replace(/^\/service\//, '/api/v1/');
@@ -171,6 +172,10 @@ export default auth(async (req) => {
     if (incomingXff) {
       headers.set('x-forwarded-for', incomingXff);
     }
+
+    const realClientIp = resolveClientIp(incomingXff, req.headers.get('x-real-ip'));
+    headers.delete('x-aivus-forwarded-client');
+    headers.set('x-aivus-forwarded-client', realClientIp);
 
     if (!newPathname.startsWith('/api/v1/auth/') && !newPathname.startsWith('/api/v1/public/')) {
       const timestamp = Math.floor(Date.now() / 1000).toString();
