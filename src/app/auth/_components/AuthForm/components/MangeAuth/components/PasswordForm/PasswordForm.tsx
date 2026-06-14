@@ -37,7 +37,7 @@ export const PasswordForm = ({ email, prevStepAction }: { email: string; prevSte
         if (pending) {
           clearPendingBrief();
           consumeAuthReturnUrl();
-          window.location.href = AppRoute.BRIEF_DETAIL(pending.briefId);
+          window.location.href = `${AppRoute.BRIEF_CLAIM(pending.briefId)}?token=${encodeURIComponent(pending.token)}`;
         } else {
           const returnUrl = consumeAuthReturnUrl();
           window.location.href = returnUrl ?? CALLBACK_URL ?? AppRoute.HOME;
