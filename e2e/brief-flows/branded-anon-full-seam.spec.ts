@@ -1,14 +1,14 @@
 /**
  * PRD §10 full seam: anon Send -> Mailpit email -> claim -> register -> brief in client cabinet -> RFP project in vendor cabinet.
  *
- * Requires live env with Mailpit (MAILPIT_URL) and a vendor with a slug (E2E_VENDOR_SLUG or SMOKE_TEST_EMAIL/PASSWORD).
+ * Requires live env with Mailpit (MAILPIT_URL) and a vendor with a slug.
+ * Vendor slug must be set via E2E_VENDOR_SLUG or discoverable via vendor UI login (SMOKE_TEST_EMAIL / SMOKE_TEST_PASSWORD).
  * Run via: make e2e-flows
  */
-import { test, expect } from '@playwright/test';
+import { test, expect, Page } from '@playwright/test';
 import { sendChatAndWaitReply, messageInput } from '../helpers/briefFlowV3';
 import { clearMailpit, waitForConfirmationLinkViaMailpit } from '../helpers/mailpit';
 
-const BACKEND_URL = process.env.BACKEND_URL ?? 'http://localhost:8000';
 const VENDOR_EMAIL = process.env.SMOKE_TEST_EMAIL ?? 'p@p.pp';
 const VENDOR_PASSWORD = process.env.SMOKE_TEST_PASSWORD ?? 'iiiijjjj';
 
@@ -22,52 +22,38 @@ const uniqueEmail = (): string => `e2e-seam-${Date.now()}@aivus.local`;
 
 const SLUG_URL_RE = /\/service\/public\/briefs\/ai\/by-slug\/.+\/drafts/;
 
-interface VendorTokenResult {
-  access: string | null;
-}
+/**
+ * Log in as vendor via UI and return the personal slug from the vendor settings API response.
+ * Returns null if login fails or slug is not configured.
+ */
+const getVendorSlugViaUi = async (vendorPage: Page): Promise<string | null> => {
+  await vendorPage.goto('/auth');
+  await vendorPage.getByPlaceholder('Your email address').fill(VENDOR_EMAIL);
+  await vendorPage.getByRole('button', { name: 'Next', exact: true }).click();
+  const passwordInput = vendorPage.getByPlaceholder('Enter your password');
+  await passwordInput.waitFor({ state: 'visible', timeout: 10_000 });
+  await passwordInput.fill(VENDOR_PASSWORD);
+  await vendorPage.getByRole('button', { name: 'Sign in', exact: true }).click();
+  await vendorPage.waitForURL(/\/app\//, { timeout: 30_000 });
 
-const getVendorToken = async (): Promise<string | null> => {
-  const response = await fetch(`${BACKEND_URL}/api/v1/auth/login`, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ email: VENDOR_EMAIL, password: VENDOR_PASSWORD }),
-  });
-  if (!response.ok) {
+  const settingsResponse = await vendorPage.request.get('/service/vendor/settings');
+  if (!settingsResponse.ok()) {
     return null;
   }
-  const data = (await response.json()) as VendorTokenResult;
-  return data.access ?? null;
-};
-
-const getVendorSlug = async (access: string): Promise<string | null> => {
-  const response = await fetch(`${BACKEND_URL}/api/v1/vendor/settings`, {
-    headers: { Authorization: `Bearer ${access}` },
-  });
-  if (!response.ok) {
-    return null;
-  }
-  const settings = (await response.json()) as { slug?: string | null };
+  const settings = (await settingsResponse.json()) as { slug?: string | null };
   return settings.slug ?? null;
 };
 
-interface RfpProject {
-  id: string;
-  title?: string;
-}
-
-interface RfpListResponse {
-  results?: RfpProject[];
-}
-
-const getVendorRfpProjects = async (access: string): Promise<RfpProject[]> => {
-  const response = await fetch(`${BACKEND_URL}/api/v1/vendor/projects?source=rfp`, {
-    headers: { Authorization: `Bearer ${access}` },
-  });
-  if (!response.ok) {
-    return [];
+/**
+ * Check vendor dashboard for at least one RFP project via UI API call (uses browser session).
+ */
+const getVendorRfpProjectCountViaUi = async (vendorPage: Page): Promise<number> => {
+  const response = await vendorPage.request.get('/service/vendor/projects?source=rfp');
+  if (!response.ok()) {
+    return 0;
   }
-  const data = (await response.json()) as RfpListResponse;
-  return data.results ?? [];
+  const data = (await response.json()) as { results?: unknown[] };
+  return data.results?.length ?? 0;
 };
 
 /**
@@ -78,20 +64,33 @@ const getVendorRfpProjects = async (access: string): Promise<RfpProject[]> => {
  * - Vendor account with a slug set (SMOKE_TEST_EMAIL / SMOKE_TEST_PASSWORD or E2E_VENDOR_SLUG)
  */
 test.describe('Branded anon full seam — Send to claim to cabinet (PRD §10)', () => {
-  test('anon sends brief, confirms via Mailpit, sees brief in cabinet, vendor sees RFP project', async ({ page }) => {
+  test('anon sends brief, confirms via Mailpit, sees brief in cabinet, vendor sees RFP project', async ({
+    page,
+    browser,
+  }) => {
     test.setTimeout(900_000);
 
-    const vendorAccess = await getVendorToken();
-    test.skip(!vendorAccess, 'Could not log in as vendor — check SMOKE_TEST_EMAIL/PASSWORD');
+    const slug = process.env.E2E_VENDOR_SLUG ?? null;
 
-    const slug = process.env.E2E_VENDOR_SLUG ?? (vendorAccess ? await getVendorSlug(vendorAccess) : null);
-    test.skip(!slug, 'No vendor slug — set E2E_VENDOR_SLUG or configure slug in vendor settings');
+    let resolvedSlug: string | null = slug;
+    let vendorPage: Page | null = null;
+
+    if (!resolvedSlug) {
+      const vendorContext = await browser.newContext();
+      vendorPage = await vendorContext.newPage();
+      resolvedSlug = await getVendorSlugViaUi(vendorPage);
+    }
+
+    test.skip(
+      !resolvedSlug,
+      'No vendor slug — set E2E_VENDOR_SLUG or configure slug in vendor settings and provide SMOKE_TEST_EMAIL/PASSWORD'
+    );
 
     const email = uniqueEmail();
     await clearMailpit();
 
     // 1. Open branded start page.
-    await page.goto(`/brief/${slug}`);
+    await page.goto(`/brief/${resolvedSlug}`);
     await expect(page.getByRole('button', { name: 'Start brief', exact: true })).toBeVisible({ timeout: 15_000 });
 
     // 2. Start brief.
@@ -132,27 +131,18 @@ test.describe('Branded anon full seam — Send to claim to cabinet (PRD §10)', 
     await expect(page.getByText('Brief sent!')).toBeVisible({ timeout: 30_000 });
 
     // 8. Pull claim link from Mailpit.
-    // The email contains a link like /auth?token=... or /app/brief/claim/<briefId>?token=...
     const claimLink = await waitForConfirmationLinkViaMailpit(email, 90_000).catch(() => null);
-    // If no confirmation-style link found, look for the claim link specifically.
-    let claimUrl: string | null = claimLink;
-    if (!claimUrl) {
-      // Try a broader search pattern for claim links.
-      claimUrl = null;
-    }
-    test.skip(!claimUrl, 'No confirmation/claim link received in Mailpit — check email sending configuration');
+    test.skip(!claimLink, 'No confirmation/claim link received in Mailpit — check email sending configuration');
 
-    // 9. Navigate to claim link (opens /auth with token or similar).
-    await page.goto(claimUrl!);
+    // 9. Navigate to claim link.
+    await page.goto(claimLink!);
 
-    // 10. Handle two cases: direct claim (already registered) or registration flow.
+    // 10. Handle two cases: direct claim or registration flow.
     const currentUrl = page.url();
 
     if (currentUrl.includes('/auth/confirm-email') || currentUrl.includes('/app/brief/claim')) {
-      // Direct claim — already lands on claim page or confirms email and redirects.
       await page.waitForURL(/\/app\/brief\/[0-9a-f-]+|\/app\/dashboard/, { timeout: 60_000 });
     } else if (currentUrl.includes('/auth')) {
-      // New user registration flow.
       await page.getByPlaceholder('Your email address').fill(email);
       const nextButton = page.getByRole('button', { name: 'Next', exact: true });
       await nextButton.click();
@@ -164,10 +154,8 @@ test.describe('Branded anon full seam — Send to claim to cabinet (PRD §10)', 
       await page.getByPlaceholder('Repeat your password').fill(REGISTER_PASSWORD);
       await page.getByRole('button', { name: 'Sign up', exact: true }).click();
 
-      // After sign-up, wait for email confirmation or dashboard.
       await page.waitForURL(/\/app\/confirm|\/app\/brief\/[0-9a-f-]+|\/app\/dashboard/, { timeout: 30_000 });
 
-      // If redirected to confirm screen, get the real confirm link from Mailpit.
       if (page.url().includes('/app/confirm')) {
         const confirmLink = await waitForConfirmationLinkViaMailpit(email, 90_000);
         await page.goto(confirmLink);
@@ -183,13 +171,13 @@ test.describe('Branded anon full seam — Send to claim to cabinet (PRD §10)', 
       true
     );
 
-    // 12. Vendor should see new RFP project — check via API (UI check would require vendor login).
-    // Give a moment for the async project creation to settle.
+    // 12. Vendor should see new RFP project — verify via authenticated browser session.
     await page.waitForTimeout(3_000);
 
-    if (vendorAccess) {
-      const projects = await getVendorRfpProjects(vendorAccess);
-      expect(projects.length, 'Vendor should have at least one RFP project after brief is sent').toBeGreaterThan(0);
+    if (vendorPage != null) {
+      const count = await getVendorRfpProjectCountViaUi(vendorPage);
+      expect(count, 'Vendor should have at least one RFP project after brief is sent').toBeGreaterThan(0);
+      await vendorPage.context().close();
     }
   });
 });
