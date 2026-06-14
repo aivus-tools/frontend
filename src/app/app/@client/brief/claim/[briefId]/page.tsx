@@ -63,6 +63,12 @@ const BriefClaimPage = () => {
         }
         settled = true;
         clearTimeout(timeoutId);
+        const status = (error as { status?: unknown })?.status;
+        if (status === 404) {
+          removePublicBriefToken(params.briefId);
+          router.replace(AppRoute.BRIEF_DETAIL(params.briefId));
+          return;
+        }
         logger.error('Failed to claim brief:', error);
         message.error(t('UNEXPECTED_ERROR'));
         router.replace(AppRoute.DASHBOARD);

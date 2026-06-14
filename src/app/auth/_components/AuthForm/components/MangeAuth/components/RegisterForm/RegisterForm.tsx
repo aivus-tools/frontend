@@ -9,7 +9,7 @@ import { useState } from 'react';
 import { AUTH_TYPES } from '@/constants/constants';
 import { AuthType } from '@/types/user.interface';
 import { AppRoute } from '@/constants/appRoute';
-import { getPendingBrief, consumeAuthReturnUrl } from '@/helpers/pendingBrief';
+import { getPendingBrief, clearPendingBrief, consumeAuthReturnUrl } from '@/helpers/pendingBrief';
 
 export interface ResponseData {
   statusCode: number;
@@ -109,6 +109,7 @@ export const RegisterForm = ({ email, prevStepAction }: { email: string; prevSte
         form.resetFields();
         form.setFields([{ name: 'password', errors: [''] }]);
       } else {
+        clearPendingBrief();
         consumeAuthReturnUrl();
         window.location.href = AppRoute.CONFIRM;
       }

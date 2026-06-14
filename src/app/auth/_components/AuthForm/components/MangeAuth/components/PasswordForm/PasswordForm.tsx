@@ -8,7 +8,7 @@ import styles from './styles.module.css';
 import { useState } from 'react';
 import { CALLBACK_URL } from '@/constants/apiRoute';
 import { AppRoute } from '@/constants/appRoute';
-import { getPendingBrief, consumeAuthReturnUrl } from '@/helpers/pendingBrief';
+import { getPendingBrief, clearPendingBrief, consumeAuthReturnUrl } from '@/helpers/pendingBrief';
 
 export const PasswordForm = ({ email, prevStepAction }: { email: string; prevStepAction: () => void }) => {
   const [messageApi, contextHolder] = message.useMessage();
@@ -35,6 +35,7 @@ export const PasswordForm = ({ email, prevStepAction }: { email: string; prevSte
         form.setFields([{ name: 'password', errors: [''] }]);
       } else {
         if (pending) {
+          clearPendingBrief();
           consumeAuthReturnUrl();
           window.location.href = AppRoute.BRIEF_DETAIL(pending.briefId);
         } else {
