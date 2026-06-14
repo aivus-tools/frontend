@@ -166,6 +166,12 @@ export default auth(async (req) => {
       newPathname += search;
     }
     const headers = new Headers(req.headers);
+
+    const incomingXff = req.headers.get('x-forwarded-for');
+    if (incomingXff) {
+      headers.set('x-forwarded-for', incomingXff);
+    }
+
     if (!newPathname.startsWith('/api/v1/auth/') && !newPathname.startsWith('/api/v1/public/')) {
       const timestamp = Math.floor(Date.now() / 1000).toString();
       headers.set('x-timestamp', timestamp);
