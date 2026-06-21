@@ -253,6 +253,9 @@ export const EN_LOCALES = {
     'This brief was sent to a different email address, so it cannot be linked to this account.',
   BRIEF_CLAIM_NO_ACCESS_TITLE: 'No access',
   BRIEF_CLAIM_NO_ACCESS: 'This brief belongs to a client account. Your account does not have access to it.',
+  BRIEF_CLAIM_VENDOR_TITLE: 'This link is for clients',
+  BRIEF_CLAIM_VENDOR:
+    'This link creates a client account to receive a brief. You are signed in as a vendor. Log out and open the link again, or use a separate browser, to claim it with a client account.',
   UNEXPECTED_ERROR: 'An unexpected error occurred',
   UNFORESEEN_EXPENSES: 'Unforeseen expenses',
   UNIT: 'Unit',

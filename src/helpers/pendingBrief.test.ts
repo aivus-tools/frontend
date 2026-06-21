@@ -43,6 +43,16 @@ describe('pendingBrief cookie', () => {
     expect(result?.briefId).toBe('brief-2');
     expect(result?.token).toBe('tok:en:with:colons');
   });
+
+  it('parses a single-URL-encoded cookie as written by middleware via NextResponse.cookies.set', () => {
+    // NextResponse.cookies.set URL-encodes the value once, turning the ':' into
+    // '%3A'. The middleware must NOT pre-encode (that double-encodes to %253A and
+    // breaks the split). This locks the single-encoded contract getPendingBrief reads.
+    document.cookie = 'aivus_pending_brief=brief-3%3Atoken-xyz;path=/';
+    const result = getPendingBrief();
+    expect(result?.briefId).toBe('brief-3');
+    expect(result?.token).toBe('token-xyz');
+  });
 });
 
 describe('draft by slug cookie (SF-3)', () => {

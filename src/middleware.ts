@@ -231,7 +231,11 @@ export default auth(async (req) => {
       }
       const response = NextResponse.redirect(authUrl);
       if (briefId && token) {
-        const cookieValue = encodeURIComponent(`${briefId}:${token}`);
+        // NextResponse cookies.set already URL-encodes the value; encoding here
+        // too double-encodes the ':' separator (%253A) and getPendingBrief's single
+        // decodeURIComponent then fails to split it. Store the raw value to match
+        // the client-side setPendingBrief contract.
+        const cookieValue = `${briefId}:${token}`;
         response.cookies.set(PENDING_BRIEF_COOKIE_NAME, cookieValue, {
           path: '/',
           maxAge: PENDING_BRIEF_COOKIE_MAX_AGE,
@@ -260,7 +264,7 @@ export default auth(async (req) => {
         const briefId = pathname.slice(CLAIM_PATH_PREFIX.length).split('/')[0];
         const token = req.nextUrl.searchParams.get('token');
         if (briefId && token) {
-          const cookieValue = encodeURIComponent(`${briefId}:${token}`);
+          const cookieValue = `${briefId}:${token}`;
           response.cookies.set(PENDING_BRIEF_COOKIE_NAME, cookieValue, {
             path: '/',
             maxAge: PENDING_BRIEF_COOKIE_MAX_AGE,
