@@ -16,6 +16,7 @@ import { DashboardSidebar } from '@/modules/vendor/dashboard/DashboardSidebar/Da
 import { BetaFooter, useBetaFooterHeight } from '@/components/BetaFooter/BetaFooter';
 import { BetaFooterProvider, useBetaFooter } from '@/components/BetaFooter/BetaFooterContext';
 import { PageTitleSync } from '@/components/PageTitleSync';
+import { EmailConfirmationBanner } from '@/components/EmailConfirmationBanner/EmailConfirmationBanner';
 import { useBreakpoint } from '@/hooks/useBreakpoint';
 import { THEME } from '@/constants/constants';
 
@@ -90,6 +91,7 @@ const VendorLayoutInner = (props: PropsWithChildren) => {
             <ProjectTabs fullWidth />
           </div>
         )}
+        <EmailConfirmationBanner />
         {props.children}
       </AppShell>
     </>

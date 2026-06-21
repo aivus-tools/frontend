@@ -12,10 +12,9 @@ export const GroupSwitch = ({ children }: PropsWithChildren) => {
   const { group } = session.data?.user ?? {};
 
   useEffect(() => {
-    if (group === GROUPS.unconfirmed && segment !== 'confirm') {
-      window.location.href = AppRoute.CONFIRM;
-    }
-    if (group === GROUPS.confirmed && segment !== 'group') {
+    // Roleless users (CONFIRMED, or legacy UNCONFIRMED) pick a role; email
+    // confirmation is no longer a gate and nags via a dashboard banner instead.
+    if ((group === GROUPS.confirmed || group === GROUPS.unconfirmed) && segment !== 'group') {
       window.location.href = AppRoute.GROUP;
     }
     if (group === GROUPS.vendor || group === GROUPS.client) {

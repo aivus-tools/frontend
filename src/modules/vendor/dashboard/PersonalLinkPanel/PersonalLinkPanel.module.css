@@ -60,6 +60,35 @@
   font-size: 12px;
 }
 
+.modalSection {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  align-items: flex-start;
+}
+
+.modalSection :where(.codeArea, .webhookEndpoint) {
+  width: 100%;
+}
+
+.webhookKeyRow {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  align-items: center;
+  width: 100%;
+}
+
+.webhookKeyInput {
+  flex: 1;
+  min-width: 200px;
+}
+
+.webhookEndpoint {
+  font-family: monospace;
+  font-size: 12px;
+}
+
 @media (width >= 1024px) {
   .urlRow {
     flex-direction: row;

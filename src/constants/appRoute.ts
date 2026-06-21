@@ -1,11 +1,11 @@
 export const AppRoute = {
   APP: '/app',
   AUTH: '/auth',
-  CONFIRM: '/app/confirm',
   CONFIRM_EMAIL: '/auth/confirm-email',
   DASHBOARD: '/app/dashboard',
   DASHBOARD_PROJECT: (projectId: string) => `/app/dashboard/${projectId}`,
   DASHBOARD_PROJECT_ANALYSIS: (projectId: string) => `/app/dashboard/${projectId}/analysis`,
+  DASHBOARD_PROJECT_BRIEF: (projectId: string) => `/app/dashboard/${projectId}/brief`,
   DASHBOARD_PROJECT_DETAILS: (projectId: string) => `/app/dashboard/${projectId}/details`,
   DASHBOARD_PROJECT_ESTIMATION: (projectId: string) => `/app/dashboard/${projectId}/estimation`,
   DASHBOARD_PROJECT_OFFER: (projectId: string) => `/app/dashboard/${projectId}/offer`,

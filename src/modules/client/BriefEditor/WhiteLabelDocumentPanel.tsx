@@ -6,13 +6,14 @@ import StarterKit from '@tiptap/starter-kit';
 import Link from '@tiptap/extension-link';
 import Underline from '@tiptap/extension-underline';
 import Placeholder from '@tiptap/extension-placeholder';
-import { Alert, App, Spin } from 'antd';
+import { Alert, App } from 'antd';
 import { t } from '@/lib/i18n';
 import {
   useGetPublicBriefFinalDocumentsQuery,
   useUpdatePublicBriefFinalDocumentMutation,
 } from '@/services/client/publicBriefApi';
 import { BriefFinalDocument } from '@/types/briefAi.interface';
+import { FinalizingView } from './components/FinalizingView';
 
 import styles from './BriefFinalPackage.module.css';
 
@@ -370,8 +371,7 @@ export const WhiteLabelDocumentPanel = forwardRef<WhiteLabelDocumentHandle, Whit
     if (isLoading || pkg?.generating) {
       return (
         <div className={styles.loadingWrapper}>
-          <Spin size='large' />
-          <div className={styles.loadingLabel}>{t('BRIEF_V3_GENERATING_DOCUMENT')}</div>
+          <FinalizingView />
         </div>
       );
     }

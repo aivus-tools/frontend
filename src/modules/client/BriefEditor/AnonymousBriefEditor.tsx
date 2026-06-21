@@ -72,6 +72,16 @@ export const AnonymousBriefEditor = (props: AnonymousBriefEditorProps) => {
     setHasMounted(true);
   }, []);
 
+  // Adopt a resumed draft (parent sets briefId/token after mount, e.g. from the
+  // draft cookie) as long as we have not created our own draft yet — otherwise
+  // the first message would spawn a new draft and abandon the resumed one.
+  useEffect(() => {
+    if (props.briefId && !briefId) {
+      setBriefId(props.briefId);
+      setToken(props.token ?? null);
+    }
+  }, [props.briefId, props.token, briefId]);
+
   const canQueryDetail = !!briefId && !!token;
   const { data: finalDocuments } = useGetPublicBriefFinalDocumentsQuery(
     { briefId: briefId ?? '', token: token ?? '' },

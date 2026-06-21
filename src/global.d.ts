@@ -7,6 +7,7 @@ declare module 'next-auth' {
     vendorId?: string;
     clientId?: string;
     isStaff?: boolean;
+    emailConfirmedAt?: string | null;
   }
 
   interface Session {
@@ -16,6 +17,7 @@ declare module 'next-auth' {
       vendorId?: string;
       clientId?: string;
       isStaff?: boolean;
+      emailConfirmedAt?: string | null;
     } & DefaultSession['user'];
   }
 }
@@ -27,5 +29,6 @@ declare module 'next-auth/jwt' {
     vendorId?: string;
     clientId?: string;
     isStaff?: boolean;
+    emailConfirmedAt?: string | null;
   }
 }

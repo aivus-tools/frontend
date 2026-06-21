@@ -58,6 +58,7 @@ providers.push(
           vendorId: user.vendorId,
           clientId: user.clientId,
           isStaff: user.isStaff,
+          emailConfirmedAt: user.emailConfirmedAt,
           image: null,
         };
       } catch (error) {
@@ -139,6 +140,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
             user.vendorId = aivusUser.vendorId;
             user.clientId = aivusUser.clientId;
             user.isStaff = aivusUser.isStaff;
+            user.emailConfirmedAt = aivusUser.emailConfirmedAt;
             return true;
           }
 
@@ -159,6 +161,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
             user.vendorId = aivusUser.vendorId;
             user.clientId = aivusUser.clientId;
             user.isStaff = false;
+            user.emailConfirmedAt = aivusUser.emailConfirmedAt;
             return true;
           }
 
@@ -179,6 +182,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
         token.vendorId = user.vendorId;
         token.clientId = user.clientId;
         token.isStaff = user.isStaff;
+        token.emailConfirmedAt = user.emailConfirmedAt;
       }
 
       // If update() was called with data - use it immediately (takes priority)
@@ -188,6 +192,9 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
         if (session.user.clientId) token.clientId = session.user.clientId;
         if (session.user.name) token.name = session.user.name;
         if (typeof session.user.isStaff === 'boolean') token.isStaff = session.user.isStaff;
+        if ('emailConfirmedAt' in session.user) {
+          token.emailConfirmedAt = session.user.emailConfirmedAt;
+        }
         return token;
       }
 
@@ -201,6 +208,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
           token.group = aivusUser.group;
           token.vendorId = aivusUser.vendorId;
           token.clientId = aivusUser.clientId;
+          token.emailConfirmedAt = aivusUser.emailConfirmedAt;
           if (typeof aivusUser.isStaff === 'boolean') token.isStaff = aivusUser.isStaff;
         } catch (error) {
           logger.warn('Failed to update JWT from API, keeping existing token data', error);
@@ -216,6 +224,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
       session.user.vendorId = token.vendorId as string | undefined;
       session.user.clientId = token.clientId as string | undefined;
       session.user.isStaff = token.isStaff as boolean | undefined;
+      session.user.emailConfirmedAt = token.emailConfirmedAt as string | null;
       return session;
     },
     authorized: async ({ auth, request }) => {

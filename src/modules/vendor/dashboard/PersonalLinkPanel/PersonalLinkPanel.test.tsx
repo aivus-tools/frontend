@@ -80,7 +80,7 @@ describe('PersonalLinkPanel', () => {
     renderPanel();
     expect(screen.getByText('Copy')).toBeTruthy();
     expect(screen.getByText('Preview')).toBeTruthy();
-    expect(screen.getByText('Embed')).toBeTruthy();
+    expect(screen.getByText('Embed & Webhook')).toBeTruthy();
   });
 
   it('shows empty state when no slug', () => {

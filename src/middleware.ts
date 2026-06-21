@@ -138,17 +138,11 @@ export default auth(async (req) => {
         response.headers.set('Content-Security-Policy', CSP);
         return ensureLocaleCookie(req, response);
       }
-      // CONFIRMED -> role selection
-      else if (group === GROUPS.confirmed) {
-        logger.info('redirecting to /app/group (confirmed)');
-        const response = NextResponse.redirect(new URL(AppRoute.GROUP, req.url));
-        response.headers.set('Content-Security-Policy', CSP);
-        return ensureLocaleCookie(req, response);
-      }
-      // UNCONFIRMED -> email confirmation
+      // Roleless (CONFIRMED, or legacy UNCONFIRMED) -> role selection.
+      // Email confirmation is no longer a gate; it nags via a dashboard banner.
       else {
-        logger.info('redirecting to /app/confirm (unconfirmed)');
-        const response = NextResponse.redirect(new URL(AppRoute.CONFIRM, req.url));
+        logger.info('redirecting to /app/group (roleless)');
+        const response = NextResponse.redirect(new URL(AppRoute.GROUP, req.url));
         response.headers.set('Content-Security-Policy', CSP);
         return ensureLocaleCookie(req, response);
       }
@@ -217,17 +211,10 @@ export default auth(async (req) => {
       response.headers.set('Content-Security-Policy', CSP);
       return ensureLocaleCookie(req, response);
     }
-    // CONFIRMED -> role selection
-    else if (group === GROUPS.confirmed) {
-      logger.info('redirecting to /app/group (from /auth, confirmed)');
-      const response = NextResponse.redirect(new URL(AppRoute.GROUP, req.url));
-      response.headers.set('Content-Security-Policy', CSP);
-      return ensureLocaleCookie(req, response);
-    }
-    // UNCONFIRMED -> email confirmation
+    // Roleless (CONFIRMED, or legacy UNCONFIRMED) -> role selection
     else {
-      logger.info('redirecting to /app/confirm (from /auth, unconfirmed)');
-      const response = NextResponse.redirect(new URL(AppRoute.CONFIRM, req.url));
+      logger.info('redirecting to /app/group (from /auth, roleless)');
+      const response = NextResponse.redirect(new URL(AppRoute.GROUP, req.url));
       response.headers.set('Content-Security-Policy', CSP);
       return ensureLocaleCookie(req, response);
     }
@@ -261,13 +248,17 @@ export default auth(async (req) => {
 
   // Protect /app pages based on user group
   if (pathname.startsWith('/app') && id && group) {
-    // If user is UNCONFIRMED, they can only be on /app/confirm
-    if (group === GROUPS.unconfirmed && !pathname.startsWith(AppRoute.CONFIRM)) {
+    // Roleless users (CONFIRMED, or legacy UNCONFIRMED) can only be on /app/group.
+    // Email confirmation is not a gate anymore — a dashboard banner nags instead.
+    if (!userGroups.has(group) && !pathname.startsWith(AppRoute.GROUP)) {
+      const response = NextResponse.redirect(new URL(AppRoute.GROUP, req.url));
+      // A roleless user arriving on a brief-claim link would otherwise lose the
+      // claim on the redirect to role selection. Persist it the same way the
+      // unauthenticated branch does: the role form auto-picks CLIENT on a pending
+      // brief and useChangeGroup routes through the claim page (URL-token claim).
       if (pathname.startsWith(CLAIM_PATH_PREFIX)) {
         const briefId = pathname.slice(CLAIM_PATH_PREFIX.length).split('/')[0];
         const token = req.nextUrl.searchParams.get('token');
-        const confirmUrl = new URL(AppRoute.CONFIRM, req.url);
-        const response = NextResponse.redirect(confirmUrl);
         if (briefId && token) {
           const cookieValue = encodeURIComponent(`${briefId}:${token}`);
           response.cookies.set(PENDING_BRIEF_COOKIE_NAME, cookieValue, {
@@ -276,28 +267,16 @@ export default auth(async (req) => {
             sameSite: 'lax',
           });
         }
-        response.headers.set('Content-Security-Policy', CSP);
-        return ensureLocaleCookie(req, response);
       }
-      const response = NextResponse.redirect(new URL(AppRoute.CONFIRM, req.url));
       response.headers.set('Content-Security-Policy', CSP);
       return ensureLocaleCookie(req, response);
     }
 
-    // If user is CONFIRMED, they can only be on /app/group
-    if (group === GROUPS.confirmed && !pathname.startsWith(AppRoute.GROUP)) {
-      const response = NextResponse.redirect(new URL(AppRoute.GROUP, req.url));
+    // If user is CLIENT/VENDOR, they CANNOT be on /app/group
+    if (userGroups.has(group) && pathname.startsWith(AppRoute.GROUP)) {
+      const response = NextResponse.redirect(new URL(AppRoute.DASHBOARD, req.url));
       response.headers.set('Content-Security-Policy', CSP);
       return ensureLocaleCookie(req, response);
-    }
-
-    // If user is CLIENT/VENDOR, they CANNOT be on /app/confirm or /app/group
-    if (userGroups.has(group)) {
-      if (pathname.startsWith(AppRoute.CONFIRM) || pathname.startsWith(AppRoute.GROUP)) {
-        const response = NextResponse.redirect(new URL(AppRoute.DASHBOARD, req.url));
-        response.headers.set('Content-Security-Policy', CSP);
-        return ensureLocaleCookie(req, response);
-      }
     }
   }
 

@@ -1,8 +1,9 @@
 'use client';
 
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useParams, useRouter } from 'next/navigation';
-import { App } from 'antd';
+import { App, Button, Result } from 'antd';
+import { useSession } from 'next-auth/react';
 import { PageSpinner } from '@/components/PageSpinner';
 import {
   useClaimPublicBriefMutation,
@@ -10,20 +11,34 @@ import {
   removePublicBriefToken,
 } from '@/services/client/publicBriefApi';
 import { AppRoute } from '@/constants/appRoute';
+import { GROUPS } from '@/constants/constants';
 import { t } from '@/lib/i18n';
 import logger from '@/lib/logger';
 
 const CLAIM_TIMEOUT_MS = 10000;
 
+type ClaimState = 'claiming' | 'no_access' | 'mismatch';
+
 const BriefClaimPage = () => {
   const params = useParams<{ briefId: string }>();
   const router = useRouter();
   const { message } = App.useApp();
+  const { data: session, status: sessionStatus } = useSession();
   const [claimBrief] = useClaimPublicBriefMutation();
+  const [state, setState] = useState<ClaimState>('claiming');
   const claimed = useRef(false);
 
+  const isClient = sessionStatus === 'authenticated' && session?.user?.group === GROUPS.client;
+
   useEffect(() => {
-    if (claimed.current || !params.briefId) {
+    if (claimed.current || !params.briefId || sessionStatus === 'loading') {
+      return;
+    }
+    // A non-client (e.g. vendor) cannot own a client brief — show a clear
+    // no-access screen instead of attempting the claim and 403-ing.
+    if (sessionStatus === 'authenticated' && !isClient) {
+      claimed.current = true;
+      setState('no_access');
       return;
     }
     claimed.current = true;
@@ -65,14 +80,15 @@ const BriefClaimPage = () => {
         clearTimeout(timeoutId);
         const status = (error as { status?: unknown })?.status;
         if (status === 404) {
+          // Already claimed by this account (e.g. at login) — go to the brief.
           removePublicBriefToken(params.briefId);
           router.replace(AppRoute.BRIEF_DETAIL(params.briefId));
           return;
         }
         if (status === 403) {
+          // Client logged in under an email that does not match the brief.
           removePublicBriefToken(params.briefId);
-          message.warning(t('BRIEF_CLAIM_EMAIL_MISMATCH'));
-          router.replace(AppRoute.DASHBOARD);
+          setState('mismatch');
           return;
         }
         logger.error('Failed to claim brief:', error);
@@ -81,7 +97,37 @@ const BriefClaimPage = () => {
       });
 
     return () => clearTimeout(timeoutId);
-  }, [params.briefId]);
+  }, [params.briefId, sessionStatus, isClient]);
+
+  if (state === 'no_access') {
+    return (
+      <Result
+        status='403'
+        title={t('BRIEF_CLAIM_NO_ACCESS_TITLE')}
+        subTitle={t('BRIEF_CLAIM_NO_ACCESS')}
+        extra={
+          <Button type='primary' onClick={() => router.replace(AppRoute.DASHBOARD)}>
+            {t('GO_TO_DASHBOARD')}
+          </Button>
+        }
+      />
+    );
+  }
+
+  if (state === 'mismatch') {
+    return (
+      <Result
+        status='warning'
+        title={t('BRIEF_CLAIM_EMAIL_MISMATCH_TITLE')}
+        subTitle={t('BRIEF_CLAIM_EMAIL_MISMATCH')}
+        extra={
+          <Button type='primary' onClick={() => router.replace(AppRoute.DASHBOARD)}>
+            {t('GO_TO_DASHBOARD')}
+          </Button>
+        }
+      />
+    );
+  }
 
   return <PageSpinner />;
 };

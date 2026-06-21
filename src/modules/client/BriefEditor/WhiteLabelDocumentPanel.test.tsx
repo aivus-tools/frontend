@@ -137,10 +137,10 @@ describe('WhiteLabelDocumentPanel', () => {
       refetch: mocks.refetch,
     });
     renderPanel();
-    expect(document.querySelector('.ant-spin')).toBeTruthy();
+    expect(document.querySelector('[role="progressbar"]')).toBeTruthy();
   });
 
-  it('shows generating spinner when generating is true', () => {
+  it('shows the bar loader when generating is true', () => {
     mocks.getDocuments.mockReturnValue({
       data: { ...mockPackage, generating: true, documents: [] },
       isLoading: false,
@@ -148,8 +148,7 @@ describe('WhiteLabelDocumentPanel', () => {
       refetch: mocks.refetch,
     });
     renderPanel();
-    expect(document.querySelector('.ant-spin')).toBeTruthy();
-    expect(screen.getByText('Preparing your brief...')).toBeTruthy();
+    expect(document.querySelector('[role="progressbar"]')).toBeTruthy();
   });
 
   it('shows missing doc message when no production_brief document', () => {

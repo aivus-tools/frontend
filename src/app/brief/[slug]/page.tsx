@@ -7,15 +7,11 @@ import { App, Avatar, Button, Result, Spin, Typography } from 'antd';
 import { UserOutlined } from '@ant-design/icons';
 import { t } from '@/lib/i18n';
 import { AppRoute } from '@/constants/appRoute';
-import {
-  useGetPublicBriefBySlugQuery,
-  useCreatePublicBriefDraftBySlugMutation,
-  savePublicBriefToken,
-} from '@/services/client/publicBriefApi';
-import { setPendingBrief, setAuthReturnUrl, saveDraftForSlug, getDraftForSlug } from '@/helpers/pendingBrief';
+import { useGetPublicBriefBySlugQuery } from '@/services/client/publicBriefApi';
 import { useCreateBriefAiDraftMutation, useGetSentBriefIdsToVendorQuery } from '@/services/client/briefAiApi';
 import { GROUPS } from '@/constants/constants';
 import { BriefSelectModal } from '@/modules/client/BriefEditor/BriefSelectModal';
+import { BrandedBriefWorkspace } from '@/modules/client/BriefEditor/BrandedBriefWorkspace';
 
 import styles from './page.module.css';
 
@@ -30,22 +26,14 @@ export default function BrandedBriefStartPage() {
   const isEmbed = searchParams.get('embed') === '1';
 
   const { data: slugInfo, isLoading, isError } = useGetPublicBriefBySlugQuery(slug);
-  const [createAnonDraft] = useCreatePublicBriefDraftBySlugMutation();
   const [createAuthDraft] = useCreateBriefAiDraftMutation();
   const [isStarting, setIsStarting] = useState(false);
   const [selectModalOpen, setSelectModalOpen] = useState(false);
 
   const group = session?.user?.group;
   const isClient = sessionStatus === 'authenticated' && group === GROUPS.client;
-  const isVendor = sessionStatus === 'authenticated' && group === GROUPS.vendor;
 
   const { data: sentBriefIdsData } = useGetSentBriefIdsToVendorQuery(slug, { skip: !isClient });
-
-  useEffect(() => {
-    if (isVendor) {
-      router.replace(AppRoute.DASHBOARD);
-    }
-  }, [isVendor, router]);
 
   useEffect(() => {
     if (isClient && !isAuthed) {
@@ -76,32 +64,15 @@ export default function BrandedBriefStartPage() {
     );
   }
 
+  if (isClient && !isAuthed) {
+    return (
+      <div className={styles.centerWrapper}>
+        <Spin size='large' />
+      </div>
+    );
+  }
+
   const embedSuffix = isEmbed ? '?embed=1' : '';
-
-  const handleAnonStart = async () => {
-    if (isStarting) {
-      return;
-    }
-
-    const existing = getDraftForSlug(slug);
-    if (existing) {
-      savePublicBriefToken(existing.briefId, existing.token);
-      router.push(AppRoute.BRANDED_BRIEF_DETAIL(slug, existing.briefId) + embedSuffix);
-      return;
-    }
-
-    setIsStarting(true);
-    try {
-      const result = await createAnonDraft(slug).unwrap();
-      savePublicBriefToken(result.briefId, result.token);
-      setPendingBrief(result.briefId, result.token);
-      saveDraftForSlug(slug, result.briefId, result.token);
-      router.push(AppRoute.BRANDED_BRIEF_DETAIL(slug, result.briefId) + embedSuffix);
-    } catch {
-      message.error(t('UNEXPECTED_ERROR'));
-      setIsStarting(false);
-    }
-  };
 
   const handleAuthNewBrief = async () => {
     if (isStarting) {
@@ -121,16 +92,7 @@ export default function BrandedBriefStartPage() {
     router.push(AppRoute.BRANDED_BRIEF_DETAIL(slug, briefId) + embedSuffix);
   };
 
-  const handleLogin = () => {
-    const returnUrl = AppRoute.BRANDED_BRIEF(slug);
-    if (isEmbed) {
-      window.open(`${AppRoute.AUTH}?next=${encodeURIComponent(returnUrl)}`, '_blank');
-    } else {
-      setAuthReturnUrl(returnUrl);
-      router.push(AppRoute.AUTH);
-    }
-  };
-
+  // Authenticated client picks an existing brief or starts a new one for this vendor.
   if (isClient && isAuthed) {
     return (
       <div className={styles.pageWrapper}>
@@ -171,43 +133,8 @@ export default function BrandedBriefStartPage() {
     );
   }
 
-  return (
-    <div className={styles.pageWrapper}>
-      {!isEmbed ? (
-        <header className={styles.header}>
-          <div className={styles.loginHint}>
-            <span className={styles.loginHintText}>{t('BRANDED_BRIEF_LOGIN_HINT')}</span>
-            <Button type='link' size='small' onClick={handleLogin} className={styles.loginLink}>
-              {t('BRANDED_BRIEF_LOGIN_LINK')}
-            </Button>
-          </div>
-        </header>
-      ) : null}
-
-      <main className={styles.main}>
-        <div className={styles.card}>
-          <div className={styles.branding}>
-            {slugInfo.vendorLogoUrl ? (
-              <img src={slugInfo.vendorLogoUrl} alt={slugInfo.vendorName} className={styles.logo} />
-            ) : (
-              <Avatar size={72} icon={<UserOutlined />} className={styles.logoFallback} />
-            )}
-            <Typography.Title level={3} className={styles.vendorName}>
-              {t('BRANDED_BRIEF_FOR', slugInfo.vendorName)}
-            </Typography.Title>
-          </div>
-          <Button
-            type='primary'
-            size='large'
-            block
-            loading={isStarting}
-            onClick={handleAnonStart}
-            className={styles.startButton}
-          >
-            {t('BRANDED_BRIEF_START_BUTTON')}
-          </Button>
-        </div>
-      </main>
-    </div>
-  );
+  // Anonymous visitor (or a vendor previewing): open the AI dialog straight away,
+  // branding lives inside the workspace header. No draft is created until the
+  // first message is sent; an existing draft is resumed inside the workspace.
+  return <BrandedBriefWorkspace slug={slug} initialBriefId={null} />;
 }

@@ -1,8 +1,8 @@
 'use client';
 
 import { useCallback, useEffect, useRef, useState } from 'react';
-import { Form, Input, InputNumber, Button, App, Spin, Popconfirm } from 'antd';
-import { CameraOutlined, CopyOutlined } from '@ant-design/icons';
+import { Form, Input, Button, App, Spin } from 'antd';
+import { CameraOutlined } from '@ant-design/icons';
 import { t } from '@/lib/i18n';
 import {
   useGetVendorSettingsQuery,
@@ -10,9 +10,8 @@ import {
   useUploadVendorLogoMutation,
   useLazySuggestVendorSlugQuery,
   useLazyCheckVendorSlugQuery,
-  useGetVendorWebhookKeyQuery,
-  useRotateVendorWebhookKeyMutation,
 } from '@/services/client/vendorSettingsApi';
+import { usePublicAppOrigin } from '@/hooks/usePublicAppOrigin';
 
 import styles from './VendorSettingsSection.module.css';
 
@@ -36,57 +35,6 @@ interface VendorSettingsFormValues {
 
 type SlugStatus = 'idle' | 'checking' | 'available' | 'taken' | 'invalid';
 
-const WebhookKeySection = () => {
-  const { message: messageApi } = App.useApp();
-  const { data: webhookKey, isLoading } = useGetVendorWebhookKeyQuery();
-  const [rotate, { isLoading: isRotating }] = useRotateVendorWebhookKeyMutation();
-  const [keyCopied, setKeyCopied] = useState(false);
-
-  const handleCopyKey = async () => {
-    if (!webhookKey?.key) {
-      return;
-    }
-    try {
-      await navigator.clipboard.writeText(webhookKey.key);
-      setKeyCopied(true);
-      setTimeout(() => setKeyCopied(false), 2000);
-    } catch {
-      messageApi.error(t('UNEXPECTED_ERROR'));
-    }
-  };
-
-  const handleRotate = async () => {
-    try {
-      await rotate().unwrap();
-    } catch {
-      messageApi.error(t('UNEXPECTED_ERROR'));
-    }
-  };
-
-  if (isLoading) {
-    return <Spin size='small' />;
-  }
-
-  return (
-    <div className={styles.webhookSection}>
-      <h4 className={styles.subTitleCompact}>{t('VENDOR_SETTINGS_WEBHOOK_KEY_LABEL')}</h4>
-      <div className={styles.webhookRow}>
-        <Input.Password readOnly value={webhookKey?.key ?? ''} className={styles.webhookInput} />
-        <Button icon={<CopyOutlined />} onClick={handleCopyKey} disabled={!webhookKey?.key}>
-          {keyCopied ? t('VENDOR_SETTINGS_WEBHOOK_KEY_COPIED') : t('VENDOR_SETTINGS_WEBHOOK_KEY_COPY')}
-        </Button>
-        <Popconfirm
-          title={t('VENDOR_SETTINGS_WEBHOOK_KEY_REGENERATE_CONFIRM')}
-          onConfirm={handleRotate}
-          okText={t('VENDOR_SETTINGS_WEBHOOK_KEY_REGENERATE')}
-        >
-          <Button loading={isRotating}>{t('VENDOR_SETTINGS_WEBHOOK_KEY_REGENERATE')}</Button>
-        </Popconfirm>
-      </div>
-    </div>
-  );
-};
-
 export const VendorSettingsSection = () => {
   const { message } = App.useApp();
   const [form] = Form.useForm<VendorSettingsFormValues>();
@@ -99,6 +47,9 @@ export const VendorSettingsSection = () => {
   const [uploadLogo, { isLoading: isUploadingLogo }] = useUploadVendorLogoMutation();
   const [suggestSlug] = useLazySuggestVendorSlugQuery();
   const [checkSlug] = useLazyCheckVendorSlugQuery();
+
+  const origin = usePublicAppOrigin();
+  const slugAddon = `${origin.replace(/^https?:\/\//, '')}/brief/`;
 
   const [slugStatus, setSlugStatus] = useState<SlugStatus>('idle');
 
@@ -125,8 +76,9 @@ export const VendorSettingsSection = () => {
   const handleSlugSuggest = async () => {
     try {
       const result = await suggestSlug().unwrap();
-      form.setFieldValue('slug', result.slug);
-      await validateSlugRemote(result.slug);
+      const suggested = result.slug;
+      form.setFieldsValue({ slug: suggested });
+      await validateSlugRemote(suggested);
     } catch {
       message.error(t('UNEXPECTED_ERROR'));
     }
@@ -174,14 +126,7 @@ export const VendorSettingsSection = () => {
       await updateSettings({
         companyName: values.companyName,
         agencyName: values.agencyName,
-        fringesPercent: values.fringesPercent,
-        handlingPercent: values.handlingPercent,
-        markupPercent: values.markupPercent,
-        productionInsurancePercent: values.productionInsurancePercent,
-        productionFeePercent: values.productionFeePercent,
-        postMarkupPercent: values.postMarkupPercent,
-        postInsurancePercent: values.postInsurancePercent,
-        postTaxPercent: values.postTaxPercent,
+        // Default production / post-production percentages are temporarily hidden.
         slug: values.slug || null,
         leadNotificationEmail: values.leadNotificationEmail,
       }).unwrap();
@@ -277,7 +222,7 @@ export const VendorSettingsSection = () => {
           help={slugHelp || (settings?.slug ? t('VENDOR_SETTINGS_SLUG_CHANGE_WARNING') : '')}
         >
           <Input
-            addonBefore={t('VENDOR_SETTINGS_SLUG_ADDON')}
+            addonBefore={slugAddon}
             placeholder={t('VENDOR_SETTINGS_SLUG_PLACEHOLDER')}
             size='large'
             onChange={handleSlugChange}
@@ -293,6 +238,7 @@ export const VendorSettingsSection = () => {
           <Input type='email' placeholder={t('VENDOR_SETTINGS_NOTIFICATION_EMAIL_PLACEHOLDER')} size='large' />
         </Form.Item>
 
+        {/* Temporarily hidden until offers/estimation are re-enabled.
         <h4 className={styles.subTitle}>Default Production Percentages</h4>
         <div className={styles.percentsRow}>
           <Form.Item name='fringesPercent' label='Fringes %' className={styles.percentItem120}>
@@ -324,13 +270,12 @@ export const VendorSettingsSection = () => {
             <InputNumber step={0.01} min={0} className={styles.percentInput} />
           </Form.Item>
         </div>
+        */}
 
         <Button type='primary' htmlType='submit' loading={isUpdating} size='large' className={styles.submitButton}>
           Save Company Settings
         </Button>
       </Form>
-
-      <WebhookKeySection />
     </div>
   );
 };

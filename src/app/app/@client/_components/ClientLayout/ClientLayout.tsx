@@ -15,6 +15,7 @@ import { AppRoute } from '@/constants/appRoute';
 import { BetaFooter, useBetaFooterHeight } from '@/components/BetaFooter/BetaFooter';
 import { BetaFooterProvider, useBetaFooter } from '@/components/BetaFooter/BetaFooterContext';
 import { PageTitleSync } from '@/components/PageTitleSync';
+import { EmailConfirmationBanner } from '@/components/EmailConfirmationBanner/EmailConfirmationBanner';
 import { getLocale, resetLocaleCache, t } from '@/lib/i18n';
 import { useGetSettingsQuery } from '@/services/client/profileApi';
 import { THEME } from '@/constants/constants';
@@ -103,6 +104,7 @@ const ClientLayoutInner = (props: PropsWithChildren) => {
         contentPaddingBottom={footerDismissed ? 0 : footerHeight}
         footer={<BetaFooter />}
       >
+        <EmailConfirmationBanner />
         {props.children}
       </AppShell>
     </>

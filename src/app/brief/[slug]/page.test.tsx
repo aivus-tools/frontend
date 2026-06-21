@@ -1,13 +1,16 @@
 import React from 'react';
 import { describe, it, expect, vi, beforeEach, beforeAll } from 'vitest';
-import { render, screen, waitFor } from '@testing-library/react';
-import userEvent from '@testing-library/user-event';
+import { render, screen } from '@testing-library/react';
 import { App } from 'antd';
 
 const navMocks = vi.hoisted(() => ({
   push: vi.fn(),
   replace: vi.fn(),
   searchParamsGet: vi.fn().mockReturnValue(null),
+}));
+
+const sessionMock = vi.hoisted(() => ({
+  value: { data: null, status: 'unauthenticated' } as { data: unknown; status: string },
 }));
 
 vi.mock('next/navigation', () => ({
@@ -17,32 +20,28 @@ vi.mock('next/navigation', () => ({
 }));
 
 vi.mock('next-auth/react', () => ({
-  useSession: () => ({ data: null, status: 'unauthenticated' }),
+  useSession: () => sessionMock.value,
 }));
 
 const mocks = vi.hoisted(() => ({
   getBySlug: vi.fn(),
-  createDraft: vi.fn(),
-  saveToken: vi.fn(),
 }));
 
 vi.mock('@/services/client/publicBriefApi', () => ({
   useGetPublicBriefBySlugQuery: mocks.getBySlug,
-  useCreatePublicBriefDraftBySlugMutation: () => [mocks.createDraft, {}],
-  savePublicBriefToken: mocks.saveToken,
-}));
-
-vi.mock('@/helpers/pendingBrief', () => ({
-  setPendingBrief: vi.fn(),
-  setAuthReturnUrl: vi.fn(),
-  saveDraftForSlug: vi.fn(),
-  getDraftForSlug: vi.fn().mockReturnValue(null),
 }));
 
 vi.mock('@/services/client/briefAiApi', () => ({
   useCreateBriefAiDraftMutation: () => [vi.fn(), {}],
-  useGetBriefAiListQuery: () => ({ data: [], isLoading: false }),
   useGetSentBriefIdsToVendorQuery: () => ({ data: undefined, isLoading: false }),
+}));
+
+vi.mock('@/modules/client/BriefEditor/BriefSelectModal', () => ({
+  BriefSelectModal: () => <div data-testid='select-modal' />,
+}));
+
+vi.mock('@/modules/client/BriefEditor/BrandedBriefWorkspace', () => ({
+  BrandedBriefWorkspace: () => <div data-testid='workspace' />,
 }));
 
 import BrandedBriefStartPage from './page';
@@ -82,17 +81,18 @@ describe('BrandedBriefStartPage', () => {
     navMocks.push.mockReset();
     navMocks.replace.mockReset();
     navMocks.searchParamsGet.mockReturnValue(null);
-    mocks.getBySlug.mockReturnValue({
-      data: mockSlugInfo,
-      isLoading: false,
-      isError: false,
-    });
-    mocks.createDraft.mockReturnValue({
-      unwrap: () => Promise.resolve({ briefId: 'brief-1', token: 'tok-1' }),
-    });
+    sessionMock.value = { data: null, status: 'unauthenticated' };
+    mocks.getBySlug.mockReturnValue({ data: mockSlugInfo, isLoading: false, isError: false });
   });
 
-  it('renders vendor name and start button', () => {
+  it('opens the AI dialog (workspace) straight away for an anonymous visitor', () => {
+    renderPage();
+    expect(screen.getByTestId('workspace')).toBeTruthy();
+  });
+
+  it('shows the branded card with Start button for an authenticated client', () => {
+    sessionMock.value = { data: { user: { group: 'CLIENT' } }, status: 'authenticated' };
+    navMocks.searchParamsGet.mockImplementation((key: string) => (key === 'authed' ? '1' : null));
     renderPage();
     expect(screen.getByText('Brief for Test Agency')).toBeTruthy();
     expect(screen.getByText('Start brief')).toBeTruthy();
@@ -109,39 +109,8 @@ describe('BrandedBriefStartPage', () => {
   });
 
   it('shows loading spinner when fetching', () => {
-    mocks.getBySlug.mockReturnValue({
-      data: undefined,
-      isLoading: true,
-      isError: false,
-    });
+    mocks.getBySlug.mockReturnValue({ data: undefined, isLoading: true, isError: false });
     renderPage();
     expect(document.querySelector('.ant-spin')).toBeTruthy();
-  });
-
-  it('calls createDraft on start button click', async () => {
-    renderPage();
-    await userEvent.click(screen.getByText('Start brief'));
-    await waitFor(() => {
-      expect(mocks.createDraft).toHaveBeenCalledWith('test-agency');
-    });
-  });
-
-  it('navigates to detail without embed suffix when embed=0', async () => {
-    navMocks.searchParamsGet.mockReturnValue(null);
-    renderPage();
-    await userEvent.click(screen.getByText('Start brief'));
-    await waitFor(() => {
-      expect(navMocks.push).toHaveBeenCalledWith(expect.stringContaining('/brief/test-agency/brief-1'));
-    });
-    expect(navMocks.push.mock.calls[0][0]).not.toContain('embed=1');
-  });
-
-  it('appends ?embed=1 to detail navigation when embed=1', async () => {
-    navMocks.searchParamsGet.mockImplementation((key: string) => (key === 'embed' ? '1' : null));
-    renderPage();
-    await userEvent.click(screen.getByText('Start brief'));
-    await waitFor(() => {
-      expect(navMocks.push).toHaveBeenCalledWith(expect.stringContaining('?embed=1'));
-    });
   });
 });

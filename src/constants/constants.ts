@@ -43,6 +43,7 @@ export const VENDOR_TABS = [
 ] as const;
 
 export const VENDOR_PROJECT_TAB_KEYS = {
+  BRIEF: 'brief',
   DETAILS: 'details',
   ESTIMATION: 'estimation',
   OFFER: 'offer',
@@ -54,6 +55,10 @@ export const VENDOR_PROJECT_TAB_KEYS = {
 export type VendorProjectTabKey = (typeof VENDOR_PROJECT_TAB_KEYS)[keyof typeof VENDOR_PROJECT_TAB_KEYS];
 
 export const VENDOR_PROJECT_TABS = [
+  {
+    key: VENDOR_PROJECT_TAB_KEYS.BRIEF,
+    labelKey: 'PROJECT_BRIEF_TAB',
+  },
   {
     key: VENDOR_PROJECT_TAB_KEYS.DETAILS,
     labelKey: 'PROJECT_DETAILS',

@@ -1,63 +1,26 @@
 'use client';
 
 import React, { useState } from 'react';
-import { App, Button, Card, Input, Modal, Typography } from 'antd';
+import { App, Button, Card, Typography } from 'antd';
 import { CopyOutlined, EyeOutlined, LinkOutlined } from '@ant-design/icons';
 import Link from 'next/link';
 import { t } from '@/lib/i18n';
 import { AppRoute } from '@/constants/appRoute';
 import { useGetVendorSettingsQuery } from '@/services/client/vendorSettingsApi';
-import { PUBLIC_APP_URL } from '@/constants/constants';
+import { usePublicAppOrigin } from '@/hooks/usePublicAppOrigin';
+import { EmbedWebhookModal } from './EmbedWebhookModal';
 
 import styles from './PersonalLinkPanel.module.css';
-
-interface EmbedModalProps {
-  value: boolean;
-  onChange: (open: boolean) => void;
-  slug: string;
-}
-
-const EmbedModal = (props: EmbedModalProps) => {
-  const { message: messageApi } = App.useApp();
-  const [copied, setCopied] = useState(false);
-
-  const snippetUrl = `${PUBLIC_APP_URL}${AppRoute.BRANDED_BRIEF(props.slug)}?embed=1`;
-  const snippet = `<iframe src="${snippetUrl}" width="100%" height="700" frameborder="0"></iframe>`;
-
-  const handleCopy = async () => {
-    try {
-      await navigator.clipboard.writeText(snippet);
-      setCopied(true);
-      setTimeout(() => setCopied(false), 2000);
-    } catch {
-      messageApi.error(t('UNEXPECTED_ERROR'));
-    }
-  };
-
-  return (
-    <Modal
-      open={props.value}
-      title={t('BRANDED_BRIEF_EMBED_MODAL_TITLE')}
-      onCancel={() => props.onChange(false)}
-      footer={
-        <Button type='primary' icon={<CopyOutlined />} onClick={handleCopy}>
-          {copied ? t('BRANDED_BRIEF_EMBED_COPIED') : t('BRANDED_BRIEF_EMBED_COPY')}
-        </Button>
-      }
-    >
-      <Input.TextArea value={snippet} readOnly rows={4} className={styles.codeArea} />
-    </Modal>
-  );
-};
 
 export const PersonalLinkPanel = () => {
   const { message: messageApi } = App.useApp();
   const { data: settings, isLoading } = useGetVendorSettingsQuery();
   const [embedOpen, setEmbedOpen] = useState(false);
   const [copied, setCopied] = useState(false);
+  const origin = usePublicAppOrigin();
 
   const slug = settings?.slug ?? null;
-  const briefUrl = slug ? `${PUBLIC_APP_URL}${AppRoute.BRANDED_BRIEF(slug)}` : '';
+  const briefUrl = slug ? `${origin}${AppRoute.BRANDED_BRIEF(slug)}` : '';
 
   const handleCopy = async () => {
     if (!briefUrl) {
@@ -123,7 +86,7 @@ export const PersonalLinkPanel = () => {
         </div>
       </Card>
 
-      <EmbedModal value={embedOpen} onChange={setEmbedOpen} slug={slug} />
+      <EmbedWebhookModal value={embedOpen} onChange={setEmbedOpen} slug={slug} />
     </>
   );
 };

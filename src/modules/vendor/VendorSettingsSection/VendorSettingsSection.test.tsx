@@ -73,9 +73,9 @@ describe('VendorSettingsSection', () => {
     mocks.getWebhookKey.mockReturnValue({ data: null, isLoading: false });
   });
 
-  it('renders slug addon prefix', () => {
+  it('renders slug addon prefix from current host', () => {
     renderSection();
-    expect(screen.getByText('go.aivus.co/brief/')).toBeTruthy();
+    expect(screen.getByText(`${window.location.host}/brief/`)).toBeTruthy();
   });
 
   it('renders Suggest button', () => {
@@ -86,21 +86,6 @@ describe('VendorSettingsSection', () => {
   it('renders lead notification email field', () => {
     renderSection();
     expect(screen.getByText('Lead notification email')).toBeTruthy();
-  });
-
-  it('renders webhook section with Regenerate button when no key', () => {
-    renderSection();
-    expect(screen.getAllByText('Regenerate').length).toBeGreaterThan(0);
-  });
-
-  it('renders Copy and Regenerate when key present', () => {
-    mocks.getWebhookKey.mockReturnValue({
-      data: { key: 'secret-key', isActive: true, createdAt: null, rotatedAt: null },
-      isLoading: false,
-    });
-    renderSection();
-    expect(screen.getByText('Copy')).toBeTruthy();
-    expect(screen.getAllByText('Regenerate').length).toBeGreaterThan(0);
   });
 
   it('does not call updateSettings when slug is taken (validates after suggest)', async () => {

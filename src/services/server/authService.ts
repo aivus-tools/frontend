@@ -33,6 +33,7 @@ export async function login(credentials: Credentials): Promise<{
   clientId?: string;
   claimedBriefId?: string;
   isStaff?: boolean;
+  emailConfirmedAt?: string | null;
 }> {
   try {
     const { clientIp, ...body } = credentials;
@@ -77,6 +78,8 @@ export async function register({
   id: string;
   vendorId?: string;
   clientId?: string;
+  claimedBriefId?: string;
+  emailConfirmedAt?: string | null;
 }> {
   try {
     logger.info('Registering user:', { name, email, authType });
