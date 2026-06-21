@@ -6,8 +6,8 @@ import { VendorSettingsSection } from '@/modules/vendor/VendorSettingsSection/Ve
 export default function VendorSettingsPage() {
   return (
     <>
-      <SettingsForm />
       <VendorSettingsSection />
+      <SettingsForm />
     </>
   );
 }

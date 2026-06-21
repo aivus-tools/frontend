@@ -35,6 +35,7 @@ type SaveState = 'idle' | 'saving' | 'saved' | 'error';
 interface DocumentEditorHandle {
   copy: (mode: 'html' | 'text') => Promise<void>;
   download: () => Promise<void>;
+  flush: () => Promise<void>;
 }
 
 const DOCUMENT_TITLES: Record<string, string> = {
@@ -43,12 +44,17 @@ const DOCUMENT_TITLES: Record<string, string> = {
   deliverables_checklist: 'Deliverables Checklist',
 };
 
+export interface BriefFinalPackageHandle {
+  flush: () => Promise<void>;
+}
+
 interface BriefFinalPackageProps {
   briefId: string;
   package: BriefFinalPackageType;
   onRegenerate?: (() => void) | null;
   isRegenerating?: boolean;
   mobileActionsSlot?: HTMLElement | null;
+  whiteLabel?: boolean;
 }
 
 const htmlToPlainText = (html: string): string => {
@@ -66,12 +72,21 @@ interface DocumentEditorProps {
   onSaveStateChange: (state: SaveState) => void;
 }
 
+const is409Error = (error: unknown): boolean => {
+  if (typeof error !== 'object' || error == null) {
+    return false;
+  }
+  const status = (error as { status?: unknown }).status;
+  return status === 409;
+};
+
 const DocumentEditor = forwardRef<DocumentEditorHandle, DocumentEditorProps>((props, ref) => {
   const { briefId, document: doc, onSaveStateChange } = props;
   const { message: messageApi } = App.useApp();
   const [updateDoc] = useUpdateBriefAiFinalDocumentMutation();
   const saveTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const latestHtmlRef = useRef<string>(doc.html);
+  const saveBlockedRef = useRef<boolean>(false);
   const onSaveStateChangeRef = useRef(onSaveStateChange);
   onSaveStateChangeRef.current = onSaveStateChange;
 
@@ -94,6 +109,9 @@ const DocumentEditor = forwardRef<DocumentEditorHandle, DocumentEditorProps>((pr
     ],
     content: doc.html,
     onUpdate: ({ editor: current }) => {
+      if (saveBlockedRef.current) {
+        return;
+      }
       const html = current.getHTML();
       latestHtmlRef.current = html;
       setSaveState('saving');
@@ -101,6 +119,9 @@ const DocumentEditor = forwardRef<DocumentEditorHandle, DocumentEditorProps>((pr
         clearTimeout(saveTimerRef.current);
       }
       saveTimerRef.current = setTimeout(async () => {
+        if (saveBlockedRef.current) {
+          return;
+        }
         try {
           await updateDoc({
             briefId,
@@ -109,8 +130,14 @@ const DocumentEditor = forwardRef<DocumentEditorHandle, DocumentEditorProps>((pr
             plainText: htmlToPlainText(html),
           }).unwrap();
           setSaveState('saved');
-        } catch {
-          setSaveState('error');
+        } catch (error) {
+          if (is409Error(error)) {
+            saveBlockedRef.current = true;
+            setSaveState('error');
+            messageApi.warning(t('BRIEF_ALREADY_SENT_EDIT_BLOCKED'));
+          } else {
+            setSaveState('error');
+          }
         }
       }, AUTOSAVE_DEBOUNCE_MS);
     },
@@ -163,6 +190,26 @@ const DocumentEditor = forwardRef<DocumentEditorHandle, DocumentEditorProps>((pr
           await downloadPdf(url, `${DOCUMENT_TITLES[doc.kind] ?? 'Brief'}.pdf`);
         } catch {
           messageApi.error(t('UNEXPECTED_ERROR'));
+        }
+      },
+      flush: async () => {
+        if (!saveTimerRef.current) {
+          return;
+        }
+        clearTimeout(saveTimerRef.current);
+        saveTimerRef.current = null;
+        if (saveBlockedRef.current) {
+          return;
+        }
+        try {
+          await updateDoc({
+            briefId,
+            documentId: doc.id,
+            html: latestHtmlRef.current,
+            plainText: htmlToPlainText(latestHtmlRef.current),
+          }).unwrap();
+        } catch {
+          /* flush before send — ignore save errors */
         }
       },
     }),
@@ -408,12 +455,13 @@ const saveStatusClass = (state: SaveState): string => {
   return styles.saveStatus;
 };
 
-export const BriefFinalPackage = (props: BriefFinalPackageProps) => {
+export const BriefFinalPackage = forwardRef<BriefFinalPackageHandle, BriefFinalPackageProps>((props, ref) => {
   const { briefId, package: pkg, onRegenerate, isRegenerating, mobileActionsSlot } = props;
+  const isWhiteLabel = props.whiteLabel ?? false;
   const { isMobile } = useBreakpoint();
   const byKind = new Map(pkg.documents.map((x) => [x.kind, x]));
 
-  const tabs: { key: 'production_brief' | 'vendor_email'; label: string; document?: BriefFinalDocument }[] = [
+  const allTabs: { key: 'production_brief' | 'vendor_email'; label: string; document?: BriefFinalDocument }[] = [
     {
       key: 'production_brief',
       label: t('BRIEF_V3_TAB_PRODUCTION_BRIEF'),
@@ -425,10 +473,19 @@ export const BriefFinalPackage = (props: BriefFinalPackageProps) => {
       document: byKind.get('vendor_email'),
     },
   ];
+  const tabs = isWhiteLabel ? allTabs.filter((x) => x.key !== 'vendor_email') : allTabs;
 
   const [activeKey, setActiveKey] = useState<'production_brief' | 'vendor_email'>('production_brief');
   const [saveState, setSaveState] = useState<SaveState>('idle');
   const editorRef = useRef<DocumentEditorHandle | null>(null);
+
+  useImperativeHandle(
+    ref,
+    () => ({
+      flush: () => editorRef.current?.flush() ?? Promise.resolve(),
+    }),
+    []
+  );
   const preVendorsRef = useRef<HTMLElement | null>(null);
 
   const { data: briefDetail } = useGetBriefAiDetailQuery(briefId);
@@ -436,7 +493,7 @@ export const BriefFinalPackage = (props: BriefFinalPackageProps) => {
 
   const preVendorsLanguage: PreVendorLanguage = getLocale() === 'ru' ? 'ru' : 'en';
 
-  const { data: preVendorsResponse } = useGetPreVendorsQuery({ language: preVendorsLanguage });
+  const { data: preVendorsResponse } = useGetPreVendorsQuery({ language: preVendorsLanguage }, { skip: isWhiteLabel });
   const preVendors = preVendorsResponse?.preVendors ?? [];
   const hasPreVendors = preVendors.length > 0;
 
@@ -475,22 +532,24 @@ export const BriefFinalPackage = (props: BriefFinalPackageProps) => {
   const actionsNode = (
     <>
       <span className={saveStatusClass(saveState)}>{saveLabel}</span>
-      {hasPreVendors ? (
+      {!isWhiteLabel && hasPreVendors ? (
         <div className={isMobile ? styles.pickVendorMobileWrap : styles.pickVendorWrap}>
           <PickVendorButton onClick={handlePickVendor} />
         </div>
       ) : null}
-      <ShareControl briefId={briefId} compact={isMobile} />
-      <Button
-        type='primary'
-        icon={<DownloadOutlined />}
-        onClick={() => editorRef.current?.download()}
-        disabled={!activeDoc}
-        aria-label={t('BRIEF_V3_DOWNLOAD_PDF')}
-        className={isMobile ? styles.iconOnlyButton : undefined}
-      >
-        {isMobile ? null : t('BRIEF_V3_DOWNLOAD_PDF')}
-      </Button>
+      {!isWhiteLabel ? <ShareControl briefId={briefId} compact={isMobile} /> : null}
+      {!isWhiteLabel ? (
+        <Button
+          type='primary'
+          icon={<DownloadOutlined />}
+          onClick={() => editorRef.current?.download()}
+          disabled={!activeDoc}
+          aria-label={t('BRIEF_V3_DOWNLOAD_PDF')}
+          className={isMobile ? styles.iconOnlyButton : undefined}
+        >
+          {isMobile ? null : t('BRIEF_V3_DOWNLOAD_PDF')}
+        </Button>
+      ) : null}
     </>
   );
 
@@ -529,7 +588,7 @@ export const BriefFinalPackage = (props: BriefFinalPackageProps) => {
         )}
       </div>
 
-      {hasPreVendors ? (
+      {!isWhiteLabel && hasPreVendors ? (
         <PreVendorsBlock
           ref={preVendorsRef}
           preVendors={preVendors}
@@ -548,4 +607,6 @@ export const BriefFinalPackage = (props: BriefFinalPackageProps) => {
       ) : null}
     </div>
   );
-};
+});
+
+BriefFinalPackage.displayName = 'BriefFinalPackage';

@@ -18,9 +18,6 @@ export const userApi = createApi({
         body: { group: newGroup },
       }),
     }),
-    confirmEmail: builder.query<void, string>({
-      query: (token) => ApiRoute.CONFIRM_EMAIL(token),
-    }),
     resendConfirmation: builder.mutation<{ message: string }, string>({
       query: (email) => ({
         url: ApiRoute.RESEND_CONFIRMATION,
@@ -47,7 +44,6 @@ export const userApi = createApi({
 
 export const {
   useChangeGroupMutation,
-  useLazyConfirmEmailQuery,
   useResendConfirmationMutation,
   useForgotPasswordMutation,
   useResetPasswordMutation,

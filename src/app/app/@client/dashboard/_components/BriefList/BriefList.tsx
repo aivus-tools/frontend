@@ -16,7 +16,7 @@ import styles from './BriefList.module.css';
 
 export const BriefList = () => {
   const router = useRouter();
-  const { data: briefs = [], isLoading } = useGetBriefAiListQuery();
+  const { data: briefs = [], isLoading } = useGetBriefAiListQuery(undefined, { refetchOnMountOrArgChange: true });
 
   const clientDashboardTHeads = [
     { text: t('PROJECT'), showIcon: true },

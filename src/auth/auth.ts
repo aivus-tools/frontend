@@ -1,12 +1,13 @@
 import NextAuth from 'next-auth';
 import Google from 'next-auth/providers/google';
 import Credentials from 'next-auth/providers/credentials';
-import { cookies } from 'next/headers';
+import { cookies, headers } from 'next/headers';
 import { checkEmail, login, register } from '@/services/server/authService';
 import logger from '@/lib/logger';
 import { AUTH_TYPES, GROUPS } from '@/constants/constants';
 import { updateUserSession } from '@/services/server/userService';
 import { PENDING_BRIEF_COOKIE_NAME } from '@/helpers/pendingBrief';
+import { resolveClientIp } from '@/lib/resolveClientIp';
 import type { Groups } from '@/types/user.interface';
 
 // Get environment variables for Google OAuth
@@ -35,7 +36,10 @@ providers.push(
       briefId: {},
       briefToken: {},
     },
-    authorize: async (credentials) => {
+    authorize: async (credentials, request) => {
+      const xff = request.headers.get('x-forwarded-for');
+      const xRealIp = request.headers.get('x-real-ip');
+      const clientIp = resolveClientIp(xff, xRealIp) || undefined;
       try {
         const user = await login({
           email: credentials.email as string,
@@ -43,6 +47,7 @@ providers.push(
           authType: AUTH_TYPES.credentials,
           briefId: credentials.briefId as string | undefined,
           briefToken: credentials.briefToken as string | undefined,
+          clientIp,
         });
 
         return {
@@ -53,6 +58,7 @@ providers.push(
           vendorId: user.vendorId,
           clientId: user.clientId,
           isStaff: user.isStaff,
+          emailConfirmedAt: user.emailConfirmedAt,
           image: null,
         };
       } catch (error) {
@@ -87,6 +93,16 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
             return false;
           }
 
+          let clientIp: string | undefined;
+          try {
+            const headerStore = await headers();
+            const xff = headerStore.get('x-forwarded-for');
+            const xRealIp = headerStore.get('x-real-ip');
+            clientIp = resolveClientIp(xff, xRealIp) || undefined;
+          } catch {
+            logger.warn('Google signIn: failed to read request headers for IP');
+          }
+
           let briefId: string | undefined;
           let briefToken: string | undefined;
           try {
@@ -105,18 +121,26 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
           }
 
           logger.info('Google signIn: checking email', { email });
-          const result = await checkEmail({ email: email as string });
+          const result = await checkEmail({ email: email as string, clientIp });
           logger.info('Google signIn: checkEmail result', result);
 
           if (result.exists) {
             logger.info('Google signIn: user exists, logging in');
-            const aivusUser = await login({ email, password: '', authType: AUTH_TYPES.google, briefId, briefToken });
+            const aivusUser = await login({
+              email,
+              password: '',
+              authType: AUTH_TYPES.google,
+              briefId,
+              briefToken,
+              clientIp,
+            });
             logger.info('Google signIn: login result', aivusUser);
             user.group = aivusUser.group;
             user.id = `${aivusUser.id}`;
             user.vendorId = aivusUser.vendorId;
             user.clientId = aivusUser.clientId;
             user.isStaff = aivusUser.isStaff;
+            user.emailConfirmedAt = aivusUser.emailConfirmedAt;
             return true;
           }
 
@@ -129,6 +153,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
               password: '',
               briefId,
               briefToken,
+              clientIp,
             });
             logger.info('Google signIn: register result', aivusUser);
             user.group = aivusUser.group ?? GROUPS.confirmed;
@@ -136,6 +161,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
             user.vendorId = aivusUser.vendorId;
             user.clientId = aivusUser.clientId;
             user.isStaff = false;
+            user.emailConfirmedAt = aivusUser.emailConfirmedAt;
             return true;
           }
 
@@ -156,6 +182,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
         token.vendorId = user.vendorId;
         token.clientId = user.clientId;
         token.isStaff = user.isStaff;
+        token.emailConfirmedAt = user.emailConfirmedAt;
       }
 
       // If update() was called with data - use it immediately (takes priority)
@@ -165,6 +192,9 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
         if (session.user.clientId) token.clientId = session.user.clientId;
         if (session.user.name) token.name = session.user.name;
         if (typeof session.user.isStaff === 'boolean') token.isStaff = session.user.isStaff;
+        if ('emailConfirmedAt' in session.user) {
+          token.emailConfirmedAt = session.user.emailConfirmedAt;
+        }
         return token;
       }
 
@@ -178,6 +208,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
           token.group = aivusUser.group;
           token.vendorId = aivusUser.vendorId;
           token.clientId = aivusUser.clientId;
+          token.emailConfirmedAt = aivusUser.emailConfirmedAt;
           if (typeof aivusUser.isStaff === 'boolean') token.isStaff = aivusUser.isStaff;
         } catch (error) {
           logger.warn('Failed to update JWT from API, keeping existing token data', error);
@@ -193,6 +224,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
       session.user.vendorId = token.vendorId as string | undefined;
       session.user.clientId = token.clientId as string | undefined;
       session.user.isStaff = token.isStaff as boolean | undefined;
+      session.user.emailConfirmedAt = token.emailConfirmedAt as string | null;
       return session;
     },
     authorized: async ({ auth, request }) => {

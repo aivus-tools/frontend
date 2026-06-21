@@ -25,28 +25,28 @@ interface ProjectOfferCardProps {
 const statusAccent = (status?: string): string => {
   switch (status) {
     case 'RFP':
-      return '#2288FF';
+      return 'var(--blue)';
     case 'REVIEWING':
-      return '#F0A020';
+      return 'var(--orange)';
     case 'ONGOING':
     case 'COMPLETED':
-      return '#52C41A';
+      return 'var(--green-darker)';
     default:
-      return '#B5B5C3';
+      return 'var(--gray-light)';
   }
 };
 
 const statusBg = (status?: string): string => {
   switch (status) {
     case 'RFP':
-      return 'linear-gradient(135deg, #f0f7ff 0%, #f8fbff 100%)';
+      return 'var(--bg-blue-subtotal)';
     case 'REVIEWING':
-      return 'linear-gradient(135deg, #fffbf5 0%, #fefcf9 100%)';
+      return 'var(--bg-orange)';
     case 'ONGOING':
     case 'COMPLETED':
-      return 'linear-gradient(135deg, #f6fcf0 0%, #fafdf7 100%)';
+      return 'var(--bg-green)';
     default:
-      return '#f9fafb';
+      return 'var(--bg-gray-page)';
   }
 };
 
@@ -69,6 +69,23 @@ const offerValueClass = (highlight: boolean, negative: boolean): string => {
     return `${base} ${styles.offerValueHighlight}`;
   }
   return base;
+};
+
+const projectStageBadgeClass = (status: string): string => {
+  if (status === 'RFP') {
+    return `${styles.leadBadge} ${styles.leadBadgeNew}`;
+  }
+  return `${styles.leadBadge} ${styles.leadBadgeInProgress}`;
+};
+
+const projectStageLabel = (status: string): string | null => {
+  if (status === 'RFP') {
+    return t('PROJECT_STAGE_NEW_LEAD');
+  }
+  if (status === 'DRAFT') {
+    return t('PROJECT_STAGE_IN_PROGRESS');
+  }
+  return null;
 };
 
 export const ProjectOfferCard = (props: ProjectOfferCardProps) => {
@@ -137,6 +154,19 @@ export const ProjectOfferCard = (props: ProjectOfferCardProps) => {
             <span>{props.item.createdAt}</span>
           </div>
         </div>
+        {props.item.briefConversationStatus != null ? (
+          <div className={styles.leadBadges}>
+            {projectStageLabel(props.item.status) != null ? (
+              <span className={projectStageBadgeClass(props.item.status)}>{projectStageLabel(props.item.status)}</span>
+            ) : null}
+            <span
+              className={`${styles.leadBadge} ${props.item.hasContactEmail ? styles.leadBadgeEmailYes : styles.leadBadgeEmailNo}`}
+            >
+              {props.item.hasContactEmail ? t('LEAD_EMAIL_YES') : t('LEAD_EMAIL_NO')}
+            </span>
+          </div>
+        ) : null}
+
         <div className={styles.headerActions}>
           <Dropdown menu={{ items: menuItems, onClick: handleMenuClick }} trigger={['click']} placement='bottomRight'>
             <div className={styles.kebabButton} onClick={(event) => event.stopPropagation()}>

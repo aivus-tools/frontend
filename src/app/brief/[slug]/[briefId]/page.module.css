@@ -1,0 +1,135 @@
+.centerWrapper {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 100dvh;
+  padding: 24px;
+}
+
+.desktopWrapper {
+  display: flex;
+  flex-direction: column;
+  height: 100dvh;
+  overflow: hidden;
+}
+
+.desktopHeader {
+  display: flex;
+  flex-shrink: 0;
+  align-items: center;
+  justify-content: space-between;
+  min-height: 48px;
+  padding: 0 12px;
+  background: var(--white);
+  border-bottom: 1px solid var(--border-subtle);
+}
+
+.desktopHeaderTitle {
+  overflow: hidden;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--main-dark);
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.desktopHeaderActions {
+  display: flex;
+  flex-shrink: 0;
+  gap: 8px;
+  align-items: center;
+}
+
+.desktopContent {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  min-height: 0;
+  overflow: hidden;
+}
+
+.desktopDocPane {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  min-height: 0;
+  overflow: hidden;
+}
+
+.desktopChatPane {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  min-height: 0;
+  overflow: hidden;
+}
+
+.mobileWrapper {
+  display: flex;
+  flex-direction: column;
+  height: 100dvh;
+  overflow: hidden;
+}
+
+.mobileTabsHeader {
+  display: flex;
+  flex-shrink: 0;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 12px;
+  background: var(--white);
+  border-bottom: 1px solid var(--border-subtle);
+}
+
+.mobileTabs {
+  flex: 1;
+}
+
+.mobileSendAction {
+  flex-shrink: 0;
+  padding-left: 8px;
+}
+
+.mobileChatPane {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  min-height: 0;
+  overflow: hidden;
+}
+
+.mobileDocPane {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  min-height: 0;
+  overflow: hidden;
+}
+
+.mobileHidden {
+  display: none !important;
+}
+
+.alreadySentLabel {
+  font-size: 13px;
+  color: var(--gray);
+}
+
+@media (width >= 1024px) {
+  .desktopHeader {
+    height: 56px;
+    padding: 0 24px;
+  }
+
+  .desktopHeaderTitle {
+    font-size: 15px;
+  }
+
+  .desktopContent {
+    flex-direction: row;
+  }
+
+  .desktopDocPane {
+    border-right: 1px solid var(--border-subtle);
+  }
+}

@@ -27,6 +27,7 @@ const makeDetail = (overrides: Partial<BriefV3Detail>): BriefV3Detail => ({
   totalCostUsd: '0',
   messageCount: 0,
   showCost: false,
+  source: 'direct',
   createdAt: null,
   updatedAt: null,
   claimedAt: null,

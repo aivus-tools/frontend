@@ -27,7 +27,7 @@ const htmlToPlainText = (html: string): string => {
 };
 
 interface SharedDocumentTabProps {
-  token: string;
+  pdfUrl: string;
   doc: BriefFinalDocument;
 }
 
@@ -46,10 +46,7 @@ const SharedDocumentTab = (props: SharedDocumentTabProps) => {
 
   const handleDownload = async () => {
     try {
-      await downloadPdf(
-        ApiRoute.PUBLIC_BRIEF_SHARE_DOCUMENT_PDF(props.token, props.doc.id),
-        `${DOCUMENT_TITLES[props.doc.kind] ?? 'Brief'}.pdf`
-      );
+      await downloadPdf(props.pdfUrl, `${DOCUMENT_TITLES[props.doc.kind] ?? 'Brief'}.pdf`);
     } catch {
       messageApi.error(t('UNEXPECTED_ERROR'));
     }
@@ -75,23 +72,21 @@ const SharedDocumentTab = (props: SharedDocumentTabProps) => {
 
 interface BriefSharedViewProps {
   data: BriefShareView;
+  getPdfUrl?: (docId: string) => string;
 }
+
+const CLIENT_FACING_KINDS = ['production_brief', 'deliverables_checklist'] as const;
 
 export const BriefSharedView = (props: BriefSharedViewProps) => {
   const byKind = new Map(props.data.documents.map((x) => [x.kind, x]));
+  const getPdfUrl =
+    props.getPdfUrl ?? ((docId: string) => ApiRoute.PUBLIC_BRIEF_SHARE_DOCUMENT_PDF(props.data.token, docId));
 
-  const items = [
-    {
-      key: 'production_brief',
-      label: t('BRIEF_V3_TAB_PRODUCTION_BRIEF'),
-      document: byKind.get('production_brief'),
-    },
-    {
-      key: 'vendor_email',
-      label: t('BRIEF_V3_TAB_VENDOR_EMAIL'),
-      document: byKind.get('vendor_email'),
-    },
-  ];
+  const items = CLIENT_FACING_KINDS.map((kind) => ({
+    key: kind,
+    label: kind === 'production_brief' ? t('BRIEF_V3_TAB_PRODUCTION_BRIEF') : t('BRIEF_V3_TAB_DELIVERABLES'),
+    document: byKind.get(kind),
+  })).filter((x) => !!x.document);
 
   return (
     <div className={styles.wrapper}>
@@ -106,7 +101,7 @@ export const BriefSharedView = (props: BriefSharedViewProps) => {
             key: x.key,
             label: x.label,
             children: x.document ? (
-              <SharedDocumentTab token={props.data.token} doc={x.document} />
+              <SharedDocumentTab pdfUrl={getPdfUrl(x.document.id)} doc={x.document} />
             ) : (
               <div className={styles.missingDoc}>{t('BRIEF_V3_DOCUMENT_MISSING')}</div>
             ),

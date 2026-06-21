@@ -3,12 +3,17 @@ import { NextRequest, NextResponse } from 'next/server';
 import { GROUPS } from '@/constants/constants';
 import logger from './lib/logger';
 import { createHmacSHA256 } from './lib/hmac';
+import { resolveClientIp } from './lib/resolveClientIp';
 import { AppRoute } from '@/constants/appRoute';
 
 const changePathname = (pathname: string) => pathname.replace(/^\/service\//, '/api/v1/');
 const MOCK_ENDPOINTS: string[] = []; // Removed briefs from mock
 const userGroups = new Set<string | undefined>([GROUPS.client, GROUPS.vendor]);
 const HMAC_SECRET = process.env.HMAC_SECRET;
+
+const CLAIM_PATH_PREFIX = '/app/brief/claim/';
+const PENDING_BRIEF_COOKIE_NAME = 'aivus_pending_brief';
+const PENDING_BRIEF_COOKIE_MAX_AGE = 3600;
 
 const SUPPORTED_LOCALES = ['en', 'ru'] as const;
 const DEFAULT_LOCALE = 'en';
@@ -91,16 +96,22 @@ const CSP = isDevelopment
   ? `default-src 'self'; script-src 'self' 'unsafe-eval' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https:; font-src 'self' data:; connect-src 'self' data: ${connectSrcDev}; frame-ancestors 'self' https://www.vilkaservice.com https://app.aivus.co`
   : "default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https:; font-src 'self' data:; connect-src 'self' data: https://api.aivus.co; frame-ancestors 'self' https://www.vilkaservice.com https://app.aivus.co";
 
+const EMBED_CSP = isDevelopment
+  ? `default-src 'self'; script-src 'self' 'unsafe-eval' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https:; font-src 'self' data:; connect-src 'self' data: ${connectSrcDev}; frame-ancestors *`
+  : "default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https:; font-src 'self' data:; connect-src 'self' data: https://api.aivus.co; frame-ancestors *";
+
 export default auth(async (req) => {
   if (
     req.nextUrl.pathname.startsWith('/external') ||
     req.nextUrl.pathname.startsWith('/public/') ||
     req.nextUrl.pathname.startsWith('/public-brief') ||
-    req.nextUrl.pathname.startsWith('/shared-brief')
+    req.nextUrl.pathname.startsWith('/shared-brief') ||
+    req.nextUrl.pathname === '/brief' ||
+    req.nextUrl.pathname.startsWith('/brief/')
   ) {
-    // For public-facing routes (including shared-brief), still proxy /service/ calls but skip auth requirements
     const response = createPageResponse(req);
-    response.headers.set('Content-Security-Policy', CSP);
+    const isBriefEmbed = req.nextUrl.pathname.startsWith('/brief/') && req.nextUrl.searchParams.get('embed') === '1';
+    response.headers.set('Content-Security-Policy', isBriefEmbed ? EMBED_CSP : CSP);
     return ensureLocaleCookie(req, response);
   }
 
@@ -127,17 +138,11 @@ export default auth(async (req) => {
         response.headers.set('Content-Security-Policy', CSP);
         return ensureLocaleCookie(req, response);
       }
-      // CONFIRMED -> role selection
-      else if (group === GROUPS.confirmed) {
-        logger.info('redirecting to /app/group (confirmed)');
-        const response = NextResponse.redirect(new URL(AppRoute.GROUP, req.url));
-        response.headers.set('Content-Security-Policy', CSP);
-        return ensureLocaleCookie(req, response);
-      }
-      // UNCONFIRMED -> email confirmation
+      // Roleless (CONFIRMED, or legacy UNCONFIRMED) -> role selection.
+      // Email confirmation is no longer a gate; it nags via a dashboard banner.
       else {
-        logger.info('redirecting to /app/confirm (unconfirmed)');
-        const response = NextResponse.redirect(new URL(AppRoute.CONFIRM, req.url));
+        logger.info('redirecting to /app/group (roleless)');
+        const response = NextResponse.redirect(new URL(AppRoute.GROUP, req.url));
         response.headers.set('Content-Security-Policy', CSP);
         return ensureLocaleCookie(req, response);
       }
@@ -156,6 +161,16 @@ export default auth(async (req) => {
       newPathname += search;
     }
     const headers = new Headers(req.headers);
+
+    const incomingXff = req.headers.get('x-forwarded-for');
+    if (incomingXff) {
+      headers.set('x-forwarded-for', incomingXff);
+    }
+
+    const realClientIp = resolveClientIp(incomingXff, req.headers.get('x-real-ip'));
+    headers.delete('x-aivus-forwarded-client');
+    headers.set('x-aivus-forwarded-client', realClientIp);
+
     if (!newPathname.startsWith('/api/v1/auth/') && !newPathname.startsWith('/api/v1/public/')) {
       const timestamp = Math.floor(Date.now() / 1000).toString();
       headers.set('x-timestamp', timestamp);
@@ -196,23 +211,40 @@ export default auth(async (req) => {
       response.headers.set('Content-Security-Policy', CSP);
       return ensureLocaleCookie(req, response);
     }
-    // CONFIRMED -> role selection
-    else if (group === GROUPS.confirmed) {
-      logger.info('redirecting to /app/group (from /auth, confirmed)');
-      const response = NextResponse.redirect(new URL(AppRoute.GROUP, req.url));
-      response.headers.set('Content-Security-Policy', CSP);
-      return ensureLocaleCookie(req, response);
-    }
-    // UNCONFIRMED -> email confirmation
+    // Roleless (CONFIRMED, or legacy UNCONFIRMED) -> role selection
     else {
-      logger.info('redirecting to /app/confirm (from /auth, unconfirmed)');
-      const response = NextResponse.redirect(new URL(AppRoute.CONFIRM, req.url));
+      logger.info('redirecting to /app/group (from /auth, roleless)');
+      const response = NextResponse.redirect(new URL(AppRoute.GROUP, req.url));
       response.headers.set('Content-Security-Policy', CSP);
       return ensureLocaleCookie(req, response);
     }
   }
 
   if (pathname.startsWith('/app') && (!id || !group)) {
+    if (pathname.startsWith(CLAIM_PATH_PREFIX)) {
+      const briefId = pathname.slice(CLAIM_PATH_PREFIX.length).split('/')[0];
+      const token = req.nextUrl.searchParams.get('token');
+      const email = req.nextUrl.searchParams.get('email');
+      const authUrl = new URL(AppRoute.AUTH, req.url);
+      if (email) {
+        authUrl.searchParams.set('email', email);
+      }
+      const response = NextResponse.redirect(authUrl);
+      if (briefId && token) {
+        // NextResponse cookies.set already URL-encodes the value; encoding here
+        // too double-encodes the ':' separator (%253A) and getPendingBrief's single
+        // decodeURIComponent then fails to split it. Store the raw value to match
+        // the client-side setPendingBrief contract.
+        const cookieValue = `${briefId}:${token}`;
+        response.cookies.set(PENDING_BRIEF_COOKIE_NAME, cookieValue, {
+          path: '/',
+          maxAge: PENDING_BRIEF_COOKIE_MAX_AGE,
+          sameSite: 'lax',
+        });
+      }
+      response.headers.set('Content-Security-Policy', CSP);
+      return ensureLocaleCookie(req, response);
+    }
     const response = NextResponse.redirect(new URL(AppRoute.AUTH, req.url));
     response.headers.set('Content-Security-Policy', CSP);
     return ensureLocaleCookie(req, response);
@@ -220,27 +252,35 @@ export default auth(async (req) => {
 
   // Protect /app pages based on user group
   if (pathname.startsWith('/app') && id && group) {
-    // If user is UNCONFIRMED, they can only be on /app/confirm
-    if (group === GROUPS.unconfirmed && !pathname.startsWith(AppRoute.CONFIRM)) {
-      const response = NextResponse.redirect(new URL(AppRoute.CONFIRM, req.url));
-      response.headers.set('Content-Security-Policy', CSP);
-      return ensureLocaleCookie(req, response);
-    }
-
-    // If user is CONFIRMED, they can only be on /app/group
-    if (group === GROUPS.confirmed && !pathname.startsWith(AppRoute.GROUP)) {
+    // Roleless users (CONFIRMED, or legacy UNCONFIRMED) can only be on /app/group.
+    // Email confirmation is not a gate anymore — a dashboard banner nags instead.
+    if (!userGroups.has(group) && !pathname.startsWith(AppRoute.GROUP)) {
       const response = NextResponse.redirect(new URL(AppRoute.GROUP, req.url));
+      // A roleless user arriving on a brief-claim link would otherwise lose the
+      // claim on the redirect to role selection. Persist it the same way the
+      // unauthenticated branch does: the role form auto-picks CLIENT on a pending
+      // brief and useChangeGroup routes through the claim page (URL-token claim).
+      if (pathname.startsWith(CLAIM_PATH_PREFIX)) {
+        const briefId = pathname.slice(CLAIM_PATH_PREFIX.length).split('/')[0];
+        const token = req.nextUrl.searchParams.get('token');
+        if (briefId && token) {
+          const cookieValue = `${briefId}:${token}`;
+          response.cookies.set(PENDING_BRIEF_COOKIE_NAME, cookieValue, {
+            path: '/',
+            maxAge: PENDING_BRIEF_COOKIE_MAX_AGE,
+            sameSite: 'lax',
+          });
+        }
+      }
       response.headers.set('Content-Security-Policy', CSP);
       return ensureLocaleCookie(req, response);
     }
 
-    // If user is CLIENT/VENDOR, they CANNOT be on /app/confirm or /app/group
-    if (userGroups.has(group)) {
-      if (pathname.startsWith(AppRoute.CONFIRM) || pathname.startsWith(AppRoute.GROUP)) {
-        const response = NextResponse.redirect(new URL(AppRoute.DASHBOARD, req.url));
-        response.headers.set('Content-Security-Policy', CSP);
-        return ensureLocaleCookie(req, response);
-      }
+    // If user is CLIENT/VENDOR, they CANNOT be on /app/group
+    if (userGroups.has(group) && pathname.startsWith(AppRoute.GROUP)) {
+      const response = NextResponse.redirect(new URL(AppRoute.DASHBOARD, req.url));
+      response.headers.set('Content-Security-Policy', CSP);
+      return ensureLocaleCookie(req, response);
     }
   }
 

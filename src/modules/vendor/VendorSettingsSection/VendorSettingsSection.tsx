@@ -1,15 +1,22 @@
 'use client';
 
-import { useEffect, useRef } from 'react';
-import { Form, Input, InputNumber, Button, App, Spin } from 'antd';
+import { useCallback, useEffect, useRef, useState } from 'react';
+import { Form, Input, Button, App, Spin } from 'antd';
 import { CameraOutlined } from '@ant-design/icons';
+import { t } from '@/lib/i18n';
 import {
   useGetVendorSettingsQuery,
   useUpdateVendorSettingsMutation,
   useUploadVendorLogoMutation,
+  useLazySuggestVendorSlugQuery,
+  useLazyCheckVendorSlugQuery,
 } from '@/services/client/vendorSettingsApi';
+import { usePublicAppOrigin } from '@/hooks/usePublicAppOrigin';
 
 import styles from './VendorSettingsSection.module.css';
+
+const SLUG_DEBOUNCE_MS = 600;
+const SLUG_PATTERN = /^[a-z0-9](?:[a-z0-9]|-(?=[a-z0-9])){1,38}[a-z0-9]$|^[a-z0-9]{3}$/;
 
 interface VendorSettingsFormValues {
   companyName: string;
@@ -22,19 +29,33 @@ interface VendorSettingsFormValues {
   postMarkupPercent: string;
   postInsurancePercent: string;
   postTaxPercent: string;
+  slug: string;
+  leadNotificationEmail: string;
 }
+
+type SlugStatus = 'idle' | 'checking' | 'available' | 'taken' | 'invalid';
 
 export const VendorSettingsSection = () => {
   const { message } = App.useApp();
   const [form] = Form.useForm<VendorSettingsFormValues>();
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const slugDebounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const originalSlugRef = useRef<string | null>(null);
 
   const { data: settings, isLoading } = useGetVendorSettingsQuery();
   const [updateSettings, { isLoading: isUpdating }] = useUpdateVendorSettingsMutation();
   const [uploadLogo, { isLoading: isUploadingLogo }] = useUploadVendorLogoMutation();
+  const [suggestSlug] = useLazySuggestVendorSlugQuery();
+  const [checkSlug] = useLazyCheckVendorSlugQuery();
+
+  const origin = usePublicAppOrigin();
+  const slugAddon = `${origin.replace(/^https?:\/\//, '')}/brief/`;
+
+  const [slugStatus, setSlugStatus] = useState<SlugStatus>('idle');
 
   useEffect(() => {
     if (settings) {
+      originalSlugRef.current = settings.slug;
       form.setFieldsValue({
         companyName: settings.companyName || '',
         agencyName: settings.agencyName || '',
@@ -46,16 +67,79 @@ export const VendorSettingsSection = () => {
         postMarkupPercent: settings.postMarkupPercent || '0',
         postInsurancePercent: settings.postInsurancePercent || '0',
         postTaxPercent: settings.postTaxPercent || '0',
+        slug: settings.slug || '',
+        leadNotificationEmail: settings.leadNotificationEmail || '',
       });
     }
   }, [settings, form]);
 
-  const handleSubmit = async (values: VendorSettingsFormValues) => {
+  const handleSlugSuggest = async () => {
     try {
-      await updateSettings(values).unwrap();
-      message.success('Company settings saved');
+      const result = await suggestSlug().unwrap();
+      const suggested = result.slug;
+      form.setFieldsValue({ slug: suggested });
+      await validateSlugRemote(suggested);
     } catch {
-      message.error('Failed to save settings');
+      message.error(t('UNEXPECTED_ERROR'));
+    }
+  };
+
+  const validateSlugRemote = useCallback(
+    async (value: string) => {
+      if (!SLUG_PATTERN.test(value)) {
+        setSlugStatus('invalid');
+        return;
+      }
+      if (value === originalSlugRef.current) {
+        setSlugStatus('available');
+        return;
+      }
+      setSlugStatus('checking');
+      try {
+        const result = await checkSlug(value).unwrap();
+        setSlugStatus(result.available ? 'available' : 'taken');
+      } catch {
+        setSlugStatus('idle');
+      }
+    },
+    [checkSlug]
+  );
+
+  const handleSlugChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const value = event.target.value.trim().toLowerCase();
+    if (slugDebounceRef.current) {
+      clearTimeout(slugDebounceRef.current);
+    }
+    if (!value) {
+      setSlugStatus('idle');
+      return;
+    }
+    slugDebounceRef.current = setTimeout(() => validateSlugRemote(value), SLUG_DEBOUNCE_MS);
+  };
+
+  const handleSubmit = async (values: VendorSettingsFormValues) => {
+    if (slugStatus === 'taken' || slugStatus === 'invalid') {
+      form.scrollToField('slug');
+      return;
+    }
+    try {
+      await updateSettings({
+        companyName: values.companyName,
+        agencyName: values.agencyName,
+        // Default production / post-production percentages are temporarily hidden.
+        slug: values.slug || null,
+        leadNotificationEmail: values.leadNotificationEmail,
+      }).unwrap();
+      originalSlugRef.current = values.slug || null;
+      message.success('Company settings saved');
+    } catch (error: unknown) {
+      const status =
+        typeof error === 'object' && error != null && 'status' in error ? (error as { status: number }).status : null;
+      if (status === 409) {
+        setSlugStatus('taken');
+      } else {
+        message.error('Failed to save settings');
+      }
     }
   };
 
@@ -79,6 +163,18 @@ export const VendorSettingsSection = () => {
       message.error('Failed to upload logo');
     }
   };
+
+  const slugHelp =
+    slugStatus === 'checking'
+      ? t('VENDOR_SETTINGS_SLUG_CHECKING')
+      : slugStatus === 'taken'
+        ? t('VENDOR_SETTINGS_SLUG_TAKEN')
+        : slugStatus === 'invalid'
+          ? t('VENDOR_SETTINGS_SLUG_INVALID')
+          : '';
+
+  const slugValidateStatus =
+    slugStatus === 'taken' || slugStatus === 'invalid' ? 'error' : slugStatus === 'checking' ? 'validating' : '';
 
   if (isLoading) {
     return <Spin size='large' className={styles.spinner} />;
@@ -118,6 +214,31 @@ export const VendorSettingsSection = () => {
           </Form.Item>
         </div>
 
+        <h4 className={styles.subTitle}>{t('VENDOR_SETTINGS_SLUG_LABEL')}</h4>
+
+        <Form.Item
+          name='slug'
+          validateStatus={slugValidateStatus}
+          help={slugHelp || (settings?.slug ? t('VENDOR_SETTINGS_SLUG_CHANGE_WARNING') : '')}
+        >
+          <Input
+            addonBefore={slugAddon}
+            placeholder={t('VENDOR_SETTINGS_SLUG_PLACEHOLDER')}
+            size='large'
+            onChange={handleSlugChange}
+            suffix={
+              <Button type='link' size='small' onClick={handleSlugSuggest} className={styles.suggestButton}>
+                {t('VENDOR_SETTINGS_SLUG_SUGGEST')}
+              </Button>
+            }
+          />
+        </Form.Item>
+
+        <Form.Item name='leadNotificationEmail' label={t('VENDOR_SETTINGS_NOTIFICATION_EMAIL_LABEL')}>
+          <Input type='email' placeholder={t('VENDOR_SETTINGS_NOTIFICATION_EMAIL_PLACEHOLDER')} size='large' />
+        </Form.Item>
+
+        {/* Temporarily hidden until offers/estimation are re-enabled.
         <h4 className={styles.subTitle}>Default Production Percentages</h4>
         <div className={styles.percentsRow}>
           <Form.Item name='fringesPercent' label='Fringes %' className={styles.percentItem120}>
@@ -149,6 +270,7 @@ export const VendorSettingsSection = () => {
             <InputNumber step={0.01} min={0} className={styles.percentInput} />
           </Form.Item>
         </div>
+        */}
 
         <Button type='primary' htmlType='submit' loading={isUpdating} size='large' className={styles.submitButton}>
           Save Company Settings

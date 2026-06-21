@@ -29,6 +29,8 @@ const mapProjectsToListItems = (projects: Project[]): ProjectListItem[] => {
     clientName: project.clientName || '',
     status: project.status,
     createdAt: format(new Date(project.createdAt), 'MM/dd/yyyy'),
+    briefConversationStatus: project.briefConversationStatus ?? null,
+    hasContactEmail: project.hasContactEmail ?? false,
   }));
 };
 
@@ -74,10 +76,17 @@ export const ProjectList = () => {
     return data;
   }, [data, statusFilter, isArchiveView, offersByProject]);
 
+  // Default to the Brief tab when the associated brief is finalized (its document
+  // exists to show); in-progress briefs have nothing to render there yet, so open
+  // project details instead.
+  const projectTargetRoute = (item: ProjectListItem) =>
+    item.briefConversationStatus === 'finalized'
+      ? AppRoute.DASHBOARD_PROJECT_BRIEF(item.id)
+      : AppRoute.DASHBOARD_PROJECT_DETAILS(item.id);
+
   useEffect(() => {
     filteredData.forEach((item: ProjectListItem) => {
-      // Stage 1 (Hide Offers/Estimates): open project details (brief) instead of estimation. Revert at Stage 4.
-      router.prefetch(AppRoute.DASHBOARD_PROJECT_DETAILS(item.id));
+      router.prefetch(projectTargetRoute(item));
     });
   }, [router, filteredData]);
 
@@ -86,6 +95,7 @@ export const ProjectList = () => {
   }
 
   if (filteredData.length === 0) {
+    /* 
     const isArchive = isArchiveView;
     return (
       <main className={cn(styles.dashboard)}>
@@ -115,6 +125,7 @@ export const ProjectList = () => {
         </div>
       </main>
     );
+    */
   }
 
   return (
@@ -130,8 +141,7 @@ export const ProjectList = () => {
               item={item}
               offers={visibleOffers}
               isArchived={isArchiveView}
-              // Stage 1 (Hide Offers/Estimates): open project details (brief) instead of estimation. Revert at Stage 4.
-              onClick={() => router.push(AppRoute.DASHBOARD_PROJECT_DETAILS(item.id))}
+              onClick={() => router.push(projectTargetRoute(item))}
             />
           );
         })}

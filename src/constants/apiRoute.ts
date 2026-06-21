@@ -10,7 +10,6 @@ export const ApiPathname = {
   RESEND_CONFIRMATION: '/api/v1/auth/resend-confirmation',
   FORGOT_PASSWORD: '/api/v1/auth/forgot-password',
   RESET_PASSWORD: '/api/v1/auth/reset-password',
-  CONFIRM_EMAIL: (token: string) => `/api/v1/auth/confirm-email?token=${token}`,
   USER_INFO: '/api/v1/users/me',
   CHANGE_ROLE: (id: number | string) => `/api/v1/users/${id}/change-group`,
   GET_USERS: '/api/v1/users',
@@ -21,7 +20,6 @@ export const ApiRoute = {
   CATEGORY_LIST: `/service/categories`,
   CHANGE_ROLE: (id: number | string) => `/service/users/${id}/change-group`,
   CHECK_EMAIL: `/service/auth/check-email`,
-  CONFIRM_EMAIL: (token: string) => `/service/auth/confirm-email?token=${token}`,
   FORGOT_PASSWORD: `/service/auth/forgot-password`,
   RESEND_CONFIRMATION: `/service/auth/resend-confirmation`,
   RESET_PASSWORD: `/service/auth/reset-password`,
@@ -100,6 +98,19 @@ export const ApiRoute = {
   PUBLIC_BRIEF_SHARE_DOCUMENT_PDF: (token: string, documentId: string) =>
     `/service/public/brief-shares/${token}/documents/${documentId}/pdf`,
   PUBLIC_BRIEF_AI_DRAFT: '/service/public/briefs/ai/drafts',
+  PUBLIC_BRIEF_AI_BY_SLUG: (slug: string) => `/service/public/briefs/ai/by-slug/${slug}`,
+  PUBLIC_BRIEF_AI_BY_SLUG_DRAFT: (slug: string) => `/service/public/briefs/ai/by-slug/${slug}/drafts`,
+  PUBLIC_BRIEF_AI_FINAL_DOCUMENTS: (briefId: string) => `/service/public/briefs/ai/${briefId}/final-documents`,
+  PUBLIC_BRIEF_AI_FINAL_DOCUMENT: (briefId: string, documentId: string) =>
+    `/service/public/briefs/ai/${briefId}/final-documents/${documentId}`,
+  PUBLIC_BRIEF_AI_SEND: (briefId: string) => `/service/public/briefs/ai/${briefId}/send`,
+  CLIENT_BRIEF_AI_SEND: (briefId: string) => `/service/client/briefs/ai/${briefId}/send`,
+  VENDOR_SETTINGS_SLUG_SUGGEST: '/service/vendor/settings/slug/suggest',
+  VENDOR_SETTINGS_SLUG_CHECK: '/service/vendor/settings/slug/check',
+  CLIENT_BRIEFS_SENT_TO_VENDOR: (slug: string) =>
+    `/service/client/briefs/ai/sent-to-vendor?slug=${encodeURIComponent(slug)}`,
+  VENDOR_WEBHOOK_KEY: '/service/vendor/webhook-key',
+  VENDOR_WEBHOOK_KEY_ROTATE: '/service/vendor/webhook-key/rotate',
   PUBLIC_BRIEF_AI_START: (briefId: string) => `/service/public/briefs/ai/${briefId}/start`,
   PUBLIC_BRIEF_AI_STATUS: (briefId: string) => `/service/public/briefs/ai/${briefId}/status`,
   PUBLIC_BRIEF_AI_CHAT: (briefId: string) => `/service/public/briefs/ai/${briefId}/chat`,
@@ -109,6 +120,10 @@ export const ApiRoute = {
     `/service/public/briefs/ai/${briefId}/attachments/${attachmentId}`,
   PUBLIC_BRIEF_AI_DETAIL: (briefId: string) => `/service/public/briefs/ai/${briefId}`,
   CLIENT_BRIEF_AI_CLAIM: (briefId: string) => `/service/client/briefs/ai/${briefId}/claim`,
+  // Vendor project brief documents
+  VENDOR_PROJECT_BRIEF_DOCUMENTS: (projectId: string) => `/service/vendor/projects/${projectId}/brief/documents`,
+  VENDOR_PROJECT_BRIEF_DOCUMENT_PDF: (projectId: string, documentId: string) =>
+    `/service/vendor/projects/${projectId}/brief/documents/${documentId}/pdf`,
   // Pre-Vendors
   PRE_VENDORS: '/service/pre-vendors',
 } as const;

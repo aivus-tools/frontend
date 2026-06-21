@@ -16,6 +16,7 @@ export type User = {
   vendorId?: string;
   clientId?: string;
   isStaff?: boolean;
+  emailConfirmedAt?: string | null;
   createdAt: string;
   updatedAt: string;
 };

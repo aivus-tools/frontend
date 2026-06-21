@@ -16,6 +16,7 @@ import { DashboardSidebar } from '@/modules/vendor/dashboard/DashboardSidebar/Da
 import { BetaFooter, useBetaFooterHeight } from '@/components/BetaFooter/BetaFooter';
 import { BetaFooterProvider, useBetaFooter } from '@/components/BetaFooter/BetaFooterContext';
 import { PageTitleSync } from '@/components/PageTitleSync';
+import { EmailConfirmationBanner } from '@/components/EmailConfirmationBanner/EmailConfirmationBanner';
 import { useBreakpoint } from '@/hooks/useBreakpoint';
 import { THEME } from '@/constants/constants';
 
@@ -34,7 +35,10 @@ const MobileSidebar = (props: { isRoot: boolean }) => {
 
 const VendorLayoutInner = (props: PropsWithChildren) => {
   const segments = useSelectedLayoutSegments();
-  const isRoot = segments.length === 1;
+  // The brief-claim info page (a vendor landing on a client claim link) is not a
+  // project, so render the dashboard chrome rather than the project chrome — the
+  // latter would fetch a non-existent project ("claim") and show empty tabs.
+  const isRoot = segments.length === 1 || segments[0] === 'brief';
   const { dismissed } = useBetaFooter();
   const betaFooterHeight = useBetaFooterHeight();
   const { isMobile, ready } = useBreakpoint();
@@ -90,6 +94,7 @@ const VendorLayoutInner = (props: PropsWithChildren) => {
             <ProjectTabs fullWidth />
           </div>
         )}
+        <EmailConfirmationBanner />
         {props.children}
       </AppShell>
     </>

@@ -13,6 +13,7 @@ import {
   useCreatePublicBriefDraftMutation,
   useDeletePublicBriefAttachmentMutation,
   useGetPublicBriefDetailQuery,
+  useGetPublicBriefFinalDocumentsQuery,
   useSendPublicBriefChatMutation,
   useStartPublicBriefMutation,
   useUploadPublicBriefAttachmentMutation,
@@ -34,6 +35,9 @@ interface AnonymousBriefEditorProps {
   briefId?: string | null;
   token?: string | null;
   initialTaskId?: string | null;
+  whiteLabel?: boolean;
+  alreadySent?: boolean;
+  getLatestDocumentHtml?: () => string | null;
   onBriefCreated?: (briefId: string, token?: string) => void;
   onRegisterClick?: (briefId: string | null, token: string | null, email: string | null) => void;
 }
@@ -68,7 +72,21 @@ export const AnonymousBriefEditor = (props: AnonymousBriefEditorProps) => {
     setHasMounted(true);
   }, []);
 
+  // Adopt a resumed draft (parent sets briefId/token after mount, e.g. from the
+  // draft cookie) as long as we have not created our own draft yet — otherwise
+  // the first message would spawn a new draft and abandon the resumed one.
+  useEffect(() => {
+    if (props.briefId && !briefId) {
+      setBriefId(props.briefId);
+      setToken(props.token ?? null);
+    }
+  }, [props.briefId, props.token, briefId]);
+
   const canQueryDetail = !!briefId && !!token;
+  const { data: finalDocuments } = useGetPublicBriefFinalDocumentsQuery(
+    { briefId: briefId ?? '', token: token ?? '' },
+    { skip: !canQueryDetail || !props.whiteLabel }
+  );
   const { data: detail, isFetching: isDetailFetching } = useGetPublicBriefDetailQuery(
     { briefId: briefId ?? '', token: token ?? '' },
     { skip: !canQueryDetail, refetchOnMountOrArgChange: true }
@@ -223,16 +241,37 @@ export const AnonymousBriefEditor = (props: AnonymousBriefEditorProps) => {
         })
       );
       setPendingAttachments((prev) => prev.filter((x) => !attachmentIds.includes(x.id)));
+      const latestHtml = props.getLatestDocumentHtml?.() ?? null;
+      const whiteLabelFallback = props.whiteLabel
+        ? (finalDocuments?.documents.find((x) => x.kind === 'production_brief')?.html ?? null)
+        : null;
+      const productionBriefHtml = latestHtml ?? whiteLabelFallback;
       try {
-        await sendChat({ briefId, token, message: text, attachmentIds }).unwrap();
-      } catch {
+        await sendChat({ briefId, token, message: text, attachmentIds, documentHtml: productionBriefHtml }).unwrap();
+      } catch (error) {
         patch.undo();
-        messageApi.error(t('UNEXPECTED_ERROR'));
+        const status = typeof error === 'object' && error != null ? (error as { status?: unknown }).status : null;
+        if (status === 409) {
+          messageApi.warning(t('BRIEF_ALREADY_SENT_EDIT_BLOCKED'));
+        } else {
+          messageApi.error(t('UNEXPECTED_ERROR'));
+        }
       } finally {
         setIsChatLoading(false);
       }
     },
-    [briefId, dispatch, isChatLoading, messageApi, pendingAttachments, pendingTaskId, sendChat, token]
+    [
+      briefId,
+      dispatch,
+      finalDocuments,
+      isChatLoading,
+      messageApi,
+      pendingAttachments,
+      pendingTaskId,
+      props,
+      sendChat,
+      token,
+    ]
   );
 
   const handleRegisterClick = useCallback(
@@ -297,7 +336,8 @@ export const AnonymousBriefEditor = (props: AnonymousBriefEditorProps) => {
     );
   }
 
-  const showRegistrationButton = conversationStatus === 'ready_to_finalize' || conversationStatus === 'finalized';
+  const showRegistrationButton =
+    !props.whiteLabel && (conversationStatus === 'ready_to_finalize' || conversationStatus === 'finalized');
 
   return (
     <OuterWrapper footerVisible={footerVisible} footerHeight={footerHeight}>
@@ -327,7 +367,7 @@ export const AnonymousBriefEditor = (props: AnonymousBriefEditorProps) => {
             showRegistrationButton={showRegistrationButton}
             registrationEmail={registrationEmail}
             onRegisterClick={handleRegisterClick}
-            composerDisabled={!!pendingTaskId}
+            composerDisabled={!!pendingTaskId || !!props.alreadySent}
           />
         </div>
       </div>

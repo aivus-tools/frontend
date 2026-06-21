@@ -6,10 +6,10 @@ import logger from '@/lib/logger';
 
 import styles from './styles.module.css';
 import { useState } from 'react';
-import { AUTH_TYPES } from '@/constants/constants';
+import { AUTH_TYPES, GROUPS } from '@/constants/constants';
 import { AuthType } from '@/types/user.interface';
 import { AppRoute } from '@/constants/appRoute';
-import { getPendingBrief } from '@/helpers/pendingBrief';
+import { getPendingBrief, clearPendingBrief, consumeAuthReturnUrl } from '@/helpers/pendingBrief';
 
 export interface ResponseData {
   statusCode: number;
@@ -99,6 +99,7 @@ export const RegisterForm = ({ email, prevStepAction }: { email: string; prevSte
         return;
       }
       messageApi.success(t('REGISTRATION_SUCCESSFUL'));
+      const data = await response.json().catch(() => null);
       const signInResult = await signIn('credentials', {
         email,
         password,
@@ -109,7 +110,24 @@ export const RegisterForm = ({ email, prevStepAction }: { email: string; prevSte
         form.resetFields();
         form.setFields([{ name: 'password', errors: [''] }]);
       } else {
-        window.location.href = AppRoute.CONFIRM;
+        consumeAuthReturnUrl();
+        // Email confirmation is no longer a gate. A pending brief is claimed at
+        // registration; go straight to it. If the claim did not run server-side
+        // but a pending brief remains (e.g. email mismatch), route through the
+        // claim page which surfaces the right outcome. Otherwise role selection,
+        // or dashboard if already roled.
+        if (data?.claimedBriefId) {
+          clearPendingBrief();
+          window.location.href = AppRoute.BRIEF_DETAIL(data.claimedBriefId);
+        } else if (pending) {
+          window.location.href = `${AppRoute.BRIEF_CLAIM(pending.briefId)}?token=${encodeURIComponent(pending.token)}`;
+        } else if (data?.group === GROUPS.client || data?.group === GROUPS.vendor) {
+          clearPendingBrief();
+          window.location.href = AppRoute.DASHBOARD;
+        } else {
+          clearPendingBrief();
+          window.location.href = AppRoute.GROUP;
+        }
       }
     } catch (error) {
       messageApi.error(t('UNEXPECTED_ERROR'));

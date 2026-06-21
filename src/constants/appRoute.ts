@@ -1,11 +1,11 @@
 export const AppRoute = {
   APP: '/app',
   AUTH: '/auth',
-  CONFIRM: '/app/confirm',
   CONFIRM_EMAIL: '/auth/confirm-email',
   DASHBOARD: '/app/dashboard',
   DASHBOARD_PROJECT: (projectId: string) => `/app/dashboard/${projectId}`,
   DASHBOARD_PROJECT_ANALYSIS: (projectId: string) => `/app/dashboard/${projectId}/analysis`,
+  DASHBOARD_PROJECT_BRIEF: (projectId: string) => `/app/dashboard/${projectId}/brief`,
   DASHBOARD_PROJECT_DETAILS: (projectId: string) => `/app/dashboard/${projectId}/details`,
   DASHBOARD_PROJECT_ESTIMATION: (projectId: string) => `/app/dashboard/${projectId}/estimation`,
   DASHBOARD_PROJECT_OFFER: (projectId: string) => `/app/dashboard/${projectId}/offer`,
@@ -28,6 +28,9 @@ export const AppRoute = {
   PUBLIC_BRIEF: '/public-brief',
   PUBLIC_BRIEF_DETAIL: (briefId: string) => `/public-brief/${briefId}`,
   SHARED_BRIEF: (token: string) => `/shared-brief/${token}`,
+  BRANDED_BRIEF: (slug: string) => `/brief/${slug}`,
+  BRANDED_BRIEF_DETAIL: (slug: string, briefId: string) => `/brief/${slug}/${briefId}`,
+  BRANDED_BRIEF_SUCCESS: (slug: string) => `/brief/${slug}/success`,
 } as const;
 
 export type AppRouteValue = (typeof AppRoute)[keyof typeof AppRoute];

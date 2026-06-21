@@ -8,6 +8,7 @@ import { t } from '@/lib/i18n';
 import { AppRoute } from '@/constants/appRoute';
 import { useSession, signOut } from 'next-auth/react';
 import { clearPendingBrief } from '@/helpers/pendingBrief';
+import { GROUPS } from '@/constants/constants';
 import { isDifferentUser } from '@/lib/confirmEmail';
 
 const CONFIRM_DELAY_MS = 1500;
@@ -66,14 +67,20 @@ const ConfirmEmailPage = () => {
               ...session.user,
               group: data.group,
               clientId: data.clientId,
+              emailConfirmedAt: data.emailConfirmedAt,
             },
           });
 
           await new Promise((x) => setTimeout(x, CONFIRM_DELAY_MS));
 
+          // The brief was already claimed and the role assigned at registration,
+          // so confirming just lands the user back in the app. claimedBriefId is
+          // only returned for legacy accounts that claimed on confirm.
           if (data.claimedBriefId) {
             clearPendingBrief();
             window.location.href = AppRoute.BRIEF_DETAIL(data.claimedBriefId);
+          } else if (data.group === GROUPS.client || data.group === GROUPS.vendor) {
+            window.location.href = AppRoute.DASHBOARD;
           } else {
             window.location.href = AppRoute.GROUP;
           }

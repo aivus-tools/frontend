@@ -37,9 +37,9 @@ export const VendorNavbar = (props: VendorNavbarProps) => {
     <div className={wrapperClass}>
       <VendorTabs orientation={isMobile ? 'vertical' : 'horizontal'} onNavigate={props.onNavigate} />
       <div className={actionsClass}>
-        <Button type='primary' block={isMobile} onClick={handleNewEstimation}>
+        {/* <Button type='primary' block={isMobile} onClick={handleNewEstimation}>
           {t('NEW_ESTIMATION')}
-        </Button>
+        </Button> */}
       </div>
     </div>
   );

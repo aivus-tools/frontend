@@ -1,0 +1,208 @@
+import { describe, it, expect, beforeEach } from 'vitest';
+import {
+  setPendingBrief,
+  getPendingBrief,
+  clearPendingBrief,
+  saveDraftForSlug,
+  getDraftForSlug,
+  clearDraftForSlug,
+  markBriefAsSent,
+  isBriefSent,
+  setAuthReturnUrl,
+  consumeAuthReturnUrl,
+} from './pendingBrief';
+import { getPublicBriefToken, savePublicBriefToken } from '@/services/client/publicBriefApi';
+
+beforeEach(() => {
+  document.cookie.split(';').forEach((c) => {
+    const key = c.trim().split('=')[0];
+    if (key) {
+      document.cookie = `${key}=;path=/;max-age=0`;
+    }
+  });
+  localStorage.clear();
+});
+
+describe('pendingBrief cookie', () => {
+  it('sets and gets pending brief', () => {
+    setPendingBrief('brief-1', 'token-abc');
+    const result = getPendingBrief();
+    expect(result?.briefId).toBe('brief-1');
+    expect(result?.token).toBe('token-abc');
+  });
+
+  it('returns null after clear', () => {
+    setPendingBrief('brief-1', 'token-abc');
+    clearPendingBrief();
+    expect(getPendingBrief()).toBeNull();
+  });
+
+  it('handles token with colons', () => {
+    setPendingBrief('brief-2', 'tok:en:with:colons');
+    const result = getPendingBrief();
+    expect(result?.briefId).toBe('brief-2');
+    expect(result?.token).toBe('tok:en:with:colons');
+  });
+
+  it('parses a single-URL-encoded cookie as written by middleware via NextResponse.cookies.set', () => {
+    // NextResponse.cookies.set URL-encodes the value once, turning the ':' into
+    // '%3A'. The middleware must NOT pre-encode (that double-encodes to %253A and
+    // breaks the split). This locks the single-encoded contract getPendingBrief reads.
+    document.cookie = 'aivus_pending_brief=brief-3%3Atoken-xyz;path=/';
+    const result = getPendingBrief();
+    expect(result?.briefId).toBe('brief-3');
+    expect(result?.token).toBe('token-xyz');
+  });
+});
+
+describe('draft by slug cookie (SF-3)', () => {
+  it('saves and retrieves draft via cookie (survives tab close simulation)', () => {
+    saveDraftForSlug('acme-films', 'draft-1', 'tok-1');
+    const result = getDraftForSlug('acme-films');
+    expect(result?.briefId).toBe('draft-1');
+    expect(result?.token).toBe('tok-1');
+  });
+
+  it('returns null for unknown slug', () => {
+    expect(getDraftForSlug('nonexistent-slug')).toBeNull();
+  });
+
+  it('clears draft for slug', () => {
+    saveDraftForSlug('acme-films', 'draft-1', 'tok-1');
+    clearDraftForSlug('acme-films');
+    expect(getDraftForSlug('acme-films')).toBeNull();
+  });
+
+  it('isolates drafts between different slugs', () => {
+    saveDraftForSlug('slug-a', 'brief-a', 'tok-a');
+    saveDraftForSlug('slug-b', 'brief-b', 'tok-b');
+    clearDraftForSlug('slug-a');
+    expect(getDraftForSlug('slug-a')).toBeNull();
+    expect(getDraftForSlug('slug-b')?.briefId).toBe('brief-b');
+  });
+
+  it('handles slugs with special characters via encoding', () => {
+    saveDraftForSlug('my/special slug', 'draft-3', 'tok-3');
+    const result = getDraftForSlug('my/special slug');
+    expect(result?.briefId).toBe('draft-3');
+    expect(result?.token).toBe('tok-3');
+  });
+});
+
+describe('draft cookie resume → localStorage sync (SF WL-DRAFT-COOKIE-RESUME)', () => {
+  it('cookie draft token is available via getPublicBriefToken after savePublicBriefToken called on resume', () => {
+    saveDraftForSlug('vendor-slug', 'brief-resume', 'tok-resume');
+    const draft = getDraftForSlug('vendor-slug');
+    expect(draft?.briefId).toBe('brief-resume');
+    expect(draft?.token).toBe('tok-resume');
+
+    savePublicBriefToken(draft!.briefId, draft!.token);
+    expect(getPublicBriefToken('brief-resume')).toBe('tok-resume');
+  });
+
+  it('does not return token for mismatched briefId from cookie', () => {
+    saveDraftForSlug('vendor-slug', 'brief-a', 'tok-a');
+    const draft = getDraftForSlug('vendor-slug');
+    const isMatchingBrief = draft?.briefId === 'brief-b';
+    expect(isMatchingBrief).toBe(false);
+  });
+});
+
+describe('consumeAuthReturnUrl — open redirect guard (SEC-OPEN-REDIRECT-1)', () => {
+  beforeEach(() => {
+    sessionStorage.clear();
+    Object.defineProperty(window, 'location', {
+      value: { origin: 'http://localhost', search: '' },
+      writable: true,
+    });
+  });
+
+  it('returns relative path from sessionStorage', () => {
+    setAuthReturnUrl('/brief/acme');
+    expect(consumeAuthReturnUrl()).toBe('/brief/acme');
+  });
+
+  it('preserves query and hash from sessionStorage', () => {
+    setAuthReturnUrl('/brief/acme?x=1#y');
+    expect(consumeAuthReturnUrl()).toBe('/brief/acme?x=1#y');
+  });
+
+  it('blocks absolute URL from sessionStorage', () => {
+    setAuthReturnUrl('https://evil.com');
+    expect(consumeAuthReturnUrl()).toBeNull();
+  });
+
+  it('blocks protocol-relative URL from sessionStorage', () => {
+    setAuthReturnUrl('//evil.com');
+    expect(consumeAuthReturnUrl()).toBeNull();
+  });
+
+  it('blocks backslash vector from sessionStorage — /\\evil.com', () => {
+    setAuthReturnUrl('/\\evil.com');
+    expect(consumeAuthReturnUrl()).toBeNull();
+  });
+
+  it('blocks backslash-slash vector from sessionStorage — /\\/evil.com', () => {
+    setAuthReturnUrl('/\\/evil.com');
+    expect(consumeAuthReturnUrl()).toBeNull();
+  });
+
+  it('blocks absolute URL from query param', () => {
+    Object.defineProperty(window, 'location', {
+      value: { origin: 'http://localhost', search: '?next=https://evil.com' },
+      writable: true,
+    });
+    expect(consumeAuthReturnUrl()).toBeNull();
+  });
+
+  it('blocks protocol-relative URL from query param', () => {
+    Object.defineProperty(window, 'location', {
+      value: { origin: 'http://localhost', search: '?next=//evil.com' },
+      writable: true,
+    });
+    expect(consumeAuthReturnUrl()).toBeNull();
+  });
+
+  it('blocks backslash vector from query param — decoded /%5Cevil.com → /\\evil.com', () => {
+    Object.defineProperty(window, 'location', {
+      value: { origin: 'http://localhost', search: '?next=' + encodeURIComponent('/\\evil.com') },
+      writable: true,
+    });
+    expect(consumeAuthReturnUrl()).toBeNull();
+  });
+
+  it('blocks backslash-slash vector from query param — /%5C%2Fevil.com', () => {
+    Object.defineProperty(window, 'location', {
+      value: { origin: 'http://localhost', search: '?next=' + encodeURIComponent('/\\/evil.com') },
+      writable: true,
+    });
+    expect(consumeAuthReturnUrl()).toBeNull();
+  });
+
+  it('passes relative path from query param', () => {
+    Object.defineProperty(window, 'location', {
+      value: { origin: 'http://localhost', search: '?next=/brief/acme' },
+      writable: true,
+    });
+    expect(consumeAuthReturnUrl()).toBe('/brief/acme');
+  });
+
+  it('preserves query and hash from query param', () => {
+    Object.defineProperty(window, 'location', {
+      value: { origin: 'http://localhost', search: '?next=' + encodeURIComponent('/brief/acme?x=1#y') },
+      writable: true,
+    });
+    expect(consumeAuthReturnUrl()).toBe('/brief/acme?x=1#y');
+  });
+});
+
+describe('markBriefAsSent / isBriefSent', () => {
+  it('marks and detects sent brief', () => {
+    markBriefAsSent('brief-sent-1');
+    expect(isBriefSent('brief-sent-1')).toBe(true);
+  });
+
+  it('returns false for unsent brief', () => {
+    expect(isBriefSent('brief-not-sent')).toBe(false);
+  });
+});

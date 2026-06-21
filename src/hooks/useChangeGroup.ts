@@ -2,7 +2,8 @@ import { useSession } from 'next-auth/react';
 import { Groups } from '@/types/user.interface';
 import { useChangeGroupMutation } from '@/services/client/userApi';
 import { AppRoute } from '@/constants/appRoute';
-import { clearPendingBrief } from '@/helpers/pendingBrief';
+import { clearPendingBrief, getPendingBrief } from '@/helpers/pendingBrief';
+import { GROUPS } from '@/constants/constants';
 
 export const useChangeGroup = () => {
   const session = useSession();
@@ -31,7 +32,15 @@ export const useChangeGroup = () => {
           clearPendingBrief();
           window.location.href = AppRoute.BRIEF_DETAIL(result.claimedBriefId);
         } else {
-          window.location.href = AppRoute.DASHBOARD;
+          // Backend auto-claim did not run (pending pointer not on the user).
+          // The claim page reliably claims via the URL token, so route a fresh
+          // CLIENT with a pending brief through it instead of an empty dashboard.
+          const pending = newGroup === GROUPS.client ? getPendingBrief() : null;
+          if (pending) {
+            window.location.href = `${AppRoute.BRIEF_CLAIM(pending.briefId)}?token=${encodeURIComponent(pending.token)}`;
+          } else {
+            window.location.href = AppRoute.DASHBOARD;
+          }
         }
       }
     },

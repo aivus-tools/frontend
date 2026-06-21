@@ -12,12 +12,17 @@ const mocks = vi.hoisted(() => ({
   savePublicBriefTokenFn: vi.fn(),
   updateQueryDataFn: vi.fn(),
   pollingStopFn: vi.fn(),
+  getFinalDocumentsFn: vi.fn(),
 }));
 
 let detailData: BriefV3Detail | undefined;
 
 vi.mock('@/services/client/publicBriefApi', () => ({
   useGetPublicBriefDetailQuery: () => ({ data: detailData, isFetching: false }),
+  useGetPublicBriefFinalDocumentsQuery: (_args: unknown, options: { skip?: boolean }) => {
+    mocks.getFinalDocumentsFn(options);
+    return { data: undefined };
+  },
   useCreatePublicBriefDraftMutation: () => [mocks.createDraftFn, {}],
   useStartPublicBriefMutation: () => [mocks.startBriefFn, {}],
   useSendPublicBriefChatMutation: () => [mocks.sendChatFn, {}],
@@ -108,6 +113,7 @@ const makeDetail = (overrides: Partial<BriefV3Detail> = {}): BriefV3Detail => ({
   totalCostUsd: '0',
   messageCount: 2,
   showCost: false,
+  source: 'direct',
   createdAt: null,
   updatedAt: null,
   claimedAt: null,
@@ -185,5 +191,68 @@ describe('AnonymousBriefEditor', () => {
 
     const panel = await screen.findByTestId('chat-panel');
     expect(panel.getAttribute('data-composer-disabled')).toBe('true');
+  });
+
+  it('whiteLabel: hides registration button even when status is ready_to_finalize', async () => {
+    detailData = makeDetail({ conversationStatus: 'ready_to_finalize', pendingTaskId: null });
+
+    render(<AnonymousBriefEditor briefId='b1' token='tok' whiteLabel={true} />);
+
+    const panel = await screen.findByTestId('chat-panel');
+    expect(panel.getAttribute('data-registration')).toBe('false');
+  });
+
+  it('whiteLabel: hides registration button when status is finalized', async () => {
+    detailData = makeDetail({ conversationStatus: 'finalized', pendingTaskId: null });
+
+    render(<AnonymousBriefEditor briefId='b1' token='tok' whiteLabel={true} />);
+
+    const panel = await screen.findByTestId('chat-panel');
+    expect(panel.getAttribute('data-registration')).toBe('false');
+  });
+
+  it('no whiteLabel: shows registration button when status is finalized', async () => {
+    detailData = makeDetail({ conversationStatus: 'finalized', pendingTaskId: null });
+
+    render(<AnonymousBriefEditor briefId='b1' token='tok' whiteLabel={false} />);
+
+    const panel = await screen.findByTestId('chat-panel');
+    expect(panel.getAttribute('data-registration')).toBe('true');
+  });
+
+  it('MF-1: final-documents query is skipped when whiteLabel is not set', async () => {
+    detailData = makeDetail({ conversationStatus: 'in_progress' });
+
+    render(<AnonymousBriefEditor briefId='b1' token='tok' />);
+
+    await screen.findByTestId('chat-panel');
+    expect(mocks.getFinalDocumentsFn).toHaveBeenCalledWith(expect.objectContaining({ skip: true }));
+  });
+
+  it('MF-1: final-documents query is not skipped when whiteLabel=true and detail is available', async () => {
+    detailData = makeDetail({ conversationStatus: 'in_progress' });
+
+    render(<AnonymousBriefEditor briefId='b1' token='tok' whiteLabel={true} />);
+
+    await screen.findByTestId('chat-panel');
+    expect(mocks.getFinalDocumentsFn).toHaveBeenCalledWith(expect.objectContaining({ skip: false }));
+  });
+
+  it('alreadySent: composerDisabled is true when alreadySent prop is true', async () => {
+    detailData = makeDetail({ conversationStatus: 'finalized', pendingTaskId: null });
+
+    render(<AnonymousBriefEditor briefId='b1' token='tok' alreadySent={true} />);
+
+    const panel = await screen.findByTestId('chat-panel');
+    expect(panel.getAttribute('data-composer-disabled')).toBe('true');
+  });
+
+  it('alreadySent: composerDisabled is false when alreadySent prop is false', async () => {
+    detailData = makeDetail({ conversationStatus: 'finalized', pendingTaskId: null });
+
+    render(<AnonymousBriefEditor briefId='b1' token='tok' alreadySent={false} />);
+
+    const panel = await screen.findByTestId('chat-panel');
+    expect(panel.getAttribute('data-composer-disabled')).toBe('false');
   });
 });

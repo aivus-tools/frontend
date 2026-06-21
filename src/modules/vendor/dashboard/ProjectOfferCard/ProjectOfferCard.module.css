@@ -360,3 +360,43 @@
     font-size: 9px;
   }
 }
+
+.leadBadges {
+  display: flex;
+  flex-shrink: 0;
+  flex-wrap: wrap;
+  gap: 4px;
+  align-items: center;
+}
+
+.leadBadge {
+  display: inline-flex;
+  align-items: center;
+  height: 20px;
+  padding: 0 8px;
+  font-size: 10px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
+  border-radius: 4px;
+}
+
+.leadBadgeNew {
+  color: var(--blue-text);
+  background: var(--bg-blue-subtotal);
+}
+
+.leadBadgeInProgress {
+  color: var(--orange);
+  background: var(--bg-orange);
+}
+
+.leadBadgeEmailYes {
+  color: var(--green-darker);
+  background: var(--bg-green);
+}
+
+.leadBadgeEmailNo {
+  color: var(--gray);
+  background: var(--bg-gray-page);
+}
