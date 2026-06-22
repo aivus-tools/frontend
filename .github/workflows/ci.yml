@@ -93,11 +93,24 @@ jobs:
           envs: GHCR_TOKEN,GITHUB_ACTOR
           script: |
             set -e
+            COMPOSE="docker compose -f docker-compose.production.yml"
+            t0=$(date +%s)
             echo "$GHCR_TOKEN" | docker login ghcr.io -u "$GITHUB_ACTOR" --password-stdin
             cd ~/aivus
-            docker compose -f docker-compose.production.yml pull frontend
-            docker compose -f docker-compose.production.yml up -d --no-deps frontend
+            echo "[deploy] pulling frontend image..."
+            $COMPOSE pull frontend
+            # Refuse to roll if the live compose lacks the /api/health healthcheck:
+            # docker rollout would fall back to a blind 10s sleep and reintroduce a
+            # 502 window on go.aivus.co.
+            $COMPOSE config | grep -q '/api/health' || { echo "[deploy] FATAL: frontend healthcheck missing in live compose; apply Server prerequisites (see DEPLOYMENT.md) before deploying"; exit 1; }
+            echo "[deploy] rolling frontend (zero-downtime via docker rollout)..."
+            tr0=$(date +%s)
+            docker rollout -t 180 --wait-after-healthy 10 -f docker-compose.production.yml frontend
+            tr1=$(date +%s)
+            echo "[deploy] frontend healthy, rollout took $((tr1 - tr0))s"
             docker image prune -f
+            t1=$(date +%s)
+            echo "[deploy] DONE in $((t1 - t0))s"
 
   smoke-test:
     if: >
