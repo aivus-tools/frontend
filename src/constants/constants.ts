@@ -75,6 +75,9 @@ export const VENDOR_PROJECT_TABS = [
 ] as const;
 
 export const PUBLIC_APP_URL = process.env.NEXT_PUBLIC_APP_URL ?? 'https://go.aivus.co';
+// Public backend host for external callers (webhooks). This is the api domain
+// (Django direct), NOT the go app domain whose /service/* proxy is for the SPA.
+export const PUBLIC_API_URL = process.env.NEXT_PUBLIC_API_URL ?? 'https://api.aivus.co';
 
 export const NEW_BRIEF_SLUG = 'new-brief';
 

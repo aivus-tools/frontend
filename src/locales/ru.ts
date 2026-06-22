@@ -735,8 +735,32 @@ export const RU_LOCALES = {
   VENDOR_EMBED_TAB: 'Встраивание',
   VENDOR_WEBHOOK_TAB: 'Webhook',
   VENDOR_WEBHOOK_DOC_INTRO:
-    'Отправляйте лиды на эту ссылку со своего сайта или CRM. Сделайте POST с JSON-телом (email, имя и сообщение посетителя) — Aivus создаст бриф и уведомит вас. Аутентификация через ваш webhook-ключ в заголовке X-Aivus-Webhook-Key.',
+    'Отправляйте лиды на эту ссылку со своего сайта, CRM или формы. Сделайте POST с JSON-телом (email, имя и сообщение посетителя, и при желании ссылки на файлы) — Aivus создаст бриф и уведомит вас. Аутентификация через ваш webhook-ключ в заголовке X-Aivus-Webhook-Key.',
   VENDOR_WEBHOOK_DOC_ENDPOINT: 'Endpoint',
+  VENDOR_WEBHOOK_DOC_DOMAIN_HINT: 'Используйте домен api.aivus.co (API), а не go.aivus.co (приложение).',
+  VENDOR_WEBHOOK_DOC_FILES_HINT:
+    'Файлы опциональны: передайте массив публичных ссылок (до 3), и Aivus скачает их в бриф, как обычные вложения.',
+  VENDOR_WIX_TAB: 'Wix',
+  VENDOR_WIX_DOC_INTRO:
+    'No-code вебхук Wix не умеет кастомные заголовки, поэтому есть два пути. Без кода ключ передаётся в теле запроса; безопасный путь хранит ключ в Wix Secrets Manager.',
+  VENDOR_WIX_A_TITLE: 'Без кода: ключ в теле запроса',
+  VENDOR_WIX_A_STEP_1: 'В панели Wix откройте Automations и создайте новую автоматизацию.',
+  VENDOR_WIX_A_STEP_2: 'Задайте триггер - отправка вашей формы (Wix Forms: «Form submitted»).',
+  VENDOR_WIX_A_STEP_3: 'Добавьте действие «Send HTTP request», метод POST и вставьте URL из поля Endpoint ниже.',
+  VENDOR_WIX_A_STEP_4:
+    'В теле выберите «Customize structure» и добавьте поля email, name и message - привязав каждое к нужному полю формы, плюс поле key с вашим webhook-ключом из поля ниже.',
+  VENDOR_WIX_A_STEP_5:
+    'Файлы опциональны: привяжите поле загрузки формы к списку «files» из { url, filename } публичных ссылок. Если в no-code это неудобно - используйте безопасный путь Velo ниже, он пробрасывает файлы за вас.',
+  VENDOR_WIX_A_STEP_6: 'Сохраните и включите автоматизацию.',
+  VENDOR_WIX_BODY_LABEL: 'Пример тела',
+  VENDOR_WIX_B_TITLE: 'Безопасно: храните ключ в Wix Secrets Manager',
+  VENDOR_WIX_B_STEP_1:
+    'В панели Wix откройте Developer Tools, Secrets Manager, Add Secret. Назовите секрет aivusWebhookKey и вставьте свой ключ ниже как значение.',
+  VENDOR_WIX_B_STEP_2: 'В автоматизации (триггер - отправка формы) добавьте действие «Run Velo code».',
+  VENDOR_WIX_B_STEP_3:
+    'Вставьте код ниже. Он читает ключ из Secrets Manager и шлёт его в заголовке X-Aivus-Webhook-Key.',
+  VENDOR_WIX_B_STEP_4: 'Сохраните и включите автоматизацию. Нужен включённый Dev Mode / Velo на сайте.',
+  VENDOR_WIX_B_CODE_LABEL: 'Velo-код',
   VENDOR_PERSONAL_LINK_EMPTY_TITLE: 'Настрой ссылку на бриф',
   VENDOR_PERSONAL_LINK_EMPTY_DESC: 'Задай ссылку в Настройках, чтобы клиенты могли заполнять бриф для тебя.',
   VENDOR_PERSONAL_LINK_EMPTY_ACTION: 'Перейти в Настройки',
