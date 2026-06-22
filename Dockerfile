@@ -27,6 +27,11 @@ COPY . .
 # Uncomment the following line in case you want to disable telemetry during the build.
 # ENV NEXT_TELEMETRY_DISABLED 1
 
+# Git commit baked into the client bundle (CI passes --build-arg GIT_COMMIT=<sha>).
+# Must be set before `next build` so Next inlines the NEXT_PUBLIC_* value.
+ARG GIT_COMMIT=dev
+ENV NEXT_PUBLIC_GIT_COMMIT=$GIT_COMMIT
+
 RUN \
   if [ -f yarn.lock ]; then yarn run build; \
   elif [ -f package-lock.json ]; then npm run build; \

@@ -8,6 +8,7 @@ import { MenuOutlined } from '@ant-design/icons';
 import { useBreakpoint } from '@/hooks/useBreakpoint';
 import { colors } from '@/lib/themeConfig';
 import { t } from '@/lib/i18n';
+import { VersionTag } from '@/components/VersionTag/VersionTag';
 
 import styles from './AppShell.module.css';
 
@@ -83,7 +84,10 @@ export const AppShell = (props: AppShellProps) => {
             width={props.siderWidth ?? DEFAULT_SIDER_WIDTH}
             theme={props.siderTheme ?? 'light'}
           >
-            {props.sider}
+            <div className={styles.siderInner}>
+              <div className={styles.siderContent}>{props.sider}</div>
+              <VersionTag theme={props.siderTheme ?? 'light'} />
+            </div>
           </Sider>
         )}
         <Layout>

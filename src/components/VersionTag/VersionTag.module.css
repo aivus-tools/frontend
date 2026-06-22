@@ -1,0 +1,18 @@
+.root {
+  display: block;
+  padding: 8px 12px;
+  font-family: ui-monospace, 'Cascadia Code', 'Source Code Pro', Menlo, Consolas, monospace;
+  font-size: 11px;
+  line-height: 1;
+  letter-spacing: 0.02em;
+  pointer-events: none;
+  user-select: none;
+}
+
+.light {
+  color: var(--color-text-quaternary, rgb(0 0 0 / 25%));
+}
+
+.dark {
+  color: rgb(255 255 255 / 28%);
+}
