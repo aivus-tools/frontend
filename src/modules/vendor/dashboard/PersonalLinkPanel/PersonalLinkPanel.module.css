@@ -89,6 +89,16 @@
   font-size: 12px;
 }
 
+.wixSteps {
+  width: 100%;
+  padding-left: 20px;
+  margin: 0;
+}
+
+.wixSteps li {
+  margin-bottom: 6px;
+}
+
 @media (width >= 1024px) {
   .urlRow {
     flex-direction: row;
