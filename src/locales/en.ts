@@ -734,27 +734,25 @@ export const EN_LOCALES = {
   VENDOR_WEBHOOK_DOC_DOMAIN_HINT: 'Use the api.aivus.co domain (the API), not go.aivus.co (the app).',
   VENDOR_WEBHOOK_DOC_FILES_HINT:
     'Files are optional: pass an array of public links (up to 3) and Aivus downloads them into the brief, just like in-app uploads.',
+  VENDOR_WEBHOOK_DOC_RESPONSE: 'Response (HTTP 201)',
+  VENDOR_WEBHOOK_DOC_AUTOREDIRECT:
+    'Add ?autoredirect=1 to the URL (or send "autoredirect": "1" in the body) and the endpoint answers 302 to briefUrl instead of JSON, so a plain HTML form action lands the visitor straight on their brief.',
   VENDOR_WIX_TAB: 'Wix',
-  VENDOR_WIX_DOC_INTRO:
-    "Wix's no-code webhook step can't send custom headers, so there are two ways to connect. The no-code way passes your key in the request body; the secure way stores it in the Wix Secrets Manager.",
-  VENDOR_WIX_A_TITLE: 'No-code: key in the request body',
-  VENDOR_WIX_A_STEP_1: 'In your Wix dashboard open Automations and create a new automation.',
-  VENDOR_WIX_A_STEP_2: 'Set the trigger to your form (Wix Forms: "Form submitted").',
-  VENDOR_WIX_A_STEP_3: 'Add the action "Send HTTP request", set the method to POST and paste the Endpoint URL below.',
-  VENDOR_WIX_A_STEP_4:
-    'In the body pick "Customize structure" and add the fields email, name and message (map each to the matching form field), plus a key field with your webhook key from below.',
-  VENDOR_WIX_A_STEP_5:
-    'Files are optional: map the form upload field to a "files" list of { url, filename } public links. If that is awkward in the no-code builder, use the secure Velo path below, which forwards files for you.',
-  VENDOR_WIX_A_STEP_6: 'Save and turn the automation on.',
-  VENDOR_WIX_BODY_LABEL: 'Example body',
-  VENDOR_WIX_B_TITLE: 'Secure: store the key in the Wix Secrets Manager',
+  VENDOR_WIX_DOC_INTRO: 'Two ways to send leads from Wix to Aivus - pick whichever fits. Your webhook key is below.',
+  VENDOR_WIX_B_TITLE: 'Option 1: redirect from page code (Dev Mode)',
   VENDOR_WIX_B_STEP_1:
-    'In your Wix dashboard go to Developer Tools, Secrets Manager, Add Secret. Name it aivusWebhookKey and paste your key below as the value.',
-  VENDOR_WIX_B_STEP_2: 'In the automation (trigger: form submitted) add the action "Run Velo code".',
+    'Turn on Dev Mode. Open the Secrets Manager, Add Secret, name it aivusWebhookKey and paste your key below as the value.',
+  VENDOR_WIX_B_STEP_2:
+    'Add a backend code file (e.g. backend/aivus.web.js) with the code below. It reads the key from the Secrets Manager, posts the lead to Aivus and returns briefUrl.',
   VENDOR_WIX_B_STEP_3:
-    'Paste the code below. It reads the key from the Secrets Manager and sends it in the X-Aivus-Webhook-Key header.',
-  VENDOR_WIX_B_STEP_4: 'Save and turn the automation on. This needs Dev Mode / Velo enabled on your site.',
-  VENDOR_WIX_B_CODE_LABEL: 'Velo code',
+    'In your page code, on the submit button click call submitBrief, map your form fields, then send the visitor to their brief with wixLocation.to(briefUrl).',
+  VENDOR_WIX_B_STEP_4: 'Publish the site to apply.',
+  VENDOR_WIX_B_CODE_LABEL: 'Backend code (backend/aivus.web.js)',
+  VENDOR_WIX_PAGE_CODE_LABEL: 'Page code',
+  VENDOR_WIX_C_TITLE: 'Option 2: HTML form with autoredirect (no code)',
+  VENDOR_WIX_C_DESC:
+    'No Dev Mode: add an HTML element to your page with the form below. It posts to the webhook URL with ?autoredirect=1, so on submit Aivus creates the lead and redirects the visitor straight to their brief. The key sits in the page HTML (anyone can read it and submit, each vendor is rate-limited), so rotate it if it gets abused.',
+  VENDOR_WIX_C_CODE_LABEL: 'HTML form',
   VENDOR_PERSONAL_LINK_EMPTY_TITLE: 'Set up your brief link',
   VENDOR_PERSONAL_LINK_EMPTY_DESC: 'Configure a brief link in Settings so clients can start filling a brief for you.',
   VENDOR_PERSONAL_LINK_EMPTY_ACTION: 'Go to Settings',

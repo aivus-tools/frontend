@@ -1,2 +1,6 @@
+# GUI git clients launch hooks with a minimal PATH (no Homebrew), so npm/node
+# are not found. Prepend the usual node locations; harmless where they do not exist.
+export PATH="/opt/homebrew/bin:/usr/local/bin:$PATH"
+
 npm run typecheck
 npx lint-staged
