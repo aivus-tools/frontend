@@ -733,6 +733,8 @@ export const RU_LOCALES = {
   VENDOR_PERSONAL_LINK_EMBED: 'Встроить и Webhook',
   VENDOR_EMBED_WEBHOOK_MODAL_TITLE: 'Встроить и Webhook',
   VENDOR_EMBED_TAB: 'Встраивание',
+  VENDOR_EMBED_PRIMARY_HINT: 'Этого достаточно большинству - просто вставьте этот код на страницу вашего сайта.',
+  VENDOR_DEV_SECTION_TITLE: 'Для разработчиков (опционально)',
   VENDOR_WEBHOOK_TAB: 'Webhook',
   VENDOR_WEBHOOK_DOC_INTRO:
     'Отправляйте лиды на эту ссылку со своего сайта, CRM или формы. Сделайте POST с JSON-телом (email, имя и сообщение посетителя, и при желании ссылки на файлы) — Aivus создаст бриф и уведомит вас. Аутентификация через ваш webhook-ключ в заголовке X-Aivus-Webhook-Key.',

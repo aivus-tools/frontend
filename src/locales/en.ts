@@ -727,6 +727,8 @@ export const EN_LOCALES = {
   VENDOR_PERSONAL_LINK_EMBED: 'Embed & Webhook',
   VENDOR_EMBED_WEBHOOK_MODAL_TITLE: 'Embed & Webhook',
   VENDOR_EMBED_TAB: 'Embed',
+  VENDOR_EMBED_PRIMARY_HINT: 'This is all most vendors need - just paste this code into a page on your site.',
+  VENDOR_DEV_SECTION_TITLE: 'For developers (optional)',
   VENDOR_WEBHOOK_TAB: 'Webhook',
   VENDOR_WEBHOOK_DOC_INTRO:
     'Send leads to this link from your own site, CRM or form. POST a JSON payload with the visitor email, name and message, and optionally file links — Aivus creates a brief for you and notifies you. Authenticate with your webhook key in the X-Aivus-Webhook-Key header.',

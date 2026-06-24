@@ -253,8 +253,10 @@ export const BrandedBriefWorkspace = (props: BrandedBriefWorkspaceProps) => {
               size='small'
               className={styles.mobileTabs}
             />
-          ) : (
+          ) : !isEmbed ? (
             branding
+          ) : (
+            <div />
           )}
           <div className={styles.mobileSendAction}>{sendButton}</div>
         </div>

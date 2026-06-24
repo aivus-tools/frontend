@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
-import { App, Button, Input, Modal, Popconfirm, Segmented, Spin, Tabs, Typography } from 'antd';
+import { App, Button, Collapse, Input, Modal, Popconfirm, Segmented, Spin, Tabs, Typography } from 'antd';
 import { CopyOutlined } from '@ant-design/icons';
 import { t } from '@/lib/i18n';
 import { AppRoute } from '@/constants/appRoute';
@@ -147,7 +147,7 @@ export const EmbedWebhookModal = (props: EmbedWebhookModalProps) => {
   const [wixHtmlCopied, setWixHtmlCopied] = useState(false);
 
   const embedUrl = `${origin}${AppRoute.BRANDED_BRIEF(props.slug)}?embed=1`;
-  const embedSnippet = `<iframe src="${embedUrl}" width="100%" height="700" frameborder="0"></iframe>`;
+  const embedSnippet = `<iframe src="${embedUrl}" width="100%" height="700" frameborder="0" allow="microphone"></iframe>`;
   const webhookUrl = `${PUBLIC_API_URL}${WEBHOOK_PATH}`;
   const key = webhookKey?.key ?? '';
   const codeSnippet = buildSnippet(codeLang, webhookUrl, key || 'YOUR_WEBHOOK_KEY');
@@ -181,6 +181,7 @@ export const EmbedWebhookModal = (props: EmbedWebhookModalProps) => {
       <Button type='primary' icon={<CopyOutlined />} onClick={() => copy(embedSnippet, setSnippetCopied)}>
         {snippetCopied ? t('BRANDED_BRIEF_EMBED_COPIED') : t('BRANDED_BRIEF_EMBED_COPY')}
       </Button>
+      <Typography.Paragraph type='secondary'>{t('VENDOR_EMBED_PRIMARY_HINT')}</Typography.Paragraph>
     </div>
   );
 
@@ -286,11 +287,22 @@ export const EmbedWebhookModal = (props: EmbedWebhookModalProps) => {
       footer={null}
       width={640}
     >
-      <Tabs
+      {embedTab}
+      <Collapse
+        ghost
         items={[
-          { key: 'embed', label: t('VENDOR_EMBED_TAB'), children: embedTab },
-          { key: 'webhook', label: t('VENDOR_WEBHOOK_TAB'), children: webhookTab },
-          { key: 'wix', label: t('VENDOR_WIX_TAB'), children: wixTab },
+          {
+            key: 'dev',
+            label: t('VENDOR_DEV_SECTION_TITLE'),
+            children: (
+              <Tabs
+                items={[
+                  { key: 'webhook', label: t('VENDOR_WEBHOOK_TAB'), children: webhookTab },
+                  { key: 'wix', label: t('VENDOR_WIX_TAB'), children: wixTab },
+                ]}
+              />
+            ),
+          },
         ]}
       />
     </Modal>
