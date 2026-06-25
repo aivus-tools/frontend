@@ -24,16 +24,15 @@ export default defineConfig({
   projects: [
     {
       name: 'setup',
-      testMatch: /auth\.setup\.ts/,
+      testMatch: /(^|\/)auth\.setup\.ts$/,
     },
     {
       name: 'smoke',
-      testMatch: /smoke\.spec\.ts/,
+      testMatch: /(^|\/)smoke\.spec\.ts$/,
       use: {
         ...devices['Desktop Chrome'],
-        storageState: 'e2e/.auth/user.json',
+        storageState: { cookies: [], origins: [] },
       },
-      dependencies: ['setup'],
     },
     {
       name: 'chromium',
