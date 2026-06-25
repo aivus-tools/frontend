@@ -1,5 +1,6 @@
 'use client';
 
+import { useEffect } from 'react';
 import { useSearchParams } from 'next/navigation';
 import { App } from 'antd';
 import { ReduxStore } from '@/context/ReduxProvider';
@@ -38,6 +39,18 @@ interface BriefLayoutProps {
 export default function BriefLayout(props: BriefLayoutProps) {
   const searchParams = useSearchParams();
   const isEmbed = searchParams.get('embed') === '1';
+
+  useEffect(() => {
+    if (!isEmbed) {
+      return;
+    }
+    const root = document.documentElement;
+    root.classList.add('aivus-embed');
+    return () => {
+      root.classList.remove('aivus-embed');
+    };
+  }, [isEmbed]);
+
   return (
     <ReduxStore>
       <BetaFooterProvider>

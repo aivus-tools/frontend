@@ -72,6 +72,11 @@ body {
   background-color: #fff;
 }
 
+html.aivus-embed,
+html.aivus-embed body {
+  background-color: transparent;
+}
+
 @media (width <= 1023.98px) {
   .ant-layout-sider {
     display: none !important;
