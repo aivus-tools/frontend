@@ -147,7 +147,7 @@ export const EmbedWebhookModal = (props: EmbedWebhookModalProps) => {
   const [wixHtmlCopied, setWixHtmlCopied] = useState(false);
 
   const embedUrl = `${origin}${AppRoute.BRANDED_BRIEF(props.slug)}?embed=1`;
-  const embedSnippet = `<iframe src="${embedUrl}" width="100%" height="700" frameborder="0" allow="microphone"></iframe>`;
+  const embedSnippet = `<iframe src="${embedUrl}" width="100%" height="700" frameborder="0"></iframe>`;
   const webhookUrl = `${PUBLIC_API_URL}${WEBHOOK_PATH}`;
   const key = webhookKey?.key ?? '';
   const codeSnippet = buildSnippet(codeLang, webhookUrl, key || 'YOUR_WEBHOOK_KEY');

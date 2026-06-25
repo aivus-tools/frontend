@@ -23,6 +23,7 @@ interface BriefStartScreenProps {
   onStartVoiceBusyChange: (busy: boolean) => void;
   onEnsureBrief: () => Promise<{ briefId: string; token: string | null } | null>;
   onStart: () => void;
+  embedded?: boolean;
 }
 
 export const BriefStartScreen = (props: BriefStartScreenProps) => {
@@ -45,23 +46,29 @@ export const BriefStartScreen = (props: BriefStartScreenProps) => {
           onDelete={props.onDeleteAttachment}
         />
         <div className={styles.startActions}>
-          <div className={styles.startVoiceGroup}>
-            <VoiceRecorderButton
-              briefId={props.briefId}
-              isPublic={props.isPublic}
-              publicToken={props.token}
-              disabled={props.isStarting || props.uploading}
-              onTranscript={(text) =>
-                props.onStartTextChange(props.startText.trim().length > 0 ? `${props.startText.trim()} ${text}` : text)
-              }
-              onEnsureBrief={props.onEnsureBrief}
-              onBusyChange={props.onStartVoiceBusyChange}
-              compact
-            />
-            {!props.isStartVoiceBusy ? (
-              <span className={styles.startVoiceHint}>{t('BRIEF_V3_VOICE_START_HINT')}</span>
-            ) : null}
-          </div>
+          {!props.embedded ? (
+            <div className={styles.startVoiceGroup}>
+              <VoiceRecorderButton
+                briefId={props.briefId}
+                isPublic={props.isPublic}
+                publicToken={props.token}
+                disabled={props.isStarting || props.uploading}
+                onTranscript={(text) =>
+                  props.onStartTextChange(
+                    props.startText.trim().length > 0 ? `${props.startText.trim()} ${text}` : text
+                  )
+                }
+                onEnsureBrief={props.onEnsureBrief}
+                onBusyChange={props.onStartVoiceBusyChange}
+                compact
+              />
+              {!props.isStartVoiceBusy ? (
+                <span className={styles.startVoiceHint}>{t('BRIEF_V3_VOICE_START_HINT')}</span>
+              ) : null}
+            </div>
+          ) : (
+            <span />
+          )}
           <Button
             type='primary'
             size='large'

@@ -38,9 +38,9 @@ const renderModal = () =>
   );
 
 describe('EmbedWebhookModal', () => {
-  it('embed snippet delegates microphone to the iframe', () => {
+  it('embed snippet does not advertise microphone (voice is hidden in embed)', () => {
     renderModal();
-    expect(screen.getByDisplayValue(/allow="microphone"/)).toBeTruthy();
+    expect(screen.queryByDisplayValue(/allow="microphone"/)).toBeNull();
   });
 
   it('embed snippet points at the branded brief with embed flag', () => {

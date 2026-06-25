@@ -49,6 +49,7 @@ interface BriefChatPanelProps {
   registrationEmail?: string | null;
   onRegisterClick?: (email: string | null) => void;
   composerDisabled?: boolean;
+  embedded?: boolean;
 }
 
 const formatBytes = (bytes: number): string => {
@@ -358,7 +359,7 @@ export const BriefChatPanel = (props: BriefChatPanelProps) => {
             autoSize={{ minRows: 2, maxRows: 6 }}
             disabled={limitReached || props.isLoading || isVoiceBusy || !!props.composerDisabled}
           />
-          {props.briefId ? (
+          {props.briefId && !props.embedded ? (
             <VoiceRecorderButton
               briefId={props.briefId}
               isPublic={props.isPublic}

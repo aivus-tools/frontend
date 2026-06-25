@@ -172,12 +172,10 @@ export const BrandedBriefWorkspace = (props: BrandedBriefWorkspaceProps) => {
 
   const sendButton = alreadySent ? (
     <span className={styles.alreadySentLabel}>{t('BRANDED_BRIEF_ALREADY_SENT')}</span>
-  ) : (
+  ) : isSendEnabled ? (
     <Button
       type='primary'
       icon={<SendOutlined />}
-      disabled={!isSendEnabled}
-      title={isSendEnabled ? undefined : t('BRANDED_BRIEF_SEND_DISABLED_HINT')}
       onClick={async () => {
         await (isClient ? authEditorRef.current?.flush() : anonDocPanelRef.current?.flush());
         setSendModalOpen(true);
@@ -185,7 +183,7 @@ export const BrandedBriefWorkspace = (props: BrandedBriefWorkspaceProps) => {
     >
       {t('BRANDED_BRIEF_SEND')}
     </Button>
-  );
+  ) : null;
 
   const documentPane =
     token && briefId ? (
@@ -207,6 +205,7 @@ export const BrandedBriefWorkspace = (props: BrandedBriefWorkspaceProps) => {
       getLatestDocumentHtml={getLatestDocumentHtml}
       onBriefCreated={handleBriefCreated}
       onRegisterClick={handleRegisterClick}
+      embedded={isEmbed}
     />
   );
 
@@ -228,7 +227,7 @@ export const BrandedBriefWorkspace = (props: BrandedBriefWorkspaceProps) => {
   if (isClient) {
     return (
       <div className={styles.desktopWrapper}>
-        <div className={styles.desktopHeader}>
+        <div className={isEmbed ? `${styles.desktopHeader} ${styles.headerEmbed}` : styles.desktopHeader}>
           {!isEmbed ? branding : <div />}
           <div className={styles.desktopHeaderActions}>{sendButton}</div>
         </div>
@@ -241,7 +240,7 @@ export const BrandedBriefWorkspace = (props: BrandedBriefWorkspaceProps) => {
   if (isMobile) {
     return (
       <div className={styles.mobileWrapper}>
-        <div className={styles.mobileTabsHeader}>
+        <div className={isEmbed ? `${styles.mobileTabsHeader} ${styles.headerEmbed}` : styles.mobileTabsHeader}>
           {documentReady ? (
             <Tabs
               activeKey={mobileTab}
@@ -279,7 +278,7 @@ export const BrandedBriefWorkspace = (props: BrandedBriefWorkspaceProps) => {
 
   return (
     <div className={styles.desktopWrapper}>
-      <div className={styles.desktopHeader}>
+      <div className={isEmbed ? `${styles.desktopHeader} ${styles.headerEmbed}` : styles.desktopHeader}>
         {!isEmbed ? branding : <div />}
         <div className={styles.desktopHeaderActions}>{sendButton}</div>
       </div>

@@ -22,6 +22,7 @@ const BriefLayoutContent = (props: BriefLayoutContentProps) => {
           minHeight: '100dvh',
           background: props.isEmbed ? 'transparent' : 'var(--bg-gray-page)',
           paddingBottom: props.isEmbed || dismissed ? 0 : footerHeight,
+          ...(props.isEmbed ? { '--bg-gray-page': 'transparent' } : {}),
         } as React.CSSProperties
       }
     >

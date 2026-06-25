@@ -40,6 +40,7 @@ interface AnonymousBriefEditorProps {
   getLatestDocumentHtml?: () => string | null;
   onBriefCreated?: (briefId: string, token?: string) => void;
   onRegisterClick?: (briefId: string | null, token: string | null, email: string | null) => void;
+  embedded?: boolean;
 }
 
 export const AnonymousBriefEditor = (props: AnonymousBriefEditorProps) => {
@@ -314,6 +315,7 @@ export const AnonymousBriefEditor = (props: AnonymousBriefEditorProps) => {
           onStartVoiceBusyChange={setIsStartVoiceBusy}
           onEnsureBrief={ensureDraft}
           onStart={handleStart}
+          embedded={props.embedded}
         />
       </OuterWrapper>
     );
@@ -368,6 +370,7 @@ export const AnonymousBriefEditor = (props: AnonymousBriefEditorProps) => {
             registrationEmail={registrationEmail}
             onRegisterClick={handleRegisterClick}
             composerDisabled={!!pendingTaskId || !!props.alreadySent}
+            embedded={props.embedded}
           />
         </div>
       </div>
