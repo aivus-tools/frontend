@@ -5,7 +5,7 @@ import { App, Button, Empty } from 'antd';
 import { useRouter } from 'next/navigation';
 import { AppRoute } from '@/constants/appRoute';
 import { useAppDispatch } from '@/store/hooks';
-import { t, getLocale } from '@/lib/i18n';
+import { t } from '@/lib/i18n';
 import { BriefChatPanel } from '@/modules/client/BriefChat/BriefChatPanel';
 import {
   publicBriefApi,
@@ -214,7 +214,6 @@ export const AnonymousBriefEditor = (props: AnonymousBriefEditorProps) => {
         token: draft.token ?? '',
         message: trimmed,
         attachmentIds: pendingAttachments.map((x) => x.id),
-        documentLanguage: getLocale(),
       }).unwrap();
       setLocalTaskId(response.taskId);
       setPendingAttachments([]);

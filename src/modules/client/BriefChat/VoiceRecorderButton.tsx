@@ -3,7 +3,7 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { App, Tooltip } from 'antd';
 import { AudioOutlined, CheckOutlined, CloseOutlined, LoadingOutlined } from '@ant-design/icons';
-import { getLocale, t } from '@/lib/i18n';
+import { t } from '@/lib/i18n';
 import { useVoiceRecorder, VoiceRecorderError, VoiceRecorderResult } from '@/hooks/useVoiceRecorder';
 import { useTranscribeBriefAiMutation } from '@/services/client/briefAiApi';
 import { useTranscribePublicBriefMutation } from '@/services/client/publicBriefApi';
@@ -107,22 +107,22 @@ export const VoiceRecorderButton = (props: VoiceRecorderButtonProps) => {
         return;
       }
       setIsProcessing(true);
-      const language = getLocale();
       try {
+        // No language is sent: it would be the interface locale, not the spoken
+        // language. The recognizer auto-detects (or uses the brief's frozen
+        // language) so a first message dictated in any language transcribes right.
         const result = props.isPublic
           ? await transcribePublic({
               briefId: ctx.briefId,
               token: ctx.token ?? '',
               audio: blob,
               mimeType,
-              language,
               durationMs,
             }).unwrap()
           : await transcribeAuth({
               briefId: ctx.briefId,
               audio: blob,
               mimeType,
-              language,
               durationMs,
             }).unwrap();
         const text = (result?.text ?? '').trim();

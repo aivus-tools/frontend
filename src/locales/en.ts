@@ -620,6 +620,9 @@ export const EN_LOCALES = {
   BRIEF_V3_DOCS_DISABLED_HINT: 'Available after finalization.',
   BRIEF_V3_SETTINGS_TITLE_LABEL: 'Brief title',
   BRIEF_V3_SETTINGS_LANGUAGE_LABEL: 'Document language',
+  BRIEF_V3_SETTINGS_LANGUAGE_INFO:
+    'Set automatically from your first message — the brief, replies and vendor email all use it. To change it, just ask in the chat to translate the brief.',
+  BRIEF_V3_SETTINGS_LANGUAGE_AUTO: 'Detected from your first message',
   BRIEF_V3_SETTINGS_SAVE: 'Save',
   BRIEF_V3_SETTINGS_SAVED: 'Saved',
   BRIEF_V3_SETTINGS_DELETE: 'Delete brief',

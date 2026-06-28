@@ -6,7 +6,7 @@ import { App, Button, Empty } from 'antd';
 import Link from 'next/link';
 import { AppRoute } from '@/constants/appRoute';
 import { useAppDispatch } from '@/store/hooks';
-import { t, getLocale } from '@/lib/i18n';
+import { t } from '@/lib/i18n';
 import { BriefChatPanel } from '@/modules/client/BriefChat/BriefChatPanel';
 import {
   briefAiApi,
@@ -231,7 +231,6 @@ export const AuthenticatedBriefEditor = forwardRef<AuthenticatedBriefEditorHandl
           briefId: draft.briefId,
           message: trimmed,
           attachmentIds: pendingAttachments.map((x) => x.id),
-          documentLanguage: getLocale(),
         }).unwrap();
         setLocalTaskId(response.taskId);
         setPendingAttachments([]);
@@ -281,7 +280,7 @@ export const AuthenticatedBriefEditor = forwardRef<AuthenticatedBriefEditorHandl
         return;
       }
       try {
-        const response = await finalize({ briefId }).unwrap();
+        const response = await finalize(briefId).unwrap();
         setLocalTaskId(response.taskId);
       } catch {
         autoFinalizingRef.current = false;
@@ -303,7 +302,7 @@ export const AuthenticatedBriefEditor = forwardRef<AuthenticatedBriefEditorHandl
       }
       setIsRegenerating(true);
       try {
-        const response = await finalize({ briefId }).unwrap();
+        const response = await finalize(briefId).unwrap();
         setLocalTaskId(response.taskId);
       } catch {
         setIsRegenerating(false);

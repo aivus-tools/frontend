@@ -51,7 +51,7 @@ export const briefAiApi = createApi({
 
     startBriefAi: builder.mutation<
       BriefV3StartResponse,
-      { briefId: string; message: string; attachmentIds?: string[]; documentLanguage?: string }
+      { briefId: string; message: string; attachmentIds?: string[] }
     >({
       query: (args) => ({
         url: ApiRoute.BRIEF_AI_START(args.briefId),
@@ -59,7 +59,6 @@ export const briefAiApi = createApi({
         body: {
           message: args.message,
           attachmentIds: args.attachmentIds ?? [],
-          ...(args.documentLanguage ? { documentLanguage: args.documentLanguage } : {}),
         },
       }),
       invalidatesTags: ['BriefV3'],
@@ -182,16 +181,11 @@ export const briefAiApi = createApi({
       }),
     }),
 
-    finalizeBriefAi: builder.mutation<{ taskId: string }, { briefId: string; documentLanguage?: string } | string>({
-      query: (arg) => {
-        const briefId = typeof arg === 'string' ? arg : arg.briefId;
-        const documentLanguage = typeof arg === 'string' ? undefined : arg.documentLanguage;
-        return {
-          url: ApiRoute.BRIEF_AI_FINALIZE(briefId),
-          method: 'POST',
-          body: documentLanguage ? { documentLanguage } : undefined,
-        };
-      },
+    finalizeBriefAi: builder.mutation<{ taskId: string }, string>({
+      query: (briefId) => ({
+        url: ApiRoute.BRIEF_AI_FINALIZE(briefId),
+        method: 'POST',
+      }),
       invalidatesTags: ['BriefV3'],
     }),
 
@@ -300,24 +294,12 @@ export const briefAiApi = createApi({
       invalidatesTags: ['BriefV3'],
     }),
 
-    updateBriefAiSettings: builder.mutation<
-      BriefV3ListItem,
-      { briefId: string; title?: string; documentLanguage?: 'en' | 'ru' }
-    >({
-      query: (args) => {
-        const body: Record<string, string> = {};
-        if (args.title !== undefined) {
-          body.title = args.title;
-        }
-        if (args.documentLanguage !== undefined) {
-          body.documentLanguage = args.documentLanguage;
-        }
-        return {
-          url: ApiRoute.BRIEF_AI_DETAIL(args.briefId),
-          method: 'PATCH',
-          body,
-        };
-      },
+    updateBriefAiSettings: builder.mutation<BriefV3ListItem, { briefId: string; title: string }>({
+      query: (args) => ({
+        url: ApiRoute.BRIEF_AI_DETAIL(args.briefId),
+        method: 'PATCH',
+        body: { title: args.title },
+      }),
       invalidatesTags: ['BriefV3'],
     }),
 

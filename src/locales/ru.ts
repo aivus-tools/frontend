@@ -620,6 +620,9 @@ export const RU_LOCALES = {
   BRIEF_V3_DOCS_DISABLED_HINT: 'Откроется после финализации брифа.',
   BRIEF_V3_SETTINGS_TITLE_LABEL: 'Название брифа',
   BRIEF_V3_SETTINGS_LANGUAGE_LABEL: 'Язык документа',
+  BRIEF_V3_SETTINGS_LANGUAGE_INFO:
+    'Определяется автоматически по первому сообщению — на нём же бриф, ответы и письмо вендору. Чтобы сменить, попросите в чате перевести бриф.',
+  BRIEF_V3_SETTINGS_LANGUAGE_AUTO: 'Определится по первому сообщению',
   BRIEF_V3_SETTINGS_SAVE: 'Сохранить',
   BRIEF_V3_SETTINGS_SAVED: 'Сохранено',
   BRIEF_V3_SETTINGS_DELETE: 'Удалить бриф',

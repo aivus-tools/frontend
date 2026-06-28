@@ -1,11 +1,11 @@
 'use client';
 
 import React, { useEffect, useState } from 'react';
-import { App, Button, Input, Popconfirm, Select } from 'antd';
+import { App, Button, Input, Popconfirm } from 'antd';
 import { DeleteOutlined, SaveOutlined } from '@ant-design/icons';
 import { useRouter } from 'next/navigation';
 import { useSession } from 'next-auth/react';
-import { t } from '@/lib/i18n';
+import { getLocale, t } from '@/lib/i18n';
 import { AppRoute } from '@/constants/appRoute';
 import { useDeleteBriefAiMutation, useUpdateBriefAiSettingsMutation } from '@/services/client/briefAiApi';
 import { BriefV3Detail } from '@/types/briefAi.interface';
@@ -24,18 +24,17 @@ export const BriefSettings = (props: BriefSettingsProps) => {
   const isStaff = Boolean((session?.user as { isStaff?: boolean } | undefined)?.isStaff);
 
   const [title, setTitle] = useState(brief.title ?? '');
-  const [language, setLanguage] = useState<'en' | 'ru'>((brief.documentLanguage as 'en' | 'ru') || 'en');
 
   useEffect(() => {
     setTitle(brief.title ?? '');
-    setLanguage((brief.documentLanguage as 'en' | 'ru') || 'en');
-  }, [brief.id, brief.title, brief.documentLanguage]);
+  }, [brief.id, brief.title]);
 
   const [updateSettings, { isLoading: isSaving }] = useUpdateBriefAiSettingsMutation();
   const [deleteBrief, { isLoading: isDeleting }] = useDeleteBriefAiMutation();
 
-  const isDirty =
-    title.trim() !== (brief.title ?? '').trim() || language !== ((brief.documentLanguage as 'en' | 'ru') || 'en');
+  const isDirty = title.trim() !== (brief.title ?? '').trim();
+
+  const languageLabel = getLanguageLabel(brief.documentLanguage);
 
   const handleSave = async () => {
     const trimmed = title.trim();
@@ -44,11 +43,7 @@ export const BriefSettings = (props: BriefSettingsProps) => {
       return;
     }
     try {
-      await updateSettings({
-        briefId: brief.id,
-        title: trimmed,
-        documentLanguage: language,
-      }).unwrap();
+      await updateSettings({ briefId: brief.id, title: trimmed }).unwrap();
       messageApi.success(t('BRIEF_V3_SETTINGS_SAVED'));
     } catch {
       messageApi.error(t('UNEXPECTED_ERROR'));
@@ -76,15 +71,10 @@ export const BriefSettings = (props: BriefSettingsProps) => {
 
         <div className={styles.row}>
           <label className={styles.rowLabel}>{t('BRIEF_V3_SETTINGS_LANGUAGE_LABEL')}</label>
-          <Select
-            value={language}
-            onChange={(value) => setLanguage(value as 'en' | 'ru')}
-            options={[
-              { label: 'English', value: 'en' },
-              { label: 'Русский', value: 'ru' },
-            ]}
-            className={styles.languageSelect}
-          />
+          <div className={styles.languageInfo}>
+            <span className={styles.languageValue}>{languageLabel}</span>
+            <p className={styles.languageHint}>{t('BRIEF_V3_SETTINGS_LANGUAGE_INFO')}</p>
+          </div>
         </div>
 
         <div className={styles.actions}>
@@ -144,4 +134,16 @@ export const BriefSettings = (props: BriefSettingsProps) => {
       </section>
     </div>
   );
+};
+
+const getLanguageLabel = (code: string): string => {
+  if (!code) {
+    return t('BRIEF_V3_SETTINGS_LANGUAGE_AUTO');
+  }
+  try {
+    const displayNames = new Intl.DisplayNames([getLocale()], { type: 'language' });
+    return displayNames.of(code) ?? code.toUpperCase();
+  } catch {
+    return code.toUpperCase();
+  }
 };
