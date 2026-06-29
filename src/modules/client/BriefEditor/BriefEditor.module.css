@@ -315,7 +315,18 @@
 }
 
 :global(html.aivus-embed) .generatingOverlay {
+  margin: 8px;
   background: var(--white);
+  border-radius: 14px;
+}
+
+:global(html.aivus-embed) .chatScreen {
+  padding: 8px;
+}
+
+:global(html.aivus-embed) .chatWrapper {
+  border: 1px solid var(--border-subtle);
+  border-radius: 14px;
 }
 
 .generatingTitle {
