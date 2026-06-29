@@ -115,6 +115,12 @@ export const BrandedBriefWorkspace = (props: BrandedBriefWorkspaceProps) => {
   const alreadySent = isClient ? !!briefId && !!(sentBriefIdsData?.briefIds ?? []).includes(briefId) : anonAlreadySent;
   const isSendEnabled = documentReady && !alreadySent;
 
+  useEffect(() => {
+    if (documentReady) {
+      setMobileTab('brief');
+    }
+  }, [documentReady]);
+
   const handleBriefCreated = (newBriefId: string, newToken?: string) => {
     setBriefId(newBriefId);
     if (newToken) {

@@ -264,13 +264,6 @@ const EditorToolbar = (props: EditorToolbarProps) => {
       </button>
       <button
         type='button'
-        className={toolButtonClass(editor.isActive('underline'))}
-        onClick={() => editor.chain().focus().toggleUnderline().run()}
-      >
-        Underline
-      </button>
-      <button
-        type='button'
         className={toolButtonClass(editor.isActive('heading', { level: 1 }))}
         onClick={() => editor.chain().focus().toggleHeading({ level: 1 }).run()}
       >

@@ -103,8 +103,10 @@
   flex-direction: column;
   gap: 8px;
   padding: 10px 12px calc(10px + env(safe-area-inset-bottom, 0px));
+  margin: 8px;
   background: var(--white);
-  border-top: 1px solid var(--border-subtle);
+  border: 1px solid var(--border-subtle);
+  border-radius: 14px;
 }
 
 .embedBottomTabs {

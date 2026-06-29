@@ -324,9 +324,22 @@
 }
 
 :global(html.aivus-embed) .tabsHeader {
+  margin: 8px 8px 0;
   background: var(--white);
+  border-radius: 12px 12px 0 0;
 }
 
 :global(html.aivus-embed) .stickyBar {
+  margin: 0 8px;
   background: var(--white);
+  border-bottom: 0;
+  border-radius: 0 0 12px 12px;
+}
+
+:global(html.aivus-embed) .scrollArea {
+  padding: 12px 8px 16px;
+}
+
+:global(html.aivus-embed) .editorCard {
+  border-radius: 12px;
 }

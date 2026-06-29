@@ -283,7 +283,7 @@ export const AnonymousBriefEditor = (props: AnonymousBriefEditorProps) => {
 
   if (hasMounted && briefId && !token) {
     return (
-      <OuterWrapper footerVisible={footerVisible} footerHeight={footerHeight}>
+      <OuterWrapper footerVisible={footerVisible} footerHeight={footerHeight} fill={!!props.whiteLabel}>
         <div className={styles.notFoundWrapper}>
           <Empty description={t('BRIEF_LINK_BROKEN')}>
             <Button type='primary' onClick={() => router.replace(AppRoute.PUBLIC_BRIEF)}>
@@ -297,7 +297,7 @@ export const AnonymousBriefEditor = (props: AnonymousBriefEditorProps) => {
 
   if (stage === 'start') {
     return (
-      <OuterWrapper footerVisible={footerVisible} footerHeight={footerHeight}>
+      <OuterWrapper footerVisible={footerVisible} footerHeight={footerHeight} fill={!!props.whiteLabel}>
         <BriefStartScreen
           startText={startText}
           onStartTextChange={setStartText}
@@ -322,7 +322,7 @@ export const AnonymousBriefEditor = (props: AnonymousBriefEditorProps) => {
 
   if (stage === 'generating') {
     return (
-      <OuterWrapper footerVisible={footerVisible} footerHeight={footerHeight}>
+      <OuterWrapper footerVisible={footerVisible} footerHeight={footerHeight} fill={!!props.whiteLabel}>
         <GeneratingView title={t('BRIEF_V3_GENERATING_TITLE')} subtitle={t('BRIEF_V3_GENERATING_SUBTITLE')} />
       </OuterWrapper>
     );
@@ -331,7 +331,7 @@ export const AnonymousBriefEditor = (props: AnonymousBriefEditorProps) => {
   const isHydrating = hasMounted && !!briefId && !!token && !detail && isDetailFetching;
   if (isHydrating) {
     return (
-      <OuterWrapper footerVisible={footerVisible} footerHeight={footerHeight}>
+      <OuterWrapper footerVisible={footerVisible} footerHeight={footerHeight} fill={!!props.whiteLabel}>
         <GeneratingView title={t('BRIEF_V3_LOADING_BRIEF_TITLE')} subtitle={t('BRIEF_V3_LOADING_BRIEF_SUBTITLE')} />
       </OuterWrapper>
     );
@@ -341,7 +341,7 @@ export const AnonymousBriefEditor = (props: AnonymousBriefEditorProps) => {
     !props.whiteLabel && (conversationStatus === 'ready_to_finalize' || conversationStatus === 'finalized');
 
   return (
-    <OuterWrapper footerVisible={footerVisible} footerHeight={footerHeight}>
+    <OuterWrapper footerVisible={footerVisible} footerHeight={footerHeight} fill={!!props.whiteLabel}>
       <div className={styles.chatScreen}>
         <div className={styles.chatWrapper}>
           <BriefChatPanel

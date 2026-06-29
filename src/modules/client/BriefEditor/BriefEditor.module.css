@@ -314,6 +314,10 @@
   padding: 40px;
 }
 
+:global(html.aivus-embed) .generatingOverlay {
+  background: var(--white);
+}
+
 .generatingTitle {
   margin: 0;
   font-family: Montserrat, sans-serif;
