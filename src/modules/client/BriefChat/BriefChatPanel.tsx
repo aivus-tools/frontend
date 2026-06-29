@@ -183,6 +183,9 @@ export const BriefChatPanel = (props: BriefChatPanelProps) => {
     setDraft((prev) => (prev.trim().length > 0 ? `${prev.trim()} ${text}` : text));
   }, []);
 
+  const hideComposerForEmbed =
+    !!props.embedded && (props.conversationStatus === 'ready_to_finalize' || props.conversationStatus === 'finalized');
+
   const handleSend = useCallback(() => {
     if (!canSend) {
       return;
@@ -349,63 +352,65 @@ export const BriefChatPanel = (props: BriefChatPanelProps) => {
         </div>
       ) : null}
 
-      <div className={styles.inputArea}>
-        <div className={styles.chatInputWrapper}>
-          <TextArea
-            value={draft}
-            onChange={(event) => setDraft(event.target.value)}
-            onKeyDown={handleKeyDown}
-            placeholder={t('BRIEF_V3_CHAT_PLACEHOLDER')}
-            autoSize={{ minRows: 2, maxRows: 6 }}
-            disabled={limitReached || props.isLoading || isVoiceBusy || !!props.composerDisabled}
-          />
-          {props.briefId && !props.embedded ? (
-            <VoiceRecorderButton
-              briefId={props.briefId}
-              isPublic={props.isPublic}
-              publicToken={props.publicToken}
-              disabled={limitReached || props.isLoading || !!props.composerDisabled}
-              onTranscript={appendToDraft}
-              onBusyChange={setIsVoiceBusy}
+      {!hideComposerForEmbed ? (
+        <div className={styles.inputArea}>
+          <div className={styles.chatInputWrapper}>
+            <TextArea
+              value={draft}
+              onChange={(event) => setDraft(event.target.value)}
+              onKeyDown={handleKeyDown}
+              placeholder={t('BRIEF_V3_CHAT_PLACEHOLDER')}
+              autoSize={{ minRows: 2, maxRows: 6 }}
+              disabled={limitReached || props.isLoading || isVoiceBusy || !!props.composerDisabled}
+            />
+            {props.briefId && !props.embedded ? (
+              <VoiceRecorderButton
+                briefId={props.briefId}
+                isPublic={props.isPublic}
+                publicToken={props.publicToken}
+                disabled={limitReached || props.isLoading || !!props.composerDisabled}
+                onTranscript={appendToDraft}
+                onBusyChange={setIsVoiceBusy}
+              />
+            ) : null}
+            <Button type='primary' icon={<SendOutlined />} disabled={!canSend} onClick={handleSend}>
+              {t('SEND')}
+            </Button>
+          </div>
+
+          {showAttachBox || props.pendingAttachments.length > 0 ? (
+            <FileUploadZone
+              attachments={props.pendingAttachments}
+              uploading={props.uploading}
+              maxFiles={props.maxAttachments}
+              onUpload={props.onUploadAttachment}
+              onDelete={props.onDeleteAttachment}
+              disabled={limitReached}
             />
           ) : null}
-          <Button type='primary' icon={<SendOutlined />} disabled={!canSend} onClick={handleSend}>
-            {t('SEND')}
-          </Button>
+
+          <div className={styles.chatFooterRow}>
+            <button type='button' className={styles.attachToggle} onClick={() => setShowAttachBox((x) => !x)}>
+              <PaperClipOutlined />
+              {showAttachBox ? t('BRIEF_V3_ATTACH_HIDE') : t('BRIEF_V3_ATTACH_SHOW')}
+            </button>
+
+            {(props.showCost || isStaff) && props.totalCostUsd ? (
+              <span className={isStaff ? `${styles.costBadge} ${styles.costBadgeStaff}` : styles.costBadge}>
+                {t('BRIEF_V3_COST_BADGE')}: ${Number(props.totalCostUsd).toFixed(4)}
+              </span>
+            ) : null}
+
+            {Number.isFinite(props.messageLimit) ? (
+              <span className={styles.limitBadge}>
+                {props.messageCount}/{props.messageLimit} {t('BRIEF_V3_MESSAGES')}
+              </span>
+            ) : null}
+
+            <span className={styles.dragHint}>{t('BRIEF_V3_DRAG_HINT')}</span>
+          </div>
         </div>
-
-        {showAttachBox || props.pendingAttachments.length > 0 ? (
-          <FileUploadZone
-            attachments={props.pendingAttachments}
-            uploading={props.uploading}
-            maxFiles={props.maxAttachments}
-            onUpload={props.onUploadAttachment}
-            onDelete={props.onDeleteAttachment}
-            disabled={limitReached}
-          />
-        ) : null}
-
-        <div className={styles.chatFooterRow}>
-          <button type='button' className={styles.attachToggle} onClick={() => setShowAttachBox((x) => !x)}>
-            <PaperClipOutlined />
-            {showAttachBox ? t('BRIEF_V3_ATTACH_HIDE') : t('BRIEF_V3_ATTACH_SHOW')}
-          </button>
-
-          {(props.showCost || isStaff) && props.totalCostUsd ? (
-            <span className={isStaff ? `${styles.costBadge} ${styles.costBadgeStaff}` : styles.costBadge}>
-              {t('BRIEF_V3_COST_BADGE')}: ${Number(props.totalCostUsd).toFixed(4)}
-            </span>
-          ) : null}
-
-          {Number.isFinite(props.messageLimit) ? (
-            <span className={styles.limitBadge}>
-              {props.messageCount}/{props.messageLimit} {t('BRIEF_V3_MESSAGES')}
-            </span>
-          ) : null}
-
-          <span className={styles.dragHint}>{t('BRIEF_V3_DRAG_HINT')}</span>
-        </div>
-      </div>
+      ) : null}
 
       {isDragging ? <div className={styles.dropOverlay}>{t('BRIEF_V3_DROP_HERE')}</div> : null}
 

@@ -185,6 +185,30 @@ export const BrandedBriefWorkspace = (props: BrandedBriefWorkspaceProps) => {
     </Button>
   ) : null;
 
+  const renderEmbedBottomBar = (withTabs: boolean) => {
+    const show = isEmbed && (withTabs ? documentReady : isSendEnabled || alreadySent);
+    if (!show) {
+      return null;
+    }
+    return (
+      <div className={styles.embedBottomBar} data-testid='embed-bottom-bar'>
+        {withTabs && documentReady ? (
+          <Tabs
+            activeKey={mobileTab}
+            onChange={(key) => setMobileTab(key as 'brief' | 'chat')}
+            items={[
+              { key: 'chat', label: t('BRIEF_TAB_CHAT') },
+              { key: 'brief', label: t('BRIEF_TAB_BRIEF') },
+            ]}
+            size='small'
+            className={styles.embedBottomTabs}
+          />
+        ) : null}
+        {sendButton ? <div className={styles.embedBottomSend}>{sendButton}</div> : null}
+      </div>
+    );
+  };
+
   const documentPane =
     token && briefId ? (
       <WhiteLabelDocumentPanel ref={anonDocPanelRef} briefId={briefId} token={token} />
@@ -227,11 +251,14 @@ export const BrandedBriefWorkspace = (props: BrandedBriefWorkspaceProps) => {
   if (isClient) {
     return (
       <div className={styles.desktopWrapper}>
-        <div className={isEmbed ? `${styles.desktopHeader} ${styles.headerEmbed}` : styles.desktopHeader}>
-          {!isEmbed ? branding : <div />}
-          <div className={styles.desktopHeaderActions}>{sendButton}</div>
-        </div>
+        {!isEmbed ? (
+          <div className={styles.desktopHeader}>
+            {branding}
+            <div className={styles.desktopHeaderActions}>{sendButton}</div>
+          </div>
+        ) : null}
         <div className={styles.desktopContent}>{chatPane}</div>
+        {renderEmbedBottomBar(false)}
         {sendModal}
       </div>
     );
@@ -240,25 +267,25 @@ export const BrandedBriefWorkspace = (props: BrandedBriefWorkspaceProps) => {
   if (isMobile) {
     return (
       <div className={styles.mobileWrapper}>
-        <div className={isEmbed ? `${styles.mobileTabsHeader} ${styles.headerEmbed}` : styles.mobileTabsHeader}>
-          {documentReady ? (
-            <Tabs
-              activeKey={mobileTab}
-              onChange={(key) => setMobileTab(key as 'brief' | 'chat')}
-              items={[
-                { key: 'chat', label: t('BRIEF_TAB_CHAT') },
-                { key: 'brief', label: t('BRIEF_TAB_BRIEF') },
-              ]}
-              size='small'
-              className={styles.mobileTabs}
-            />
-          ) : !isEmbed ? (
-            branding
-          ) : (
-            <div />
-          )}
-          <div className={styles.mobileSendAction}>{sendButton}</div>
-        </div>
+        {!isEmbed ? (
+          <div className={styles.mobileTabsHeader}>
+            {documentReady ? (
+              <Tabs
+                activeKey={mobileTab}
+                onChange={(key) => setMobileTab(key as 'brief' | 'chat')}
+                items={[
+                  { key: 'chat', label: t('BRIEF_TAB_CHAT') },
+                  { key: 'brief', label: t('BRIEF_TAB_BRIEF') },
+                ]}
+                size='small'
+                className={styles.mobileTabs}
+              />
+            ) : (
+              branding
+            )}
+            <div className={styles.mobileSendAction}>{sendButton}</div>
+          </div>
+        ) : null}
 
         <div
           className={`${styles.mobileChatPane}${documentReady && mobileTab !== 'chat' ? ` ${styles.mobileHidden}` : ''}`}
@@ -271,6 +298,7 @@ export const BrandedBriefWorkspace = (props: BrandedBriefWorkspaceProps) => {
           </div>
         ) : null}
 
+        {renderEmbedBottomBar(true)}
         {sendModal}
       </div>
     );
@@ -278,15 +306,18 @@ export const BrandedBriefWorkspace = (props: BrandedBriefWorkspaceProps) => {
 
   return (
     <div className={styles.desktopWrapper}>
-      <div className={isEmbed ? `${styles.desktopHeader} ${styles.headerEmbed}` : styles.desktopHeader}>
-        {!isEmbed ? branding : <div />}
-        <div className={styles.desktopHeaderActions}>{sendButton}</div>
-      </div>
+      {!isEmbed ? (
+        <div className={styles.desktopHeader}>
+          {branding}
+          <div className={styles.desktopHeaderActions}>{sendButton}</div>
+        </div>
+      ) : null}
       <div className={styles.desktopContent}>
         {documentReady ? <div className={styles.desktopDocPane}>{documentPane}</div> : null}
         <div className={styles.desktopChatPane}>{chatPane}</div>
       </div>
 
+      {renderEmbedBottomBar(false)}
       {sendModal}
     </div>
   );

@@ -148,3 +148,34 @@ describe('BriefChatPanel registration buttons', () => {
     expect(screen.queryByText('Register with another email')).not.toBeInTheDocument();
   });
 });
+
+describe('BriefChatPanel embed composer', () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
+
+  it('hides the composer in embed when the brief is ready to finalize', () => {
+    render(<BriefChatPanel {...defaultProps} embedded conversationStatus='ready_to_finalize' />);
+
+    expect(screen.queryByPlaceholderText('Write a message...')).not.toBeInTheDocument();
+    expect(screen.queryByText('Attach files')).not.toBeInTheDocument();
+  });
+
+  it('hides the composer in embed when the brief is finalized', () => {
+    render(<BriefChatPanel {...defaultProps} embedded conversationStatus='finalized' />);
+
+    expect(screen.queryByPlaceholderText('Write a message...')).not.toBeInTheDocument();
+  });
+
+  it('keeps the composer in embed while the conversation is still in progress', () => {
+    render(<BriefChatPanel {...defaultProps} embedded conversationStatus='in_progress' />);
+
+    expect(screen.getByPlaceholderText('Write a message...')).toBeInTheDocument();
+  });
+
+  it('keeps the composer when not embedded even if the brief is ready', () => {
+    render(<BriefChatPanel {...defaultProps} conversationStatus='ready_to_finalize' />);
+
+    expect(screen.getByPlaceholderText('Write a message...')).toBeInTheDocument();
+  });
+});

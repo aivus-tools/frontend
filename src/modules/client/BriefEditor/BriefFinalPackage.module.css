@@ -322,3 +322,11 @@
   font-weight: 600;
   color: var(--red);
 }
+
+:global(html.aivus-embed) .tabsHeader {
+  background: var(--white);
+}
+
+:global(html.aivus-embed) .stickyBar {
+  background: var(--white);
+}
