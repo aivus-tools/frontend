@@ -1,6 +1,6 @@
 import React from 'react';
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { render, screen, waitFor } from '@testing-library/react';
+import { act, fireEvent, render, screen, waitFor } from '@testing-library/react';
 import { BriefV3Detail } from '@/types/briefAi.interface';
 
 const mocks = vi.hoisted(() => ({
@@ -16,9 +16,10 @@ const mocks = vi.hoisted(() => ({
 }));
 
 let detailData: BriefV3Detail | undefined;
+let detailFetching = false;
 
 vi.mock('@/services/client/publicBriefApi', () => ({
-  useGetPublicBriefDetailQuery: () => ({ data: detailData, isFetching: false }),
+  useGetPublicBriefDetailQuery: () => ({ data: detailData, isFetching: detailFetching }),
   useGetPublicBriefFinalDocumentsQuery: (_args: unknown, options: { skip?: boolean }) => {
     mocks.getFinalDocumentsFn(options);
     return { data: undefined };
@@ -82,7 +83,13 @@ vi.mock('next/navigation', () => ({
 }));
 
 vi.mock('./components/BriefStartScreen', () => ({
-  BriefStartScreen: () => <div data-testid='start-screen' />,
+  BriefStartScreen: (props: { onEnsureBrief?: () => Promise<unknown> }) => (
+    <div data-testid='start-screen'>
+      <button type='button' data-testid='ensure-draft' onClick={() => props.onEnsureBrief?.()}>
+        ensure
+      </button>
+    </div>
+  ),
 }));
 
 vi.mock('@/store/hooks', () => ({
@@ -152,6 +159,7 @@ const makeDetail = (overrides: Partial<BriefV3Detail> = {}): BriefV3Detail => ({
 describe('AnonymousBriefEditor', () => {
   beforeEach(() => {
     detailData = undefined;
+    detailFetching = false;
     vi.clearAllMocks();
   });
 
@@ -254,5 +262,26 @@ describe('AnonymousBriefEditor', () => {
 
     const panel = await screen.findByTestId('chat-panel');
     expect(panel.getAttribute('data-composer-disabled')).toBe('false');
+  });
+
+  it('locally created draft keeps the start screen without a loading flash while detail is fetching', async () => {
+    detailData = undefined;
+    detailFetching = true;
+    mocks.createDraftFn.mockReturnValue({
+      unwrap: () => Promise.resolve({ briefId: 'local-1', token: 'tok-1' }),
+    });
+
+    const { rerender } = render(<AnonymousBriefEditor />);
+    await screen.findByTestId('start-screen');
+
+    await act(async () => {
+      fireEvent.click(screen.getByTestId('ensure-draft'));
+    });
+
+    // Parent feeds the created id back as a prop, as BrandedBriefWorkspace does.
+    rerender(<AnonymousBriefEditor briefId='local-1' token='tok-1' />);
+
+    expect(screen.getByTestId('start-screen')).toBeInTheDocument();
+    expect(screen.queryByText('BRIEF_V3_LOADING_BRIEF_TITLE')).not.toBeInTheDocument();
   });
 });

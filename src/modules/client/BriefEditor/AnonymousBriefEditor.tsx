@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { App, Button, Empty } from 'antd';
 import { useRouter } from 'next/navigation';
 import { AppRoute } from '@/constants/appRoute';
@@ -58,6 +58,7 @@ export const AnonymousBriefEditor = (props: AnonymousBriefEditorProps) => {
   const [isStarting, setIsStarting] = useState(false);
   const [isStartVoiceBusy, setIsStartVoiceBusy] = useState(false);
   const [hasMounted, setHasMounted] = useState(false);
+  const createdLocallyRef = useRef(false);
 
   const { dismissed: footerDismissed } = useBetaFooter();
   const footerVisible = !footerDismissed;
@@ -96,7 +97,7 @@ export const AnonymousBriefEditor = (props: AnonymousBriefEditorProps) => {
   const pendingTaskId = detail?.pendingTaskId || localTaskId || null;
   const stage = deriveStage({
     hasBrief: !!briefId,
-    openedExisting: !!props.briefId,
+    openedExisting: !!props.briefId && !createdLocallyRef.current,
     detail,
     isStarting,
     pendingTaskId,
@@ -153,6 +154,10 @@ export const AnonymousBriefEditor = (props: AnonymousBriefEditorProps) => {
     }
     try {
       const response = await createDraft().unwrap();
+      // Mark the draft as locally created so the start screen does not flip to the
+      // "loading existing brief" view (which would unmount the start screen and the
+      // in-progress voice recorder) once the parent feeds briefId back as a prop.
+      createdLocallyRef.current = true;
       setBriefId(response.briefId);
       setToken(response.token);
       savePublicBriefToken(response.briefId, response.token);
