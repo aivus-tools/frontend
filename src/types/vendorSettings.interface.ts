@@ -15,6 +15,7 @@ export interface VendorSettings {
   updatedAt: string;
   slug: string | null;
   leadNotificationEmail: string;
+  customAiInstructions: string;
 }
 
 export interface UpdateVendorSettingsPayload {
@@ -30,6 +31,7 @@ export interface UpdateVendorSettingsPayload {
   postTaxPercent?: string;
   slug?: string | null;
   leadNotificationEmail?: string;
+  customAiInstructions?: string;
 }
 
 export interface BrandedBriefSlugInfo {

@@ -15,6 +15,8 @@ import { usePublicAppOrigin } from '@/hooks/usePublicAppOrigin';
 
 import styles from './VendorSettingsSection.module.css';
 
+const { TextArea } = Input;
+
 const SLUG_DEBOUNCE_MS = 600;
 const SLUG_PATTERN = /^[a-z0-9](?:[a-z0-9]|-(?=[a-z0-9])){1,38}[a-z0-9]$|^[a-z0-9]{3}$/;
 
@@ -31,6 +33,7 @@ interface VendorSettingsFormValues {
   postTaxPercent: string;
   slug: string;
   leadNotificationEmail: string;
+  customAiInstructions: string;
 }
 
 type SlugStatus = 'idle' | 'checking' | 'available' | 'taken' | 'invalid';
@@ -69,6 +72,7 @@ export const VendorSettingsSection = () => {
         postTaxPercent: settings.postTaxPercent || '0',
         slug: settings.slug || '',
         leadNotificationEmail: settings.leadNotificationEmail || '',
+        customAiInstructions: settings.customAiInstructions || '',
       });
     }
   }, [settings, form]);
@@ -129,6 +133,7 @@ export const VendorSettingsSection = () => {
         // Default production / post-production percentages are temporarily hidden.
         slug: values.slug || null,
         leadNotificationEmail: values.leadNotificationEmail,
+        customAiInstructions: values.customAiInstructions,
       }).unwrap();
       originalSlugRef.current = values.slug || null;
       message.success('Company settings saved');
@@ -236,6 +241,19 @@ export const VendorSettingsSection = () => {
 
         <Form.Item name='leadNotificationEmail' label={t('VENDOR_SETTINGS_NOTIFICATION_EMAIL_LABEL')}>
           <Input type='email' placeholder={t('VENDOR_SETTINGS_NOTIFICATION_EMAIL_PLACEHOLDER')} size='large' />
+        </Form.Item>
+
+        <Form.Item
+          name='customAiInstructions'
+          label={t('VENDOR_SETTINGS_AI_INSTRUCTIONS_LABEL')}
+          extra={t('VENDOR_SETTINGS_AI_INSTRUCTIONS_EXTRA')}
+        >
+          <TextArea
+            autoSize={{ minRows: 4, maxRows: 10 }}
+            showCount
+            maxLength={500}
+            placeholder={t('VENDOR_SETTINGS_AI_INSTRUCTIONS_PLACEHOLDER')}
+          />
         </Form.Item>
 
         {/* Temporarily hidden until offers/estimation are re-enabled.

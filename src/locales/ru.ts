@@ -778,6 +778,11 @@ export const RU_LOCALES = {
   VENDOR_SETTINGS_SLUG_CHANGE_WARNING: 'При смене ссылки все старые копии и встройки перестанут работать.',
   VENDOR_SETTINGS_NOTIFICATION_EMAIL_LABEL: 'Email для уведомлений о лидах',
   VENDOR_SETTINGS_NOTIFICATION_EMAIL_PLACEHOLDER: 'your@email.com',
+  VENDOR_SETTINGS_AI_INSTRUCTIONS_LABEL: 'Инструкции для AI-ассистента',
+  VENDOR_SETTINGS_AI_INSTRUCTIONS_PLACEHOLDER:
+    'Например: отвечай кратко, рано уточняй бюджет и сроки, используй термины video production.',
+  VENDOR_SETTINGS_AI_INSTRUCTIONS_EXTRA:
+    'Задает тон и фокус AI-ассистента для лидов, пришедших по персональной ссылке. До 500 символов. Не переопределяет безопасность и формат вывода.',
   VENDOR_SETTINGS_WEBHOOK_KEY_LABEL: 'Webhook-ключ',
   VENDOR_SETTINGS_WEBHOOK_KEY_REGENERATE: 'Сгенерировать новый',
   VENDOR_SETTINGS_WEBHOOK_KEY_REGENERATE_CONFIRM: 'Старый ключ перестанет работать сразу. Продолжить?',

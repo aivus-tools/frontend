@@ -772,6 +772,11 @@ export const EN_LOCALES = {
   VENDOR_SETTINGS_SLUG_CHANGE_WARNING: 'Changing the link breaks all old copies and embeds.',
   VENDOR_SETTINGS_NOTIFICATION_EMAIL_LABEL: 'Lead notification email',
   VENDOR_SETTINGS_NOTIFICATION_EMAIL_PLACEHOLDER: 'your@email.com',
+  VENDOR_SETTINGS_AI_INSTRUCTIONS_LABEL: 'AI assistant instructions',
+  VENDOR_SETTINGS_AI_INSTRUCTIONS_PLACEHOLDER:
+    'e.g. Be concise, ask about budget and timeline early, use US ad-production terms.',
+  VENDOR_SETTINGS_AI_INSTRUCTIONS_EXTRA:
+    'Guides the tone and focus of the AI assistant for leads who come through your personal link. Up to 500 characters. It never overrides safety or output format.',
   VENDOR_SETTINGS_WEBHOOK_KEY_LABEL: 'Webhook key',
   VENDOR_SETTINGS_WEBHOOK_KEY_REGENERATE: 'Regenerate',
   VENDOR_SETTINGS_WEBHOOK_KEY_REGENERATE_CONFIRM: 'Old key stops working immediately. Continue?',
