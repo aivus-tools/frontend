@@ -91,6 +91,18 @@ describe('VoiceRecorderButton', () => {
     expect(recorder.start).toHaveBeenCalledTimes(1);
   });
 
+  it('starts recording within the gesture without awaiting draft creation', async () => {
+    const recorder = buildRecorder();
+    mockUseVoiceRecorder.mockReturnValue(recorder);
+    const onEnsureBrief = vi.fn(() => new Promise<never>(() => {}));
+    renderButton({ briefId: null, onEnsureBrief });
+    await act(async () => {
+      fireEvent.click(screen.getByRole('button', { name: /record voice message/i }));
+    });
+    expect(onEnsureBrief).toHaveBeenCalledTimes(1);
+    expect(recorder.start).toHaveBeenCalledTimes(1);
+  });
+
   it('renders the recording panel with stop and cancel controls while recording', () => {
     const recorder = buildRecorder({ state: 'recording', audioLevel: 0.4, elapsedMs: 5_000 });
     mockUseVoiceRecorder.mockReturnValue(recorder);

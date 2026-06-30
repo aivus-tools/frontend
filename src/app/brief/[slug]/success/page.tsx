@@ -38,12 +38,14 @@ export default function BrandedBriefSuccessPage() {
 
   return (
     <div className={styles.centerWrapper}>
-      <Result
-        status='success'
-        title={t('BRANDED_BRIEF_SUCCESS_TITLE')}
-        subTitle={isClient ? t('BRANDED_BRIEF_SUCCESS_AUTH_DESC', vendorName) : t('BRANDED_BRIEF_SUCCESS_ANON_DESC')}
-        extra={extra}
-      />
+      <div className={styles.resultCard}>
+        <Result
+          status='success'
+          title={t('BRANDED_BRIEF_SUCCESS_TITLE')}
+          subTitle={isClient ? t('BRANDED_BRIEF_SUCCESS_AUTH_DESC', vendorName) : t('BRANDED_BRIEF_SUCCESS_ANON_DESC')}
+          extra={extra}
+        />
+      </div>
     </div>
   );
 }

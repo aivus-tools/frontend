@@ -5,3 +5,14 @@
   min-height: 100dvh;
   padding: 24px;
 }
+
+.resultCard {
+  width: 100%;
+  max-width: 480px;
+}
+
+:global(html.aivus-embed) .resultCard {
+  background: var(--white);
+  border: 1px solid var(--border-subtle);
+  border-radius: 14px;
+}

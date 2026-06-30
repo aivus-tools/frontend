@@ -91,6 +91,7 @@ export const VoiceRecorderButton = (props: VoiceRecorderButtonProps) => {
     briefId: props.briefId,
     token: props.publicToken,
   });
+  const ensureDraftPromiseRef = useRef<Promise<{ briefId: string; token: string | null } | null> | null>(null);
 
   useEffect(() => {
     briefContextRef.current = { briefId: props.briefId, token: props.publicToken };
@@ -101,6 +102,12 @@ export const VoiceRecorderButton = (props: VoiceRecorderButtonProps) => {
 
   const callTranscribe = useCallback(
     async (blob: Blob, mimeType: string, durationMs: number) => {
+      if (!briefContextRef.current.briefId && ensureDraftPromiseRef.current) {
+        const ensured = await ensureDraftPromiseRef.current;
+        if (ensured?.briefId) {
+          briefContextRef.current = { briefId: ensured.briefId, token: ensured.token };
+        }
+      }
       const ctx = briefContextRef.current;
       if (!ctx.briefId) {
         messageApi.error(t('BRIEF_V3_VOICE_TRANSCRIBE_FAILED'));
@@ -181,15 +188,17 @@ export const VoiceRecorderButton = (props: VoiceRecorderButtonProps) => {
       return;
     }
     if (recorder.state === 'idle' || recorder.state === 'error') {
+      // Start capture synchronously inside the user gesture: browsers (Safari/iOS
+      // especially) only grant getUserMedia reliably within the click handler, so
+      // awaiting a network round-trip first would make the first recording fail.
+      // The draft is created in parallel and awaited later, before transcription.
       if (!briefContextRef.current.briefId) {
         if (!props.onEnsureBrief) {
           return;
         }
-        const ensured = await props.onEnsureBrief();
-        if (!ensured?.briefId) {
-          return;
+        if (!ensureDraftPromiseRef.current) {
+          ensureDraftPromiseRef.current = props.onEnsureBrief();
         }
-        briefContextRef.current = { briefId: ensured.briefId, token: ensured.token };
       }
       await recorder.start();
       return;
