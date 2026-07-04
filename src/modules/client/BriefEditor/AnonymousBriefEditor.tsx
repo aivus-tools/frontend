@@ -11,6 +11,7 @@ import {
   publicBriefApi,
   savePublicBriefToken,
   useCreatePublicBriefDraftMutation,
+  useCreatePublicBriefDraftBySlugMutation,
   useDeletePublicBriefAttachmentMutation,
   useGetPublicBriefDetailQuery,
   useGetPublicBriefFinalDocumentsQuery,
@@ -41,6 +42,7 @@ interface AnonymousBriefEditorProps {
   onBriefCreated?: (briefId: string, token?: string) => void;
   onRegisterClick?: (briefId: string | null, token: string | null, email: string | null) => void;
   embedded?: boolean;
+  slug?: string | null;
 }
 
 export const AnonymousBriefEditor = (props: AnonymousBriefEditorProps) => {
@@ -59,12 +61,14 @@ export const AnonymousBriefEditor = (props: AnonymousBriefEditorProps) => {
   const [isStartVoiceBusy, setIsStartVoiceBusy] = useState(false);
   const [hasMounted, setHasMounted] = useState(false);
   const createdLocallyRef = useRef(false);
+  const draftPromiseRef = useRef<Promise<{ briefId: string; token: string | null } | null> | null>(null);
 
   const { dismissed: footerDismissed } = useBetaFooter();
   const footerVisible = !footerDismissed;
   const footerHeight = useBetaFooterHeight();
 
   const [createDraft] = useCreatePublicBriefDraftMutation();
+  const [createDraftBySlug] = useCreatePublicBriefDraftBySlugMutation();
   const [startBrief] = useStartPublicBriefMutation();
   const [sendChat] = useSendPublicBriefChatMutation();
   const [uploadAttach] = useUploadPublicBriefAttachmentMutation();
@@ -152,22 +156,35 @@ export const AnonymousBriefEditor = (props: AnonymousBriefEditorProps) => {
     if (briefId) {
       return { briefId, token };
     }
-    try {
-      const response = await createDraft().unwrap();
-      // Mark the draft as locally created so the start screen does not flip to the
-      // "loading existing brief" view (which would unmount the start screen and the
-      // in-progress voice recorder) once the parent feeds briefId back as a prop.
-      createdLocallyRef.current = true;
-      setBriefId(response.briefId);
-      setToken(response.token);
-      savePublicBriefToken(response.briefId, response.token);
-      props.onBriefCreated?.(response.briefId, response.token);
-      return { briefId: response.briefId, token: response.token };
-    } catch {
-      messageApi.error(t('UNEXPECTED_ERROR'));
-      return null;
+    // Guard against concurrent callers (upload + start, voice + click): briefId
+    // state has not updated yet, so a naive check would let both create a draft
+    // and — with the personal-link flow — spawn a duplicate vendor lead. The
+    // first caller owns the in-flight promise; the rest await it.
+    if (draftPromiseRef.current) {
+      return draftPromiseRef.current;
     }
-  }, [briefId, createDraft, messageApi, props, token]);
+    const promise = (async () => {
+      try {
+        const response = props.slug ? await createDraftBySlug(props.slug).unwrap() : await createDraft().unwrap();
+        // Mark the draft as locally created so the start screen does not flip to
+        // the "loading existing brief" view (which would unmount the start screen
+        // and the in-progress voice recorder) once the parent feeds briefId back.
+        createdLocallyRef.current = true;
+        setBriefId(response.briefId);
+        setToken(response.token);
+        savePublicBriefToken(response.briefId, response.token);
+        props.onBriefCreated?.(response.briefId, response.token);
+        return { briefId: response.briefId, token: response.token };
+      } catch {
+        // Clear the ref so a later action can retry after a failed creation.
+        draftPromiseRef.current = null;
+        messageApi.error(t('UNEXPECTED_ERROR'));
+        return null;
+      }
+    })();
+    draftPromiseRef.current = promise;
+    return promise;
+  }, [briefId, createDraft, createDraftBySlug, messageApi, props, token]);
 
   const handleUploadAttachment = useCallback(
     async (file: File) => {

@@ -8,7 +8,7 @@ import { UserOutlined } from '@ant-design/icons';
 import { t } from '@/lib/i18n';
 import { AppRoute } from '@/constants/appRoute';
 import { useGetPublicBriefBySlugQuery } from '@/services/client/publicBriefApi';
-import { useCreateBriefAiDraftMutation, useGetSentBriefIdsToVendorQuery } from '@/services/client/briefAiApi';
+import { useCreateBriefAiDraftBySlugMutation, useGetSentBriefIdsToVendorQuery } from '@/services/client/briefAiApi';
 import { GROUPS } from '@/constants/constants';
 import { BriefSelectModal } from '@/modules/client/BriefEditor/BriefSelectModal';
 import { BrandedBriefWorkspace } from '@/modules/client/BriefEditor/BrandedBriefWorkspace';
@@ -26,7 +26,7 @@ export default function BrandedBriefStartPage() {
   const isEmbed = searchParams.get('embed') === '1';
 
   const { data: slugInfo, isLoading, isError } = useGetPublicBriefBySlugQuery(slug);
-  const [createAuthDraft] = useCreateBriefAiDraftMutation();
+  const [createAuthDraft] = useCreateBriefAiDraftBySlugMutation();
   const [isStarting, setIsStarting] = useState(false);
   const [selectModalOpen, setSelectModalOpen] = useState(false);
 
@@ -80,7 +80,7 @@ export default function BrandedBriefStartPage() {
     }
     setIsStarting(true);
     try {
-      const result = await createAuthDraft().unwrap();
+      const result = await createAuthDraft(slug).unwrap();
       router.push(AppRoute.BRANDED_BRIEF_DETAIL(slug, result.briefId) + embedSuffix);
     } catch {
       message.error(t('UNEXPECTED_ERROR'));

@@ -49,6 +49,14 @@ export const briefAiApi = createApi({
       invalidatesTags: ['BriefV3'],
     }),
 
+    createBriefAiDraftBySlug: builder.mutation<{ briefId: string }, string>({
+      query: (slug) => ({
+        url: ApiRoute.CLIENT_BRIEF_AI_BY_SLUG_DRAFT(slug),
+        method: 'POST',
+      }),
+      invalidatesTags: ['BriefV3'],
+    }),
+
     startBriefAi: builder.mutation<
       BriefV3StartResponse,
       { briefId: string; message: string; attachmentIds?: string[] }
@@ -315,6 +323,7 @@ export const briefAiApi = createApi({
 
 export const {
   useCreateBriefAiDraftMutation,
+  useCreateBriefAiDraftBySlugMutation,
   useStartBriefAiMutation,
   useLazyGetBriefAiStatusQuery,
   useSendBriefAiChatMutation,

@@ -5,6 +5,7 @@ import { BriefV3Detail } from '@/types/briefAi.interface';
 
 const mocks = vi.hoisted(() => ({
   createDraftFn: vi.fn(),
+  createDraftBySlugFn: vi.fn(),
   startBriefFn: vi.fn(),
   sendChatFn: vi.fn(),
   uploadAttachFn: vi.fn(),
@@ -25,6 +26,7 @@ vi.mock('@/services/client/publicBriefApi', () => ({
     return { data: undefined };
   },
   useCreatePublicBriefDraftMutation: () => [mocks.createDraftFn, {}],
+  useCreatePublicBriefDraftBySlugMutation: () => [mocks.createDraftBySlugFn, {}],
   useStartPublicBriefMutation: () => [mocks.startBriefFn, {}],
   useSendPublicBriefChatMutation: () => [mocks.sendChatFn, {}],
   useUploadPublicBriefAttachmentMutation: () => [mocks.uploadAttachFn, {}],
@@ -283,5 +285,53 @@ describe('AnonymousBriefEditor', () => {
 
     expect(screen.getByTestId('start-screen')).toBeInTheDocument();
     expect(screen.queryByText('BRIEF_V3_LOADING_BRIEF_TITLE')).not.toBeInTheDocument();
+  });
+
+  it('by-slug: creates the draft via the by-slug mutation when slug is provided', async () => {
+    mocks.createDraftBySlugFn.mockReturnValue({
+      unwrap: () => Promise.resolve({ briefId: 'bs-1', token: 'tok-bs' }),
+    });
+
+    render(<AnonymousBriefEditor slug='acme-films' />);
+    await screen.findByTestId('start-screen');
+
+    await act(async () => {
+      fireEvent.click(screen.getByTestId('ensure-draft'));
+    });
+
+    expect(mocks.createDraftBySlugFn).toHaveBeenCalledWith('acme-films');
+    expect(mocks.createDraftFn).not.toHaveBeenCalled();
+  });
+
+  it('by-slug: concurrent ensureDraft calls create only one draft (no ghost lead)', async () => {
+    mocks.createDraftBySlugFn.mockReturnValue({
+      unwrap: () => Promise.resolve({ briefId: 'bs-1', token: 'tok-bs' }),
+    });
+
+    render(<AnonymousBriefEditor slug='acme-films' />);
+    await screen.findByTestId('start-screen');
+
+    await act(async () => {
+      fireEvent.click(screen.getByTestId('ensure-draft'));
+      fireEvent.click(screen.getByTestId('ensure-draft'));
+    });
+
+    expect(mocks.createDraftBySlugFn).toHaveBeenCalledTimes(1);
+  });
+
+  it('no slug: creates the draft via the plain mutation', async () => {
+    mocks.createDraftFn.mockReturnValue({
+      unwrap: () => Promise.resolve({ briefId: 'p-1', token: 'tok-p' }),
+    });
+
+    render(<AnonymousBriefEditor />);
+    await screen.findByTestId('start-screen');
+
+    await act(async () => {
+      fireEvent.click(screen.getByTestId('ensure-draft'));
+    });
+
+    expect(mocks.createDraftFn).toHaveBeenCalled();
+    expect(mocks.createDraftBySlugFn).not.toHaveBeenCalled();
   });
 });

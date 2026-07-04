@@ -76,6 +76,7 @@ export const ApiRoute = {
   // AI Brief v3
   BRIEF_AI_LIST: '/service/client/briefs/ai',
   BRIEF_AI_DRAFT: '/service/client/briefs/ai/drafts',
+  CLIENT_BRIEF_AI_BY_SLUG_DRAFT: (slug: string) => `/service/client/briefs/ai/by-slug/${slug}/drafts`,
   BRIEF_AI_START: (briefId: string) => `/service/client/briefs/ai/${briefId}/start`,
   BRIEF_AI_STATUS: (briefId: string) => `/service/client/briefs/ai/${briefId}/status`,
   BRIEF_AI_CHAT: (briefId: string) => `/service/client/briefs/ai/${briefId}/chat`,

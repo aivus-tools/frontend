@@ -21,6 +21,7 @@ import {
   markBriefAsSent,
   clearDraftForSlug,
   getDraftForSlug,
+  saveDraftForSlug,
 } from '@/helpers/pendingBrief';
 import { GROUPS } from '@/constants/constants';
 import { AnonymousBriefEditor } from './AnonymousBriefEditor';
@@ -125,6 +126,7 @@ export const BrandedBriefWorkspace = (props: BrandedBriefWorkspaceProps) => {
     setBriefId(newBriefId);
     if (newToken) {
       savePublicBriefToken(newBriefId, newToken);
+      saveDraftForSlug(slug, newBriefId, newToken);
       setToken(newToken);
     }
   };
@@ -231,6 +233,7 @@ export const BrandedBriefWorkspace = (props: BrandedBriefWorkspaceProps) => {
       briefId={briefId}
       token={token}
       whiteLabel={true}
+      slug={slug}
       alreadySent={alreadySent}
       getLatestDocumentHtml={getLatestDocumentHtml}
       onBriefCreated={handleBriefCreated}

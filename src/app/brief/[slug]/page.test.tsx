@@ -1,6 +1,6 @@
 import React from 'react';
 import { describe, it, expect, vi, beforeEach, beforeAll } from 'vitest';
-import { render, screen } from '@testing-library/react';
+import { render, screen, act, fireEvent } from '@testing-library/react';
 import { App } from 'antd';
 
 const navMocks = vi.hoisted(() => ({
@@ -25,6 +25,7 @@ vi.mock('next-auth/react', () => ({
 
 const mocks = vi.hoisted(() => ({
   getBySlug: vi.fn(),
+  createDraftBySlugFn: vi.fn(),
 }));
 
 vi.mock('@/services/client/publicBriefApi', () => ({
@@ -32,12 +33,16 @@ vi.mock('@/services/client/publicBriefApi', () => ({
 }));
 
 vi.mock('@/services/client/briefAiApi', () => ({
-  useCreateBriefAiDraftMutation: () => [vi.fn(), {}],
+  useCreateBriefAiDraftBySlugMutation: () => [mocks.createDraftBySlugFn, {}],
   useGetSentBriefIdsToVendorQuery: () => ({ data: undefined, isLoading: false }),
 }));
 
 vi.mock('@/modules/client/BriefEditor/BriefSelectModal', () => ({
-  BriefSelectModal: () => <div data-testid='select-modal' />,
+  BriefSelectModal: (props: { onSelectNew?: () => void }) => (
+    <button type='button' data-testid='select-new' onClick={() => props.onSelectNew?.()}>
+      new
+    </button>
+  ),
 }));
 
 vi.mock('@/modules/client/BriefEditor/BrandedBriefWorkspace', () => ({
@@ -112,5 +117,20 @@ describe('BrandedBriefStartPage', () => {
     mocks.getBySlug.mockReturnValue({ data: undefined, isLoading: true, isError: false });
     renderPage();
     expect(document.querySelector('.ant-spin')).toBeTruthy();
+  });
+
+  it('authenticated: starts a new brief via the by-slug draft mutation', async () => {
+    mocks.createDraftBySlugFn.mockReturnValue({
+      unwrap: () => Promise.resolve({ briefId: 'new-1' }),
+    });
+    sessionMock.value = { data: { user: { group: 'CLIENT' } }, status: 'authenticated' };
+    navMocks.searchParamsGet.mockImplementation((key: string) => (key === 'authed' ? '1' : null));
+    renderPage();
+
+    await act(async () => {
+      fireEvent.click(screen.getByTestId('select-new'));
+    });
+
+    expect(mocks.createDraftBySlugFn).toHaveBeenCalledWith('test-agency');
   });
 });
