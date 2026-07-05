@@ -128,7 +128,7 @@ describe('VendorSettingsSection', () => {
 
   it('falls back to a generic message when the error carries no backend text', async () => {
     mocks.updateSettings.mockReturnValue({
-      unwrap: () => Promise.reject({ status: 500 }),
+      unwrap: () => Promise.reject({ status: 'FETCH_ERROR', error: 'TypeError: Failed to fetch' }),
     });
     renderSection();
 
