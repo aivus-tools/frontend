@@ -142,9 +142,9 @@ export const VendorSettingsSection = () => {
         typeof error === 'object' && error != null && 'status' in error ? (error as { status: number }).status : null;
       if (status === 409) {
         setSlugStatus('taken');
-      } else {
-        message.error('Failed to save settings');
+        return;
       }
+      message.error(getBackendErrorMessage(error) ?? 'Failed to save settings');
     }
   };
 
@@ -296,4 +296,16 @@ export const VendorSettingsSection = () => {
       </Form>
     </div>
   );
+};
+
+const getBackendErrorMessage = (error: unknown): string | null => {
+  if (typeof error !== 'object' || error == null || !('data' in error)) {
+    return null;
+  }
+  const data = (error as { data: unknown }).data;
+  if (typeof data !== 'object' || data == null || !('error' in data)) {
+    return null;
+  }
+  const value = (data as { error: unknown }).error;
+  return typeof value === 'string' ? value : null;
 };

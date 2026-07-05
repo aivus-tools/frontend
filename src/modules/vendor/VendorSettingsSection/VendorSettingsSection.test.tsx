@@ -110,6 +110,37 @@ describe('VendorSettingsSection', () => {
     expect(mocks.updateSettings.mock.calls[0][0]).toHaveProperty('customAiInstructions', 'Be concise.');
   });
 
+  it('shows the backend error message when saving is rejected', async () => {
+    const backendMessage = 'These instructions look unsafe and were not saved. Please rephrase them.';
+    mocks.updateSettings.mockReturnValue({
+      unwrap: () => Promise.reject({ status: 400, data: { error: backendMessage } }),
+    });
+    renderSection();
+
+    await act(async () => {
+      fireEvent.click(screen.getByText('Save Company Settings'));
+    });
+
+    await waitFor(() => {
+      expect(screen.getByText(backendMessage)).toBeTruthy();
+    });
+  });
+
+  it('falls back to a generic message when the error carries no backend text', async () => {
+    mocks.updateSettings.mockReturnValue({
+      unwrap: () => Promise.reject({ status: 500 }),
+    });
+    renderSection();
+
+    await act(async () => {
+      fireEvent.click(screen.getByText('Save Company Settings'));
+    });
+
+    await waitFor(() => {
+      expect(screen.getByText('Failed to save settings')).toBeTruthy();
+    });
+  });
+
   it('lets the user edit the AI instructions textarea', async () => {
     renderSection();
     const textarea = document.querySelector('#customAiInstructions') as HTMLTextAreaElement;
