@@ -179,3 +179,82 @@ describe('BriefChatPanel embed composer', () => {
     expect(screen.getByPlaceholderText('Write a message...')).toBeInTheDocument();
   });
 });
+
+describe('BriefChatPanel message-limit badge', () => {
+  it('hides the count badge early so it does not read like a quota to fill', () => {
+    render(<BriefChatPanel {...defaultProps} conversationStatus='in_progress' messageCount={5} messageLimit={50} />);
+
+    expect(screen.queryByText(/messages left/)).not.toBeInTheDocument();
+    expect(screen.queryByText('5/50 messages')).not.toBeInTheDocument();
+  });
+
+  it('shows remaining count only near the limit', () => {
+    render(<BriefChatPanel {...defaultProps} conversationStatus='in_progress' messageCount={45} messageLimit={50} />);
+
+    expect(screen.getByText('5 messages left')).toBeInTheDocument();
+  });
+
+  it('shows a clear reached message at the limit', () => {
+    render(<BriefChatPanel {...defaultProps} conversationStatus='in_progress' messageCount={50} messageLimit={50} />);
+
+    expect(screen.getByText('Message limit reached')).toBeInTheDocument();
+  });
+
+  it('shows the badge at exactly the threshold (10 messages left)', () => {
+    render(<BriefChatPanel {...defaultProps} conversationStatus='in_progress' messageCount={40} messageLimit={50} />);
+
+    expect(screen.getByText('10 messages left')).toBeInTheDocument();
+  });
+
+  it('hides the badge one step above the threshold (11 messages left)', () => {
+    render(<BriefChatPanel {...defaultProps} conversationStatus='in_progress' messageCount={39} messageLimit={50} />);
+
+    expect(screen.queryByText(/messages left/)).not.toBeInTheDocument();
+  });
+
+  it('uses singular copy for a single remaining message', () => {
+    render(<BriefChatPanel {...defaultProps} conversationStatus='in_progress' messageCount={49} messageLimit={50} />);
+
+    expect(screen.getByText('1 message left')).toBeInTheDocument();
+    expect(screen.queryByText('1 messages left')).not.toBeInTheDocument();
+  });
+
+  it('hides the badge when the message limit is infinite', () => {
+    render(
+      <BriefChatPanel {...defaultProps} conversationStatus='in_progress' messageCount={0} messageLimit={Infinity} />
+    );
+
+    expect(screen.queryByText(/messages left/)).not.toBeInTheDocument();
+    expect(screen.queryByText('Message limit reached')).not.toBeInTheDocument();
+  });
+
+  it('shows reached copy (never a negative count) when count overshoots the limit', () => {
+    render(<BriefChatPanel {...defaultProps} conversationStatus='in_progress' messageCount={55} messageLimit={50} />);
+
+    expect(screen.getByText('Message limit reached')).toBeInTheDocument();
+    expect(screen.queryByText(/messages left/)).not.toBeInTheDocument();
+    expect(screen.queryByText(/-5/)).not.toBeInTheDocument();
+  });
+
+  it('does not render the badge in embed + ready even when near the limit', () => {
+    render(
+      <BriefChatPanel
+        {...defaultProps}
+        embedded
+        conversationStatus='ready_to_finalize'
+        messageCount={45}
+        messageLimit={50}
+      />
+    );
+
+    expect(screen.queryByText('5 messages left')).not.toBeInTheDocument();
+    expect(screen.queryByPlaceholderText('Write a message...')).not.toBeInTheDocument();
+  });
+
+  it('at exactly the limit shows only reached copy, not a zero-count remaining message', () => {
+    render(<BriefChatPanel {...defaultProps} conversationStatus='in_progress' messageCount={50} messageLimit={50} />);
+
+    expect(screen.getByText('Message limit reached')).toBeInTheDocument();
+    expect(screen.queryByText('0 messages left')).not.toBeInTheDocument();
+  });
+});

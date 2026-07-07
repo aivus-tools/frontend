@@ -23,6 +23,10 @@ import styles from './BriefChatPanel.module.css';
 
 const TextArea = Input.TextArea;
 
+// Show the message-count badge only near the limit, so early on it doesn't read
+// like the client has to send that many messages.
+const LIMIT_BADGE_THRESHOLD = 10;
+
 interface BriefChatPanelProps {
   briefId?: string;
   isPublic: boolean;
@@ -168,6 +172,8 @@ export const BriefChatPanel = (props: BriefChatPanelProps) => {
   const pendingIds = props.pendingAttachments.map((x) => x.id);
 
   const limitReached = props.messageCount >= props.messageLimit;
+  const messagesLeft = props.messageLimit - props.messageCount;
+  const nearLimit = Number.isFinite(props.messageLimit) && messagesLeft <= LIMIT_BADGE_THRESHOLD;
   const canSend =
     draft.trim().length > 0 &&
     !props.isLoading &&
@@ -401,9 +407,11 @@ export const BriefChatPanel = (props: BriefChatPanelProps) => {
               </span>
             ) : null}
 
-            {Number.isFinite(props.messageLimit) ? (
+            {nearLimit ? (
               <span className={styles.limitBadge}>
-                {props.messageCount}/{props.messageLimit} {t('BRIEF_V3_MESSAGES')}
+                {limitReached
+                  ? t('BRIEF_V3_MESSAGE_LIMIT_REACHED')
+                  : `${messagesLeft} ${messagesLeft === 1 ? t('BRIEF_V3_MESSAGE_LEFT_ONE') : t('BRIEF_V3_MESSAGES_LEFT')}`}
               </span>
             ) : null}
 

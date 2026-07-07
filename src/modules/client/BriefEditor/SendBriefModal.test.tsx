@@ -59,13 +59,16 @@ describe('SendBriefModal', () => {
   beforeEach(() => {
     mocks.sendPublic.mockClear();
     mocks.sendClient.mockClear();
-    mocks.sendPublic.mockResolvedValue({ data: { ok: true, finalizingTaskId: null } });
-    mocks.sendClient.mockResolvedValue({ data: { ok: true, finalizingTaskId: null } });
+    // The component calls the mutation as `send({...}).unwrap()`, so the mock must
+    // return an object with an unwrap() — a plain resolved value would throw and
+    // silently route the "success" tests through the catch branch.
+    mocks.sendPublic.mockReturnValue({ unwrap: () => Promise.resolve({ ok: true, finalizingTaskId: null }) });
+    mocks.sendClient.mockReturnValue({ unwrap: () => Promise.resolve({ ok: true, finalizingTaskId: null }) });
   });
 
-  it('renders email field for anon', () => {
+  it('does not render email field for anon by default (email comes from chat)', () => {
     renderModal();
-    expect(screen.getByPlaceholderText('email@example.com')).toBeTruthy();
+    expect(screen.queryByPlaceholderText('email@example.com')).toBeNull();
   });
 
   it('does not render email field for authenticated user', () => {
@@ -73,28 +76,79 @@ describe('SendBriefModal', () => {
     expect(screen.queryByPlaceholderText('email@example.com')).toBeNull();
   });
 
-  it('validates email required on submit', async () => {
+  it('calls sendPublic with empty email for anon (server falls back to stored)', async () => {
     renderModal();
+    await act(async () => {
+      fireEvent.click(screen.getByText('Send brief'));
+    });
+    await waitFor(() => {
+      expect(mocks.sendPublic).toHaveBeenCalledWith(expect.objectContaining({ email: '', slug: 'test-agency' }));
+    });
+  });
+
+  it('reveals the email field as a fallback when server reports email_required', async () => {
+    mocks.sendPublic.mockReturnValue({
+      unwrap: () => Promise.reject({ status: 400, data: { code: 'email_required' } }),
+    });
+    renderModal();
+    await act(async () => {
+      fireEvent.click(screen.getByText('Send brief'));
+    });
+    await waitFor(() => {
+      expect(screen.getByPlaceholderText('email@example.com')).toBeTruthy();
+    });
+  });
+
+  it('sends the typed email after the fallback field appears', async () => {
+    mocks.sendPublic.mockReturnValueOnce({
+      unwrap: () => Promise.reject({ status: 400, data: { code: 'email_required' } }),
+    });
+    renderModal();
+    await act(async () => {
+      fireEvent.click(screen.getByText('Send brief'));
+    });
+    const input = await screen.findByPlaceholderText('email@example.com');
+    await act(async () => {
+      fireEvent.change(input, { target: { value: 'test@example.com' } });
+      fireEvent.click(screen.getByText('Send brief'));
+    });
+    await waitFor(() => {
+      expect(mocks.sendPublic).toHaveBeenLastCalledWith(
+        expect.objectContaining({ email: 'test@example.com', slug: 'test-agency' })
+      );
+    });
+  });
+
+  it('closes and calls onSuccess when the send resolves without a finalizing task', async () => {
+    const onSuccess = vi.fn();
+    const onChange = vi.fn();
+    renderModal({ onSuccess, onChange });
+    await act(async () => {
+      fireEvent.click(screen.getByText('Send brief'));
+    });
+    await waitFor(() => {
+      expect(onSuccess).toHaveBeenCalledTimes(1);
+      expect(onChange).toHaveBeenCalledWith(false);
+    });
+  });
+
+  it('does not submit an empty revealed fallback email (required rule blocks it)', async () => {
+    mocks.sendPublic.mockReturnValueOnce({
+      unwrap: () => Promise.reject({ status: 400, data: { code: 'email_required' } }),
+    });
+    renderModal();
+    await act(async () => {
+      fireEvent.click(screen.getByText('Send brief'));
+    });
+    await screen.findByPlaceholderText('email@example.com');
+    mocks.sendPublic.mockClear();
     await act(async () => {
       fireEvent.click(screen.getByText('Send brief'));
     });
     await waitFor(() => {
       expect(screen.getByText('Email is required')).toBeTruthy();
     });
-  });
-
-  it('calls sendPublic with email for anon', async () => {
-    renderModal();
-    const input = screen.getByPlaceholderText('email@example.com');
-    await act(async () => {
-      fireEvent.change(input, { target: { value: 'test@example.com' } });
-      fireEvent.click(screen.getByText('Send brief'));
-    });
-    await waitFor(() => {
-      expect(mocks.sendPublic).toHaveBeenCalledWith(
-        expect.objectContaining({ email: 'test@example.com', slug: 'test-agency' })
-      );
-    });
+    expect(mocks.sendPublic).not.toHaveBeenCalled();
   });
 
   it('calls sendClient for authenticated user', async () => {
@@ -111,9 +165,7 @@ describe('SendBriefModal', () => {
 
   it('does not call sendPublic when isAnon=true but token=null', async () => {
     renderModal({ isAnon: true, token: null });
-    const input = screen.getByPlaceholderText('email@example.com');
     await act(async () => {
-      fireEvent.change(input, { target: { value: 'test@example.com' } });
       fireEvent.click(screen.getByText('Send brief'));
     });
     await waitFor(() => {
@@ -127,9 +179,7 @@ describe('SendBriefModal', () => {
       unwrap: () => Promise.reject({ status: 409, data: { code: 'already_sent' } }),
     });
     renderModal();
-    const input = screen.getByPlaceholderText('email@example.com');
     await act(async () => {
-      fireEvent.change(input, { target: { value: 'test@example.com' } });
       fireEvent.click(screen.getByText('Send brief'));
     });
     await waitFor(() => {
@@ -142,9 +192,7 @@ describe('SendBriefModal', () => {
       unwrap: () => Promise.reject({ status: 409, data: { code: 'still_generating' } }),
     });
     renderModal();
-    const input = screen.getByPlaceholderText('email@example.com');
     await act(async () => {
-      fireEvent.change(input, { target: { value: 'test@example.com' } });
       fireEvent.click(screen.getByText('Send brief'));
     });
     await waitFor(() => {
@@ -157,9 +205,7 @@ describe('SendBriefModal', () => {
       unwrap: () => Promise.reject({ status: 409, data: { code: 'already_being_sent' } }),
     });
     renderModal();
-    const input = screen.getByPlaceholderText('email@example.com');
     await act(async () => {
-      fireEvent.change(input, { target: { value: 'test@example.com' } });
       fireEvent.click(screen.getByText('Send brief'));
     });
     await waitFor(() => {
@@ -172,9 +218,7 @@ describe('SendBriefModal', () => {
       unwrap: () => Promise.reject({ status: 400, data: { code: 'not_ready' } }),
     });
     renderModal();
-    const input = screen.getByPlaceholderText('email@example.com');
     await act(async () => {
-      fireEvent.change(input, { target: { value: 'test@example.com' } });
       fireEvent.click(screen.getByText('Send brief'));
     });
     await waitFor(() => {
@@ -187,9 +231,7 @@ describe('SendBriefModal', () => {
       unwrap: () => Promise.reject({ status: 400, data: { code: 'invalid_email' } }),
     });
     renderModal();
-    const input = screen.getByPlaceholderText('email@example.com');
     await act(async () => {
-      fireEvent.change(input, { target: { value: 'test@example.com' } });
       fireEvent.click(screen.getByText('Send brief'));
     });
     await waitFor(() => {
@@ -202,9 +244,7 @@ describe('SendBriefModal', () => {
       unwrap: () => Promise.reject({ status: 404, data: { code: 'agency_not_found' } }),
     });
     renderModal();
-    const input = screen.getByPlaceholderText('email@example.com');
     await act(async () => {
-      fireEvent.change(input, { target: { value: 'test@example.com' } });
       fireEvent.click(screen.getByText('Send brief'));
     });
     await waitFor(() => {
@@ -217,9 +257,7 @@ describe('SendBriefModal', () => {
       unwrap: () => Promise.reject({ status: 400, data: { code: 'vendor_mismatch' } }),
     });
     renderModal();
-    const input = screen.getByPlaceholderText('email@example.com');
     await act(async () => {
-      fireEvent.change(input, { target: { value: 'test@example.com' } });
       fireEvent.click(screen.getByText('Send brief'));
     });
     await waitFor(() => {
@@ -236,9 +274,7 @@ describe('SendBriefModal', () => {
     });
 
     renderModal();
-    const input = screen.getByPlaceholderText('email@example.com');
     await act(async () => {
-      fireEvent.change(input, { target: { value: 'test@example.com' } });
       fireEvent.click(screen.getByText('Send brief'));
     });
     await waitFor(
@@ -247,5 +283,79 @@ describe('SendBriefModal', () => {
       },
       { timeout: 5000 }
     );
+  });
+
+  it('reveals the email field as a fallback when server reports invalid_email', async () => {
+    mocks.sendPublic.mockReturnValue({
+      unwrap: () => Promise.reject({ status: 400, data: { code: 'invalid_email' } }),
+    });
+    renderModal();
+    await act(async () => {
+      fireEvent.click(screen.getByText('Send brief'));
+    });
+    await waitFor(() => {
+      expect(screen.getByPlaceholderText('email@example.com')).toBeTruthy();
+    });
+  });
+
+  it('does not reveal the email field for anon on a non-email error', async () => {
+    mocks.sendPublic.mockReturnValue({
+      unwrap: () => Promise.reject({ status: 409, data: { code: 'already_sent' } }),
+    });
+    renderModal();
+    await act(async () => {
+      fireEvent.click(screen.getByText('Send brief'));
+    });
+    await waitFor(() => {
+      expect(screen.getByText('This brief was already sent to this vendor.')).toBeTruthy();
+    });
+    expect(screen.queryByPlaceholderText('email@example.com')).toBeNull();
+  });
+
+  it('keeps the fallback email field visible after a subsequent non-email error', async () => {
+    mocks.sendPublic.mockReturnValueOnce({
+      unwrap: () => Promise.reject({ status: 400, data: { code: 'email_required' } }),
+    });
+    mocks.sendPublic.mockReturnValue({
+      unwrap: () => Promise.reject({ status: 409, data: { code: 'already_sent' } }),
+    });
+    renderModal();
+    await act(async () => {
+      fireEvent.click(screen.getByText('Send brief'));
+    });
+    const input = await screen.findByPlaceholderText('email@example.com');
+    await act(async () => {
+      fireEvent.change(input, { target: { value: 'test@example.com' } });
+      fireEvent.click(screen.getByText('Send brief'));
+    });
+    await waitFor(() => {
+      expect(screen.getByText('This brief was already sent to this vendor.')).toBeTruthy();
+    });
+    expect(screen.queryByPlaceholderText('email@example.com')).not.toBeNull();
+  });
+
+  it('does not reveal the email field for authenticated user even when the server returns email_required', async () => {
+    mocks.sendClient.mockReturnValue({
+      unwrap: () => Promise.reject({ status: 400, data: { code: 'email_required' } }),
+    });
+    renderModal({ isAnon: false });
+    await act(async () => {
+      fireEvent.click(screen.getByText('Send brief'));
+    });
+    await waitFor(() => {
+      expect(screen.getByText('Please provide a valid email address.')).toBeTruthy();
+    });
+    expect(screen.queryByPlaceholderText('email@example.com')).toBeNull();
+  });
+
+  it('authenticated send calls sendClient without any email field', async () => {
+    renderModal({ isAnon: false });
+    await act(async () => {
+      fireEvent.click(screen.getByText('Send brief'));
+    });
+    await waitFor(() => {
+      expect(mocks.sendClient).toHaveBeenCalledWith(expect.not.objectContaining({ email: expect.anything() }));
+      expect(mocks.sendPublic).not.toHaveBeenCalled();
+    });
   });
 });

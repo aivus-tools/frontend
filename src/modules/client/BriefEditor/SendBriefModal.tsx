@@ -66,10 +66,23 @@ interface FormValues {
   email: string;
 }
 
+const isEmailError = (error: unknown): boolean => {
+  const fetchError = error as FetchBaseQueryError;
+  if (fetchError && typeof fetchError === 'object' && 'status' in fetchError) {
+    const data = (fetchError.data as { code?: string } | undefined) ?? {};
+    return data.code === 'email_required' || data.code === 'invalid_email';
+  }
+  return false;
+};
+
 export const SendBriefModal = (props: SendBriefModalProps) => {
   const { message: messageApi } = App.useApp();
   const [form] = Form.useForm<FormValues>();
   const [isSending, setIsSending] = useState(false);
+  // The client already gave their email in chat (stored on the brief), so the
+  // modal is a plain confirmation. The email field only appears as a fallback
+  // when the server reports the stored email is missing or invalid.
+  const [needsEmail, setNeedsEmail] = useState(false);
   const pollTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const startedAtRef = useRef<number>(0);
 
@@ -165,7 +178,7 @@ export const SendBriefModal = (props: SendBriefModalProps) => {
         const result = await sendPublic({
           briefId: props.briefId,
           token: props.token,
-          email: values.email,
+          email: values.email ?? '',
           slug: props.slug,
         }).unwrap();
         finalizingTaskId = result.finalizingTaskId ?? null;
@@ -186,6 +199,9 @@ export const SendBriefModal = (props: SendBriefModalProps) => {
       }
     } catch (error) {
       setIsSending(false);
+      if (props.isAnon && !needsEmail && isEmailError(error)) {
+        setNeedsEmail(true);
+      }
       messageApi.error(getSendErrorMessage(error));
     }
   };
@@ -206,7 +222,7 @@ export const SendBriefModal = (props: SendBriefModalProps) => {
       maskClosable={!isSending}
     >
       <Form form={form} layout='vertical' onFinish={handleSubmit}>
-        {props.isAnon ? (
+        {props.isAnon && needsEmail ? (
           <Form.Item
             name='email'
             label={t('BRANDED_BRIEF_SEND_EMAIL_LABEL')}
