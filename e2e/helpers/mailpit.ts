@@ -36,20 +36,27 @@ const messageBody = async (id: string): Promise<string> => {
   return `${data.HTML ?? ''}\n${data.Text ?? ''}`;
 };
 
+// The client lead email routes into the cabinet through a claim link
+// (/app/brief/claim/<id>?...token=...); registration-confirmation emails use
+// /auth/confirm-email?token=... . Accept either so both flows resolve, and scan
+// every message for the address (a recipient may have more than one).
+const LINK_RE =
+  /https?:\/\/[^\s"'<>)]*\/app\/brief\/claim\/[^\s"'<>)]*\btoken=[A-Za-z0-9_-]+|https?:\/\/[^\s"'<>)]*\/auth\/confirm-email\?token=[A-Za-z0-9_-]+/;
+
 export const waitForConfirmationLinkViaMailpit = async (email: string, timeoutMs = 60_000): Promise<string> => {
   const deadline = Date.now() + timeoutMs;
   let lastState = 'no message yet';
   while (Date.now() < deadline) {
     const messages = await searchByRecipient(email);
-    if (messages.length > 0) {
-      const body = await messageBody(messages[0].ID);
-      const match = body.match(/https?:\/\/[^\s"'<>)]*\/auth\/confirm-email\?token=[A-Za-z0-9_-]+/);
+    for (const message of messages) {
+      const body = await messageBody(message.ID);
+      const match = body.match(LINK_RE);
       if (match) {
         return match[0];
       }
-      lastState = 'message found but confirm link missing';
+      lastState = 'message found but claim/confirm link missing';
     }
     await sleep(1_000);
   }
-  throw new Error(`Confirmation email for ${email} not found within ${timeoutMs}ms (${lastState}).`);
+  throw new Error(`Confirmation/claim email for ${email} not found within ${timeoutMs}ms (${lastState}).`);
 };

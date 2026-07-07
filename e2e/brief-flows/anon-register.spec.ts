@@ -1,16 +1,13 @@
 import { test, expect } from '@playwright/test';
 import {
   fillStartScreen,
-  finalizingHeading,
   readBriefTitle,
   readFinalPackageText,
   sendChatAndWaitReply,
   signUpButton,
-  signUpCtaText,
   submitStartScreen,
   waitForFinalPackage,
 } from '../helpers/briefFlowV3';
-import { waitForConfirmationLink } from '../helpers/tokenSource';
 
 const FIRST_PROMPT =
   'We need a 45-second brand film for a sustainable coffee startup, warm documentary style, shot on location, for Instagram and the website.';
@@ -19,8 +16,9 @@ const REGISTER_PASSWORD = 'iiiijjjj';
 
 const uniqueEmail = (): string => `e2e-${Date.now()}-${Math.floor(Math.random() * 1e6)}@aivus.local`;
 
-// Full anonymous flow continued into registration + e-mail confirmation, ending
-// in the logged-in cabinet with the finalized brief package.
+// Full anonymous flow continued into registration, ending in the logged-in
+// cabinet with the finalized brief package. E-mail confirmation is soft (no
+// gate): registration claims the pending brief and the ready brief auto-finalizes.
 test.describe('Public brief — registration and confirmation', () => {
   test('register from the sign-up CTA and receive the finalized package', async ({ page }) => {
     test.setTimeout(720_000);
@@ -49,19 +47,12 @@ test.describe('Public brief — registration and confirmation', () => {
     await page.getByPlaceholder('Repeat your password').fill(REGISTER_PASSWORD);
     await page.getByRole('button', { name: 'Sign up', exact: true }).click();
 
-    // 3. Auto sign-in lands on the "please confirm your e-mail" screen.
-    await page.waitForURL(/\/app\/confirm(\?|$)/, { timeout: 30_000 });
-    await expect(page.getByRole('heading', { name: 'Please confirm your e-mail' })).toBeVisible();
-
-    // 4. Pull the confirmation link from Mailpit and open it in the same session.
-    const confirmLink = await waitForConfirmationLink(email, 90_000);
-    await page.goto(confirmLink);
-
-    // 5. Confirmation triggers finalization: "Assembling your final package...".
-    await expect(finalizingHeading(page)).toBeVisible({ timeout: 90_000 });
-
-    // 6. The logged-in cabinet opens with the finalized brief package.
+    // 3. Registration claims the pending brief and drops straight into the
+    //    cabinet — e-mail confirmation is no longer a gate (soft confirmation).
     await page.waitForURL(/\/app\/brief\/[0-9a-f-]+/, { timeout: 30_000 });
+
+    // 4. The claimed, ready brief auto-finalizes into the package
+    //    ("Assembling your final package..." then the documents).
     await waitForFinalPackage(page);
 
     // 7. The brief got a generated title (not the "Untitled Brief" placeholder).

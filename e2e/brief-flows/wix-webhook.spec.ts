@@ -20,6 +20,11 @@ const WIX_PAYLOAD: Record<string, unknown> = {
   },
 };
 
+// The logged-in claim only succeeds when the brief's contact e-mail matches the
+// signed-in account — claim rejects a mismatch with 403 (Brief belongs to a
+// different email). Mirrors the account from client-auth.setup.ts.
+const CLIENT_EMAIL = process.env.E2E_CLIENT_EMAIL ?? 'a@a.aa';
+
 // Inbound Wix webhook: a brief is created server-side, the response hands back a
 // public brief URL that opens straight into the seeded chat.
 test.describe('Wix webhook brief', () => {
@@ -42,15 +47,19 @@ test.describe('Wix webhook brief', () => {
   });
 });
 
-// A logged-in client opening the same Wix URL is redirected through the claim
-// page into their own cabinet (/app/brief/<id>) with the brief attached.
+// A logged-in client opening a Wix URL addressed to their e-mail is redirected
+// through the claim page into their own cabinet (/app/brief/<id>) with the brief
+// attached.
 test.describe('Wix webhook brief — logged-in claim', () => {
   test.use({ storageState: 'e2e/.auth/client.json' });
 
   test('logged-in client opening the URL claims the brief into the cabinet', async ({ page }) => {
     test.setTimeout(300_000);
 
-    const result = await postWixBrief(WIX_PAYLOAD);
+    const result = await postWixBrief({
+      ...WIX_PAYLOAD,
+      contact: { name: { first: 'Jamie', last: 'Brooks' }, email: CLIENT_EMAIL },
+    });
 
     // /public-brief/<id>?token=... -> /app/brief/claim/<id> -> /app/brief/<id>.
     await page.goto(result.briefUrl);

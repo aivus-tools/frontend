@@ -129,7 +129,8 @@ export const VendorSettingsSection = () => {
     try {
       await updateSettings({
         companyName: values.companyName,
-        agencyName: values.agencyName,
+        // "Default Agency" field is temporarily hidden; preserve the stored value round-trip.
+        agencyName: settings?.agencyName ?? '',
         // Default production / post-production percentages are temporarily hidden.
         slug: values.slug || null,
         leadNotificationEmail: values.leadNotificationEmail,
@@ -214,9 +215,11 @@ export const VendorSettingsSection = () => {
           <Form.Item name='companyName' label='Company Name' className={styles.itemFlex1}>
             <Input placeholder='Your company name' size='large' />
           </Form.Item>
+          {/* "Default Agency" (agencyName) is hidden: it duplicated Company Name and confused vendors.
           <Form.Item name='agencyName' label='Default Agency' className={styles.itemFlex1}>
             <Input placeholder='Default agency for new projects' size='large' />
           </Form.Item>
+          */}
         </div>
 
         <h4 className={styles.subTitle}>{t('VENDOR_SETTINGS_SLUG_LABEL')}</h4>

@@ -6,7 +6,7 @@
  * Run via: make e2e-flows
  */
 import { test, expect, Page } from '@playwright/test';
-import { sendChatAndWaitReply, messageInput } from '../helpers/briefFlowV3';
+import { sendChatAndWaitReply, submitChatMessage, messageInput } from '../helpers/briefFlowV3';
 import { clearMailpit, waitForConfirmationLinkViaMailpit } from '../helpers/mailpit';
 
 const VENDOR_EMAIL = process.env.SMOKE_TEST_EMAIL ?? 'p@p.pp';
@@ -48,12 +48,14 @@ const getVendorSlugViaUi = async (vendorPage: Page): Promise<string | null> => {
  * Check vendor dashboard for at least one RFP project via UI API call (uses browser session).
  */
 const getVendorRfpProjectCountViaUi = async (vendorPage: Page): Promise<number> => {
-  const response = await vendorPage.request.get('/service/vendor/projects?source=rfp');
+  // projects_list returns every project of the vendor as a bare array; an
+  // incoming brief lands as an RFP-status lead.
+  const response = await vendorPage.request.get('/service/projects');
   if (!response.ok()) {
     return 0;
   }
-  const data = (await response.json()) as { results?: unknown[] };
-  return data.results?.length ?? 0;
+  const data = (await response.json()) as Array<{ status?: string }>;
+  return data.filter((x) => x.status === 'RFP').length;
 };
 
 /**
@@ -93,41 +95,60 @@ test.describe('Branded anon full seam — Send to claim to cabinet (PRD §10)', 
     await page.goto(`/brief/${resolvedSlug}`);
     await expect(page.getByRole('button', { name: 'Start brief', exact: true })).toBeVisible({ timeout: 15_000 });
 
-    // 2. Start brief.
+    // 2. Describe the project (Start brief stays disabled until the textarea has
+    //    content), then start.
+    await page.getByPlaceholder(/We are launching a new energy drink/i).fill(FIRST_PROMPT);
     const draftCreated = page.waitForResponse((x) => SLUG_URL_RE.test(x.url()) && x.request().method() === 'POST', {
       timeout: 30_000,
     });
     await page.getByRole('button', { name: 'Start brief', exact: true }).click();
-    await draftCreated;
 
-    // 3. Wait for chat panel.
-    await page.waitForURL(/\/brief\/.+\/.+/, { timeout: 20_000 });
-    const briefUrl = page.url();
-    const briefId = briefUrl.split('/').at(-1) ?? '';
+    // 3. The branded workspace renders the chat on the same URL (no navigation to
+    //    a per-brief route), so read the briefId from the draft response.
+    const draftResponse = await draftCreated;
+    const draftBody = (await draftResponse.json()) as { briefId?: string };
+    const briefId = draftBody.briefId ?? '';
     expect(briefId).toMatch(/[0-9a-f-]{36}/);
 
     await expect(messageInput(page)).toBeVisible({ timeout: 200_000 });
 
-    // 4. Converse until document is ready.
-    await sendChatAndWaitReply(page, FIRST_PROMPT);
+    // 4. Converse until document is ready. FIRST_PROMPT is already the opening
+    //    message (typed on the start screen), so the first turn adds detail
+    //    rather than repeating it (a duplicate bubble would break strict-mode).
+    await sendChatAndWaitReply(page, 'budget is 30k usd and we need it delivered in 6 weeks');
     await sendChatAndWaitReply(
       page,
       'fill all remaining sections yourself and make the brief complete and ready to send'
     );
+    // The personal-link assistant collects the sender's name and email in-chat
+    // before it finalizes; provide them (submitChatMessage tolerates the panel
+    // swapping straight to the finalizing/ready view without a new reply bubble).
+    await submitChatMessage(
+      page,
+      `My name is ${REGISTER_NAME}, email ${email}. Everything looks good, finalize the brief now.`
+    );
 
-    // 5. Send button enabled — document ready.
-    const sendBriefButton = page.getByRole('button', { name: 'Send brief', exact: true });
+    // 5. Wait until the brief is finalized. antd prefixes the icon label, so the
+    //    accessible name is "send Send brief" — match the trailing text. Send
+    //    rejects with "still generating" while the finalize task is running, so
+    //    wait for the package to assemble before opening the modal.
+    const sendBriefButton = page.getByRole('button', { name: /Send brief$/ });
     await expect(sendBriefButton).toBeEnabled({ timeout: 240_000 });
+    await expect(page.getByText(/Assembling your final package/)).toBeHidden({ timeout: 240_000 });
+    await expect(page.locator('.ProseMirror').first()).not.toBeEmpty({ timeout: 60_000 });
 
-    // 6. Open send modal, fill email, submit.
+    // 6. Open the send modal and confirm. The e-mail was already collected in-chat,
+    //    so the modal ("Send to <vendor>") carries no e-mail field. Retry the
+    //    confirm in case the finalize task only just finished (still-generating).
     await sendBriefButton.click();
-    const emailInput = page.getByLabel('Your email');
-    await expect(emailInput).toBeVisible({ timeout: 10_000 });
-    await emailInput.fill(email);
-    await page.getByRole('button', { name: 'Send brief', exact: true }).last().click();
+    const sendDialog = page.getByRole('dialog');
+    await expect(sendDialog).toBeVisible({ timeout: 10_000 });
+    await expect(async () => {
+      await sendDialog.getByRole('button', { name: /Send brief$/ }).click();
+      await expect(page).toHaveURL(/\/brief\/.+\/success/, { timeout: 15_000 });
+    }).toPass({ timeout: 150_000 });
 
-    // 7. Redirect to success page.
-    await page.waitForURL(/\/brief\/.+\/success/, { timeout: 120_000 });
+    // 7. Success page.
     await expect(page.getByText('Brief sent!')).toBeVisible({ timeout: 30_000 });
 
     // 8. Pull claim link from Mailpit.
@@ -143,18 +164,26 @@ test.describe('Branded anon full seam — Send to claim to cabinet (PRD §10)', 
     if (currentUrl.includes('/auth/confirm-email') || currentUrl.includes('/app/brief/claim')) {
       await page.waitForURL(/\/app\/brief\/[0-9a-f-]+|\/app\/dashboard/, { timeout: 60_000 });
     } else if (currentUrl.includes('/auth')) {
-      await page.getByPlaceholder('Your email address').fill(email);
-      const nextButton = page.getByRole('button', { name: 'Next', exact: true });
-      await nextButton.click();
-
+      // The claim link carries the e-mail, so /auth auto-advances to the register
+      // step (name + password) — wait for it rather than driving the e-mail step
+      // (which detaches mid-transition).
       const nameInput = page.getByPlaceholder('Name', { exact: true });
-      await nameInput.waitFor({ state: 'visible', timeout: 10_000 });
+      await nameInput.waitFor({ state: 'visible', timeout: 20_000 });
       await nameInput.fill(REGISTER_NAME);
       await page.getByPlaceholder('Enter your password').fill(REGISTER_PASSWORD);
       await page.getByPlaceholder('Repeat your password').fill(REGISTER_PASSWORD);
       await page.getByRole('button', { name: 'Sign up', exact: true }).click();
 
-      await page.waitForURL(/\/app\/confirm|\/app\/brief\/[0-9a-f-]+|\/app\/dashboard/, { timeout: 30_000 });
+      await page.waitForURL(/\/app\/confirm|\/app\/brief\/[0-9a-f-]+|\/app\/dashboard|\/app\/group/, {
+        timeout: 30_000,
+      });
+
+      // A brand-new account that registered without an in-browser pending brief
+      // lands on role selection; pick "client" to enter the cabinet.
+      if (page.url().includes('/app/group')) {
+        await page.getByRole('button', { name: "I'm a client", exact: true }).click();
+        await page.waitForURL(/\/app\/brief\/[0-9a-f-]+|\/app\/dashboard/, { timeout: 30_000 });
+      }
 
       if (page.url().includes('/app/confirm')) {
         const confirmLink = await waitForConfirmationLinkViaMailpit(email, 90_000);
