@@ -35,11 +35,19 @@ import styles from './BrandedBriefWorkspace.module.css';
 interface BrandedBriefWorkspaceProps {
   slug: string;
   initialBriefId: string | null;
+  initialToken?: string | null;
 }
 
-const resolveInitialToken = (briefId: string | null, slug: string): string | null => {
+const resolveInitialToken = (briefId: string | null, slug: string, initialToken: string | null): string | null => {
   if (typeof window === 'undefined' || !briefId) {
     return null;
+  }
+  // A token in the email agent's brief link takes priority: it claims the lead's
+  // brief instead of resuming a stale local draft, so the filled brief attaches
+  // to the existing lead rather than spawning a duplicate.
+  if (initialToken) {
+    savePublicBriefToken(briefId, initialToken);
+    return initialToken;
   }
   const fromStorage = getPublicBriefToken(briefId);
   if (fromStorage) {
@@ -63,7 +71,9 @@ export const BrandedBriefWorkspace = (props: BrandedBriefWorkspaceProps) => {
   const isEmbed = searchParams.get('embed') === '1';
 
   const [briefId, setBriefId] = useState<string | null>(props.initialBriefId);
-  const [token, setToken] = useState<string | null>(() => resolveInitialToken(props.initialBriefId, slug));
+  const [token, setToken] = useState<string | null>(() =>
+    resolveInitialToken(props.initialBriefId, slug, props.initialToken ?? null)
+  );
   const [mobileTab, setMobileTab] = useState<'brief' | 'chat'>('chat');
   const [sendModalOpen, setSendModalOpen] = useState(false);
   const anonDocPanelRef = useRef<WhiteLabelDocumentHandle | null>(null);

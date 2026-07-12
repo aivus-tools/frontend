@@ -136,5 +136,9 @@ export default function BrandedBriefStartPage() {
   // Anonymous visitor (or a vendor previewing): open the AI dialog straight away,
   // branding lives inside the workspace header. No draft is created until the
   // first message is sent; an existing draft is resumed inside the workspace.
-  return <BrandedBriefWorkspace slug={slug} initialBriefId={null} />;
+  // The email agent's brief link carries b/t so the lead's brief is claimed
+  // instead of creating a duplicate.
+  const claimBriefId = searchParams.get('b');
+  const claimToken = searchParams.get('t');
+  return <BrandedBriefWorkspace slug={slug} initialBriefId={claimBriefId} initialToken={claimToken} />;
 }

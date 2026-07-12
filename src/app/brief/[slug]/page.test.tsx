@@ -45,8 +45,13 @@ vi.mock('@/modules/client/BriefEditor/BriefSelectModal', () => ({
   ),
 }));
 
+const workspaceMock = vi.hoisted(() => ({ props: {} as Record<string, unknown> }));
+
 vi.mock('@/modules/client/BriefEditor/BrandedBriefWorkspace', () => ({
-  BrandedBriefWorkspace: () => <div data-testid='workspace' />,
+  BrandedBriefWorkspace: (props: Record<string, unknown>) => {
+    workspaceMock.props = props;
+    return <div data-testid='workspace' />;
+  },
 }));
 
 import BrandedBriefStartPage from './page';
@@ -93,6 +98,21 @@ describe('BrandedBriefStartPage', () => {
   it('opens the AI dialog (workspace) straight away for an anonymous visitor', () => {
     renderPage();
     expect(screen.getByTestId('workspace')).toBeTruthy();
+  });
+
+  it('forwards the email agent brief link b/t params to the workspace', () => {
+    navMocks.searchParamsGet.mockImplementation((key: string) => {
+      if (key === 'b') {
+        return 'lead-brief-1';
+      }
+      if (key === 't') {
+        return 'thread-token-1';
+      }
+      return null;
+    });
+    renderPage();
+    expect(workspaceMock.props.initialBriefId).toBe('lead-brief-1');
+    expect(workspaceMock.props.initialToken).toBe('thread-token-1');
   });
 
   it('shows the branded card with Start button for an authenticated client', () => {
