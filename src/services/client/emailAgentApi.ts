@@ -86,7 +86,7 @@ export const emailAgentApi = createApi({
         url: ApiRoute.EMAIL_AGENT_DRAFT_REJECT(draftId),
         method: 'POST',
       }),
-      invalidatesTags: ['Drafts', 'Followups'],
+      invalidatesTags: ['Drafts', 'Threads', 'Followups'],
     }),
     getThreads: builder.query<ThreadsPage, ThreadsQueryArgs>({
       query: (args) => {
@@ -114,7 +114,7 @@ export const emailAgentApi = createApi({
         url: ApiRoute.EMAIL_AGENT_PREPARE_FOLLOWUP(threadId),
         method: 'POST',
       }),
-      invalidatesTags: ['Drafts', 'Followups'],
+      invalidatesTags: ['Drafts', 'Threads', 'Followups'],
     }),
   }),
 });
