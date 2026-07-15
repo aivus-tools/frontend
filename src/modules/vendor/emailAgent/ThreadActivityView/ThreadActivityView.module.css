@@ -1,0 +1,92 @@
+.wrapper {
+  width: 100%;
+  max-width: 760px;
+}
+
+.back {
+  padding-left: 0;
+  margin-bottom: 8px;
+}
+
+.header {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  align-items: center;
+}
+
+.subject {
+  margin: 0;
+  font-size: 20px;
+  font-weight: 600;
+  word-break: break-word;
+}
+
+.client {
+  margin-top: 4px;
+  font-size: 13px;
+  color: var(--gray);
+  word-break: break-all;
+}
+
+.section {
+  margin-top: 20px;
+}
+
+.empty {
+  margin: 0;
+  color: var(--gray);
+}
+
+.itemList {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 0;
+  margin: 0;
+  list-style: none;
+}
+
+.item {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.itemMain {
+  display: flex;
+  gap: 8px;
+  align-items: baseline;
+}
+
+.itemText {
+  word-break: break-word;
+}
+
+.itemMeta {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.due {
+  font-size: 12px;
+  color: var(--gray-light);
+}
+
+.event {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  justify-content: space-between;
+}
+
+.eventText {
+  word-break: break-word;
+}
+
+.eventDate {
+  flex-shrink: 0;
+  font-size: 12px;
+  color: var(--gray-light);
+}

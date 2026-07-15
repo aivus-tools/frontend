@@ -1,0 +1,60 @@
+.wrapper {
+  width: 100%;
+}
+
+.title {
+  margin-bottom: 16px;
+  font-size: 18px;
+  font-weight: 600;
+}
+
+.rows {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.row {
+  width: 100%;
+}
+
+.rowHeader {
+  display: flex;
+  gap: 12px;
+  align-items: flex-start;
+  justify-content: space-between;
+  margin-bottom: 12px;
+}
+
+.roleTitle {
+  font-weight: 600;
+}
+
+.roleHint {
+  margin-top: 2px;
+  font-size: 13px;
+  color: var(--gray);
+}
+
+.connected {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.email {
+  font-weight: 500;
+  word-break: break-all;
+}
+
+.connectForm {
+  width: 100%;
+}
+
+@media (width >= 1024px) {
+  .connected {
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+  }
+}

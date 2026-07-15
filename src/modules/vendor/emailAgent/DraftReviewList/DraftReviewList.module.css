@@ -1,0 +1,40 @@
+.wrapper {
+  width: 100%;
+}
+
+.title {
+  margin-bottom: 16px;
+  font-size: 18px;
+  font-weight: 600;
+}
+
+.list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.card {
+  width: 100%;
+}
+
+.header {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  margin-bottom: 10px;
+}
+
+.body {
+  margin: 0 0 12px;
+  word-break: break-word;
+  white-space: pre-wrap;
+}
+
+.editor {
+  margin-bottom: 12px;
+}
+
+.actions {
+  display: flex;
+}

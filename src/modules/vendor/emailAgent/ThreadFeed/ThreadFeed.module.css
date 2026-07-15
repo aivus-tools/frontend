@@ -1,0 +1,88 @@
+.wrapper {
+  width: 100%;
+}
+
+.pageTitle {
+  margin-bottom: 20px;
+  font-size: 22px;
+  font-weight: 600;
+}
+
+.list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.card {
+  width: 100%;
+}
+
+.cardHeader {
+  display: flex;
+  gap: 12px;
+  align-items: flex-start;
+  justify-content: space-between;
+}
+
+.subject {
+  font-size: 15px;
+  font-weight: 600;
+  word-break: break-word;
+}
+
+.tags {
+  display: flex;
+  flex-shrink: 0;
+  flex-wrap: wrap;
+  gap: 4px;
+}
+
+.client {
+  margin-top: 4px;
+  font-size: 13px;
+  color: var(--gray);
+  word-break: break-all;
+}
+
+.footer {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 12px;
+}
+
+.chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.chip {
+  font-size: 12px;
+  color: var(--gray);
+}
+
+.chipDanger {
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--red-text);
+}
+
+.date {
+  font-size: 12px;
+  color: var(--gray-light);
+}
+
+.emptyIcon {
+  font-size: 48px;
+  color: var(--gray-light);
+}
+
+.loadMore {
+  display: flex;
+  justify-content: center;
+  margin-top: 20px;
+}

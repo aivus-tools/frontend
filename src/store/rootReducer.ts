@@ -18,6 +18,7 @@ import { vendorSettingsApi } from '@/services/client/vendorSettingsApi';
 import { briefAiApi } from '@/services/client/briefAiApi';
 import { publicBriefApi } from '@/services/client/publicBriefApi';
 import { preVendorsApi } from '@/services/client/preVendorsApi';
+import { emailAgentApi } from '@/services/client/emailAgentApi';
 
 export const rootReducer = combineReducers({
   [projectSlice.reducerPath]: projectSlice.reducer,
@@ -39,4 +40,5 @@ export const rootReducer = combineReducers({
   [briefAiApi.reducerPath]: briefAiApi.reducer,
   [publicBriefApi.reducerPath]: publicBriefApi.reducer,
   [preVendorsApi.reducerPath]: preVendorsApi.reducer,
+  [emailAgentApi.reducerPath]: emailAgentApi.reducer,
 });

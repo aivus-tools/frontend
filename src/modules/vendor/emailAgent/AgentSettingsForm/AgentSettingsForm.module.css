@@ -1,0 +1,71 @@
+.wrapper {
+  max-width: 720px;
+}
+
+.pageTitle {
+  margin-bottom: 20px;
+  font-size: 22px;
+  font-weight: 600;
+}
+
+.form {
+  width: 100%;
+}
+
+.radioGroup {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.workingHours {
+  margin-bottom: 24px;
+}
+
+.fieldLabel {
+  display: block;
+  margin-bottom: 4px;
+  font-weight: 500;
+}
+
+.hint {
+  margin: 0 0 12px;
+  font-size: 13px;
+  color: var(--gray);
+}
+
+.workingHoursRow {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.tzField,
+.timeField {
+  margin-bottom: 0;
+}
+
+.timePicker {
+  width: 100%;
+}
+
+.divider {
+  height: 1px;
+  margin: 32px 0;
+  background: var(--bg-gray-page);
+}
+
+@media (width >= 1024px) {
+  .workingHoursRow {
+    flex-direction: row;
+    align-items: flex-end;
+  }
+
+  .tzField {
+    flex: 1 1 auto;
+  }
+
+  .timeField {
+    flex: 0 0 140px;
+  }
+}

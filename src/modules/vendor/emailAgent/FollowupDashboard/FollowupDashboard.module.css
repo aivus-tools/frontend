@@ -1,0 +1,48 @@
+.wrapper {
+  width: 100%;
+}
+
+.title {
+  margin-bottom: 16px;
+  font-size: 18px;
+  font-weight: 600;
+}
+
+.list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.card {
+  width: 100%;
+}
+
+.header {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  margin-bottom: 8px;
+}
+
+.subject {
+  font-weight: 600;
+  word-break: break-word;
+}
+
+.client {
+  margin-top: 2px;
+  font-size: 13px;
+  color: var(--gray);
+  word-break: break-all;
+}
+
+.detail {
+  margin-top: 8px;
+  font-size: 13px;
+  color: var(--main);
+}
+
+.action {
+  margin-top: 12px;
+}

@@ -35,10 +35,11 @@ const MobileSidebar = (props: { isRoot: boolean }) => {
 
 const VendorLayoutInner = (props: PropsWithChildren) => {
   const segments = useSelectedLayoutSegments();
-  // The brief-claim info page (a vendor landing on a client claim link) is not a
-  // project, so render the dashboard chrome rather than the project chrome — the
-  // latter would fetch a non-existent project ("claim") and show empty tabs.
-  const isRoot = segments.length === 1 || segments[0] === 'brief';
+  // The brief-claim info page (a vendor landing on a client claim link) and the
+  // email agent section are not projects, so render the dashboard chrome rather
+  // than the project chrome for all of their nested routes — the latter would
+  // fetch a non-existent project and show empty tabs.
+  const isRoot = segments.length === 1 || segments[0] === 'brief' || segments[0] === 'email-agent';
   const { dismissed } = useBetaFooter();
   const betaFooterHeight = useBetaFooterHeight();
   const { isMobile, ready } = useBreakpoint();

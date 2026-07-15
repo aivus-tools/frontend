@@ -127,4 +127,17 @@ export const ApiRoute = {
     `/service/vendor/projects/${projectId}/brief/documents/${documentId}/pdf`,
   // Pre-Vendors
   PRE_VENDORS: '/service/pre-vendors',
+  // Email agent
+  EMAIL_AGENT_PROFILE: '/service/email-agent/profile',
+  EMAIL_AGENT_MAILBOXES: '/service/email-agent/mailboxes',
+  EMAIL_AGENT_MAILBOX_CONNECT: '/service/email-agent/mailboxes/connect',
+  EMAIL_AGENT_MAILBOX_DISCONNECT: (accountId: string) => `/service/email-agent/mailboxes/${accountId}/disconnect`,
+  EMAIL_AGENT_DRAFTS: '/service/email-agent/drafts',
+  EMAIL_AGENT_DRAFT_APPROVE: (draftId: string) => `/service/email-agent/drafts/${draftId}/approve`,
+  EMAIL_AGENT_DRAFT_EDIT: (draftId: string) => `/service/email-agent/drafts/${draftId}/edit`,
+  EMAIL_AGENT_DRAFT_REJECT: (draftId: string) => `/service/email-agent/drafts/${draftId}/reject`,
+  EMAIL_AGENT_THREADS: '/service/email-agent/threads',
+  EMAIL_AGENT_FOLLOWUPS: '/service/email-agent/followups',
+  EMAIL_AGENT_THREAD_ACTIVITY: (threadId: string) => `/service/email-agent/threads/${threadId}/activity`,
+  EMAIL_AGENT_PREPARE_FOLLOWUP: (threadId: string) => `/service/email-agent/threads/${threadId}/followup`,
 } as const;
