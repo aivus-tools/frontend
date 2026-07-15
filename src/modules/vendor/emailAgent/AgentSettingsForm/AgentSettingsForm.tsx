@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect } from 'react';
+import { useEffect, useMemo } from 'react';
 import { App, Button, Form, Input, Radio, Select, TimePicker } from 'antd';
 import dayjs, { Dayjs } from 'dayjs';
 import { t } from '@/lib/i18n';
@@ -14,7 +14,9 @@ import styles from './AgentSettingsForm.module.css';
 
 const TIME_FORMAT = 'HH:mm';
 
-const TIMEZONES = [
+// Fallback set when Intl.supportedValuesOf is unavailable (older browsers, SSR).
+// Backend accepts any IANA zone; this list only shapes the picker.
+const FALLBACK_TIMEZONES = [
   'UTC',
   'America/New_York',
   'America/Chicago',
@@ -33,6 +35,21 @@ const TIMEZONES = [
   'Australia/Sydney',
 ];
 
+const getSupportedTimezones = (): string[] => {
+  const intl = Intl as typeof Intl & { supportedValuesOf?: (key: string) => string[] };
+  if (typeof intl.supportedValuesOf === 'function') {
+    try {
+      const zones = intl.supportedValuesOf('timeZone');
+      if (Array.isArray(zones) && zones.length > 0) {
+        return zones;
+      }
+    } catch {
+      // Some engines throw on unknown keys; fall back to the curated list.
+    }
+  }
+  return FALLBACK_TIMEZONES;
+};
+
 interface SettingsFormValues {
   instruction: string;
   producerEmail: string;
@@ -47,6 +64,7 @@ export const AgentSettingsForm = () => {
   const [form] = Form.useForm<SettingsFormValues>();
   const { data: profile, isLoading } = useGetAgentProfileQuery();
   const [updateProfile, { isLoading: isSaving }] = useUpdateAgentProfileMutation();
+  const timezoneOptions = useMemo(() => getSupportedTimezones().map((zone) => ({ value: zone, label: zone })), []);
 
   useEffect(() => {
     if (profile) {
@@ -132,13 +150,7 @@ export const AgentSettingsForm = () => {
           <p className={styles.hint}>{t('EMAIL_AGENT_WORKING_HOURS_HINT')}</p>
           <div className={styles.workingHoursRow}>
             <Form.Item name='timezone' label={t('EMAIL_AGENT_TIMEZONE_LABEL')} className={styles.tzField}>
-              <Select
-                size='large'
-                allowClear
-                showSearch
-                placeholder='UTC'
-                options={TIMEZONES.map((zone) => ({ value: zone, label: zone }))}
-              />
+              <Select size='large' allowClear showSearch placeholder='UTC' options={timezoneOptions} />
             </Form.Item>
             <Form.Item name='start' label={t('EMAIL_AGENT_START_LABEL')} className={styles.timeField}>
               <TimePicker format={TIME_FORMAT} minuteStep={15} size='large' className={styles.timePicker} />

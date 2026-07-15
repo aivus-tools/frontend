@@ -1,6 +1,6 @@
 'use client';
 
-import { App, Button, Card, Form, Input, Popconfirm, Tag } from 'antd';
+import { App, Alert, Button, Card, Form, Input, Popconfirm, Tag } from 'antd';
 import { t } from '@/lib/i18n';
 import {
   useConnectMailboxMutation,
@@ -11,6 +11,9 @@ import { EmailAccountRole, Mailbox } from '@/types/emailAgent.interface';
 import { getBackendErrorMessage, mailboxStatusColor, mailboxStatusLabel } from '../helpers';
 
 import styles from './MailboxConnectPanel.module.css';
+
+const APP_PASSWORD_URL = 'https://myaccount.google.com/apppasswords';
+const APP_PASSWORD_LENGTH = 16;
 
 interface MailboxRowProps {
   role: EmailAccountRole;
@@ -24,6 +27,19 @@ interface ConnectFormValues {
   credential: string;
 }
 
+const stripWhitespace = (value: string): string => value.replace(/\s+/g, '');
+
+const validateAppPassword = (_: unknown, value: string) => {
+  if (!value) {
+    return Promise.reject(new Error(t('EMAIL_AGENT_MAILBOX_APP_PASSWORD')));
+  }
+  const compact = stripWhitespace(value);
+  if (compact.length !== APP_PASSWORD_LENGTH || !/^[A-Za-z0-9]+$/.test(compact)) {
+    return Promise.reject(new Error(t('EMAIL_AGENT_MAILBOX_APP_PASSWORD_INVALID')));
+  }
+  return Promise.resolve();
+};
+
 const MailboxRow = (props: MailboxRowProps) => {
   const { message } = App.useApp();
   const [form] = Form.useForm<ConnectFormValues>();
@@ -35,7 +51,7 @@ const MailboxRow = (props: MailboxRowProps) => {
       await connectMailbox({
         role: props.role,
         email: values.email.trim(),
-        credential: values.credential,
+        credential: stripWhitespace(values.credential),
       }).unwrap();
       message.success(t('EMAIL_AGENT_MAILBOX_CONNECTED_OK'));
       form.resetFields();
@@ -84,6 +100,20 @@ const MailboxRow = (props: MailboxRowProps) => {
         </div>
       ) : (
         <Form form={form} layout='vertical' onFinish={handleConnect} className={styles.connectForm}>
+          <Alert
+            className={styles.appPasswordAlert}
+            type='warning'
+            showIcon
+            message={t('EMAIL_AGENT_MAILBOX_APP_PASSWORD_WARNING_TITLE')}
+            description={
+              <span>
+                {t('EMAIL_AGENT_MAILBOX_APP_PASSWORD_WARNING_BODY')}{' '}
+                <a href={APP_PASSWORD_URL} target='_blank' rel='noopener noreferrer'>
+                  {t('EMAIL_AGENT_MAILBOX_APP_PASSWORD_LINK')}
+                </a>
+              </span>
+            }
+          />
           <Form.Item
             name='email'
             label={t('EMAIL_AGENT_MAILBOX_EMAIL')}
@@ -94,7 +124,7 @@ const MailboxRow = (props: MailboxRowProps) => {
           <Form.Item
             name='credential'
             label={t('EMAIL_AGENT_MAILBOX_APP_PASSWORD')}
-            rules={[{ required: true, message: t('EMAIL_AGENT_MAILBOX_APP_PASSWORD') }]}
+            rules={[{ required: true, validator: validateAppPassword }]}
           >
             <Input.Password placeholder='xxxx xxxx xxxx xxxx' size='large' autoComplete='off' />
           </Form.Item>

@@ -11,7 +11,7 @@ import {
 } from '@/services/client/emailAgentApi';
 import { OutboundDraftDto } from '@/types/emailAgent.interface';
 import { PageSpinner } from '@/components/PageSpinner';
-import { draftKindLabel, getBackendErrorMessage } from '../helpers';
+import { draftKindLabel, formatDate, getBackendErrorMessage } from '../helpers';
 
 import styles from './DraftReviewList.module.css';
 
@@ -23,6 +23,7 @@ const DraftCard = (props: DraftCardProps) => {
   const { draft } = props;
   const { message } = App.useApp();
   const [isEditing, setIsEditing] = useState(false);
+  const [showOriginal, setShowOriginal] = useState(false);
   const [body, setBody] = useState(draft.body);
   const [approveDraft, approveState] = useApproveDraftMutation();
   const [editDraft, editState] = useEditDraftMutation();
@@ -60,12 +61,59 @@ const DraftCard = (props: DraftCardProps) => {
     }
   };
 
+  const toLine = draft.to.length > 0 ? draft.to.join(', ') : t('EMAIL_AGENT_DRAFT_NO_RECIPIENTS');
+  const ccLine = draft.cc.length > 0 ? draft.cc.join(', ') : '';
+  const replyToPreview = (draft.inReplyToPreview || '').trim();
+  const replyToFrom = draft.inReplyToFrom;
+  const replyToDate = draft.inReplyToDate ? formatDate(draft.inReplyToDate) : '';
+  const originalToggleLabel = showOriginal
+    ? t('EMAIL_AGENT_DRAFT_HIDE_ORIGINAL')
+    : t('EMAIL_AGENT_DRAFT_SHOW_ORIGINAL');
+
   return (
     <Card className={styles.card} size='small'>
       <div className={styles.header}>
         <Tag color='blue'>{draftKindLabel(draft.kind)}</Tag>
         {draft.overdue && <Tag color='orange'>{t('EMAIL_AGENT_DRAFT_OVERDUE')}</Tag>}
       </div>
+
+      <dl className={styles.envelope}>
+        <div className={styles.envelopeRow}>
+          <dt className={styles.envelopeLabel}>{t('EMAIL_AGENT_DRAFT_TO')}</dt>
+          <dd className={styles.envelopeValue}>{toLine}</dd>
+        </div>
+        {ccLine && (
+          <div className={styles.envelopeRow}>
+            <dt className={styles.envelopeLabel}>{t('EMAIL_AGENT_DRAFT_CC')}</dt>
+            <dd className={styles.envelopeValue}>{ccLine}</dd>
+          </div>
+        )}
+        <div className={styles.envelopeRow}>
+          <dt className={styles.envelopeLabel}>{t('EMAIL_AGENT_DRAFT_SUBJECT')}</dt>
+          <dd className={styles.envelopeValue}>{draft.subject}</dd>
+        </div>
+      </dl>
+
+      {replyToPreview && (
+        <div className={styles.originalBlock}>
+          <button
+            type='button'
+            className={styles.originalToggle}
+            onClick={() => setShowOriginal((current) => !current)}
+          >
+            {originalToggleLabel}
+          </button>
+          {showOriginal && (
+            <div className={styles.originalPreview}>
+              <div className={styles.originalMeta}>
+                {t('EMAIL_AGENT_DRAFT_REPLYING_TO')}: {replyToFrom}
+                {replyToDate && <span className={styles.originalDate}> — {replyToDate}</span>}
+              </div>
+              <p className={styles.originalBody}>{replyToPreview}</p>
+            </div>
+          )}
+        </div>
+      )}
 
       {isEditing ? (
         <Input.TextArea

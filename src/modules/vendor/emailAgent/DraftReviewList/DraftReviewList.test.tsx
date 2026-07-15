@@ -41,6 +41,12 @@ const draft = {
   kind: 'first_reply',
   status: 'pending',
   body: 'Thanks for reaching out, we will get back to you.',
+  to: ['jane@client.com'],
+  cc: ['pm@vendor.com'],
+  subject: 'Re: Brand video',
+  inReplyToPreview: 'Hi, can you send me a quote by Friday?',
+  inReplyToFrom: 'jane@client.com',
+  inReplyToDate: '2026-07-10T09:00:00Z',
   variant: 'A',
   action: 'acknowledge_receipt',
   edited: false,
@@ -73,5 +79,22 @@ describe('DraftReviewList', () => {
       </App>
     );
     expect(screen.getByText('No drafts are waiting for your approval.')).toBeTruthy();
+  });
+
+  it('shows recipients, subject, and the original message preview', async () => {
+    mocks.getDrafts.mockReturnValue({ data: { drafts: [draft] }, isLoading: false });
+
+    render(
+      <App>
+        <DraftReviewList />
+      </App>
+    );
+
+    expect(screen.getByText('jane@client.com')).toBeTruthy();
+    expect(screen.getByText('pm@vendor.com')).toBeTruthy();
+    expect(screen.getByText('Re: Brand video')).toBeTruthy();
+
+    await userEvent.click(screen.getByText('Show original message'));
+    expect(screen.getByText(/Hi, can you send me a quote by Friday/)).toBeTruthy();
   });
 });

@@ -65,6 +65,12 @@ export interface OutboundDraftDto {
   kind: OutboundDraftKind;
   status: OutboundDraftStatus;
   body: string;
+  to: string[];
+  cc: string[];
+  subject: string;
+  inReplyToPreview: string;
+  inReplyToFrom: string;
+  inReplyToDate: string | null;
   variant: string;
   action: string;
   edited: boolean;

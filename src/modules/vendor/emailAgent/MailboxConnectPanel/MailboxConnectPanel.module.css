@@ -51,6 +51,10 @@
   width: 100%;
 }
 
+.appPasswordAlert {
+  margin-bottom: 16px;
+}
+
 @media (width >= 1024px) {
   .connected {
     flex-direction: row;
