@@ -31,6 +31,10 @@ export const AppRoute = {
   BRANDED_BRIEF: (slug: string) => `/brief/${slug}`,
   BRANDED_BRIEF_DETAIL: (slug: string, briefId: string) => `/brief/${slug}/${briefId}`,
   BRANDED_BRIEF_SUCCESS: (slug: string) => `/brief/${slug}/success`,
+  EMAIL_AGENT: '/app/email-agent',
+  EMAIL_AGENT_SETTINGS: '/app/email-agent/settings',
+  EMAIL_AGENT_FOLLOWUPS: '/app/email-agent/followups',
+  EMAIL_AGENT_THREAD: (threadId: string) => `/app/email-agent/threads/${threadId}`,
 } as const;
 
 export type AppRouteValue = (typeof AppRoute)[keyof typeof AppRoute];

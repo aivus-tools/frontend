@@ -31,6 +31,10 @@ export const VENDOR_TABS = [
     key: 'dashboard',
     labelKey: 'DASHBOARD',
   },
+  {
+    key: 'email-agent',
+    labelKey: 'EMAIL_AGENT',
+  },
   // Stage 1 (Hide Offers/Estimates): templates/rates temporarily hidden, re-enable at Stage 4.
   // {
   //   key: 'templates',

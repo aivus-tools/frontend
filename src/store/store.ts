@@ -16,6 +16,7 @@ import { vendorSettingsApi } from '@/services/client/vendorSettingsApi';
 import { briefAiApi } from '@/services/client/briefAiApi';
 import { publicBriefApi } from '@/services/client/publicBriefApi';
 import { preVendorsApi } from '@/services/client/preVendorsApi';
+import { emailAgentApi } from '@/services/client/emailAgentApi';
 import { listenerMiddleware } from '@/lib/listenerMiddleware';
 
 export const makeStore = () => {
@@ -38,6 +39,7 @@ export const makeStore = () => {
         briefAiApi.middleware,
         publicBriefApi.middleware,
         preVendorsApi.middleware,
+        emailAgentApi.middleware,
         listenerMiddleware.middleware
       ),
   });
