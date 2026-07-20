@@ -92,6 +92,10 @@ export interface ThreadSummary {
   overdueItemCount: number;
   openItemCount: number;
   lastActivityAt: string;
+  lastMessageFrom?: string;
+  lastMessagePreview?: string;
+  lastMessageAt?: string | null;
+  lastMessageDirection?: 'in' | 'out' | '';
 }
 
 export interface ThreadsPage {
@@ -110,6 +114,9 @@ export interface FollowupItem {
   detail: string;
   draftId?: string;
   since?: string | null;
+  lastInboundFrom?: string;
+  lastInboundPreview?: string;
+  lastInboundAt?: string | null;
 }
 
 export interface FollowupsResponse {
@@ -131,6 +138,10 @@ export interface ActivityEvent {
   text: string;
   createdAt: string;
   event?: string;
+  direction?: 'in' | 'out';
+  from?: string;
+  subject?: string;
+  preview?: string;
 }
 
 export interface ThreadActivity {

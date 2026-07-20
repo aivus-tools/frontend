@@ -7,7 +7,7 @@ import { t } from '@/lib/i18n';
 import { useGetFollowupsQuery, usePrepareFollowupMutation } from '@/services/client/emailAgentApi';
 import { FollowupItem } from '@/types/emailAgent.interface';
 import { PageSpinner } from '@/components/PageSpinner';
-import { followupKindColor, followupKindLabel, getBackendErrorMessage } from '../helpers';
+import { followupKindColor, followupKindLabel, formatDateTime, getBackendErrorMessage } from '../helpers';
 
 import styles from './FollowupDashboard.module.css';
 
@@ -39,6 +39,15 @@ const FollowupCard = (props: FollowupCardProps) => {
       <div className={styles.subject}>{item.subject || item.clientEmail || '—'}</div>
       <div className={styles.client}>{item.clientEmail}</div>
       <div className={styles.detail}>{item.detail}</div>
+      {item.lastInboundPreview && (
+        <div className={styles.lastInbound}>
+          <div className={styles.lastInboundMeta}>
+            {item.lastInboundFrom || item.clientEmail}
+            {item.lastInboundAt && <span> — {formatDateTime(item.lastInboundAt)}</span>}
+          </div>
+          <p className={styles.lastInboundPreview}>{item.lastInboundPreview}</p>
+        </div>
+      )}
       {item.kind === 'overdue_promise' && (
         <div className={styles.action}>
           <Button type='primary' size='small' loading={isLoading} onClick={handlePrepare}>

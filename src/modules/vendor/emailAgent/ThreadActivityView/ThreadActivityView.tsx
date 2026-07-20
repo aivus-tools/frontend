@@ -10,6 +10,7 @@ import { PageSpinner } from '@/components/PageSpinner';
 import {
   assigneeLabel,
   formatDate,
+  formatDateTime,
   itemStatusColor,
   itemStatusLabel,
   threadStateColor,
@@ -30,15 +31,29 @@ export const ThreadActivityView = (props: ThreadActivityViewProps) => {
     return <PageSpinner />;
   }
 
-  const timelineItems = data.events.map((event, index) => ({
-    key: `${event.createdAt}-${index}`,
-    children: (
-      <div className={styles.event}>
-        <span className={styles.eventText}>{event.text}</span>
-        <span className={styles.eventDate}>{formatDate(event.createdAt)}</span>
-      </div>
-    ),
-  }));
+  const timelineItems = data.events.map((event, index) => {
+    const isMessage = event.kind === 'message';
+    const directionTag = isMessage
+      ? event.direction === 'in'
+        ? { color: 'blue', label: t('EMAIL_AGENT_MESSAGE_INBOUND') }
+        : { color: 'geekblue', label: t('EMAIL_AGENT_MESSAGE_OUTBOUND') }
+      : null;
+    return {
+      key: `${event.createdAt}-${index}`,
+      color: isMessage ? (event.direction === 'in' ? 'blue' : 'green') : 'gray',
+      children: (
+        <div className={styles.event}>
+          <div className={styles.eventHead}>
+            {directionTag && <Tag color={directionTag.color}>{directionTag.label}</Tag>}
+            <span className={styles.eventText}>{isMessage ? event.subject || event.text : event.text}</span>
+          </div>
+          {isMessage && event.from && <div className={styles.eventFrom}>{event.from}</div>}
+          {isMessage && event.preview && <div className={styles.eventPreview}>{event.preview}</div>}
+          <div className={styles.eventDate}>{formatDateTime(event.createdAt)}</div>
+        </div>
+      ),
+    };
+  });
 
   return (
     <div className={styles.wrapper}>

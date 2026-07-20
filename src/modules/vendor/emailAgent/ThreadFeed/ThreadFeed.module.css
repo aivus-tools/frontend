@@ -3,7 +3,7 @@
 }
 
 .pageTitle {
-  margin-bottom: 20px;
+  margin-bottom: 16px;
   font-size: 22px;
   font-weight: 600;
 }
@@ -11,69 +11,169 @@
 .list {
   display: flex;
   flex-direction: column;
-  gap: 12px;
-}
-
-.card {
   width: 100%;
 }
 
-.cardHeader {
-  display: flex;
-  gap: 12px;
-  align-items: flex-start;
-  justify-content: space-between;
-}
-
-.subject {
-  font-size: 15px;
-  font-weight: 600;
-  word-break: break-word;
-}
-
-.tags {
-  display: flex;
-  flex-shrink: 0;
-  flex-wrap: wrap;
-  gap: 4px;
-}
-
-.client {
-  margin-top: 4px;
-  font-size: 13px;
-  color: var(--gray);
-  word-break: break-all;
-}
-
-.footer {
-  display: flex;
-  flex-wrap: wrap;
+.row {
+  position: relative;
+  display: grid;
+  grid-template-columns: 200px 1fr auto;
   gap: 12px;
   align-items: center;
-  justify-content: space-between;
-  margin-top: 12px;
+  width: 100%;
+  padding: 10px 16px 10px 20px;
+  font-family: inherit;
+  color: var(--main);
+  text-align: left;
+  cursor: pointer;
+  background: transparent;
+  border: 0;
+  border-bottom: 1px solid var(--gray-light);
 }
 
-.chips {
+.row:hover {
+  background: var(--bg-gray-page);
+}
+
+.rowIndicator {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  width: 3px;
+  background: transparent;
+}
+
+.rowSender {
+  overflow: hidden;
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--main-dark);
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.rowNeedsAction .rowIndicator {
+  background: var(--blue-text);
+}
+
+.rowNeedsAction .rowSender {
+  font-weight: 700;
+}
+
+.rowContent {
   display: flex;
-  flex-wrap: wrap;
-  gap: 8px;
+  gap: 4px;
+  align-items: baseline;
+  min-width: 0;
+  overflow: hidden;
+  font-size: 14px;
+  white-space: nowrap;
 }
 
-.chip {
-  font-size: 12px;
+.rowSubject {
+  flex-shrink: 0;
+  max-width: 340px;
+  overflow: hidden;
+  color: var(--main-dark);
+  text-overflow: ellipsis;
+}
+
+.rowNeedsAction .rowSubject {
+  font-weight: 700;
+}
+
+.rowSeparator {
+  flex-shrink: 0;
   color: var(--gray);
 }
 
-.chipDanger {
-  font-size: 12px;
-  font-weight: 500;
-  color: var(--red-text);
+.rowPreview {
+  overflow: hidden;
+  color: var(--gray);
+  text-overflow: ellipsis;
 }
 
-.date {
+.rowMeta {
+  display: flex;
+  flex-shrink: 0;
+  gap: 6px;
+  align-items: center;
+}
+
+.metaTag {
+  margin: 0;
+  font-size: 11px;
+  line-height: 18px;
+}
+
+.rowDate {
+  min-width: 110px;
+  font-size: 12px;
+  font-variant-numeric: tabular-nums;
+  color: var(--gray);
+  text-align: right;
+  white-space: nowrap;
+}
+
+.group {
+  display: flex;
+  flex-direction: column;
+  border-bottom: 1px solid var(--gray-light);
+}
+
+.groupHeader {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  padding: 8px 16px 8px 20px;
+  font-family: inherit;
+  font-size: 13px;
+  color: var(--gray);
+  text-align: left;
+  cursor: pointer;
+  background: transparent;
+  border: 0;
+}
+
+.groupHeader:hover {
+  background: var(--bg-gray-page);
+}
+
+.groupCaret {
+  display: inline-flex;
+  flex-shrink: 0;
   font-size: 12px;
   color: var(--gray-light);
+}
+
+.groupCount {
+  flex-shrink: 0;
+  font-weight: 500;
+  color: var(--gray);
+}
+
+.groupSenders {
+  overflow: hidden;
+  color: var(--gray-light);
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.groupBody {
+  display: flex;
+  flex-direction: column;
+  color: var(--gray);
+}
+
+.groupBody .row {
+  color: var(--gray);
+}
+
+.groupBody .rowSender,
+.groupBody .rowSubject {
+  font-weight: 400;
+  color: var(--gray);
 }
 
 .emptyIcon {
@@ -85,4 +185,46 @@
   display: flex;
   justify-content: center;
   margin-top: 20px;
+}
+
+@media (width <= 1023.98px) {
+  .row {
+    grid-template-rows: auto auto;
+    grid-template-columns: 1fr auto;
+    padding: 10px 12px 10px 16px;
+  }
+
+  .rowContent {
+    grid-column: 1 / -1;
+    white-space: normal;
+  }
+
+  .rowSubject {
+    max-width: none;
+    white-space: normal;
+  }
+
+  .rowPreview {
+    display: -webkit-box;
+    overflow: hidden;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
+    white-space: normal;
+  }
+
+  .rowSender {
+    min-width: 0;
+  }
+
+  .rowMeta {
+    justify-content: flex-end;
+  }
+
+  .rowDate {
+    min-width: 0;
+  }
+
+  .groupHeader {
+    padding: 8px 12px 8px 16px;
+  }
 }
